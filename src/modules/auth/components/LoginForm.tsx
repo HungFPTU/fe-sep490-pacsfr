@@ -1,93 +1,114 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@shared/components/ui/Button";
-import type { LoginPayload } from "@modules/auth/types";
-import { authService } from "@modules/auth/services/auth.service";
 
 export function LoginForm() {
-    const [form, setForm] = useState<LoginPayload>({ email: "", password: "" });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [message, setMessage] = useState<string | null>(null);
-    const [mounted, setMounted] = useState(false);
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+  });
+  const [mounted, setMounted] = useState(false);
 
-    React.useEffect(() => {
-        setMounted(true);
-    }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // Giả lập login nha xóa cái này nha
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    // Chưa có API nha chỉ alert demo
+    alert(`Tên đăng nhập: ${form.username}\nMật khẩu: ${form.password}`);
+  }
 
-    async function onSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setMessage(null);
-        try {
-            const res = await authService.login(form);
-            setMessage(`Welcome ${res.user.email}`);
-        } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : "Login failed");
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    if (!mounted) {
-        return (
-            <form className="flex flex-col gap-4 w-full max-w-sm">
-                <div>
-                    <label className="block text-sm mb-1">Email</label>
-                    <input
-                        type="email"
-                        className="w-full h-10 px-3 rounded-md border border-black/10 dark:border-white/20 bg-background"
-                        value=""
-                        readOnly
-                        required
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm mb-1">Password</label>
-                    <input
-                        type="password"
-                        className="w-full h-10 px-3 rounded-md border border-black/10 dark:border-white/20 bg-background"
-                        value=""
-                        readOnly
-                        required
-                    />
-                </div>
-                <Button type="submit" disabled>
-                    Sign in
-                </Button>
-            </form>
-        );
-    }
-
+  if (!mounted) {
     return (
-        <form onSubmit={onSubmit} className="flex flex-col gap-4 w-full max-w-sm">
-            <div>
-                <label className="block text-sm mb-1">Email</label>
-                <input
-                    type="email"
-                    className="w-full h-10 px-3 rounded-md border border-black/10 dark:border-white/20 bg-background"
-                    value={form.email}
-                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    required
-                />
-            </div>
-            <div>
-                <label className="block text-sm mb-1">Password</label>
-                <input
-                    type="password"
-                    className="w-full h-10 px-3 rounded-md border border-black/10 dark:border-white/20 bg-background"
-                    value={form.password}
-                    onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-                    required
-                />
-            </div>
-            <Button type="submit" disabled={loading}>
-                {loading ? "Signing in..." : "Sign in"}
-            </Button>
-            {error && <p className="text-red-600 text-sm">{error}</p>}
-            {message && <p className="text-green-600 text-sm">{message}</p>}
-        </form>
+      <form className="flex flex-col gap-4 w-full max-w-sm animate-pulse">
+        <div>
+          <label className="block text-sm mb-1">Tên đăng nhập</label>
+          <input
+            type="text"
+            className="w-full h-10 px-3 rounded-md border border-gray-200 bg-gray-50"
+            value=""
+            readOnly
+          />
+        </div>
+        <div>
+          <label className="block text-sm mb-1">Mật khẩu</label>
+          <input
+            type="password"
+            className="w-full h-10 px-3 rounded-md border border-gray-200 bg-gray-50"
+            value=""
+            readOnly
+          />
+        </div>
+        <Button type="submit" disabled>
+          Đăng nhập
+        </Button>
+      </form>
     );
-} 
+  }
+
+  return (
+    <div className="w-full max-w-sm mx-auto bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
+  <h1 className="text-xl font-semibold text-center mb-2 text-black">
+    Hệ thống Tư vấn Dịch vụ Hành chính Công
+  </h1>
+  <p className="text-sm text-black text-center mb-6">
+    Đăng nhập để sử dụng dịch vụ tại UBND Xã/Phường
+  </p>
+
+  <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <div>
+      <label
+        htmlFor="username"
+        className="block text-sm font-medium mb-1 text-black"
+      >
+        Tên đăng nhập
+      </label>
+      <input
+        id="username"
+        type="text"
+        placeholder="Nhập tên đăng nhập"
+        autoComplete="username"
+        className="w-full h-10 px-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-black placeholder:text-black/50"
+        value={form.username}
+        onChange={(e) => setForm({ ...form, username: e.target.value })}
+        required
+      />
+    </div>
+    <div>
+      <label
+        htmlFor="password"
+        className="block text-sm font-medium mb-1 text-black"
+      >
+        Mật khẩu
+      </label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Nhập mật khẩu"
+        autoComplete="current-password"
+        className="w-full h-10 px-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-black placeholder:text-black/50"
+        value={form.password}
+        onChange={(e) => setForm({ ...form, password: e.target.value })}
+        required
+      />
+    </div>
+
+    <div className="flex items-center justify-between text-sm text-black">
+      <label className="flex items-center gap-2">
+        <input type="checkbox" className="h-4 w-4" /> Ghi nhớ đăng nhập
+      </label>
+      <a href="#" className="text-black hover:underline">
+        Quên mật khẩu?
+      </a>
+    </div>
+
+    <Button type="submit" className="mt-2 h-10 text-black">
+      Đăng nhập
+    </Button>
+  </form>
+</div>
+  );
+}
