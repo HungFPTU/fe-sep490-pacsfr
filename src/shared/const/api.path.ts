@@ -1,6 +1,10 @@
 export const API_PATH = {
     AUTH: {
         LOGIN: "/auth/login",
+        LOGOUT: "/auth/logout",
+        ME: "/auth/me",
+        UPDATE_PROFILE: "/auth/profile",
+        REFRESH_TOKEN: "/auth/refresh",
     },
     QUEUE: {
         COUNTERS: "/queue/counters",

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@shared/components/ui/Button";
+import { Button } from "@/shared/components/ui/button.ui";
 import { Container } from "@shared/components/layout/Container";
 import { queueService } from "@modules/queue/services/queue.service";
 import type { StaffQueueState } from "@modules/queue/types";
@@ -99,16 +99,16 @@ export function StaffQueuePanel({ counterId }: { counterId: string }) {
                     </div>
                     <div className="flex gap-2">
                         {state.current?.status === "waiting" && (
-                            <Button disabled={loading} onClick={startServing} variant="primary">Bắt đầu phục vụ</Button>
+                            <Button disabled={loading} onClick={startServing} variant="default">Bắt đầu phục vụ</Button>
                         )}
                         {state.current?.status === "serving" && (
-                            <Button disabled={loading} onClick={() => act(queueService.completeCurrent)} variant="secondary">Hoàn tất</Button>
+                            <Button disabled={loading} onClick={() => act(queueService.completeCurrent)} variant="outline">Hoàn tất</Button>
                         )}
                         {!state.current && (
                             <Button disabled={loading} onClick={() => act(queueService.callNext)}>Gọi số tiếp theo</Button>
                         )}
                         {state.current && state.current.status !== "serving" && (
-                            <Button disabled={loading} onClick={() => act(queueService.skipCurrent)} variant="secondary">Bỏ qua</Button>
+                            <Button disabled={loading} onClick={() => act(queueService.skipCurrent)} variant="outline">Bỏ qua</Button>
                         )}
                     </div>
                 </div>
