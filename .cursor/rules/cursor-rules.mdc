@@ -1,0 +1,402 @@
+---
+alwaysApply: true
+---
+
+# PASCS Frontend Development Guidelines
+
+**Objective:** Standardize development practices for the Public Administrative Service Consultation System (PASCS) frontend built with Next.js 15 + TypeScript.
+
+## Core Principles
+
+- **Vietnamese UI Content:** Use Vietnamese for all user-facing text and documentation
+- **No Hardcoded APIs:** Always define API endpoints in `src/shared/const/api.path.ts` and call through `@core/http/client` or module-specific wrappers
+- **Layer Separation:** Maintain clear separation between `api` (raw HTTP calls) and `services` (business logic/utilities)
+- **Minimal Component State:** Keep component state minimal; extract complex logic to services/hooks
+- **Preserve Formatting:** Respect existing code formatting; avoid unnecessary reformatting
+
+## Technology Stack
+
+- **Framework:** Next.js 15 (App Router), React 19, TypeScript (strict mode)
+- **Styling:** Tailwind CSS v4 with shared UI components at `@shared/components`
+- **Architecture:** Module-based structure: `src/modules/<feature>/{api,components,services,types}`
+- **Path Aliases:** `@/*`, `@app/*`, `@core/*`, `@shared/*`, `@modules/*` (see `tsconfig.json`)
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (client)/             # Public client routes with layout
+│   │   ├── layout.tsx        # Wraps MainLayout once
+│   │   ├── page.tsx          # Home page
+│   │   └── about/            # About page
+│   ├── (private)/            # Protected routes with layout
+│   │   ├── layout.tsx        # Wraps MainLayout once
+│   │   ├── queue/            # Queue management
+│   │   └── staff/            # Staff dashboard
+│   ├── (public)/             # Public routes (login, etc.)
+│   │   └── login/
+│   └── layout.tsx            # Root layout with providers
+├── core/
+│   ├── http/client.ts        # HTTP client with interceptors
+│   ├── patterns/             # Singleton hooks, patterns
+│   └── stores/               # Global stores
+├── modules/
+│   └── <feature>/
+│       ├── api/              # HTTP API calls
+│       ├── components/       # Feature components
+│       ├── services/         # Business logic
+│       ├── stores/           # Feature-specific stores
+│       ├── hooks.ts          # Combined feature hooks
+│       └── types.ts          # TypeScript definitions
+└── shared/
+    ├── components/
+    │   ├── layout/
+    │   │   ├── main/         # Main layout components
+    │   │   ├── admin/        # Admin-specific layouts
+    │   │   ├── staff/        # Staff-specific layouts
+    │   │   └── citizen/      # Citizen-specific layouts
+    │   ├── home/             # Homepage components
+    │   └── ui/               # Reusable UI primitives
+    ├── hooks/                # Shared hooks
+    ├── lib/                  # Utilities
+    ├── const/                # Constants and API paths
+    └── providers/            # React context providers
+```
+
+## Layout System
+
+### Centralized Layout Management
+- **Root Layout** (`app/layout.tsx`): Contains providers and global components
+- **Client Layout** (`app/(client)/layout.tsx`): Wraps MainLayout for public client routes
+- **Private Layout** (`app/(private)/layout.tsx`): Wraps MainLayout for protected routes
+- **Page Components**: Only contain page-specific content, no layout imports
+
+### Route Groups
+- `(client)/`: Public client routes with header/footer (home, about)
+- `(private)/`: Protected routes with header/footer (queue, staff dashboard)
+- `(public)/`: Public auth routes without main layout (login, signup)
+
+## API Integration
+
+### 1. Define API Paths
+```typescript
+// src/shared/const/api.path.ts
+export const API_PATH = {
+  AUTH: {
+    LOGIN: "/auth/login",
+    LOGOUT: "/auth/logout",
+  },
+  QUEUE: {
+    OVERVIEW: "/queue/overview",
+    COUNTERS: "/queue/counters",
+  },
+};
+```
+
+### 2. Create API Functions
+```typescript
+// src/modules/<feature>/api/<feature>.api.ts
+import { http } from "@core/http/client";
+import { API_PATH } from "@shared/const/api.path";
+
+export const featureApi = {
+  async getData(id: string) {
+    return http.get(`${API_PATH.FEATURE.DETAIL}?id=${encodeURIComponent(id)}`);
+  },
+};
+```
+
+### 3. Business Logic in Services
+```typescript
+// src/modules/<feature>/services/<feature>.service.ts
+import { featureApi } from "../api/<feature>.api";
+
+export const featureService = {
+  async processData(id: string) {
+    const response = await featureApi.getData(id);
+    // Add business logic, data transformation, etc.
+    return response.data;
+  },
+};
+```
+
+## Component Guidelines
+
+### Use Shared Components First
+- Import from `@shared/components` before creating new components
+- Utilize `Container`, `Button`, `Card` for consistent styling
+- Follow Tailwind best practices: concise classes, consistent spacing
+
+### Accessibility Requirements
+- Include `alt` attributes for images
+- Add proper `label` elements for form inputs
+- Ensure keyboard navigation support
+- Maintain color contrast ratios
+
+### Component Naming
+- **Files/Directories:** kebab-case (`user-profile.tsx`)
+- **Types/Interfaces:** PascalCase (`UserProfile`)
+- **Variables/Functions:** camelCase (`getUserProfile`)
+- **Constants:** SCREAMING_SNAKE_CASE (`API_BASE_URL`)
+
+## Key Routes Reference
+
+- `/`: Homepage with hero section and features (client)
+- `/about`: System information and features (client)
+- `/login`: Authentication form with professional UI (public)
+- `/queue`: Citizen queue display with 5s polling (private)
+- `/staff/queue`: Staff queue management with auto-skip (private)
+
+## Environment Variables
+
+- **Client:** `NEXT_PUBLIC_API_BASE_URL`
+- **Server:** `API_BASE_URL` (fallbacks to `NEXT_PUBLIC_API_BASE_URL`)
+- Access via `@core/http/client.getBaseUrl()` or `@core/env` helpers
+
+## Development Best Practices
+
+### Adding New Features
+1. Create module directory: `src/modules/<feature>/`
+2. Define types in `types.ts`
+3. Create API functions in `api/`
+4. Implement business logic in `services/`
+5. Build components in `components/`
+6. Export everything through `index.ts`
+
+### State Management
+- **Local State:** React useState for simple component state
+- **Feature State:** Zustand stores in module directories
+- **Global State:** Singleton hooks for cross-cutting concerns
+- **Server State:** TanStack Query for API data caching
+
+### TypeScript Standards
+- Enable strict mode
+- Avoid `any` type usage
+- Define shared types in module `types.ts`
+- Use proper generic constraints
+- Leverage utility types when appropriate
+
+## Prohibited Practices
+
+- ❌ Hardcoding API URLs in components
+- ❌ Importing MainLayout in individual pages (use route groups)
+- ❌ Reformatting unrelated files
+- ❌ Storing secrets in client-side code
+- ❌ Mixing HTTP logic with UI components
+- ❌ Creating duplicate utility functions
+
+## Code Quality
+
+### File Organization
+- Group related functionality in modules
+- Use barrel exports (`index.ts`) for clean imports
+- Separate concerns: UI, logic, data, types
+- Follow consistent file naming conventions
+
+### Performance Considerations
+- Implement proper code splitting with Next.js dynamic imports
+- Use React.memo for expensive components
+- Optimize images with Next.js Image component
+- Leverage TanStack Query for efficient data caching
+
+This guideline ensures consistent, maintainable, and scalable development for the PASCS frontend application.
+# PASCS Frontend Development Guidelines
+
+**Objective:** Standardize development practices for the Public Administrative Service Consultation System (PASCS) frontend built with Next.js 15 + TypeScript.
+
+## Core Principles
+
+- **Vietnamese UI Content:** Use Vietnamese for all user-facing text and documentation
+- **No Hardcoded APIs:** Always define API endpoints in `src/shared/const/api.path.ts` and call through `@core/http/client` or module-specific wrappers
+- **Layer Separation:** Maintain clear separation between `api` (raw HTTP calls) and `services` (business logic/utilities)
+- **Minimal Component State:** Keep component state minimal; extract complex logic to services/hooks
+- **Preserve Formatting:** Respect existing code formatting; avoid unnecessary reformatting
+
+## Technology Stack
+
+- **Framework:** Next.js 15 (App Router), React 19, TypeScript (strict mode)
+- **Styling:** Tailwind CSS v4 with shared UI components at `@shared/components`
+- **Architecture:** Module-based structure: `src/modules/<feature>/{api,components,services,types}`
+- **Path Aliases:** `@/*`, `@app/*`, `@core/*`, `@shared/*`, `@modules/*` (see `tsconfig.json`)
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (client)/             # Public client routes with layout
+│   │   ├── layout.tsx        # Wraps MainLayout once
+│   │   ├── page.tsx          # Home page
+│   │   └── about/            # About page
+│   ├── (private)/            # Protected routes with layout
+│   │   ├── layout.tsx        # Wraps MainLayout once
+│   │   ├── queue/            # Queue management
+│   │   └── staff/            # Staff dashboard
+│   ├── (public)/             # Public routes (login, etc.)
+│   │   └── login/
+│   └── layout.tsx            # Root layout with providers
+├── core/
+│   ├── http/client.ts        # HTTP client with interceptors
+│   ├── patterns/             # Singleton hooks, patterns
+│   └── stores/               # Global stores
+├── modules/
+│   └── <feature>/
+│       ├── api/              # HTTP API calls
+│       ├── components/       # Feature components
+│       ├── services/         # Business logic
+│       ├── stores/           # Feature-specific stores
+│       ├── hooks.ts          # Combined feature hooks
+│       └── types.ts          # TypeScript definitions
+└── shared/
+    ├── components/
+    │   ├── layout/
+    │   │   ├── main/         # Main layout components
+    │   │   ├── admin/        # Admin-specific layouts
+    │   │   ├── staff/        # Staff-specific layouts
+    │   │   └── citizen/      # Citizen-specific layouts
+    │   ├── home/             # Homepage components
+    │   └── ui/               # Reusable UI primitives
+    ├── hooks/                # Shared hooks
+    ├── lib/                  # Utilities
+    ├── const/                # Constants and API paths
+    └── providers/            # React context providers
+```
+
+## Layout System
+
+### Centralized Layout Management
+- **Root Layout** (`app/layout.tsx`): Contains providers and global components
+- **Client Layout** (`app/(client)/layout.tsx`): Wraps MainLayout for public client routes
+- **Private Layout** (`app/(private)/layout.tsx`): Wraps MainLayout for protected routes
+- **Page Components**: Only contain page-specific content, no layout imports
+
+### Route Groups
+- `(client)/`: Public client routes with header/footer (home, about)
+- `(private)/`: Protected routes with header/footer (queue, staff dashboard)
+- `(public)/`: Public auth routes without main layout (login, signup)
+
+## API Integration
+
+### 1. Define API Paths
+```typescript
+// src/shared/const/api.path.ts
+export const API_PATH = {
+  AUTH: {
+    LOGIN: "/auth/login",
+    LOGOUT: "/auth/logout",
+  },
+  QUEUE: {
+    OVERVIEW: "/queue/overview",
+    COUNTERS: "/queue/counters",
+  },
+};
+```
+
+### 2. Create API Functions
+```typescript
+// src/modules/<feature>/api/<feature>.api.ts
+import { http } from "@core/http/client";
+import { API_PATH } from "@shared/const/api.path";
+
+export const featureApi = {
+  async getData(id: string) {
+    return http.get(`${API_PATH.FEATURE.DETAIL}?id=${encodeURIComponent(id)}`);
+  },
+};
+```
+
+### 3. Business Logic in Services
+```typescript
+// src/modules/<feature>/services/<feature>.service.ts
+import { featureApi } from "../api/<feature>.api";
+
+export const featureService = {
+  async processData(id: string) {
+    const response = await featureApi.getData(id);
+    // Add business logic, data transformation, etc.
+    return response.data;
+  },
+};
+```
+
+## Component Guidelines
+
+### Use Shared Components First
+- Import from `@shared/components` before creating new components
+- Utilize `Container`, `Button`, `Card` for consistent styling
+- Follow Tailwind best practices: concise classes, consistent spacing
+
+### Accessibility Requirements
+- Include `alt` attributes for images
+- Add proper `label` elements for form inputs
+- Ensure keyboard navigation support
+- Maintain color contrast ratios
+
+### Component Naming
+- **Files/Directories:** kebab-case (`user-profile.tsx`)
+- **Types/Interfaces:** PascalCase (`UserProfile`)
+- **Variables/Functions:** camelCase (`getUserProfile`)
+- **Constants:** SCREAMING_SNAKE_CASE (`API_BASE_URL`)
+
+## Key Routes Reference
+
+- `/`: Homepage with hero section and features (client)
+- `/about`: System information and features (client)
+- `/login`: Authentication form with professional UI (public)
+- `/queue`: Citizen queue display with 5s polling (private)
+- `/staff/queue`: Staff queue management with auto-skip (private)
+
+## Environment Variables
+
+- **Client:** `NEXT_PUBLIC_API_BASE_URL`
+- **Server:** `API_BASE_URL` (fallbacks to `NEXT_PUBLIC_API_BASE_URL`)
+- Access via `@core/http/client.getBaseUrl()` or `@core/env` helpers
+
+## Development Best Practices
+
+### Adding New Features
+1. Create module directory: `src/modules/<feature>/`
+2. Define types in `types.ts`
+3. Create API functions in `api/`
+4. Implement business logic in `services/`
+5. Build components in `components/`
+6. Export everything through `index.ts`
+
+### State Management
+- **Local State:** React useState for simple component state
+- **Feature State:** Zustand stores in module directories
+- **Global State:** Singleton hooks for cross-cutting concerns
+- **Server State:** TanStack Query for API data caching
+
+### TypeScript Standards
+- Enable strict mode
+- Avoid `any` type usage
+- Define shared types in module `types.ts`
+- Use proper generic constraints
+- Leverage utility types when appropriate
+
+## Prohibited Practices
+
+- ❌ Hardcoding API URLs in components
+- ❌ Importing MainLayout in individual pages (use route groups)
+- ❌ Reformatting unrelated files
+- ❌ Storing secrets in client-side code
+- ❌ Mixing HTTP logic with UI components
+- ❌ Creating duplicate utility functions
+
+## Code Quality
+
+### File Organization
+- Group related functionality in modules
+- Use barrel exports (`index.ts`) for clean imports
+- Separate concerns: UI, logic, data, types
+- Follow consistent file naming conventions
+
+### Performance Considerations
+- Implement proper code splitting with Next.js dynamic imports
+- Use React.memo for expensive components
+- Optimize images with Next.js Image component
+- Leverage TanStack Query for efficient data caching
+
+This guideline ensures consistent, maintainable, and scalable development for the PASCS frontend application.

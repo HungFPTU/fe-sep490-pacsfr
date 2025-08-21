@@ -38,8 +38,11 @@
       ],
       "@modules/*": [
         "./src/modules/*"
+      ],
+      "@public/*": [
+        "../public/*"
       ]
-    }
+    },
   },
   "include": [
     "next-env.d.ts",

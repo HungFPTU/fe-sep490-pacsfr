@@ -11,7 +11,7 @@ const currentLevel: LogLevel = (process.env.NEXT_PUBLIC_LOG_LEVEL as LogLevel) |
 
 function log(level: LogLevel, ...args: unknown[]) {
     if (levelOrder[level] < levelOrder[currentLevel]) return;
-    // eslint-disable-next-line no-console
+
     console[level === "debug" ? "log" : level](...args);
 }
 
