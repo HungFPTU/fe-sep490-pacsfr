@@ -33,7 +33,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
 
     // Phone validation - support both email and phone
     if (!form.phone.trim()) {
-      newErrors.phone = "Email hoặc số điện thoại là bắt buộc";
+      newErrors.phone = "Số điện thoại là bắt buộc";
     } else {
       // Check if it's email format
       const isEmail = form.phone.includes('@');
@@ -119,7 +119,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField
-          label="Email hoặc Số điện thoại"
+          label="Số điện thoại"
           name="phone"
           error={errors.phone}
           required
@@ -127,8 +127,8 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
           <Input
             id="phone"
             type="text"
-            placeholder="Nhập email hoặc số điện thoại"
-            autoComplete="username"
+            placeholder="Nhập số điện thoại"
+            autoComplete="phone"
             value={form.phone}
             onChange={handleInputChange("phone")}
             error={!!errors.phone}
