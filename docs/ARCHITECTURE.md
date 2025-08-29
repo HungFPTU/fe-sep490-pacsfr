@@ -30,8 +30,9 @@ src/
 │   ├── (client)/                    # Main application routes
 │   │   ├── layout.tsx            # Wraps MainLayout once
 │   │   ├── page.tsx              # Homepage (no layout import)
-│   ├── (public)/                 # Public routes (without main layout)
-│   │   └── login/page.tsx        # Login page
+│   ├── (auth)/                 # Public routes (without main layout)
+│   │   ├── login/page.tsx        # Login page
+│   │   └── register/page.tsx     # Register page
 │   ├── layout.tsx                # Root layout with providers
 │
 ├── core/                         # Core infrastructure

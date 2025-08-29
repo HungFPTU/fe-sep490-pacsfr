@@ -1,18 +1,101 @@
-export interface LoginPayload {
-    username: string;
-    password: string;
-}
+import { ApiResponse } from "@/core/config";
+
+/**
+ * Authentication feature types
+ * Consolidated type definitions for auth domain
+ */
+
+import { UserRole } from "./enums";
 
 export interface User {
     id: string;
     username: string;
-    email?: string;
-    role: "admin" | "staff" | "citizen";
+    email: string;
     name: string;
+    phone?: string;
     avatar?: string;
+    role: UserRole;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+// Authentication payloads
+export interface LoginPayload {
+    phone: string;
+    password: string;
+    rememberMe?: boolean;
+}
+
+export interface RegisterPayload {
+    fullName: string;
+    username: string;
+    email: string;
+    phone: string;
+    password: string;
+    confirmPassword?: string; // Frontend validation only
+    role: UserRole;
+    isActive: boolean;
+    dayOfBirth: string;
+    priorityGroup: boolean;
+    idCardNumber: string;
+    description: string;
+}
+
+// API payload (without confirmPassword)
+export type RegisterApiPayload = Omit<RegisterPayload, 'confirmPassword'>;
+
+// API responses - based on actual backend response structure
+export interface AuthTokens {
+    accessToken: string;
+    refreshToken?: string;
+    expiresIn: number;
+}
+
+// Actual API response structure
+export interface ApiAuthData {
+    token: string;
+    expiration: string;
+    userId: string;
+    fullName: string;
+    phone: string;
+    role: string;
 }
 
 export interface LoginResponse {
     user: User;
-    token: string;
-} 
+    tokens: AuthTokens;
+    message: string;
+}
+
+export interface RegisterResponse {
+    user: User;
+    tokens: AuthTokens;
+    message: string;
+}
+
+// Type aliases for actual API responses
+export type ApiLoginResponse = ApiResponse<ApiAuthData>;
+export type ApiRegisterResponse = ApiResponse<ApiAuthData>;
+
+// Auth state
+export interface AuthState {
+    user: User | null;
+    tokens: AuthTokens | null;
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    error: string | null;
+}
+
+// Permission and role types
+export interface Permission {
+    id: string;
+    name: string;
+    resource: string;
+    action: string;
+}
+
+export interface RolePermissions {
+    role: UserRole;
+    permissions: Permission[];
+}

@@ -50,8 +50,9 @@ src/
 │   ├── (client)/             # Main app routes with layout
 │   │   ├── layout.tsx     # MainLayout wrapper
 │   │   ├── page.tsx       # Homepage
-│   ├── (public)/          # Public routes (no layout)
-│   │   └── login/         # Authentication
+│   ├── (auth)/          # Public routes (no layout)
+│   │   ├── login/         # Authentication
+│   │   └── register/      # Register
 │   ├── (private)/          # Private routes (with layout)
 │   │   ├── queue/         # Queue management
 │   │   └── staff/         # Staff dashboard

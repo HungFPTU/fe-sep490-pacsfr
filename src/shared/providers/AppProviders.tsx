@@ -4,6 +4,7 @@ import React from "react";
 import { ThemeProvider } from "./ThemeProvider";
 import { HeroUIProvider } from "./HeroUIProvider";
 import { QueryProvider } from "./QueryProvider";
+import { AuthProvider } from "./AuthProvider";
 import { HttpLoadingProvider } from "@shared/hooks/useHttpLoading";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
@@ -11,9 +12,11 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         <ThemeProvider>
             <HeroUIProvider>
                 <QueryProvider>
-                    <HttpLoadingProvider>
-                        {children}
-                    </HttpLoadingProvider>
+                    <AuthProvider>
+                        <HttpLoadingProvider>
+                            {children}
+                        </HttpLoadingProvider>
+                    </AuthProvider>
                 </QueryProvider>
             </HeroUIProvider>
         </ThemeProvider>
