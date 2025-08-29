@@ -1,7 +1,6 @@
 ---
 alwaysApply: true
 ---
-
 # PASCS Frontend Development Guidelines
 
 **Objective:** Standardize development practices for the Public Administrative Service Consultation System (PASCS) frontend built with Next.js 15 + TypeScript.
@@ -34,8 +33,9 @@ src/
 │   │   ├── layout.tsx        # Wraps MainLayout once
 │   │   ├── queue/            # Queue management
 │   │   └── staff/            # Staff dashboard
-│   ├── (public)/             # Public routes (login, etc.)
-│   │   └── login/
+│   ├── (auth)/             # Public routes (login, etc.)
+│   │   ├── login/
+│   │   └── register/
 │   └── layout.tsx            # Root layout with providers
 ├── core/
 │   ├── http/client.ts        # HTTP client with interceptors

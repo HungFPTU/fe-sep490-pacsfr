@@ -1,4 +1,6 @@
 // import { useGlobalLoading } from "@core/patterns/SingletonHook";
+import { ENV } from "@/core/config/env";
+
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -86,10 +88,8 @@ class HttpClient {
     }
 
     private getBaseUrl(): string {
-        if (typeof window === "undefined") {
-            return process.env.API_BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
-        }
-        return process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
+        const baseUrl = ENV.API_BASE_URL || "/api";
+        return baseUrl;
     }
 
     private resolveAuthHeader(
@@ -178,7 +178,23 @@ class HttpClient {
 
             const contentType = response.headers.get("content-type");
             const isJson = contentType && contentType.includes("application/json");
-            const data = (isJson ? await response.json() : await response.text()) as TResponse;
+
+            let data: TResponse;
+            if (isJson) {
+                const text = await response.text();
+                if (text.trim() === "") {
+                    data = {} as TResponse; // Handle empty JSON responses
+                } else {
+                    try {
+                        data = JSON.parse(text);
+                    } catch {
+                        console.warn("Failed to parse JSON response:", text);
+                        data = text as TResponse;
+                    }
+                }
+            } else {
+                data = (await response.text()) as TResponse;
+            }
 
             if (!response.ok) {
                 const error: HttpError = {

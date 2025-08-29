@@ -1,3 +1,8 @@
+/**
+ * @deprecated Use src/core/config/env.ts instead
+ * This file is kept for backward compatibility
+ */
+
 export type PublicEnvKeys =
     | "NEXT_PUBLIC_API_BASE_URL";
 
@@ -15,4 +20,7 @@ export function getServerEnv(key: ServerEnvKeys, defaultValue: string = ""): str
     }
     const value = process.env[key];
     return value ?? defaultValue;
-} 
+}
+
+// Re-export from new location
+export { ENV } from './config/env'; 

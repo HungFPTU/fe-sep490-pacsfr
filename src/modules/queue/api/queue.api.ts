@@ -1,5 +1,5 @@
 import { http } from "@core/http/client";
-import { API_PATH } from "@shared/const/api.path";
+import { API_PATH } from "@/core/config/api.path";
 import type { Counter, QueueOverview, StaffQueueState } from "@modules/queue/types";
 
 export const queueApi = {

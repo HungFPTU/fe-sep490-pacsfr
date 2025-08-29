@@ -1,15 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { http } from "@core/http/client";
-
-interface User {
-    id: string;
-    username: string;
-    email?: string;
-    role: "admin" | "staff" | "citizen";
-    name: string;
-    avatar?: string;
-}
+import type { User } from "../types";
 
 interface AuthState {
     // State

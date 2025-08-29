@@ -178,7 +178,7 @@ type ToastType = {
     duration?: number;
 };
 
-export const useGlobalToast = createSingletonStore("globalToast", (set, _get) => ({
+export const useGlobalToast = createSingletonStore("globalToast", (set) => ({
     toasts: [] as ToastType[],
 
     addToast: (toast: Omit<ToastType, "id">) => {
