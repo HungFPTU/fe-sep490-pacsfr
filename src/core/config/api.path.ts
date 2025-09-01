@@ -17,5 +17,13 @@ export const API_PATH = {
             SKIP: "/staff/queue/skip",
         },
     },
+    USERS: {
+        LIST: "/admin/users",
+        CREATE: "/admin/users",
+        DETAIL: (id: string) => `/admin/users/${id}`,
+        UPDATE: (id: string) => `/admin/users/${id}`,
+        DELETE: (id: string) => `/admin/users/${id}`,
+        ROLES: "/admin/roles",
+    },
 };
 
