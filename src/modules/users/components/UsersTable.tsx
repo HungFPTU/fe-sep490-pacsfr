@@ -40,11 +40,13 @@ export function UsersTable() {
     }, []);
 
     const debouncedSearch = React.useMemo(
-        () => debounce((value: string) => {
-            const q = { ...state.query, page: 1, search: value };
-            setState((s) => ({ ...s, query: q }));
-            fetchData(q);
-        }, 400),
+        () =>
+            debounce((...args: unknown[]) => {
+                const value = String(args[0]);
+                const q = { ...state.query, page: 1, search: value };
+                setState((s) => ({ ...s, query: q }));
+                fetchData(q);
+            }, 400),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [state.query]
     );

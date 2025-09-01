@@ -2,7 +2,7 @@ import { http } from "@core/http/client";
 import { API_PATH } from "@/core/config/api.path";
 import type { PaginatedResponse, UpsertUserPayload, UserSummary, UsersQuery } from "@modules/users/types";
 
-function buildQuery(params: Record<string, unknown>): string {
+function buildQuery(params: UsersQuery): string {
     const query = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
         if (value === undefined || value === null || value === "all") return;
