@@ -11,12 +11,17 @@ export default function LoginPage() {
     const { login, isLoading, isAuthenticated } = useAuth();
     const router = useRouter();
 
+    console.log(isAuthenticated, router);
+    
+
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
-            router.push("/queue"); // Redirect to protected route
+            router.push("/system/dashboard"); // Redirect to protected route
+        } else {
+            router.push("/system/dashboard"); // Tạm thời
         }
-    }, [isAuthenticated, router]);
+    }, [isAuthenticated, router, isLoading]);
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
             {/* Background decorative elements */}
