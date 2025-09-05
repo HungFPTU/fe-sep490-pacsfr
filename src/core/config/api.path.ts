@@ -17,5 +17,21 @@ export const API_PATH = {
             SKIP: "/staff/queue/skip",
         },
     },
+    SYSTEM: {
+        SERVICES: {
+            ALL: "/system/services",
+            BY_ID: (id: string) => `/system/services/${id}`,
+        },
+        ACCOUNTS: {
+            ALL: "/system/accounts",
+            PERMISSIONS: "/system/accounts/permissions",
+            BY_ID: (id: string) => `/system/accounts/${id}`,
+        },
+        QUEUES: {
+            ALL: "/system/queues",
+            STATUS: "/system/queues/status",
+            STATISTICS: "/system/queues/statistics",
+        },
+    },
 };
 
