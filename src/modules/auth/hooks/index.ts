@@ -41,10 +41,8 @@ export function useAuth() {
             return authService.register(payload);
         },
         onSuccess: (response) => {
-            // Hook handles UI state updates
-            setCredentials(response.user, response.tokens.accessToken);
-            setJustLoggedIn(true); // Mark as just logged in to prevent profile query
-            addToast({ message: "Đăng ký thành công! Chào mừng bạn!", type: "success" });
+            // For citizen registration, backend returns created citizen info (no tokens)
+            addToast({ message: "Đăng ký thành công!", type: "success" });
         },
         onError: (error) => {
             console.error("[Auth Hook] Register error:", error);
