@@ -7,6 +7,9 @@ export const API_PATH = {
         UPDATE_PROFILE: "/auth/profile",
         REFRESH_TOKEN: "/auth/refresh",
     },
+    CITIZEN: {
+        BASE: "/Citizen",
+    },
     QUEUE: {
         COUNTERS: "/queue/counters",
         OVERVIEW: "/queue/overview",
