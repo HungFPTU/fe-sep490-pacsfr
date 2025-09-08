@@ -37,7 +37,14 @@ export const ENV = {
     // Dynamic getters to ensure fresh environment variable access
     get API_BASE_URL() {
         // Direct access to avoid any wrapper issues
-        return process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+        const value = process.env.NEXT_PUBLIC_API_BASE_URL;
+        if (!value) {
+            if (process.env.NODE_ENV === "production") {
+                throw new Error("Missing NEXT_PUBLIC_API_BASE_URL in production environment.");
+            }
+            return "http://localhost:3000/api";
+        }
+        return value;
     },
     get APP_NAME() {
         return process.env.NEXT_PUBLIC_APP_NAME || "PASCS";
