@@ -42,7 +42,14 @@ export default function RegisterPage() {
                 {/* Card đăng ký */}
                 <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-4 sm:p-8">
                     {/* Form */}
-                    <RegisterForm onSubmit={register} isLoading={isLoading} />
+                    <RegisterForm
+                        onSubmit={async (payload) => {
+                            const res = await register(payload);
+                            router.push("/login");
+                            return res;
+                        }}
+                        isLoading={isLoading}
+                    />
 
                     {/* Navigation to login */}
                     <div className="mt-6 text-center">

@@ -1,7 +1,7 @@
 import { http } from "@core/http/client";
 import type {
     LoginPayload,
-    RegisterPayload,
+    RegisterApiPayload,
     ApiLoginResponse,
     ApiRegisterResponse
 } from "@modules/auth/types";
@@ -14,9 +14,9 @@ export const authApi = {
         });
     },
 
-    async register(payload: RegisterPayload) {
-        return http.post<ApiRegisterResponse, RegisterPayload>(API_PATH.AUTH.REGISTER, payload, {
-            loadingKey: "auth-register"
+    async register(payload: RegisterApiPayload) {
+        return http.post<ApiRegisterResponse, RegisterApiPayload>(API_PATH.CITIZEN.BASE, payload, {
+            loadingKey: "auth-citizen-register"
         });
     },
 

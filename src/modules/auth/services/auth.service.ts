@@ -61,18 +61,6 @@ export const authService = {
                 message: response.data.message
             };
         } catch (error) {
-            // Business logic: handle different error types
-            if (error instanceof Error) {
-                if (error.message.includes("401")) {
-                    throw new Error("Tên đăng nhập hoặc mật khẩu không đúng");
-                }
-                if (error.message.includes("429")) {
-                    throw new Error("Quá nhiều lần thử. Vui lòng thử lại sau");
-                }
-                if (error.message.includes("500")) {
-                    throw new Error("Lỗi hệ thống. Vui lòng thử lại sau");
-                }
-            }
             throw error;
         }
     },
@@ -80,9 +68,6 @@ export const authService = {
     // Register with business logic and validation
     async register(payload: RegisterApiPayload): Promise<RegisterResponse> {
         try {
-            // Note: confirmPassword validation is handled in the frontend
-            // The payload here should not contain confirmPassword
-
             if (payload.password.length < 6) {
                 throw new Error("Mật khẩu phải có ít nhất 6 ký tự");
             }
@@ -92,34 +77,24 @@ export const authService = {
                 throw new Error("Email không hợp lệ");
             }
 
-            const response = await authApi.register(payload);
+            // Ensure date format aligns with API expectation (ISO string)
+            const normalizedPayload: RegisterApiPayload = {
+                ...payload,
+                dayOfBirth: new Date(payload.dayOfBirth).toISOString(),
+            };
 
-            // Business logic: validate response structure
-            if (!response.data.isSuccess || !response.data.data) {
+            const response = await authApi.register(normalizedPayload);
+
+            const okFlag = (response.data as unknown as { isSuccess?: boolean; success?: boolean }).isSuccess ?? (response.data as unknown as { isSuccess?: boolean; success?: boolean }).success;
+            if (!okFlag || !response.data.data) {
                 throw new Error(response.data.message || "Invalid register response");
             }
 
-            // Transform API response to internal format
-            const { user, tokens } = transformApiAuthData(response.data.data);
-
             return {
-                user,
-                tokens,
+                citizen: response.data.data,
                 message: response.data.message
             };
         } catch (error) {
-            // Business logic: handle different error types
-            if (error instanceof Error) {
-                if (error.message.includes("409")) {
-                    throw new Error("Tên đăng nhập hoặc email đã tồn tại");
-                }
-                if (error.message.includes("422")) {
-                    throw new Error("Thông tin đăng ký không hợp lệ");
-                }
-                if (error.message.includes("500")) {
-                    throw new Error("Lỗi hệ thống. Vui lòng thử lại sau");
-                }
-            }
             throw error;
         }
     },
