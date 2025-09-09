@@ -7,9 +7,6 @@ export const API_PATH = {
         UPDATE_PROFILE: "/auth/profile",
         REFRESH_TOKEN: "/auth/refresh",
     },
-    CITIZEN: {
-        BASE: "/Citizen",
-    },
     QUEUE: {
         COUNTERS: "/queue/counters",
         OVERVIEW: "/queue/overview",
@@ -20,5 +17,22 @@ export const API_PATH = {
             SKIP: "/staff/queue/skip",
         },
     },
+    MANAGER: {
+        SERVICES: {
+            ALL: "/manager/services",
+            BY_ID: (id: string) => `/manager/services/${id}`,
+        },
+        ACCOUNTS: {
+            ALL: "/manager/accounts",
+            PERMISSIONS: "/manager/accounts/permissions",
+            BY_ID: (id: string) => `/manager/accounts/${id}`,
+        },
+        QUEUES: {
+            ALL: "/manager/queues",
+            STATUS: "/manager/queues/status",
+            STATISTICS: "/manager/queues/statistics",
+        },
+    },
+
 };
 

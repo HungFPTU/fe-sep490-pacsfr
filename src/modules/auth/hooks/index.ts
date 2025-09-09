@@ -10,7 +10,7 @@ import type { LoginPayload, RegisterPayload } from "../types";
  * Service handles business logic, Hook handles UI state
  */
 export function useAuth() {
-    const { user, token, isAuthenticated, setCredentials, clearCredentials } = useAuthStore();
+    const { user, token, role, isAuthenticated, setCredentials, clearCredentials } = useAuthStore();
     const { addToast } = useGlobalToast();
 
     // Track if user just logged in to prevent duplicate API calls
@@ -23,7 +23,7 @@ export function useAuth() {
         },
         onSuccess: (response) => {
             // Hook handles UI state updates
-            setCredentials(response.user, response.tokens.accessToken);
+            setCredentials(response.user, response.tokens.accessToken, response.role);
             setJustLoggedIn(true); // Mark as just logged in to prevent profile query
             addToast({ message: "Đăng nhập thành công!", type: "success" });
         },
@@ -41,8 +41,10 @@ export function useAuth() {
             return authService.register(payload);
         },
         onSuccess: (response) => {
-            // For citizen registration, backend returns created citizen info (no tokens)
-            addToast({ message: "Đăng ký thành công!", type: "success" });
+            // Hook handles UI state updates
+            setCredentials(response.user, response.tokens.accessToken, response?.role);
+            setJustLoggedIn(true); // Mark as just logged in to prevent profile query
+            addToast({ message: "Đăng ký thành công! Chào mừng bạn!", type: "success" });
         },
         onError: (error) => {
             console.error("[Auth Hook] Register error:", error);
@@ -90,15 +92,16 @@ export function useAuth() {
 
     // Sync profile data to store when available (only if not from recent login)
     React.useEffect(() => {
-        if (profileQuery.data && token && !justLoggedIn) {
-            setCredentials(profileQuery.data, token);
+        if (profileQuery.data && token && role && !justLoggedIn) {
+            setCredentials(profileQuery.data, token, role);
         }
-    }, [profileQuery.data, token, setCredentials, justLoggedIn]);
+    }, [profileQuery.data, token, role, setCredentials, justLoggedIn]);
 
     return {
         // State
         user: profileQuery.data || user,
         token,
+        role,
         isAuthenticated,
 
         // Actions

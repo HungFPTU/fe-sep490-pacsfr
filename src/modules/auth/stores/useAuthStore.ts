@@ -2,15 +2,17 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { http } from "@core/http/client";
 import type { User } from "../types";
+import { UserRole } from "../enums";
 
 interface AuthState {
     // State
     user: User | null;
+    role?: UserRole | null;
     token: string | null;
     isAuthenticated: boolean;
 
     // Actions
-    setCredentials: (user: User, token: string) => void;
+    setCredentials: (user: User, token: string, role: UserRole) => void;
     clearCredentials: () => void;
     updateUser: (user: Partial<User>) => void;
 }
@@ -22,13 +24,15 @@ export const useAuthStore = create<AuthState>()(
                 // Initial state
                 user: null,
                 token: null,
+                role: null,
                 isAuthenticated: false,
 
                 // Actions
-                setCredentials: (user, token) => {
+                setCredentials: (user, token, role) => {
                     set({
                         user,
                         token,
+                        role,
                         isAuthenticated: true,
                     });
 

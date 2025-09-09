@@ -22,8 +22,8 @@ export const ROUTES = {
     // Queue
     QUEUE: "/queue",
     STAFF_QUEUE: "/staff/queue",
-    // Admin
-    ADMIN: "/admin",
+    // Manager
+    MANAGER: "/manager",
     // Profile
     PROFILE: "/profile",
     ABOUT: "/about",

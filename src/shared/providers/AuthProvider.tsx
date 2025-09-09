@@ -10,10 +10,12 @@ import { useAuth } from '@/modules/auth/hooks';
 import { TokenStorage } from '@/core/utils/storage';
 import { http } from '@/core/http/client';
 import type { User, RegisterPayload } from '@/modules/auth/types';
+import { UserRole } from '@/modules';
 
 interface AuthContextValue {
     // State
     user: User | null;
+    role?: UserRole | string;
     isAuthenticated: boolean;
     isLoading: boolean;
     error: Error | null;
@@ -71,6 +73,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const contextValue: AuthContextValue = {
         user: auth.user,
+        role: auth.role != null ? String(auth.role) : undefined,
         isAuthenticated: auth.isAuthenticated,
         isLoading: auth.isLoading,
         error: auth.error as Error | null,
