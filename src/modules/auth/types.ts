@@ -29,13 +29,17 @@ export interface LoginPayload {
 
 export interface RegisterPayload {
     fullName: string;
-    phone: string;
+    username: string;
     email: string;
+    phone: string;
     password: string;
     confirmPassword?: string; // Frontend validation only
-    dayOfBirth: string; // ISO string
+    role: UserRole;
+    isActive: boolean;
+    dayOfBirth: string;
     priorityGroup: boolean;
     idCardNumber: string;
+    description: string;
 }
 
 // API payload (without confirmPassword)
@@ -61,26 +65,20 @@ export interface ApiAuthData {
 export interface LoginResponse {
     user: User;
     tokens: AuthTokens;
+    role: UserRole;
     message: string;
 }
 
-// Citizen entity returned by POST /Citizen
-export interface Citizen {
-    citizenId: string;
-    fullName: string;
-    dayOfBirth: string; // ISO
-    priorityGroup: boolean;
-    idCardNumber: string;
-}
-
 export interface RegisterResponse {
-    citizen: Citizen;
+    user: User;
+    role: UserRole;
+    tokens: AuthTokens;
     message: string;
 }
 
 // Type aliases for actual API responses
 export type ApiLoginResponse = ApiResponse<ApiAuthData>;
-export type ApiRegisterResponse = ApiResponse<Citizen>;
+export type ApiRegisterResponse = ApiResponse<ApiAuthData>;
 
 // Auth state
 export interface AuthState {
