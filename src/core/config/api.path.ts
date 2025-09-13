@@ -33,6 +33,21 @@ export const API_PATH = {
             STATISTICS: "/manager/queues/statistics",
         },
     },
+    STAFF: {
+        DASHBOARD: {
+            WAITING_LIST: "/staff/dashboard/waiting",
+            CITIZEN_PROFILE: (id: string) => `/staff/dashboard/citizen/${id}`,
+            UPDATE_STATUS: "/staff/dashboard/citizen/status",
+            DOCUMENTS: {
+                UPLOAD: "/staff/dashboard/documents/upload",
+                DOWNLOAD: (id: string) => `/staff/dashboard/documents/${id}/download`,
+                LIST: (citizenId: string) => `/staff/dashboard/citizen/${citizenId}/documents`,
+            },
+            FEEDBACK: "/staff/dashboard/feedback",
+            HISTORY: "/staff/dashboard/history",
+            NOTIFICATIONS: "/staff/dashboard/notifications",
+        },
+    },
 
 };
 
