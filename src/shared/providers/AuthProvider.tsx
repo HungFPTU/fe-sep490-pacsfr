@@ -21,7 +21,7 @@ interface AuthContextValue {
     error: Error | null;
 
     // Actions
-    login: (credentials: { phone: string; password: string; rememberMe?: boolean }) => Promise<unknown>;
+    login: (credentials: { username: string; password: string; rememberMe?: boolean }) => Promise<unknown>;
     register: (payload: RegisterPayload) => Promise<unknown>;
     logout: () => Promise<unknown>;
 }
