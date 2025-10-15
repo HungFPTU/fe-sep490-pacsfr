@@ -86,8 +86,8 @@ export const authService = {
             // Note: confirmPassword validation is handled in the frontend
             // The payload here should not contain confirmPassword
 
-            if (payload.password.length < 6) {
-                throw new Error("Mật khẩu phải có ít nhất 6 ký tự");
+            if (payload.password.length < 5) {
+                throw new Error("Mật khẩu phải có ít nhất 5 ký tự");
             }
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

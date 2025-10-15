@@ -6,6 +6,8 @@
 
 ```bash
 # Install dependencies
+pnpm add react-markdown
+pnpm add @google/generative-ai@latest
 pnpm install
 
 # Start development server

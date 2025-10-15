@@ -16,7 +16,7 @@ export const validationSchemas = {
         password: yup
             .string()
             .required("Mật khẩu là bắt buộc")
-            .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+            .min(5, "Mật khẩu phải có ít nhất 5 ký tự"),
     }),
 
     // Contact form
@@ -48,7 +48,7 @@ export const zodSchemas = {
         password: z
             .string()
             .min(1, "Mật khẩu là bắt buộc")
-            .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+            .min(5, "Mật khẩu phải có ít nhất 5 ký tự"),
     }),
 
     // Contact form
