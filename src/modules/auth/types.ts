@@ -27,15 +27,25 @@ export interface LoginPayload {
     rememberMe?: boolean;
 }
 
+// Staff login payload - API requires "Username" field (capitalized)
+export interface StaffLoginPayload {
+    Username: string;
+    Password: string;
+}
+
 export interface RegisterPayload {
     fullName: string;
-    phone: string;
+    username: string;
     email: string;
+    phone: string;
     password: string;
     confirmPassword?: string; // Frontend validation only
-    dayOfBirth: string; // ISO string
+    role: UserRole;
+    isActive: boolean;
+    dayOfBirth: string;
     priorityGroup: boolean;
     idCardNumber: string;
+    description: string;
 }
 
 // API payload (without confirmPassword)
@@ -48,7 +58,7 @@ export interface AuthTokens {
     expiresIn: number;
 }
 
-// Actual API response structure
+// Actual API response structure (old format - keeping for reference)
 export interface ApiAuthData {
     token: string;
     expiration: string;
@@ -58,29 +68,32 @@ export interface ApiAuthData {
     role: string;
 }
 
+// New API login response structure (actual)
+export interface ApiLoginData {
+    $id?: string;
+    username: string;
+    fullName: string;
+    role: string;
+    token: string;
+}
+
 export interface LoginResponse {
     user: User;
+    tokens: AuthTokens;
+    role: UserRole;
+    message: string;
+}
+
+export interface RegisterResponse {
+    user: User;
+    role: UserRole;
     tokens: AuthTokens;
     message: string;
 }
 
-// Citizen entity returned by POST /Citizen
-export interface Citizen {
-    citizenId: string;
-    fullName: string;
-    dayOfBirth: string; // ISO
-    priorityGroup: boolean;
-    idCardNumber: string;
-}
-
-export interface RegisterResponse {
-    citizen: Citizen;
-    message: string;
-}
-
 // Type aliases for actual API responses
-export type ApiLoginResponse = ApiResponse<ApiAuthData>;
-export type ApiRegisterResponse = ApiResponse<Citizen>;
+export type ApiLoginResponse = ApiLoginData; // Direct response, no wrapper
+export type ApiRegisterResponse = ApiResponse<ApiAuthData>;
 
 // Auth state
 export interface AuthState {

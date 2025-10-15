@@ -1,8 +1,6 @@
 export interface ApiResponse<T> {
     $id: string;
     data: T;
-    isSuccess?: boolean;
-    success?: boolean; // Some endpoints use `success` instead of `isSuccess`
+    isSuccess: boolean;
     message: string;
-    timestamp?: string;
 }

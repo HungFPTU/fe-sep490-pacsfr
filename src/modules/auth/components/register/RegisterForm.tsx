@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -13,10 +14,12 @@ import {
     validatePhone,
     validateIdCard,
     validateFullName,
+    validateUsername,
     validateDateOfBirth
 } from "@/core/utils/validation";
 import { formatDateInput, parseDateFromInput } from "@/core/utils/date";
 import type { RegisterPayload, RegisterResponse } from "../../types";
+import { DEFAULT_ROLE } from "../../consts";
 
 interface RegisterFormProps {
     onSubmit?: (payload: RegisterPayload) => Promise<RegisterResponse>;
@@ -26,13 +29,17 @@ interface RegisterFormProps {
 export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps) {
     const [form, setForm] = useState<RegisterPayload>({
         fullName: "",
-        phone: "",
+        username: "",
         email: "",
+        phone: "",
         password: "",
         confirmPassword: "",
+        role: DEFAULT_ROLE,
+        isActive: true,
         dayOfBirth: "",
         priorityGroup: false,
         idCardNumber: "",
+        description: "",
     });
     const [mounted, setMounted] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -52,6 +59,11 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
         const fullNameResult = validateFullName(form.fullName);
         if (!fullNameResult.isValid) {
             newErrors.fullName = fullNameResult.error!;
+        }
+
+        const usernameResult = validateUsername(form.username);
+        if (!usernameResult.isValid) {
+            newErrors.username = usernameResult.error!;
         }
 
         const emailResult = validateEmail(form.email);
@@ -109,7 +121,7 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
                 const { confirmPassword, ...payload } = form;
                 const date = parseDateFromInput(payload.dayOfBirth);
                 console.log("[RegisterForm] Submitting registration:", {
-                    phone: payload.phone,
+                    username: payload.username,
                     email: payload.email,
                     timestamp: new Date().toISOString()
                 });
@@ -121,6 +133,17 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
                 });
             } catch (error) {
                 console.error("[RegisterForm] Registration error:", error);
+                if (error instanceof Error) {
+                    // Handle specific registration errors
+                    if (error.message.includes("409") || error.message.includes("đã tồn tại")) {
+                        setErrors({
+                            username: "Tên đăng nhập hoặc email đã được sử dụng",
+                            email: "Email đã được sử dụng"
+                        });
+                    } else {
+                        setErrors({ general: error.message });
+                    }
+                }
             }
         }
     };
@@ -200,6 +223,23 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
                                 value={form.fullName}
                                 onChange={handleInputChange("fullName")}
                                 error={!!errors.fullName}
+                            />
+                        </FormField>
+
+                        <FormField
+                            label="Tên đăng nhập"
+                            name="username"
+                            error={errors.username}
+                            required
+                        >
+                            <Input
+                                id="username"
+                                type="text"
+                                placeholder="Nhập tên đăng nhập"
+                                autoComplete="username"
+                                value={form.username}
+                                onChange={handleInputChange("username")}
+                                error={!!errors.username}
                             />
                         </FormField>
 
@@ -298,7 +338,21 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
                         </label>
                     </div>
 
-                    {/* Description removed to match API payload */}
+                    {/* Description */}
+                    <FormField
+                        label="Ghi chú thêm"
+                        name="description"
+                        className="mt-4"
+                    >
+                        <textarea
+                            id="description"
+                            placeholder="Ghi chú thêm về bản thân, nhu cầu sử dụng dịch vụ..."
+                            rows={3}
+                            className="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-black placeholder:text-gray-400 resize-none"
+                            value={form.description}
+                            onChange={handleInputChange("description")}
+                        />
+                    </FormField>
                 </div>
 
                 {/* Security Information Section */}

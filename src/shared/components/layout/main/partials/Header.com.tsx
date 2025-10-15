@@ -54,10 +54,15 @@ export function Header() {
                             Nhân viên
                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                         </Link>
+                        {/* Sau này check role Admin mới cho hiển thị path này */}
+                        {/* <Link href={ROUTES.MANAGER} className="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+                            Quản trị
+                            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                        </Link>
                         <Link href={ROUTES.ABOUT} className="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
                             Về chúng tôi
                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
-                        </Link>
+                        </Link> */}
                     </nav>
 
                     {/* Actions */}

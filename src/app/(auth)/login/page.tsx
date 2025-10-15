@@ -8,15 +8,24 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function LoginPage() {
-    const { login, isLoading, isAuthenticated } = useAuth();
+    const { login, isLoading, isAuthenticated, role } = useAuth();
     const router = useRouter();
+
 
     // Redirect if already authenticated
     useEffect(() => {
-        if (isAuthenticated) {
-            router.push("/queue"); // Redirect to protected route
+        if (isAuthenticated && role) {
+            console.log('[Login Page] Redirecting based on role:', role);
+
+            if (role === 'Admin') {
+                router.push("/manager");
+            } else if (role === 'Staff') {
+                router.push("/staff/dashboard");
+            } else {
+                router.push("/queue");
+            }
         }
-    }, [isAuthenticated, router]);
+    }, [isAuthenticated, router, role]);
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
             {/* Background decorative elements */}

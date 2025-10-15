@@ -174,6 +174,7 @@ class HttpClient {
                 body: body !== undefined ? JSON.stringify(body) : undefined,
             };
 
+            // Chỗ này chưa có API auth/me, lỗi ở đây
             const response = await fetch(`${resolvedBase}${url}`, fetchInit);
 
             const contentType = response.headers.get("content-type");
@@ -297,8 +298,8 @@ http.addErrorInterceptor(async (error) => {
     // Only log meaningful error information, skip network errors for mock app
     const errorInfo = {
         message: error.message || 'Unknown error',
-        status: error.status,
-        data: error.data,
+        status: error.status || 404,
+        data: error.data || null,
     };
 
     // Only log if it's not a network connection error (common in mock apps)

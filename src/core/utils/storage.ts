@@ -140,7 +140,7 @@ export class SessionStorage {
 }
 
 /**
- * Token management utilities
+ * Token management utilities (LocalStorage)
  */
 export const TokenStorage = {
     setAuthToken: (token: string): boolean => {
@@ -173,3 +173,4 @@ export const TokenStorage = {
         return authRemoved && refreshRemoved;
     },
 };
+

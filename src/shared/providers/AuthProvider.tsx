@@ -10,16 +10,18 @@ import { useAuth } from '@/modules/auth/hooks';
 import { TokenStorage } from '@/core/utils/storage';
 import { http } from '@/core/http/client';
 import type { User, RegisterPayload } from '@/modules/auth/types';
+import { UserRole } from '@/modules';
 
 interface AuthContextValue {
     // State
     user: User | null;
+    role?: UserRole | string;
     isAuthenticated: boolean;
     isLoading: boolean;
     error: Error | null;
 
     // Actions
-    login: (credentials: { phone: string; password: string; rememberMe?: boolean }) => Promise<unknown>;
+    login: (credentials: { username: string; password: string; rememberMe?: boolean }) => Promise<unknown>;
     register: (payload: RegisterPayload) => Promise<unknown>;
     logout: () => Promise<unknown>;
 }
@@ -71,10 +73,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const contextValue: AuthContextValue = {
         user: auth.user,
+        role: auth.role != null ? String(auth.role) : undefined,
         isAuthenticated: auth.isAuthenticated,
         isLoading: auth.isLoading,
         error: auth.error as Error | null,
-        login: auth.login,
+        login: async (credentials) => {
+            return auth.login({
+                ...credentials,
+                phone: credentials.username // Map username to phone for API compatibility
+            });
+        },
         register: auth.register,
         logout: auth.logout,
     };

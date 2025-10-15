@@ -8,13 +8,14 @@ import type {
     RegisterResponse,
     User,
     ApiAuthData,
+    ApiLoginData,
     AuthTokens
 } from "../types";
 
 /**
- * Transform API auth data to internal format
+ * Transform API auth data to internal format (old format)
  */
-function transformApiAuthData(apiData: ApiAuthData): { user: User; tokens: AuthTokens } {
+function transformApiAuthData(apiData: ApiAuthData): { user: User; tokens: AuthTokens, role: UserRole } {
     // Transform API data to internal User format
     const user: User = {
         id: apiData.userId,
@@ -34,7 +35,37 @@ function transformApiAuthData(apiData: ApiAuthData): { user: User; tokens: AuthT
         expiresIn: new Date(apiData.expiration).getTime() - Date.now()
     };
 
-    return { user, tokens };
+    const role = apiData.role as UserRole;
+
+    return { user, tokens, role };
+}
+
+/**
+ * Transform new API login data to internal format
+ */
+function transformLoginData(apiData: ApiLoginData): { user: User; tokens: AuthTokens, role: UserRole } {
+    // Transform API data to internal User format
+    const user: User = {
+        id: apiData.username, // Use username as ID
+        username: apiData.username,
+        email: "", // Not provided in login response
+        name: apiData.fullName,
+        phone: "", // Not provided in login response
+        role: apiData.role as UserRole,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+
+    // Transform API token data to internal AuthTokens format
+    const tokens: AuthTokens = {
+        accessToken: apiData.token,
+        expiresIn: 12 * 60 * 60 * 1000 // 12 hours from JWT
+    };
+
+    const role = apiData.role as UserRole;
+
+    return { user, tokens, role };
 }
 
 /**
@@ -48,8 +79,57 @@ export const authService = {
             const response = await authApi.login(credentials);
 
             // Business logic: validate response structure
+            // New API returns direct data without wrapper
+            if (!response.data || !response.data.token) {
+                throw new Error("Invalid login response");
+            }
+
+            // Transform API response to internal format
+            const { user, tokens, role } = transformLoginData(response.data);
+
+            return {
+                user,
+                tokens,
+                role,
+                message: "Đăng nhập thành công"
+            };
+        } catch (error) {
+            // Business logic: handle different error types
+            if (error instanceof Error) {
+                if (error.message.includes("401")) {
+                    throw new Error("Tên đăng nhập hoặc mật khẩu không đúng");
+                }
+                if (error.message.includes("429")) {
+                    throw new Error("Quá nhiều lần thử. Vui lòng thử lại sau");
+                }
+                if (error.message.includes("500")) {
+                    throw new Error("Lỗi hệ thống. Vui lòng thử lại sau");
+                }
+            }
+            throw error;
+        }
+    },
+
+    // Register with business logic and validation
+    async register(payload: RegisterApiPayload): Promise<RegisterResponse> {
+        try {
+            // Note: confirmPassword validation is handled in the frontend
+            // The payload here should not contain confirmPassword
+
+            if (payload.password.length < 5) {
+                throw new Error("Mật khẩu phải có ít nhất 5 ký tự");
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(payload.email)) {
+                throw new Error("Email không hợp lệ");
+            }
+
+            const response = await authApi.register(payload);
+
+            // Business logic: validate response structure
             if (!response.data.isSuccess || !response.data.data) {
-                throw new Error(response.data.message || "Invalid login response");
+                throw new Error(response.data.message || "Invalid register response");
             }
 
             // Transform API response to internal format
@@ -58,43 +138,22 @@ export const authService = {
             return {
                 user,
                 tokens,
+                role: user.role,
                 message: response.data.message
             };
         } catch (error) {
-            throw error;
-        }
-    },
-
-    // Register with business logic and validation
-    async register(payload: RegisterApiPayload): Promise<RegisterResponse> {
-        try {
-            if (payload.password.length < 6) {
-                throw new Error("Mật khẩu phải có ít nhất 6 ký tự");
+            // Business logic: handle different error types
+            if (error instanceof Error) {
+                if (error.message.includes("409")) {
+                    throw new Error("Tên đăng nhập hoặc email đã tồn tại");
+                }
+                if (error.message.includes("422")) {
+                    throw new Error("Thông tin đăng ký không hợp lệ");
+                }
+                if (error.message.includes("500")) {
+                    throw new Error("Lỗi hệ thống. Vui lòng thử lại sau");
+                }
             }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(payload.email)) {
-                throw new Error("Email không hợp lệ");
-            }
-
-            // Ensure date format aligns with API expectation (ISO string)
-            const normalizedPayload: RegisterApiPayload = {
-                ...payload,
-                dayOfBirth: new Date(payload.dayOfBirth).toISOString(),
-            };
-
-            const response = await authApi.register(normalizedPayload);
-
-            const okFlag = (response.data as unknown as { isSuccess?: boolean; success?: boolean }).isSuccess ?? (response.data as unknown as { isSuccess?: boolean; success?: boolean }).success;
-            if (!okFlag || !response.data.data) {
-                throw new Error(response.data.message || "Invalid register response");
-            }
-
-            return {
-                citizen: response.data.data,
-                message: response.data.message
-            };
-        } catch (error) {
             throw error;
         }
     },
