@@ -5,7 +5,6 @@ import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/forms/Input.com";
 import { FormField } from "@/shared/components/forms/FormField.com";
 import { LoadingSpinner } from "@/shared/components/common/LoadingSpinner.com";
-import { validatePassword } from "@/core/utils/validation";
 import type { LoginPayload, LoginResponse } from "../../types";
 
 interface LoginFormProps {
@@ -15,7 +14,7 @@ interface LoginFormProps {
 
 export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const [form, setForm] = useState<LoginPayload>({
-    username: "",
+    phone: "",
     password: "",
     rememberMe: false,
   });
@@ -30,14 +29,9 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Username validation
-    const username = form.username.trim();
-    if (!username) {
-      newErrors.username = "Tên đăng nhập là bắt buộc";
-    } else if (username.length < 3 || username.length > 20) {
-      newErrors.username = "Tên đăng nhập phải có độ dài từ 3 đến 20 ký tự";
-    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      newErrors.username = "Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới (_)";
+    // Phone validation - only check if not empty
+    if (!form.phone.trim()) {
+      newErrors.phone = "Số điện thoại là bắt buộc";
     }
 
     // Password validation - only check if not empty
@@ -60,7 +54,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
       try {
         // Transform payload to match API requirement (Username, Password with capital letters)
         const apiPayload = {
-          Username: form.username,
+          Username: form.phone,
           Password: form.password,
         };
         
@@ -70,7 +64,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
         // Handle specific error cases
         if (error instanceof Error) {
           if (error.message.includes("401") || error.message.includes("Unauthorized")) {
-            setErrors({ username: "Tên đăng nhập hoặc mật khẩu không chính xác" });
+            setErrors({ phone: "Thông tin đăng nhập không chính xác" });
           } else {
             setErrors({ password: error.message });
           }
@@ -114,19 +108,19 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField
-          label="Tên đăng nhập"
-          name="username"
-          error={errors.username}
+          label="Số điện thoại"
+          name="phone"
+          error={errors.phone}
           required
         >
           <Input
-            id="username"
+            id="phone"
             type="text"
-            placeholder="Nhập tên đăng nhập"
-            autoComplete="username"
-            value={form.username}
-            onChange={handleInputChange("username")}
-            error={!!errors.username}
+            placeholder="Nhập số điện thoại"
+            autoComplete="phone"
+            value={form.phone}
+            onChange={handleInputChange("phone")}
+            error={!!errors.phone}
             leftIcon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

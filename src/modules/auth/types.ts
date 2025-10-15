@@ -22,7 +22,7 @@ export interface User {
 
 // Authentication payloads
 export interface LoginPayload {
-    username: string;
+    phone: string;
     password: string;
     rememberMe?: boolean;
 }
