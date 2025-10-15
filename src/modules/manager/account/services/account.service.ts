@@ -1,7 +1,5 @@
-import { User } from "@/modules/auth";
 import { accountsAPI } from "../api/account.api";
 import { Acccount } from "../types";
-import { UserRole } from "../enums";
 
 export function createMockDataServices(count: number): Acccount[] {
   const services: Acccount[] = [];

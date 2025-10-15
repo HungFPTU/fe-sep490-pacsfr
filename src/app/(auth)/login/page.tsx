@@ -15,8 +15,12 @@ export default function LoginPage() {
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated && role) {
+            console.log('[Login Page] Redirecting based on role:', role);
+
             if (role === 'Admin') {
                 router.push("/manager");
+            } else if (role === 'Staff') {
+                router.push("/staff/dashboard");
             } else {
                 router.push("/queue");
             }

@@ -27,6 +27,12 @@ export interface LoginPayload {
     rememberMe?: boolean;
 }
 
+// Staff login payload - API requires "Username" field (capitalized)
+export interface StaffLoginPayload {
+    Username: string;
+    Password: string;
+}
+
 export interface RegisterPayload {
     fullName: string;
     username: string;
@@ -52,7 +58,7 @@ export interface AuthTokens {
     expiresIn: number;
 }
 
-// Actual API response structure
+// Actual API response structure (old format - keeping for reference)
 export interface ApiAuthData {
     token: string;
     expiration: string;
@@ -60,6 +66,15 @@ export interface ApiAuthData {
     fullName: string;
     phone: string;
     role: string;
+}
+
+// New API login response structure (actual)
+export interface ApiLoginData {
+    $id?: string;
+    username: string;
+    fullName: string;
+    role: string;
+    token: string;
 }
 
 export interface LoginResponse {
@@ -77,7 +92,7 @@ export interface RegisterResponse {
 }
 
 // Type aliases for actual API responses
-export type ApiLoginResponse = ApiResponse<ApiAuthData>;
+export type ApiLoginResponse = ApiLoginData; // Direct response, no wrapper
 export type ApiRegisterResponse = ApiResponse<ApiAuthData>;
 
 // Auth state

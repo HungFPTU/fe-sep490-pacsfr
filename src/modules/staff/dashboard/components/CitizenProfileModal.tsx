@@ -324,10 +324,10 @@ export function CitizenProfileModal({ citizenId, onClose }: CitizenProfileModalP
 
                     {activeTab === 'documents' && (
                         <div className="space-y-6">
-                            <DocumentUpload
+                            {/* <DocumentUpload
                                 citizenId={citizen.id}
                                 onDocumentUploaded={handleDocumentUploaded}
-                            />
+                            /> */}
                             <DocumentList
                                 documents={documents}
                             />

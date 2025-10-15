@@ -6,10 +6,7 @@ import {
   BookOpen,
   Bot,
   Command,
-  Frame,
   GalleryVerticalEnd,
-  Map,
-  PieChart,
   Settings2,
   SquareTerminal,
 } from "lucide-react"
@@ -23,7 +20,6 @@ import {
 } from "./ui/sidebar"
 import { TeamSwitcher } from "./team-switcher"
 import { NavMain } from "./nav-main"
-import { NavProjects } from "./nav-projects"
 import { NavUser } from "./nav-user"
 
 // This is sample data.

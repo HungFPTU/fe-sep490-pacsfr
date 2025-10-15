@@ -1,5 +1,3 @@
-import { ApiResponse } from "@/core/config";
-
 /**
  * Authentication feature types
  * Consolidated type definitions for auth domain

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/shared/components/ui/button.ui";
 import { Card } from "@/shared/components/ui/card.ui";
 import { staffDashboardService } from "../services/staff-dashboard.service";
@@ -19,11 +19,7 @@ export function CitizenDocumentsModal({ citizenId, onClose }: CitizenDocumentsMo
     const [isLoading, setIsLoading] = useState(true);
     const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
 
-    useEffect(() => {
-        loadCitizenDocuments();
-    }, [citizenId]);
-
-    const loadCitizenDocuments = async () => {
+    const loadCitizenDocuments = useCallback(async () => {
         setIsLoading(true);
         try {
             // In real app, this would be API calls
@@ -39,7 +35,11 @@ export function CitizenDocumentsModal({ citizenId, onClose }: CitizenDocumentsMo
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [citizenId]);
+
+    useEffect(() => {
+        loadCitizenDocuments();
+    }, [citizenId, loadCitizenDocuments]);
 
     const handleDownloadDocument = async (document: Document) => {
         setDownloadingIds(prev => new Set([...prev, document.id]));

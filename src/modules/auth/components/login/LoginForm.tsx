@@ -5,8 +5,6 @@ import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/forms/Input.com";
 import { FormField } from "@/shared/components/forms/FormField.com";
 import { LoadingSpinner } from "@/shared/components/common/LoadingSpinner.com";
-import { validateEmail, validatePassword } from "@/core/utils/validation";
-import { VALIDATION_RULES } from "@/core/config/constants";
 import type { LoginPayload, LoginResponse } from "../../types";
 
 interface LoginFormProps {
@@ -31,29 +29,14 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Phone validation - support both email and phone
+    // Phone validation - only check if not empty
     if (!form.phone.trim()) {
       newErrors.phone = "Số điện thoại là bắt buộc";
-    } else {
-      // Check if it's email format
-      const isEmail = form.phone.includes('@');
-      if (isEmail) {
-        const emailResult = validateEmail(form.phone);
-        if (!emailResult.isValid) {
-          newErrors.phone = emailResult.error!;
-        }
-      } else {
-        // Check phone format
-        if (!VALIDATION_RULES.PHONE_PATTERN.test(form.phone.replace(/\s/g, ""))) {
-          newErrors.phone = "Số điện thoại không hợp lệ (10-11 chữ số)";
-        }
-      }
     }
 
-    // Password validation
-    const passwordResult = validatePassword(form.password);
-    if (!passwordResult.isValid) {
-      newErrors.password = passwordResult.error!;
+    // Password validation - only check if not empty
+    if (!form.password.trim()) {
+      newErrors.password = "Mật khẩu là bắt buộc";
     }
 
     setErrors(newErrors);
@@ -69,7 +52,13 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
 
     if (onSubmit) {
       try {
-        await onSubmit(form);
+        // Transform payload to match API requirement (Username, Password with capital letters)
+        const apiPayload = {
+          Username: form.phone,
+          Password: form.password,
+        };
+        
+        await onSubmit(apiPayload as unknown as LoginPayload);
       } catch (error) {
         console.error("Login error:", error);
         // Handle specific error cases

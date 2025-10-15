@@ -4,7 +4,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Card } from "@/shared/components/ui/card.ui";
 import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/ui/input.ui";
-import { Container } from "@shared/components/layout/Container";
 import { useStaffDashboardStore } from "../stores/useStaffDashboardStore";
 import { staffDashboardService } from "../services/staff-dashboard.service";
 import {
@@ -198,288 +197,289 @@ export function StaffDashboard() {
     };
 
     return (
-        <Container className="py-6">
-            <div className="space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900">
-                            Bảng điều khiển Nhân viên
-                        </h1>
-                        <p className="text-gray-600 mt-1">
-                            Quản lý hàng đợi và hồ sơ công dân
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        {/* <NotificationPanel notifications={notifications} /> */}
-                        <Button variant="outline" size="sm">
-                            <Filter className="w-4 h-4 mr-2" />
-                            Lọc nâng cao
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Current Serving & Call Next Number */}
-                <Card className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <div className="bg-gray-50 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="space-y-6">
+                    {/* Header */}
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-6">
-                            {/* Current Serving Display */}
-                            <div className="flex items-center space-x-4">
-                                <div className="flex items-center space-x-2">
-                                    <UserCheck className="w-5 h-5 text-blue-600" />
-                                    <span className="text-sm font-medium text-gray-700">Đang phục vụ:</span>
-                                </div>
-                                <div className="flex items-center space-x-3">
-                                    {currentServing ? (
-                                        <div className="flex items-center space-x-3">
-                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
-                                                currentServing.status === 'completed'
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-blue-100 text-blue-800'
-                                            }`}>
-                                                {currentServing.number}
-                                            </div>
-                                            <div>
-                                                <div className="font-medium text-gray-900">
-                                                    {currentServing.fullName}
-                                                </div>
-                                                <div className="text-sm text-gray-600">
-                                                    {currentServing.serviceType}
-                                                </div>
-                                            </div>
-                                            {currentServing.status === 'completed' && (
-                                                <div className="flex items-center text-green-600">
-                                                    <CheckCircle className="w-4 h-4 mr-1" />
-                                                    <span className="text-sm">Hoàn thành</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <div className="text-gray-500 text-sm">
-                                            Chưa có số nào đang phục vụ
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Next Number Display */}
-                            <div className="flex items-center space-x-2">
-                                <span className="text-sm font-medium text-gray-700">Số tiếp theo:</span>
-                                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-600">
-                                    {nextNumber || '--'}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex items-center space-x-3">
-                            <Button
-                                onClick={callNextNumber}
-                                disabled={isCallingNext || !nextNumber}
-                                className="bg-green-600 hover:bg-green-700"
-                            >
-                                {isCallingNext ? (
-                                    <>
-                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                        Đang gọi...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Phone className="w-4 h-4 mr-2" />
-                                        Gọi số tiếp theo
-                                    </>
-                                )}
-                            </Button>
-
-                            {currentServing && currentServing.status !== 'completed' && (
-                                <Button
-                                    onClick={completeCurrentServing}
-                                    variant="outline"
-                                    className="border-green-600 text-green-600 hover:bg-green-50"
-                                >
-                                    <PhoneOff className="w-4 h-4 mr-2" />
-                                    Hoàn thành
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-                </Card>
-
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <Card className="p-4">
-                        <div className="flex items-center">
-                            <div className="p-2 bg-yellow-100 rounded-lg">
-                                <Users className="w-6 h-6 text-yellow-600" />
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-600">Đang chờ</p>
-                                <p className="text-2xl font-bold text-gray-900">
-                                    {stats?.totalWaiting || 0}
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card className="p-4">
-                        <div className="flex items-center">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                                <Clock className="w-6 h-6 text-blue-600" />
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-600">Đang xử lý</p>
-                                <p className="text-2xl font-bold text-gray-900">
-                                    {stats?.totalProcessing || 0}
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card className="p-4">
-                        <div className="flex items-center">
-                            <div className="p-2 bg-green-100 rounded-lg">
-                                <CheckCircle className="w-6 h-6 text-green-600" />
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-600">Hoàn thành hôm nay</p>
-                                <p className="text-2xl font-bold text-gray-900">
-                                    {stats?.totalCompletedToday || 0}
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card className="p-4">
-                        <div className="flex items-center">
-                            <div className="p-2 bg-orange-100 rounded-lg">
-                                <AlertCircle className="w-6 h-6 text-orange-600" />
-                            </div>
-                            <div className="ml-4">
-                                <p className="text-sm font-medium text-gray-600">Thời gian chờ TB</p>
-                                <p className="text-2xl font-bold text-gray-900">
-                                    {stats?.averageWaitTime || 0} phút
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-
-                {/* Search and Filters */}
-                <Card className="p-4">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex-1">
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                <Input
-                                    placeholder="Tìm kiếm theo tên, số thứ tự, hoặc số điện thoại..."
-                                    value={searchQuery}
-                                    onChange={(e) => handleSearch(e.target.value)}
-                                    className="pl-10"
-                                />
-                            </div>
-                        </div>
-                        <div className="sm:w-64">
-                            <select
-                                value={selectedServiceType}
-                                onChange={(e) => handleServiceTypeFilter(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            >
-                                <option value="">Tất cả loại dịch vụ</option>
-                                {SERVICE_TYPES.map((service) => (
-                                    <option key={service.id} value={service.id}>
-                                        {service.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </Card>
-
-                {/* Waiting List */}
-                <Card className="p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-semibold text-gray-900">
-                            Danh sách công dân đang chờ
-                        </h2>
-                        <Button
-                            onClick={loadDashboardData}
-                            disabled={isLoadingWaitingList}
-                            variant="outline"
-                            size="sm"
-                        >
-                            {isLoadingWaitingList ? "Đang tải..." : "Làm mới"}
-                        </Button>
-                    </div>
-
-                    {isLoadingWaitingList ? (
-                        <div className="space-y-4">
-                            {[...Array(5)].map((_, i) => (
-                                <div key={i} className="animate-pulse">
-                                    <div className="h-20 bg-gray-200 rounded-lg"></div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : waitingList.length === 0 ? (
-                        <div className="text-center py-12">
-                            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                Không có công dân nào đang chờ
-                            </h3>
-                            <p className="text-gray-500">
-                                Hiện tại không có công dân nào trong hàng đợi.
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900">
+                                Bảng điều khiển Nhân viên
+                            </h1>
+                            <p className="text-gray-600 mt-1">
+                                Quản lý hàng đợi và hồ sơ công dân
                             </p>
                         </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {waitingList.map((citizen) => (
-                                <div
-                                    key={citizen.id}
-                                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                                >
-                                    <div className="flex items-center space-x-4">
-                                        <div className="flex-shrink-0">
-                                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                                <span className="text-sm font-medium text-blue-600">
-                                                    {citizen.queueNumber}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-sm font-medium text-gray-900">
-                                                {citizen.fullName}
-                                            </h3>
-                                            <p className="text-sm text-gray-500">
-                                                {getServiceTypeName(citizen.serviceId)}
-                                            </p>
-                                            <p className="text-xs text-gray-400">
-                                                {citizen.phoneNumber}
-                                            </p>
-                                        </div>
-                                    </div>
+                        <div className="flex items-center gap-3">
+                            {/* <NotificationPanel notifications={notifications} /> */}
+                            <Button variant="outline" size="sm">
+                                <Filter className="w-4 h-4 mr-2" />
+                                Lọc nâng cao
+                            </Button>
+                        </div>
+                    </div>
 
-                                    <div className="flex items-center space-x-4">
-                                        <div className="text-right">
-                                            {getStatusBadge(citizen.status)}
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                {new Date(citizen.requestedAt).toLocaleTimeString('vi-VN')}
-                                            </p>
-                                        </div>
-                                        <Button
-                                            onClick={() => handleViewCitizen(citizen.id)}
-                                            size="sm"
-                                            variant="outline"
-                                        >
-                                            Xem hồ sơ
-                                        </Button>
+                    {/* Current Serving & Call Next Number */}
+                    <Card className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-6">
+                                {/* Current Serving Display */}
+                                <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-2">
+                                        <UserCheck className="w-5 h-5 text-blue-600" />
+                                        <span className="text-sm font-medium text-gray-700">Đang phục vụ:</span>
+                                    </div>
+                                    <div className="flex items-center space-x-3">
+                                        {currentServing ? (
+                                            <div className="flex items-center space-x-3">
+                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${currentServing.status === 'completed'
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : 'bg-blue-100 text-blue-800'
+                                                    }`}>
+                                                    {currentServing.number}
+                                                </div>
+                                                <div>
+                                                    <div className="font-medium text-gray-900">
+                                                        {currentServing.fullName}
+                                                    </div>
+                                                    <div className="text-sm text-gray-600">
+                                                        {currentServing.serviceType}
+                                                    </div>
+                                                </div>
+                                                {currentServing.status === 'completed' && (
+                                                    <div className="flex items-center text-green-600">
+                                                        <CheckCircle className="w-4 h-4 mr-1" />
+                                                        <span className="text-sm">Hoàn thành</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="text-gray-500 text-sm">
+                                                Chưa có số nào đang phục vụ
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </Card>
-            </div>
 
-        </Container>
+                                {/* Next Number Display */}
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-sm font-medium text-gray-700">Số tiếp theo:</span>
+                                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-600">
+                                        {nextNumber || '--'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex items-center space-x-3">
+                                <Button
+                                    onClick={callNextNumber}
+                                    disabled={isCallingNext || !nextNumber}
+                                    className="bg-green-600 hover:bg-green-700"
+                                >
+                                    {isCallingNext ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                            Đang gọi...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Phone className="w-4 h-4 mr-2" />
+                                            Gọi số tiếp theo
+                                        </>
+                                    )}
+                                </Button>
+
+                                {currentServing && currentServing.status !== 'completed' && (
+                                    <Button
+                                        onClick={completeCurrentServing}
+                                        variant="outline"
+                                        className="border-green-600 text-green-600 hover:bg-green-50"
+                                    >
+                                        <PhoneOff className="w-4 h-4 mr-2" />
+                                        Hoàn thành
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    </Card>
+
+                    {/* Stats Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Card className="p-4">
+                            <div className="flex items-center">
+                                <div className="p-2 bg-yellow-100 rounded-lg">
+                                    <Users className="w-6 h-6 text-yellow-600" />
+                                </div>
+                                <div className="ml-4">
+                                    <p className="text-sm font-medium text-gray-600">Đang chờ</p>
+                                    <p className="text-2xl font-bold text-gray-900">
+                                        {stats?.totalWaiting || 0}
+                                    </p>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card className="p-4">
+                            <div className="flex items-center">
+                                <div className="p-2 bg-blue-100 rounded-lg">
+                                    <Clock className="w-6 h-6 text-blue-600" />
+                                </div>
+                                <div className="ml-4">
+                                    <p className="text-sm font-medium text-gray-600">Đang xử lý</p>
+                                    <p className="text-2xl font-bold text-gray-900">
+                                        {stats?.totalProcessing || 0}
+                                    </p>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card className="p-4">
+                            <div className="flex items-center">
+                                <div className="p-2 bg-green-100 rounded-lg">
+                                    <CheckCircle className="w-6 h-6 text-green-600" />
+                                </div>
+                                <div className="ml-4">
+                                    <p className="text-sm font-medium text-gray-600">Hoàn thành hôm nay</p>
+                                    <p className="text-2xl font-bold text-gray-900">
+                                        {stats?.totalCompletedToday || 0}
+                                    </p>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card className="p-4">
+                            <div className="flex items-center">
+                                <div className="p-2 bg-orange-100 rounded-lg">
+                                    <AlertCircle className="w-6 h-6 text-orange-600" />
+                                </div>
+                                <div className="ml-4">
+                                    <p className="text-sm font-medium text-gray-600">Thời gian chờ TB</p>
+                                    <p className="text-2xl font-bold text-gray-900">
+                                        {stats?.averageWaitTime || 0} phút
+                                    </p>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+
+                    {/* Search and Filters */}
+                    <Card className="p-4">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="flex-1">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    <Input
+                                        placeholder="Tìm kiếm theo tên, số thứ tự, hoặc số điện thoại..."
+                                        value={searchQuery}
+                                        onChange={(e) => handleSearch(e.target.value)}
+                                        className="pl-10"
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:w-64">
+                                <select
+                                    value={selectedServiceType}
+                                    onChange={(e) => handleServiceTypeFilter(e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="">Tất cả loại dịch vụ</option>
+                                    {SERVICE_TYPES.map((service) => (
+                                        <option key={service.id} value={service.id}>
+                                            {service.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </Card>
+
+                    {/* Waiting List */}
+                    <Card className="p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-semibold text-gray-900">
+                                Danh sách công dân đang chờ
+                            </h2>
+                            <Button
+                                onClick={loadDashboardData}
+                                disabled={isLoadingWaitingList}
+                                variant="outline"
+                                size="sm"
+                            >
+                                {isLoadingWaitingList ? "Đang tải..." : "Làm mới"}
+                            </Button>
+                        </div>
+
+                        {isLoadingWaitingList ? (
+                            <div className="space-y-4">
+                                {[...Array(5)].map((_, i) => (
+                                    <div key={i} className="animate-pulse">
+                                        <div className="h-20 bg-gray-200 rounded-lg"></div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : waitingList.length === 0 ? (
+                            <div className="text-center py-12">
+                                <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                    Không có công dân nào đang chờ
+                                </h3>
+                                <p className="text-gray-500">
+                                    Hiện tại không có công dân nào trong hàng đợi.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                {waitingList.map((citizen) => (
+                                    <div
+                                        key={citizen.id}
+                                        className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                                    >
+                                        <div className="flex items-center space-x-4">
+                                            <div className="flex-shrink-0">
+                                                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                    <span className="text-sm font-medium text-blue-600">
+                                                        {citizen.queueNumber}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h3 className="text-sm font-medium text-gray-900">
+                                                    {citizen.fullName}
+                                                </h3>
+                                                <p className="text-sm text-gray-500">
+                                                    {getServiceTypeName(citizen.serviceId)}
+                                                </p>
+                                                <p className="text-xs text-gray-400">
+                                                    {citizen.phoneNumber}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center space-x-4">
+                                            <div className="text-right">
+                                                {getStatusBadge(citizen.status)}
+                                                <p className="text-xs text-gray-500 mt-1">
+                                                    {new Date(citizen.requestedAt).toLocaleTimeString('vi-VN')}
+                                                </p>
+                                            </div>
+                                            <Button
+                                                onClick={() => handleViewCitizen(citizen.id)}
+                                                size="sm"
+                                                variant="outline"
+                                            >
+                                                Xem hồ sơ
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </Card>
+                </div>
+
+            </div>
+        </div>
     );
 
     // Citizen Documents Modal

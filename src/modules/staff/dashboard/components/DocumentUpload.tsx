@@ -10,11 +10,10 @@ import { Upload, X, FileText, AlertCircle } from "lucide-react";
 import type { Document } from "../types";
 
 interface DocumentUploadProps {
-    citizenId: string;
     onDocumentUploaded: (document: Document) => void;
 }
 
-export function DocumentUpload({ citizenId, onDocumentUploaded }: DocumentUploadProps) {
+export function DocumentUpload({ onDocumentUploaded }: DocumentUploadProps) {
     const [isUploading, setIsUploading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [description, setDescription] = useState('');

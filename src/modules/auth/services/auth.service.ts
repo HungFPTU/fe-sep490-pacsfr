@@ -8,11 +8,12 @@ import type {
     RegisterResponse,
     User,
     ApiAuthData,
+    ApiLoginData,
     AuthTokens
 } from "../types";
 
 /**
- * Transform API auth data to internal format
+ * Transform API auth data to internal format (old format)
  */
 function transformApiAuthData(apiData: ApiAuthData): { user: User; tokens: AuthTokens, role: UserRole } {
     // Transform API data to internal User format
@@ -40,6 +41,34 @@ function transformApiAuthData(apiData: ApiAuthData): { user: User; tokens: AuthT
 }
 
 /**
+ * Transform new API login data to internal format
+ */
+function transformLoginData(apiData: ApiLoginData): { user: User; tokens: AuthTokens, role: UserRole } {
+    // Transform API data to internal User format
+    const user: User = {
+        id: apiData.username, // Use username as ID
+        username: apiData.username,
+        email: "", // Not provided in login response
+        name: apiData.fullName,
+        phone: "", // Not provided in login response
+        role: apiData.role as UserRole,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+    };
+
+    // Transform API token data to internal AuthTokens format
+    const tokens: AuthTokens = {
+        accessToken: apiData.token,
+        expiresIn: 12 * 60 * 60 * 1000 // 12 hours from JWT
+    };
+
+    const role = apiData.role as UserRole;
+
+    return { user, tokens, role };
+}
+
+/**
  * Auth Service - Business Logic Layer
  * Handles API calls, data transformation, and business rules
  */
@@ -50,18 +79,19 @@ export const authService = {
             const response = await authApi.login(credentials);
 
             // Business logic: validate response structure
-            if (!response.data.isSuccess || !response.data.data) {
-                throw new Error(response.data.message || "Invalid login response");
+            // New API returns direct data without wrapper
+            if (!response.data || !response.data.token) {
+                throw new Error("Invalid login response");
             }
 
             // Transform API response to internal format
-            const { user, tokens, role } = transformApiAuthData(response?.data?.data);
+            const { user, tokens, role } = transformLoginData(response.data);
 
             return {
                 user,
                 tokens,
                 role,
-                message: response.data.message
+                message: "Đăng nhập thành công"
             };
         } catch (error) {
             // Business logic: handle different error types

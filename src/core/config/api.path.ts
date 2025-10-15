@@ -47,6 +47,9 @@ export const API_PATH = {
             HISTORY: "/staff/dashboard/history",
             NOTIFICATIONS: "/staff/dashboard/notifications",
         },
+        WORKSHIFT: {
+            MY_SHIFTS: "/WorkShift/my-shifts",
+        },
     },
 
 };
