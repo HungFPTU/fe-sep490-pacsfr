@@ -77,7 +77,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isAuthenticated: auth.isAuthenticated,
         isLoading: auth.isLoading,
         error: auth.error as Error | null,
-        login: auth.login,
+        login: async (credentials) => {
+            return auth.login({
+                ...credentials,
+                phone: credentials.username // Map username to phone for API compatibility
+            });
+        },
         register: auth.register,
         logout: auth.logout,
     };
