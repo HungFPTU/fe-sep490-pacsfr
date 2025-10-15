@@ -69,7 +69,7 @@ export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkSh
                 </h2>
                 <div className="flex gap-2">
                     <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-green-500 rounded"></div>
+                        <div className="w-4 h-4 bg-red-500 rounded"></div>
                         <span className="text-sm text-gray-600">Có lịch làm việc</span>
                     </div>
                 </div>
@@ -91,15 +91,15 @@ export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkSh
                             className={`
                                 relative p-2 text-center text-sm cursor-pointer rounded-lg transition-all
                                 ${day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}
-                                ${day.isToday ? 'bg-blue-100 border border-blue-300' : ''}
-                                ${day.hasShift ? 'bg-green-100 hover:bg-green-200 border border-green-300' : 'hover:bg-gray-100'}
-                                ${selectedDate === day.dateString ? 'ring-2 ring-blue-500' : ''}
+                                ${day.isToday ? 'bg-red-100 border border-red-300' : ''}
+                                ${day.hasShift ? 'bg-red-100 hover:bg-red-200 border border-red-300' : 'hover:bg-gray-100'}
+                                ${selectedDate === day.dateString ? 'ring-2 ring-red-500' : ''}
                             `}
                             onClick={() => onDateSelect?.(day.dateString)}
                         >
                             {day.date.getDate()}
                             {day.hasShift && (
-                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></div>
+                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
                             )}
                         </div>
                     ))

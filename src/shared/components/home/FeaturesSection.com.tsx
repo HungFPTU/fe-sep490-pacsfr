@@ -90,7 +90,7 @@ export function FeaturesSection() {
             <Container>
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium mb-6">
+                    <div className="inline-flex items-center px-4 py-2 rounded-full bg-red-100 text-red-800 text-sm font-medium mb-6">
                         <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -98,7 +98,7 @@ export function FeaturesSection() {
                     </div>
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                         Giải pháp toàn diện cho
-                        <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"> dịch vụ công</span>
+                        <span className="bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent"> dịch vụ công</span>
                     </h2>
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                         Nền tảng PASCS cung cấp bộ công cụ mạnh mẽ, giúp tối ưu hóa mọi quy trình
@@ -122,7 +122,7 @@ export function FeaturesSection() {
 
                 {/* Bottom CTA */}
                 <div className="mt-20 text-center">
-                    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-12 text-white">
+                    <div className="bg-gradient-to-r from-red-600 to-rose-600 rounded-2xl p-12 text-white">
                         <h3 className="text-3xl font-bold mb-4">
                             Sẵn sàng trải nghiệm PACSFR?
                         </h3>
@@ -131,10 +131,10 @@ export function FeaturesSection() {
                             chất lượng phục vụ người dân.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button className="bg-white text-blue-600 font-semibold px-8 py-4 rounded-xl hover:bg-gray-50 transition-colors duration-300">
+                            <button className="bg-white text-red-600 font-semibold px-8 py-4 rounded-xl hover:bg-gray-50 transition-colors duration-300">
                                 Bắt đầu dùng thử
                             </button>
-                            <button className="border-2 border-white text-white font-semibold px-8 py-4 rounded-xl hover:bg-white hover:text-blue-600 transition-all duration-300">
+                            <button className="border-2 border-white text-white font-semibold px-8 py-4 rounded-xl hover:bg-white hover:text-red-600 transition-all duration-300">
                                 Xem demo trực tiếp
                             </button>
                         </div>

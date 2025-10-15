@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/useAuthStore";
 import { authService } from "../services/auth.service";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
+import { useRouter } from "next/navigation";
 import type { LoginPayload, RegisterPayload } from "../types";
 
 /**
@@ -12,6 +13,7 @@ import type { LoginPayload, RegisterPayload } from "../types";
 export function useAuth() {
     const { user, token, role, isAuthenticated, setCredentials, clearCredentials } = useAuthStore();
     const { addToast } = useGlobalToast();
+    const router = useRouter();
 
     // Track if user just logged in to prevent duplicate API calls
     const [justLoggedIn, setJustLoggedIn] = React.useState(false);
@@ -68,6 +70,8 @@ export function useAuth() {
             clearCredentials();
             setJustLoggedIn(false); // Reset login flag
             addToast({ message: "Đã đăng xuất", type: "info" });
+            // Navigate to home page after logout
+            router.push("/");
         },
     });
 
