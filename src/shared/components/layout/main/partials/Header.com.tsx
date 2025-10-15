@@ -17,6 +17,19 @@ export function Header() {
         window.location.href = ROUTES.HOME;
     };
 
+    const handleStaffClick = () => {
+        if (!isAuthenticated) {
+            // Chưa đăng nhập -> chuyển đến staff-login
+            window.location.href = '/staff-login';
+        } else if (user?.role === 'Staff') {
+            // Đã đăng nhập và là Staff -> chuyển đến staff dashboard
+            window.location.href = ROUTES.STAFF_QUEUE;
+        } else {
+            // Đã đăng nhập nhưng không phải Staff -> chuyển đến staff-login
+            window.location.href = '/staff-login';
+        }
+    };
+
     return (
         <header className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
             <Container className="py-4">
@@ -50,10 +63,13 @@ export function Header() {
                             Hàng đợi
                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                         </Link>
-                        <Link href={ROUTES.STAFF_QUEUE} className="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+                        <button 
+                            onClick={handleStaffClick}
+                            className="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200 relative group"
+                        >
                             Nhân viên
                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
-                        </Link>
+                        </button>
                         {/* Sau này check role Admin mới cho hiển thị path này */}
                         {/* <Link href={ROUTES.MANAGER} className="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
                             Quản trị
@@ -108,20 +124,11 @@ export function Header() {
                                     <span className="hidden sm:inline">Đăng xuất</span>
                                 </Button>
                             </div>
-                        ) : (
-                            /* Guest User Actions */
-                            <>
-                                <Link href={ROUTES.LOGIN}>
-                                    <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium px-6 py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                                        Đăng nhập
-                                    </Button>
-                                </Link>
-                                <Link href={ROUTES.REGISTER}>
-                                    <Button className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium px-6 py-2.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-                                        Đăng ký
-                                    </Button>
-                                </Link>
-                            </>
+                        ) 
+                        
+                        : (
+                            /* Guest User Actions - Hidden */
+                            null
                         )}
 
                         {/* Mobile menu button */}
