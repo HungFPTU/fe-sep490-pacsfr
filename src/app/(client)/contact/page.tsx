@@ -16,7 +16,7 @@ export default function ContactPage() {
         ward: "Phường Tăng Nhơn Phú"
     });
 
-    const [searchResults, setSearchResults] = useState([
+    const [searchResults] = useState([
         {
             id: 1,
             name: "Tổ an ninh Công an phường Tăng Nhơn Phú, thành phố Hồ Chí Minh",

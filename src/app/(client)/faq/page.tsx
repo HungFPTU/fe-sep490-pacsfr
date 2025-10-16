@@ -91,8 +91,8 @@ export default function FAQPage() {
     };
 
     const totalPages = Math.ceil(faqs.length / recordsPerPage);
-    const startRecord = (currentPage - 1) * recordsPerPage + 1;
-    const endRecord = Math.min(currentPage * recordsPerPage, faqs.length);
+    // const startRecord = (currentPage - 1) * recordsPerPage + 1;
+    // const endRecord = Math.min(currentPage * recordsPerPage, faqs.length);
 
     return (
         <div className="min-h-screen bg-white">

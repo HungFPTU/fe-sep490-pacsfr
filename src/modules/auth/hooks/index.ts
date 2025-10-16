@@ -88,6 +88,7 @@ export function useAuth() {
             }, 1000); // Reset after 1 second to allow future profile queries
             return () => clearTimeout(timer);
         }
+        return undefined; // Explicit return for all code paths
     }, [justLoggedIn, isAuthenticated]);
 
     // Sync profile data to store when available (only if not from recent login)

@@ -207,7 +207,7 @@ export default function SearchPage() {
     const departments = Array.from(new Set(allProcedures.map(p => p.department)));
 
     const filteredProcedures = useMemo(() => {
-        let filtered = allProcedures.filter(procedure => {
+        const filtered = allProcedures.filter(procedure => {
             const matchesSearch = procedure.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 procedure.description.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesCategory = !selectedCategory || procedure.category === selectedCategory;

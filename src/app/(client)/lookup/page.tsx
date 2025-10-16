@@ -12,7 +12,13 @@ export default function LookupPage() {
     const [caseNumber, setCaseNumber] = useState("");
     const [confirmationCode, setConfirmationCode] = useState("");
     const [captcha, setCaptcha] = useState("kvnjy");
-    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [searchResults, setSearchResults] = useState<Array<{
+        id: number;
+        fileNumber: string;
+        procedure: string;
+        submitter: string;
+        status: string;
+    }>>([]);
     const [isSearching, setIsSearching] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
 
