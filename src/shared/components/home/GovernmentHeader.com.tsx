@@ -15,12 +15,15 @@ export function GovernmentHeader({
 }: GovernmentHeaderProps) {
   return (
     <>
-      {/* Header với background pattern */}
-      <header className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-b border-yellow-200 relative">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23dc2626&quot; fill-opacity=&quot;0.1&quot;%3E%3Ccircle cx=&quot;30&quot; cy=&quot;30&quot; r=&quot;2&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
-        </div>
+      {/* Header với background trong-dong */}
+      <header className="relative border-b border-yellow-200" style={{
+        backgroundImage: "url('/assets/image/background/trong-dong.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
+      }}>
+        {/* Overlay để đảm bảo text dễ đọc */}
+        <div className="absolute inset-0 bg-yellow-50 bg-opacity-90"></div>
 
         <div className="container mx-auto px-4 py-4 relative z-10">
           <div className="flex items-center justify-between">
@@ -64,17 +67,28 @@ export function GovernmentHeader({
       <nav className="bg-red-600 text-white">
         <div className="container mx-auto px-4">
           <div className="flex items-center space-x-8">
+            {/* Icon HOME riêng biệt */}
             <Link
               href="/"
-              className={`flex items-center space-x-2 py-4 px-2 transition-colors ${currentPage === "home"
+              className={`flex items-center justify-center w-12 h-12 transition-colors ${currentPage === "home"
+                ? "bg-red-700"
+                : "hover:bg-red-700"
+                }`}
+              title="Trang chủ"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+              </svg>
+            </Link>
+
+            <Link
+              href="/tin-tuc"
+              className={`py-4 px-2 transition-colors font-medium ${currentPage === "news"
                 ? "bg-red-700"
                 : "hover:bg-red-700"
                 }`}
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-              </svg>
-              <span className="font-medium">Giới thiệu</span>
+              Giới thiệu
             </Link>
             <Link
               href="/procedures"
