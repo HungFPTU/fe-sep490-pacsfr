@@ -16,14 +16,20 @@ export function GovernmentHeader({
   return (
     <>
       {/* Header với background trong-dong */}
-      <header className="relative border-b border-yellow-200" style={{
-        backgroundImage: "url('/assets/image/background/trong-dong.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat"
-      }}>
+      <header className="relative border-b border-yellow-200 min-h-[120px]">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/assets/image/background/trong-dong.jpg"
+            alt="Background"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
         {/* Overlay để đảm bảo text dễ đọc */}
-        <div className="absolute inset-0 bg-yellow-50 bg-opacity-90"></div>
+        <div className="absolute inset-0 bg-yellow-50 bg-opacity-20"></div>
 
         <div className="container mx-auto px-4 py-4 relative z-10">
           <div className="flex items-center justify-between">

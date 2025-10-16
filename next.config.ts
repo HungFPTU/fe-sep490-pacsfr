@@ -87,7 +87,7 @@ const nextConfig: NextConfig = {
       config.resolve.alias = {
         ...config.resolve.alias,
         'async_hooks': 'empty-module',
-      };  
+      };
 
       return config;
     },
@@ -106,6 +106,8 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Hỗ trợ import images từ assets
+    unoptimized: false,
   },
 
   // Tối ưu hóa output

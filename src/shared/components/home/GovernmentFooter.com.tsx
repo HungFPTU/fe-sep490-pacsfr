@@ -10,7 +10,7 @@ export function GovernmentFooter() {
                 Cơ quan chủ quản: BỘ THÔNG TIN VÀ TRUYỀN THÔNG
               </h3>
               <p className="text-sm opacity-90">
-                Khi sử dụng lại thông tin, đề nghị ghi rõ nguồn "Cổng Dịch vụ công quốc gia"
+                Khi sử dụng lại thông tin, đề nghị ghi rõ nguồn &quot;Cổng Dịch vụ công quốc gia&quot;
               </p>
             </div>
             <div className="flex items-center space-x-2 text-sm">

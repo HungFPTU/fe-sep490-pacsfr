@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export function UncleHoTeachings() {
   const principles = [
     "Dịch vụ công trực tuyến 24/7, tiện lợi mọi lúc mọi nơi",
@@ -9,14 +11,20 @@ export function UncleHoTeachings() {
   ];
 
   return (
-    <div className="relative py-8" style={{
-      backgroundImage: "url('/assets/image/background/sen.jpg')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat"
-    }}>
+    <div className="relative py-12 min-h-[400px] border-b border-red-500">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/assets/image/background/sen.jpg"
+          alt="Background"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
+
       {/* Overlay để đảm bảo text dễ đọc */}
-      <div className="absolute inset-0 bg-white bg-opacity-80"></div>
+      <div className="absolute inset-0 bg-white bg-opacity-30"></div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-8 items-center">
           {/* Left Panel - Principles */}
