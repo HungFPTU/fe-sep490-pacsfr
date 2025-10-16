@@ -1,0 +1,21 @@
+# Local development configuration for Bun
+[install]
+# Tối ưu hóa cho development
+cache = true
+lockfile = true
+auto = true
+
+[run]
+# Sử dụng Bun runtime
+bun = true
+
+[test]
+# Cấu hình test cho development
+preload = ["./src/test/setup.ts"]
+timeout = 10000
+
+[build]
+# Tối ưu hóa build cho development
+target = "browser"
+minify = false
+splitting = true
