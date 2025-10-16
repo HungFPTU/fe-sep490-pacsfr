@@ -77,8 +77,8 @@ export function GovernmentHeader({
               <span className="font-medium">Giới thiệu</span>
             </Link>
             <Link
-              href="/search"
-              className={`py-4 px-2 transition-colors font-medium ${currentPage === "search"
+              href="/procedures"
+              className={`py-4 px-2 transition-colors font-medium ${currentPage === "procedures"
                 ? "bg-red-700"
                 : "hover:bg-red-700"
                 }`}
@@ -142,10 +142,10 @@ export function GovernmentHeader({
               <div className="absolute top-full left-0 w-64 bg-white shadow-lg border border-gray-200 rounded-b-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="py-2">
                   <Link
-                    href="/payment"
+                    href="/lookup"
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
                   >
-                    Thanh toán trực tuyến
+                    Tra cứu hồ sơ TTHC
                   </Link>
                   <Link
                     href="/guide"
@@ -158,12 +158,6 @@ export function GovernmentHeader({
                     className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
                   >
                     Câu hỏi thường gặp
-                  </Link>
-                  <Link
-                    href="/qa"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    Hỏi đáp
                   </Link>
                   <Link
                     href="/survey"
