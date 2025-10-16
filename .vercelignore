@@ -42,3 +42,6 @@ docs/
 # Ignore OS files
 .DS_Store
 Thumbs.db
+
+# Ignore Vercel config files
+.vercel/project.json

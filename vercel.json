@@ -4,11 +4,6 @@
     "framework": "nextjs",
     "installCommand": "bun install",
     "devCommand": "bun run dev",
-    "functions": {
-        "src/app/api/**/*.ts": {
-            "runtime": "edge"
-        }
-    },
     "rewrites": [
         {
             "source": "/(.*)",

@@ -1,7 +1,7 @@
 // app/api/chat/route.ts
 import { NextRequest } from "next/server"; // Thêm import NextRequest
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 // --- Định nghĩa các kiểu dữ liệu để tránh 'any' ---
 type ChatMessage = { role: "user" | "assistant"; content: string };
