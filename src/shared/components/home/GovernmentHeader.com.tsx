@@ -1,4 +1,3 @@
-import { APP_CONFIG } from "@/core/config/constants";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -16,11 +15,11 @@ export function GovernmentHeader({
   return (
     <>
       {/* Header với background trong-dong */}
-      <header className="relative border-b border-yellow-200 min-h-[120px]">
+      <header className="relative border-b border-yellow-100 min-h-[120px]">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
-            src="/assets/image/background/trong-dong.jpg"
+            src="/assets/image/background/trong-dong-1.jpg"
             alt="Background"
             fill
             className="object-cover"
@@ -29,7 +28,7 @@ export function GovernmentHeader({
         </div>
 
         {/* Overlay để đảm bảo text dễ đọc */}
-        <div className="absolute inset-0 bg-yellow-50 bg-opacity-20"></div>
+        <div className="absolute inset-0 bg-yellow-100 bg-opacity-60"></div>
 
         <div className="container mx-auto px-4 py-4 relative z-10">
           <div className="flex items-center justify-between">
@@ -39,10 +38,10 @@ export function GovernmentHeader({
                 <div className="relative">
                   <div className="w-12 h-12 rounded-lg flex items-center justify-center">
                     <Image
-                      src={APP_CONFIG.LOGO}
+                      src="/logo.png"
                       width={48}
                       height={48}
-                      alt={`Logo ${APP_CONFIG.NAME}`}
+                      alt="Logo Cổng Dịch vụ công quốc gia"
                       priority
                     />
                   </div>
@@ -65,6 +64,17 @@ export function GovernmentHeader({
                 <option>English</option>
               </select>
             </div>
+          </div>
+        </div>
+        <div className="absolute top-0 left-0 right-0 h-full flex items-center justify-center overflow-hidden">
+          <div className="relative w-[2000px] h-[2000px] mx-auto">
+            <Image
+              src="/assets/image/background/trong-dong-1.jpg"
+              alt="Background"
+              fill
+              className="object-contain"
+              priority
+            />
           </div>
         </div>
       </header>
@@ -232,6 +242,7 @@ export function GovernmentHeader({
           </div>
         </div>
       )}
+
     </>
   );
 }
