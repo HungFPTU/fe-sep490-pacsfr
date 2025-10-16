@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) { // Sửa Request thành NextReque
           `Gemini ${res.status}: ${json?.error?.message ?? JSON.stringify(json) ?? res.statusText}`
         );
       }
-      
+
       // SỬA ĐỔI: Dùng kiểu 'GeminiPart' đã định nghĩa
       const text = json?.candidates?.[0]?.content?.parts
         ?.map((p: GeminiPart) => p?.text || "")

@@ -1,0 +1,44 @@
+# Vercel ignore file
+# Ignore development files
+.bunfig.local.toml
+.bun
+*.log
+*.tsbuildinfo
+
+# Ignore test files
+**/*.test.*
+**/*.spec.*
+**/test/**
+**/tests/**
+
+# Ignore development dependencies
+node_modules/.cache
+.next/cache
+
+# Ignore build artifacts
+dist
+build
+out
+
+# Ignore environment files
+.env*
+!.env.example
+
+# Ignore documentation
+docs/
+*.md
+!README.md
+
+# Ignore git files
+.git
+.gitignore
+
+# Ignore IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Ignore OS files
+.DS_Store
+Thumbs.db

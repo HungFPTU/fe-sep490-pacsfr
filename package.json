@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "bun --bun run next dev",
     "dev:turbo": "bun --bun run next dev --turbo",
-    "build": "bun --bun run next build",
+    "build": "NODE_ENV=production bun --bun run next build",
+    "build:vercel": "NODE_ENV=production next build",
     "start": "bun --bun run next start",
     "lint": "bun --bun run next lint",
     "type-check": "bun --bun run tsc --noEmit",
