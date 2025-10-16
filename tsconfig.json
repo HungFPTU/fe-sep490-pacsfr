@@ -1,22 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    // Tối ưu hóa target cho Bun runtime
+    "target": "ES2022",
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "es2022"
     ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    // Tối ưu hóa module resolution cho Bun
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    // Tối ưu hóa incremental compilation
     "incremental": true,
+    "tsBuildInfoFile": ".next/cache/tsconfig.tsbuildinfo",
+    // Tối ưu hóa performance
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "useDefineForClassFields": true,
     "baseUrl": ".",
     "plugins": [
       {
@@ -43,6 +59,10 @@
         "../public/*"
       ]
     },
+    // Tối ưu hóa cho Bun
+    "allowImportingTsExtensions": false,
+    "verbatimModuleSyntax": false,
+    "moduleDetection": "force"
   },
   "include": [
     "next-env.d.ts",
@@ -51,6 +71,15 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
-  ]
+    "node_modules",
+    ".next",
+    "out",
+    "build",
+    "dist"
+  ],
+  // Tối ưu hóa cho development
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  }
 }

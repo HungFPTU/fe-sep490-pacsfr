@@ -1,13 +1,21 @@
-import { HeroSection } from "@/shared/components/home/HeroSection.com";
-import { FeaturesSection } from "@/shared/components/home/FeaturesSection.com";
-import { StatsSection } from "@/shared/components/home/StatsSection.com";
+import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
+import { UncleHoTeachings } from "@/shared/components/home/UncleHoTeachings.com";
+import { NewProceduresCarousel } from "@/shared/components/home/NewProceduresCarousel.com";
+import { AdministrativeProcedures } from "@/shared/components/home/AdministrativeProcedures.com";
+import { OnlineServices } from "@/shared/components/home/OnlineServices.com";
+import { StatisticsSection } from "@/shared/components/home/StatisticsSection.com";
+import { GovernmentFooter } from "@/shared/components/home/GovernmentFooter.com";
 
 export default function Home() {
   return (
-    <>
-      <HeroSection />
-      <FeaturesSection />
-      <StatsSection />
-    </>
+    <div className="min-h-screen bg-white">
+      <GovernmentHeader showBreadcrumb={false} currentPage="home" />
+      <UncleHoTeachings />
+      <NewProceduresCarousel />
+      <AdministrativeProcedures />
+      <OnlineServices />
+      <StatisticsSection />
+      <GovernmentFooter />
+    </div>
   );
 }
