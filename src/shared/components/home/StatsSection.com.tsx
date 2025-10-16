@@ -25,7 +25,7 @@ const stats = [
 
 export function StatsSection() {
     return (
-        <section className="py-20 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white relative overflow-hidden">
+        <section className="py-20 bg-gradient-to-br from-red-600 via-red-700 to-rose-800 text-white relative overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;0.05&quot;%3E%3Ccircle cx=&quot;30&quot; cy=&quot;30&quot; r=&quot;1&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
@@ -49,7 +49,7 @@ export function StatsSection() {
                                 <div className="text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-br from-white to-blue-100 bg-clip-text text-transparent">
                                     {stat.value}
                                 </div>
-                                <div className="text-xl font-semibold mb-2 text-blue-100">
+                                <div className="text-xl font-semibold mb-2 text-red-100">
                                     {stat.label}
                                 </div>
                                 <div className="text-sm opacity-80 leading-relaxed">

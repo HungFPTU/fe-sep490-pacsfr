@@ -3,16 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "bun --bun run next dev",
+    "dev:turbo": "bun --bun run next dev --turbo",
+    "build": "bun --bun run next build",
+    "start": "bun --bun run next start",
+    "lint": "bun --bun run next lint",
+    "type-check": "bun --bun run tsc --noEmit",
+    "clean": "bun --bun run rm -rf .next out dist",
+    "preview": "bun --bun run next build && bun --bun run next start",
+    "analyze": "bun --bun run cross-env ANALYZE=true next build",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "postinstall": "bun --bun run next telemetry disable"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@heroui/react": "^2.8.2",
     "@heroui/theme": "^2.4.20",
     "@hookform/resolvers": "^5.2.1",
+    "@opentelemetry/api": "^1.9.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -54,5 +63,5 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67"
+  "packageManager": "bun@1.1.0"
 }

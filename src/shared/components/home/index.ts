@@ -1,0 +1,11 @@
+export { HeroSection } from "./HeroSection.com";
+export { FeaturesSection } from "./FeaturesSection.com";
+export { StatsSection } from "./StatsSection.com";
+export { FeatureCard } from "./FeatureCard.com";
+export { GovernmentHeader } from "./GovernmentHeader.com";
+export { UncleHoTeachings } from "./UncleHoTeachings.com";
+export { NewProceduresCarousel } from "./NewProceduresCarousel.com";
+export { AdministrativeProcedures } from "./AdministrativeProcedures.com";
+export { OnlineServices } from "./OnlineServices.com";
+export { StatisticsSection } from "./StatisticsSection.com";
+export { GovernmentFooter } from "./GovernmentFooter.com";

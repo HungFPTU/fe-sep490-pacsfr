@@ -1,6 +1,99 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Tối ưu hóa cho Bun runtime
+  serverExternalPackages: [],
+  experimental: {
+    // Cấu hình Turbopack cho Bun compatibility
+    turbo: {
+      rules: {
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
+        },
+      },
+      // Tối ưu hóa cho Bun runtime
+      resolveAlias: {
+        "async_hooks": "empty-module",
+      },
+    },
+    // Tăng tốc độ build
+    optimizePackageImports: [
+      "@heroui/react",
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-select",
+      "@radix-ui/react-separator",
+      "@radix-ui/react-slot",
+      "@radix-ui/react-toast",
+      "@radix-ui/react-tooltip",
+      "@tanstack/react-query",
+      "@tanstack/react-table",
+      "lucide-react",
+      "framer-motion",
+    ],
+    // Tối ưu hóa memory usage
+    memoryBasedWorkersCount: true,
+    // Tối ưu hóa CSS
+    optimizeCss: true,
+    // Tối ưu hóa server actions
+    serverActions: {
+      allowedOrigins: ["localhost:3000"],
+    },
+  },
+
+  // Tối ưu hóa build performance
+  compiler: {
+    // Loại bỏ console.log trong production
+    removeConsole: process.env.NODE_ENV === "production",
+    // Tối ưu hóa styled-jsx
+    styledComponents: true,
+  },
+
+  // Tối ưu hóa webpack cho Bun (chỉ khi không dùng Turbopack)
+  ...(process.env.NODE_ENV === "production" && {
+    webpack: (config, { dev, isServer }) => {
+      // Tối ưu hóa cho development
+      if (dev) {
+        config.watchOptions = {
+          poll: 1000,
+          aggregateTimeout: 300,
+          ignored: [
+            '**/node_modules/**',
+            '**/.git/**',
+            '**/.next/**',
+            '**/pagefile.sys', // Ignore Windows pagefile
+          ],
+        };
+      }
+
+      // Tối ưu hóa cho Bun runtime
+      if (!isServer) {
+        config.resolve.fallback = {
+          ...config.resolve.fallback,
+          fs: false,
+          net: false,
+          tls: false,
+          crypto: false,
+          stream: false,
+          util: false,
+          buffer: false,
+          process: false,
+        };
+      }
+
+      // Xử lý lỗi tương thích với Bun
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'async_hooks': 'empty-module',
+      };
+
+      return config;
+    },
+  }),
+
+  // Tối ưu hóa images
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "api.dicebear.com" },
@@ -8,7 +101,35 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "avatars.githubusercontent.com" },
       { protocol: "https", hostname: "scontent.fsgn2-10.fna.fbcdn.net" },
     ],
+    // Tối ưu hóa image loading
+    formats: ["image/webp", "image/avif"],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Hỗ trợ import images từ assets
+    unoptimized: false,
   },
+
+  // Tối ưu hóa output
+  output: "standalone",
+
+  // Tối ưu hóa performance
+  poweredByHeader: false,
+  compress: true,
+
+  // Tối ưu hóa caching
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
+
+  // Tối ưu hóa cho production
+  ...(process.env.NODE_ENV === "production" && {
+    generateEtags: false,
+    httpAgentOptions: {
+      keepAlive: true,
+    },
+  }),
 };
 
 export default nextConfig;

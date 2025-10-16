@@ -65,7 +65,7 @@ export default function StaffLayout({
                     {/* Logo */}
                     <div className="flex h-16 shrink-0 items-center px-6 border-b">
                         <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
                                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                         d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -86,14 +86,14 @@ export default function StaffLayout({
                                 href={item.href}
                                 className={classNames(
                                     item.current
-                                        ? "bg-green-50 text-green-700 border-green-200"
+                                        ? "bg-red-50 text-red-700 border-red-200"
                                         : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
                                     "group flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-transparent transition-colors"
                                 )}
                             >
                                 <item.icon
                                     className={classNames(
-                                        item.current ? "text-green-500" : "text-gray-400 group-hover:text-gray-500",
+                                        item.current ? "text-red-500" : "text-gray-400 group-hover:text-gray-500",
                                         "mr-3 h-5 w-5 flex-shrink-0"
                                     )}
                                     aria-hidden="true"
@@ -106,8 +106,8 @@ export default function StaffLayout({
                     {/* User info and logout */}
                     <div className="border-t p-4">
                         <div className="flex items-center space-x-3 mb-3">
-                            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                                <span className="text-sm font-medium text-gray-700">
+                            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                <span className="text-sm font-medium text-red-600">
                                     {user?.name?.charAt(0)?.toUpperCase() || "U"}
                                 </span>
                             </div>
@@ -122,9 +122,9 @@ export default function StaffLayout({
                         </div>
                         <button
                             onClick={handleLogout}
-                            className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+                            className="w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors border border-red-200 hover:border-red-300"
                         >
-                            <svg className="mr-3 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <svg className="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                             </svg>
                             Đăng xuất
