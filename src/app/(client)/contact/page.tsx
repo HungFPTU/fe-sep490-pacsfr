@@ -1,6 +1,7 @@
 "use client";
 
 import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function ContactPage() {
@@ -187,9 +188,17 @@ export default function ContactPage() {
                                 {/* Emblem */}
                                 <div className="flex justify-center mb-4">
                                     <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center relative">
-                                        <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                                        {/* <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
                                             <span className="text-white font-bold text-lg">★</span>
-                                        </div>
+                                        </div> */}
+                                        <Image
+                                            src="/logo.png"
+                                            alt="Logo"
+                                            width={60}
+                                            height={60}
+                                            className="object-contain"
+                                            priority
+                                        />
                                         <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
                                             <div className="w-4 h-4 bg-green-500 rounded-full"></div>
                                         </div>
