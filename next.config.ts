@@ -51,47 +51,65 @@ const nextConfig: NextConfig = {
     styledComponents: true,
   },
 
-  // Tối ưu hóa webpack cho Bun (chỉ khi không dùng Turbopack)
-  ...(process.env.NODE_ENV === "production" && {
-    webpack: (config, { dev, isServer }) => {
-      // Tối ưu hóa cho development
-      if (dev) {
-        config.watchOptions = {
-          poll: 1000,
-          aggregateTimeout: 300,
-          ignored: [
-            '**/node_modules/**',
-            '**/.git/**',
-            '**/.next/**',
-            '**/pagefile.sys', // Ignore Windows pagefile
-          ],
-        };
-      }
-
-      // Tối ưu hóa cho Bun runtime
-      if (!isServer) {
-        config.resolve.fallback = {
-          ...config.resolve.fallback,
-          fs: false,
-          net: false,
-          tls: false,
-          crypto: false,
-          stream: false,
-          util: false,
-          buffer: false,
-          process: false,
-        };
-      }
-
-      // Xử lý lỗi tương thích với Bun
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'async_hooks': 'empty-module',
+  // Tối ưu hóa webpack cho Bun và SSR
+  webpack: (config, { dev, isServer }) => {
+    // Tối ưu hóa cho development
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+        ignored: [
+          '**/node_modules/**',
+          '**/.git/**',
+          '**/.next/**',
+          '**/pagefile.sys', // Ignore Windows pagefile
+          'D:/pagefile.sys', // Ignore Windows pagefile on D drive
+        ],
       };
+    }
 
-      return config;
-    },
-  }),
+    // Tối ưu hóa cho Bun runtime và SSR
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        util: false,
+        buffer: false,
+        process: false,
+        path: false,
+        os: false,
+      };
+    }
+
+    // Xử lý lỗi tương thích với Bun và SSR
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'async_hooks': 'empty-module',
+    };
+
+
+    // Xử lý lỗi "i.M" trong build
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        ...config.optimization.splitChunks,
+        cacheGroups: {
+          ...config.optimization.splitChunks?.cacheGroups,
+          default: {
+            ...config.optimization.splitChunks?.cacheGroups?.default,
+            minChunks: 1,
+            reuseExistingChunk: true,
+          },
+        },
+      },
+    };
+
+    return config;
+  },
 
   // Tối ưu hóa images
   images: {
@@ -116,6 +134,10 @@ const nextConfig: NextConfig = {
   // Tối ưu hóa performance
   poweredByHeader: false,
   compress: true,
+
+  // Cấu hình để tránh prerendering errors
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
 
   // Tối ưu hóa caching
   onDemandEntries: {
