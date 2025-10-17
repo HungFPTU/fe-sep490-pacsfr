@@ -21,14 +21,10 @@ import {
 import { TeamSwitcher } from "./team-switcher"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
+import { useAuth } from "@/modules/auth/hooks"
 
 // This is sample data.
 const data = {
-  user: {
-    name: "Viet Dung",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "Viet Dung",
@@ -156,26 +152,18 @@ const data = {
       ],
     },
   ],
-  //projects: [
-  //  {
-  //    name: "Design Engineering",
-  //    url: "#",
-  //    icon: Frame,
-  //  },
-  //  {
-  //    name: "Sales & Marketing",
-  //    url: "#",
-  //    icon: PieChart,
-  //  },
-  //  {
-  //    name: "Travel",
-  //    url: "#",
-  //    icon: Map,
-  //  },
-  //],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth()
+  
+  // Create user data for NavUser component
+  const userData = {
+    name: user?.name || "Manager",
+    email: user?.email || "manager@pascs.com",
+    avatar: user?.avatar || "/avatars/manager.jpg",
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -183,10 +171,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/*<NavProjects projects={data.projects} />*/}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
