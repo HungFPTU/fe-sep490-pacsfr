@@ -35,8 +35,8 @@ const nextConfig: NextConfig = {
     ],
     // Tối ưu hóa memory usage
     memoryBasedWorkersCount: true,
-    // Tối ưu hóa CSS
-    optimizeCss: true,
+    // Tối ưu hóa CSS - tắt để tránh lỗi critters với Bun
+    optimizeCss: false,
     // Tối ưu hóa server actions
     serverActions: {
       allowedOrigins: ["localhost:3000"],
@@ -110,7 +110,7 @@ const nextConfig: NextConfig = {
     unoptimized: false,
   },
 
-  // Tối ưu hóa output
+  // Tối ưu hóa output - sử dụng standalone cho Vercel
   output: "standalone",
 
   // Tối ưu hóa performance

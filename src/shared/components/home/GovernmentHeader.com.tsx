@@ -107,7 +107,7 @@ export function GovernmentHeader({
               Giới thiệu
             </Link>
             <Link
-              href="/procedures"
+              href="/thu-tuc-hanh-chinh"
               className={`py-4 px-2 transition-colors font-medium ${currentPage === "procedures"
                 ? "bg-red-700"
                 : "hover:bg-red-700"

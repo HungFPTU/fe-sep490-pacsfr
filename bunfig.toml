@@ -26,3 +26,6 @@ minify = true
 splitting = true
 # Sử dụng Bun's native bundler
 bundler = "bun"
+# Tối ưu hóa cho production
+sourcemap = "external"
+outdir = "out"
