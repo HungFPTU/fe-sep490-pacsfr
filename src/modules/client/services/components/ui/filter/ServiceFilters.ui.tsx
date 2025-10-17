@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input, Button } from "@heroui/react";
-import type { ServiceFilters as ServiceFiltersType } from "@/modules/client/services/types";
+import { AdvancedSearchFilters } from "./AdvancedSearchFilters.ui";
+import type { ServiceFilters as ServiceFiltersType } from "@/modules/client/services/types/req";
 
 interface ServiceFiltersProps {
     filters: ServiceFiltersType;
@@ -17,7 +18,13 @@ export const ServiceFilters: React.FC<ServiceFiltersProps> = ({
     onReset,
     className = "",
 }) => {
-    const [searchKeyword, setSearchKeyword] = useState(filters.keyword);
+    const [searchKeyword, setSearchKeyword] = useState(filters.keyword || "");
+    const [showAdvanced, setShowAdvanced] = useState(false);
+
+    // Sync keyword state when filters change
+    useEffect(() => {
+        setSearchKeyword(filters.keyword || "");
+    }, [filters.keyword]);
 
     const handleSearch = () => {
         onFiltersChange({
@@ -33,8 +40,19 @@ export const ServiceFilters: React.FC<ServiceFiltersProps> = ({
         }
     };
 
+    const handleFilterChange = (newFilters: ServiceFiltersType) => {
+        onFiltersChange(newFilters);
+    };
+
+    const handleReset = () => {
+        setSearchKeyword("");
+        setShowAdvanced(false);
+        onReset();
+    };
+
     return (
         <div className={`w-full ${className}`}>
+            {/* Main Search Bar */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                 <div className="flex gap-3">
                     <Input
@@ -51,7 +69,7 @@ export const ServiceFilters: React.FC<ServiceFiltersProps> = ({
                         }
                         classNames={{
                             input: "text-base",
-                            inputWrapper: "border-gray-300 hover:border-red-400 focus-within:border-red-500"
+                            inputWrapper: "border-none shadow-none focus-within:shadow-none focus-visible:shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                         }}
                     />
                     <Button
@@ -70,13 +88,31 @@ export const ServiceFilters: React.FC<ServiceFiltersProps> = ({
                     <Button
                         variant="light"
                         size="lg"
-                        onClick={onReset}
+                        onClick={handleReset}
                         className="px-6 text-gray-600 hover:text-gray-800"
                     >
                         Xóa
                     </Button>
+                    <Button
+                        variant="light"
+                        size="lg"
+                        onClick={() => setShowAdvanced(!showAdvanced)}
+                        className="px-6 text-gray-600 hover:text-gray-800"
+                    >
+                        {showAdvanced ? "Ẩn tìm kiếm nâng cao" : "Tìm kiếm nâng cao"}
+                    </Button>
                 </div>
             </div>
+
+            {/* Advanced Search Section */}
+            {showAdvanced && (
+                <div className="mt-4">
+                    <AdvancedSearchFilters
+                        filters={filters}
+                        onFiltersChange={handleFilterChange}
+                    />
+                </div>
+            )}
         </div>
     );
 };

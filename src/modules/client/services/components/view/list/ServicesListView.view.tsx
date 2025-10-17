@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import React from "react";
 import { Card, CardBody } from "@heroui/react";
 import { ServiceFilters } from "../../ui/filter/ServiceFilters.ui";
 import { ServiceList } from "../../ui/list/ServiceList.ui";
 import { ServicePagination } from "../../ui/pagination/ServicePagination.ui";
 import { useServices, useServiceFilters } from "../../../hooks/useServices";
-import type { ServiceFilters as ServiceFiltersType } from "../../../types";
+import type { ServiceFilters as ServiceFiltersType } from "../../../types/req";
 
 interface ServicesListViewProps {
     className?: string;
@@ -22,9 +22,10 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
         ...initialFilters,
     });
 
-    const handleFiltersChange = (newFilters: typeof filters) => {
+    const handleFiltersChange = (newFilters: ServiceFiltersType) => {
+        // Update all filters at once
         Object.entries(newFilters).forEach(([key, value]) => {
-            updateFilter(key as keyof typeof filters, value);
+            updateFilter(key as keyof ServiceFiltersType, value);
         });
     };
 

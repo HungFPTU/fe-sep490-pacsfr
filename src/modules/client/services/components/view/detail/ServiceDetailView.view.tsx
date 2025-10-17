@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Card, CardBody, Button, Chip } from "@heroui/react";
 import { useService } from "../../../hooks/useServices";
+import { useServiceGroup } from "@/modules/client/services-group";
+import { useLegalBasis } from "@/modules/client/legal-basis";
 import { ServiceDetailPopup } from "../../ui/detail/ServiceDetailPopup.ui";
 import { LoadingSpinner } from "@/shared/components/common";
 
@@ -20,7 +22,14 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
     const { data: response, isLoading, error } = useService(serviceId);
     const service = response?.data;
 
-    if (isLoading) {
+    // Fetch service group and legal basis data
+    const { data: serviceGroupResponse, isLoading: isLoadingServiceGroup } = useServiceGroup(service?.serviceGroupId || "");
+    const { data: legalBasisResponse, isLoading: isLoadingLegalBasis } = useLegalBasis(service?.legalBasisId || "");
+
+    const serviceGroup = serviceGroupResponse?.data;
+    const legalBasis = legalBasisResponse?.data;
+
+    if (isLoading || isLoadingServiceGroup || isLoadingLegalBasis) {
         return (
             <div className="flex justify-center items-center py-12">
                 <LoadingSpinner size="lg" />
@@ -141,18 +150,24 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
 
                         <div className="space-y-4">
                             <div>
-                                <label className="text-sm font-medium text-gray-600">Cơ quan ban hành</label>
-                                <p className="text-sm font-semibold text-gray-900">Bộ Tài chính</p>
+                                <label className="text-sm font-medium text-gray-600">Nhóm dịch vụ</label>
+                                <p className="text-sm font-semibold text-gray-900">
+                                    {serviceGroup ? `${serviceGroup.groupCode} - ${serviceGroup.groupName}` : "Đang tải..."}
+                                </p>
                             </div>
 
                             <div>
-                                <label className="text-sm font-medium text-gray-600">Cơ quan thực hiện</label>
-                                <p className="text-sm font-semibold text-gray-900">Ủy ban nhân dân cấp xã</p>
+                                <label className="text-sm font-medium text-gray-600">Căn cứ pháp lý</label>
+                                <p className="text-sm font-semibold text-gray-900">
+                                    {legalBasis ? legalBasis.name : "Đang tải..."}
+                                </p>
                             </div>
 
                             <div>
-                                <label className="text-sm font-medium text-gray-600">Lĩnh vực</label>
-                                <p className="text-sm font-semibold text-gray-900">Thành lập và hoạt động của tổ hợp tác, hợp tác xã</p>
+                                <label className="text-sm font-medium text-gray-600">Mô tả nhóm dịch vụ</label>
+                                <p className="text-sm font-semibold text-gray-900">
+                                    {serviceGroup ? serviceGroup.description : "Đang tải..."}
+                                </p>
                             </div>
 
                             <div>
@@ -209,6 +224,8 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
             {/* Service Detail Popup */}
             <ServiceDetailPopup
                 service={service}
+                serviceGroup={serviceGroup}
+                legalBasis={legalBasis}
                 isOpen={isPopupOpen}
                 onClose={() => setIsPopupOpen(false)}
             />

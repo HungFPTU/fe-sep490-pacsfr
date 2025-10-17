@@ -1,21 +1,46 @@
 "use client";
 
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Chip, Divider } from "@heroui/react";
-import { formatCurrency, getServiceTypeColor } from "../../../utils";
+import { Modal, ModalContent, ModalHeader, ModalBody, Chip, Divider } from "@heroui/react";
 import type { Service } from "../../../types";
+import type { ServiceGroup } from "@/modules/client/services-group";
+import type { LegalBasis } from "@/modules/client/legal-basis";
 
 interface ServiceDetailPopupProps {
     service: Service | null;
+    serviceGroup?: ServiceGroup | null;
+    legalBasis?: LegalBasis | null;
     isOpen: boolean;
     onClose: () => void;
 }
 
 export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
     service,
+    serviceGroup,
+    legalBasis,
     isOpen,
     onClose,
 }) => {
     if (!service) return null;
+
+    // Simple currency formatter
+    const formatCurrency = (amount: number): string => {
+        return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(amount);
+    };
+
+    // Simple service type color
+    const getServiceTypeColor = (type: string): string => {
+        switch (type) {
+            case "Trực tuyến":
+                return "bg-green-100 text-green-800 border-green-200";
+            case "Trực tiếp":
+                return "bg-blue-100 text-blue-800 border-blue-200";
+            default:
+                return "bg-gray-100 text-gray-800 border-gray-200";
+        }
+    };
 
     return (
         <Modal
@@ -23,14 +48,16 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
             onClose={onClose}
             size="5xl"
             scrollBehavior="inside"
+            backdrop="blur"
             classNames={{
-                base: "max-h-[90vh]",
+                base: "max-h-[90vh] bg-white",
                 body: "py-6",
-                header: "pb-2"
+                header: "pb-2 bg-white",
+                backdrop: "bg-black/50 backdrop-blur-sm"
             }}
         >
-            <ModalContent>
-                <ModalHeader className="flex flex-col gap-1">
+            <ModalContent className="bg-white shadow-2xl border border-gray-200">
+                <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
                     <div className="flex items-center gap-3">
                         <h2 className="text-xl font-bold text-gray-900">
                             Chi tiết thủ tục hành chính
@@ -44,7 +71,7 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
                     </div>
                 </ModalHeader>
 
-                <ModalBody>
+                <ModalBody className="bg-white">
                     <div className="space-y-6">
                         {/* Basic Information */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -67,16 +94,22 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label className="text-sm font-medium text-gray-600">Cấp thực hiện</label>
-                                <p className="text-sm font-semibold text-gray-900">Cấp Xã</p>
+                                <label className="text-sm font-medium text-gray-600">Nhóm dịch vụ</label>
+                                <p className="text-sm font-semibold text-gray-900">
+                                    {serviceGroup ? `${serviceGroup.groupCode} - ${serviceGroup.groupName}` : "Đang tải..."}
+                                </p>
                             </div>
                             <div>
-                                <label className="text-sm font-medium text-gray-600">Loại thủ tục</label>
-                                <p className="text-sm font-semibold text-gray-900">TTHC được luật giao quy định chi tiết</p>
+                                <label className="text-sm font-medium text-gray-600">Căn cứ pháp lý</label>
+                                <p className="text-sm font-semibold text-gray-900">
+                                    {legalBasis ? legalBasis.name : "Đang tải..."}
+                                </p>
                             </div>
                             <div>
-                                <label className="text-sm font-medium text-gray-600">Lĩnh vực</label>
-                                <p className="text-sm font-semibold text-gray-900">Thành lập và hoạt động của tổ hợp tác, hợp tác xã</p>
+                                <label className="text-sm font-medium text-gray-600">Mô tả nhóm dịch vụ</label>
+                                <p className="text-sm font-semibold text-gray-900">
+                                    {serviceGroup ? serviceGroup.description : "Đang tải..."}
+                                </p>
                             </div>
                         </div>
 
@@ -128,6 +161,37 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
                                 </div>
                             </div>
                         </div>
+
+                        {/* Legal Basis Information */}
+                        {legalBasis && (
+                            <>
+                                <Divider />
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        Căn cứ pháp lý
+                                    </h3>
+
+                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                        <h4 className="font-semibold text-gray-900 mb-2">{legalBasis.name}</h4>
+                                        <p className="text-sm text-gray-700 mb-3">{legalBasis.description}</p>
+                                        <p className="text-sm text-gray-600 mb-3">{legalBasis.content}</p>
+                                        {legalBasis.link && (
+                                            <a
+                                                href={legalBasis.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                            >
+                                                Xem chi tiết →
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            </>
+                        )}
 
                         {/* Required Documents */}
                         {service.requiredDocuments?.$values && service.requiredDocuments.$values.length > 0 && (
@@ -261,22 +325,6 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
                     </div>
                 </ModalBody>
 
-                <ModalFooter>
-                    <Button
-                        variant="light"
-                        onPress={onClose}
-                        className="text-gray-600"
-                    >
-                        Đóng
-                    </Button>
-                    <Button
-                        color="primary"
-                        onPress={() => {/* Handle registration */ }}
-                        className="bg-red-600 hover:bg-red-700"
-                    >
-                        Đăng ký
-                    </Button>
-                </ModalFooter>
             </ModalContent>
         </Modal>
     );

@@ -7,8 +7,8 @@ import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
 import type {
     Service,
     ServiceListResponse,
-    ServiceFilters,
 } from "../types";
+import type { ServiceFilters } from "../types/req";
 
 // Use constants for query keys
 export const serviceKeys = QUERY_KEYS;
@@ -64,6 +64,11 @@ export const useServiceFilters = (initialFilters: Partial<ServiceFilters> = {}) 
         isActive: null,
         page: 1,
         size: 10,
+        implementingAgency: "",
+        field: "",
+        implementationLevel: "",
+        targetAudience: "",
+        searchBy: "department",
         ...initialFilters,
     });
 
@@ -83,6 +88,11 @@ export const useServiceFilters = (initialFilters: Partial<ServiceFilters> = {}) 
             isActive: null,
             page: 1,
             size: 10,
+            implementingAgency: "",
+            field: "",
+            implementationLevel: "",
+            targetAudience: "",
+            searchBy: "department",
         });
     }, []);
 

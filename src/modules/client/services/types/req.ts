@@ -1,6 +1,6 @@
 // Request Types for Services Module
 
-// Service Search Request
+// Service Search Request - Based on Swagger API
 export interface ServiceSearchRequest {
   keyword?: string;
   serviceGroupId?: string;
@@ -8,6 +8,28 @@ export interface ServiceSearchRequest {
   isActive?: boolean;
   page?: number;
   size?: number;
+}
+
+// Service Filters for UI - Extended with advanced search options
+export interface ServiceFilters {
+  // Basic search
+  keyword: string;
+
+  // Advanced filters (from Swagger)
+  serviceGroupId: string;
+  legalBasisId: string;
+  isActive: boolean | null;
+
+  // Pagination
+  page: number;
+  size: number;
+
+  // Additional UI filters (for future API integration)
+  implementingAgency?: string;
+  field?: string;
+  implementationLevel?: string;
+  targetAudience?: string;
+  searchBy?: 'department' | 'province';
 }
 
 // Service Group Search Request

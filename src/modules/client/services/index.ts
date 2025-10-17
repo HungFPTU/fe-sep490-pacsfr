@@ -20,7 +20,7 @@ export * from "./services/service.service";
 export * from "./hooks/useServices";
 
 // UI Components (Pure UI components)
-export { ServiceFilters, ServiceList, ServicePagination, ServiceDetailPopup } from "./components/ui";
+export { ServiceFilters, AdvancedSearchFilters, ServiceList, ServicePagination, ServiceDetailPopup } from "./components/ui";
 
 // View Components (Complete page views)
 export { ServicesListView, ServiceDetailView } from "./components/view";

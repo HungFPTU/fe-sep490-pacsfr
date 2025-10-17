@@ -18,7 +18,11 @@ export default function ServiceDetailPage({ params }: ServiceDetailPageProps) {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <GovernmentHeader breadcrumbItems={breadcrumbItems} />
+            <GovernmentHeader
+                showBreadcrumb={true}
+                breadcrumbItems={breadcrumbItems}
+                currentPage="procedures"
+            />
 
             <div className="container mx-auto px-4 py-8">
                 <ServiceDetailView serviceId={params.id} />
