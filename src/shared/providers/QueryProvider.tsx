@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -8,8 +8,8 @@ interface QueryProviderProps {
     children: React.ReactNode;
 }
 
-// Create a client
-const queryClient = new QueryClient({
+// Create a client with SSR-safe configuration
+const createQueryClient = () => new QueryClient({
     defaultOptions: {
         queries: {
             // Time in milliseconds
@@ -23,7 +23,9 @@ const queryClient = new QueryClient({
                 return failureCount < 3;
             },
             refetchOnWindowFocus: false,
-            refetchOnReconnect: true,
+            refetchOnReconnect: false,
+            // SSR-safe options
+            refetchOnMount: false,
         },
         mutations: {
             retry: 1,
@@ -32,6 +34,9 @@ const queryClient = new QueryClient({
 });
 
 export function QueryProvider({ children }: QueryProviderProps) {
+    // Create query client only on client side
+    const [queryClient] = useState(() => createQueryClient());
+
     return (
         <QueryClientProvider client={queryClient}>
             {children}

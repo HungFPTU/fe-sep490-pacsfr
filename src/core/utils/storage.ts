@@ -6,10 +6,15 @@
 import { STORAGE_KEYS } from '../config/constants';
 
 /**
- * Safe localStorage wrapper
+ * Safe localStorage wrapper with SSR support
  */
 export class LocalStorage {
     private static isAvailable(): boolean {
+        // Check if we're in browser environment
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
         try {
             const test = '__localStorage_test__';
             localStorage.setItem(test, test);
@@ -73,10 +78,15 @@ export class LocalStorage {
 }
 
 /**
- * Safe sessionStorage wrapper
+ * Safe sessionStorage wrapper with SSR support
  */
 export class SessionStorage {
     private static isAvailable(): boolean {
+        // Check if we're in browser environment
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
         try {
             const test = '__sessionStorage_test__';
             sessionStorage.setItem(test, test);
