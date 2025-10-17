@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { useServices, useServiceFilters } from "@/modules/client/services/hooks/useServices";
-import { ServiceFilters } from "@/modules/client/services/components/ServiceFilters";
-import { ServiceList } from "@/modules/client/services/components/ServiceList";
-import { ServicePagination } from "@/modules/client/services/components/ServicePagination";
+import { ServiceFilters } from "@/modules/client/services/components/ui/filter/ServiceFilters.ui";
+import { ServicesListView } from "@/modules/client/services/components/view/list/ServicesListView.view";
+import { ServicePagination } from "@/modules/client/services/components/ui/pagination/ServicePagination.ui";
 
 export default function SearchPage() {
     const { filters, updateFilter, resetFilters, setPage } = useServiceFilters();
-    const { data: servicesResponse, isLoading, error } = useServices(filters);
+    const { data: servicesResponse } = useServices(filters);
 
     const handleFiltersChange = (newFilters: typeof filters) => {
         Object.entries(newFilters).forEach(([key, value]) => {
@@ -65,7 +64,7 @@ export default function SearchPage() {
                                 <label className="text-sm text-gray-600">Hiển thị:</label>
                                 <select
                                     value={filters.size}
-                                    onChange={(e) => updateFilter("size", parseInt(e.target.value))}
+                                    onChange={(e) => updateFilter("size", parseInt(e.target.value) as unknown as string | boolean | null)}
                                     className="border border-gray-300 rounded px-2 py-1 text-sm"
                                 >
                                     <option value={10}>10</option>
@@ -78,21 +77,15 @@ export default function SearchPage() {
                 )}
 
                 {/* Services List */}
-                <ServiceList
-                    services={servicesResponse?.data?.items?.$values || []}
-                    loading={isLoading}
-                    error={error?.message}
-                    showDescription={true}
+                <ServicesListView
+                    initialFilters={filters}
                 />
 
                 {/* Pagination */}
                 {servicesResponse && servicesResponse.data.totalPages > 1 && (
                     <div className="mt-8">
                         <ServicePagination
-                            currentPage={servicesResponse.data.page}
-                            totalPages={servicesResponse.data.totalPages}
-                            hasNextPage={servicesResponse.data.hasNextPage}
-                            hasPreviousPage={servicesResponse.data.hasPreviousPage}
+                            pagination={servicesResponse.data}
                             onPageChange={handlePageChange}
                         />
                     </div>

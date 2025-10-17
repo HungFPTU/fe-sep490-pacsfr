@@ -1,4 +1,5 @@
 import { SERVICE_TYPE_COLORS, SERVICE_TYPE_CHIP_COLORS } from "../constants";
+import type { Service, ServiceFilters } from "../types";
 
 // Format currency for Vietnamese locale
 export const formatCurrency = (amount: number): string => {
@@ -57,7 +58,7 @@ export const generateServiceUrl = (serviceId: string): string => {
 };
 
 // Generate search URL with params
-export const generateSearchUrl = (params: Record<string, any>): string => {
+export const generateSearchUrl = (params: Record<string, string | number | boolean | null | undefined>): string => {
     const searchParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {
@@ -71,7 +72,7 @@ export const generateSearchUrl = (params: Record<string, any>): string => {
 };
 
 // Validate service filters
-export const validateServiceFilters = (filters: any): boolean => {
+export const validateServiceFilters = (filters: ServiceFilters): boolean => {
     if (!filters) return false;
 
     // Check if page is valid
@@ -88,7 +89,7 @@ export const validateServiceFilters = (filters: any): boolean => {
 };
 
 // Debounce function for search
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => unknown>(
     func: T,
     delay: number
 ): ((...args: Parameters<T>) => void) => {
@@ -101,12 +102,12 @@ export const debounce = <T extends (...args: any[]) => any>(
 };
 
 // Check if service is available online
-export const isServiceOnlineAvailable = (service: any): boolean => {
+export const isServiceOnlineAvailable = (service: Service): boolean => {
     return service.isOnlineAvailable && service.isActive;
 };
 
 // Check if service is active
-export const isServiceActive = (service: any): boolean => {
+export const isServiceActive = (service: Service): boolean => {
     return service.isActive;
 };
 

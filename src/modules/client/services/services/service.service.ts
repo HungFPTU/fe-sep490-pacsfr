@@ -1,5 +1,5 @@
 import { serviceApi } from "../api/service.api";
-import { API_ENDPOINTS, UI_CONSTANTS } from "../constants";
+import { UI_CONSTANTS } from "../constants";
 import type {
     Service,
     ServiceListResponse,

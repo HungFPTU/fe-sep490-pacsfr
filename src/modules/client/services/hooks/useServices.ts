@@ -1,13 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ServiceService } from "../services/service.service";
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
-import type {
-    Service,
-    ServiceListResponse,
-} from "../types";
 import type { ServiceFilters } from "../types/req";
 
 // Use constants for query keys
