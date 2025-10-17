@@ -7,6 +7,20 @@ export const API_PATH = {
         UPDATE_PROFILE: "/auth/profile",
         REFRESH_TOKEN: "/auth/refresh",
     },
+    CLIENT: {
+        SERVICES: {
+            ALL: "/Service",
+            BY_ID: (id: string) => `/Service/${id}`,
+        },
+        SERVICE_GROUPS: {
+            ALL: "/ServiceGroup",
+            BY_ID: (id: string) => `/ServiceGroup/${id}`,
+        },
+        LEGAL_BASIS: {
+            ALL: "/LegalBasis",
+            BY_ID: (id: string) => `/LegalBasis/${id}`,
+        },
+    },
     QUEUE: {
         COUNTERS: "/queue/counters",
         OVERVIEW: "/queue/overview",
