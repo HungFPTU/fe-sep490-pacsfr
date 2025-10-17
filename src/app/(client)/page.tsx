@@ -4,7 +4,6 @@ import { NewProceduresCarousel } from "@/shared/components/home/NewProceduresCar
 import { AdministrativeProcedures } from "@/shared/components/home/AdministrativeProcedures.com";
 import { OnlineServices } from "@/shared/components/home/OnlineServices.com";
 import { StatisticsSection } from "@/shared/components/home/StatisticsSection.com";
-import { GovernmentFooter } from "@/shared/components/home/GovernmentFooter.com";
 import { ServicesListView } from "@/modules/client/services/components/view/list/ServicesListView.view";
 
 export default function Home() {
@@ -17,7 +16,6 @@ export default function Home() {
       <OnlineServices />
       <ServicesListView />
       <StatisticsSection />
-      <GovernmentFooter />
     </div>
   );
 }
