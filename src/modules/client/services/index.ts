@@ -19,9 +19,8 @@ export * from "./services/service.service";
 // Hooks
 export * from "./hooks/useServices";
 
-// Components
-export { ServiceCard } from "./components/ServiceCard";
-export { ServiceList } from "./components/ServiceList";
-export { ServiceFilters } from "./components/ServiceFilters";
-export { ServicePagination } from "./components/ServicePagination";
-export { FeaturedServices } from "./components/FeaturedServices";
+// UI Components (Pure UI components)
+export { ServiceFilters, ServiceList, ServicePagination, ServiceDetailPopup } from "./components/ui";
+
+// View Components (Complete page views)
+export { ServicesListView, ServiceDetailView } from "./components/view";

@@ -31,10 +31,9 @@ export class ServiceService {
     }
 
     // Get service by ID
-    static async getServiceById(id: string): Promise<Service> {
+    static async getServiceById(id: string): Promise<ServiceDetailResponse> {
         try {
-            const response = await serviceApi.getServiceById(id);
-            return response.data;
+            return await serviceApi.getServiceById(id);
         } catch (error) {
             console.error("Error fetching service detail:", error);
             throw error;

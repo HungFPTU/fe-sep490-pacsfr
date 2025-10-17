@@ -5,7 +5,7 @@ import { AdministrativeProcedures } from "@/shared/components/home/Administrativ
 import { OnlineServices } from "@/shared/components/home/OnlineServices.com";
 import { StatisticsSection } from "@/shared/components/home/StatisticsSection.com";
 import { GovernmentFooter } from "@/shared/components/home/GovernmentFooter.com";
-import { FeaturedServices } from "@/modules/client/services/components/FeaturedServices";
+import { ServicesListView } from "@/modules/client/services/components/view/list/ServicesListView.view";
 
 export default function Home() {
   return (
@@ -15,7 +15,7 @@ export default function Home() {
       <NewProceduresCarousel />
       <AdministrativeProcedures />
       <OnlineServices />
-      <FeaturedServices />
+      <ServicesListView />
       <StatisticsSection />
       <GovernmentFooter />
     </div>
