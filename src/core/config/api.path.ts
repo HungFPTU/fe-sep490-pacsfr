@@ -46,6 +46,10 @@ export const API_PATH = {
             FEEDBACK: "/staff/dashboard/feedback",
             HISTORY: "/staff/dashboard/history",
             NOTIFICATIONS: "/staff/dashboard/notifications",
+            QUEUE_STATUS: (queueId: string) => `/Queue/status/${queueId}`,
+            CALL_NEXT: (queueId: string) => `/Queue/${queueId}/call-next`,
+            CREATE_CASE: "/Case",
+            GET_SERVICES: "/Service",
         },
         WORKSHIFT: {
             MY_SHIFTS: "/WorkShift/my-shifts",

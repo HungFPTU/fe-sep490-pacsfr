@@ -7,7 +7,11 @@ import type {
     WaitingListFilters,
     HistoryFilters,
     Notification,
-    DashboardStats
+    DashboardStats,
+    QueueStatus,
+    CallNextResponse,
+    CreateCaseRequest,
+    CaseResponse
 } from "../types";
 
 export const staffDashboardService = {
@@ -225,5 +229,89 @@ export const staffDashboardService = {
             default:
                 return status;
         }
+    },
+
+    // Get queue status
+    async getQueueStatus(queueId: string): Promise<QueueStatus> {
+        try {
+            const response = await staffDashboardApi.getQueueStatus(queueId);
+            if (response.success && response.data) {
+                return response.data;
+            }
+            throw new Error('Failed to get queue status');
+        } catch (error) {
+            console.error('Error fetching queue status:', error);
+            throw error;
+        }
+    },
+
+    // Call next ticket in queue
+    async callNext(queueId: string): Promise<CallNextResponse> {
+        try {
+            const response = await staffDashboardApi.callNext(queueId);
+            return response;
+        } catch (error) {
+            console.error('Error calling next ticket:', error);
+            // Check if error is about no tickets in queue
+            if (error instanceof Error && error.message.includes('No tickets in queue')) {
+                throw new Error('Không có số nào trong hàng đợi');
+            }
+            throw error;
+        }
+    },
+
+    // Create new case with validation
+    async createCase(request: CreateCaseRequest): Promise<CaseResponse> {
+        try {
+            // Validate required fields
+            if (!request.guestId || !request.guestId.trim()) {
+                throw new Error('Guest ID là bắt buộc');
+            }
+            if (!request.serviceId || !request.serviceId.trim()) {
+                throw new Error('Service ID là bắt buộc');
+            }
+            if (!request.submissionMethod || !request.submissionMethod.trim()) {
+                throw new Error('Phương thức nộp là bắt buộc');
+            }
+            if (!request.createdBy || !request.createdBy.trim()) {
+                throw new Error('Người tạo là bắt buộc');
+            }
+
+            // Validate priority level
+            if (request.priorityLevel < 0 || request.priorityLevel > 10) {
+                throw new Error('Mức độ ưu tiên phải từ 0 đến 10');
+            }
+
+            const response = await staffDashboardApi.createCase(request);
+            
+            if (response.success && response.data) {
+                return response.data;
+            }
+            
+            throw new Error(response.message || 'Failed to create case');
+        } catch (error) {
+            console.error('Error creating case:', error);
+            throw error;
+        }
+    },
+
+    // Get priority level text in Vietnamese
+    getPriorityLevelText(level: number): string {
+        if (level === 0) return 'Bình thường';
+        if (level >= 1 && level <= 3) return 'Ưu tiên thấp';
+        if (level >= 4 && level <= 6) return 'Ưu tiên trung bình';
+        if (level >= 7 && level <= 9) return 'Ưu tiên cao';
+        if (level === 10) return 'Khẩn cấp';
+        return 'Không xác định';
+    },
+
+    // Get priority level color for UI
+    getPriorityLevelColor(level: number): string {
+        if (level === 0) return 'bg-gray-100 text-gray-800';
+        if (level >= 1 && level <= 3) return 'bg-blue-100 text-blue-800';
+        if (level >= 4 && level <= 6) return 'bg-yellow-100 text-yellow-800';
+        if (level >= 7 && level <= 9) return 'bg-orange-100 text-orange-800';
+        if (level === 10) return 'bg-red-100 text-red-800';
+        return 'bg-gray-100 text-gray-800';
     },
 };

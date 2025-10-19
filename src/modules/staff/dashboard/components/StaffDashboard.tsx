@@ -13,7 +13,8 @@ import {
 import type { CitizenProfile, WaitingListFilters } from "../types";
 // import { NotificationPanel } from "./NotificationPanel";
 import { CitizenDocumentsModal } from "./CitizenDocumentsModal";
-import { Search, Filter, Users, Clock, CheckCircle, AlertCircle, Phone, PhoneOff, UserCheck } from "lucide-react";
+import { CreateCaseModal } from "./CreateCaseModal";
+import { Search, Filter, Users, Clock, CheckCircle, AlertCircle, Phone, UserCheck, Settings, Plus } from "lucide-react";
 
 export function StaffDashboard() {
     const {
@@ -21,15 +22,26 @@ export function StaffDashboard() {
         stats,
         waitingListFilters,
         isLoadingWaitingList,
+        queueId,
+        queueStatus,
+        isLoadingQueueStatus,
+        isCallingNext,
         setWaitingList,
         setWaitingListFilters,
         setLoadingWaitingList,
+        setQueueId,
+        setQueueStatus,
+        setLoadingQueueStatus,
+        setCallingNext,
     } = useStaffDashboardStore();
 
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedServiceType, setSelectedServiceType] = useState("");
     const [selectedCitizenId, setSelectedCitizenId] = useState<string | null>(null);
     const [showCitizenDocumentsModal, setShowCitizenDocumentsModal] = useState(false);
+    const [showQueueSetup, setShowQueueSetup] = useState(!queueId);
+    const [queueIdInput, setQueueIdInput] = useState(queueId || "");
+    const [showCreateCaseModal, setShowCreateCaseModal] = useState(false);
 
     // Queue management states
     const [currentServing, setCurrentServing] = useState<{
@@ -39,8 +51,21 @@ export function StaffDashboard() {
         serviceType: string;
         status: 'waiting' | 'serving' | 'completed';
     } | null>(null);
-    const [nextNumber, setNextNumber] = useState<string | null>(null);
-    const [isCallingNext, setIsCallingNext] = useState(false);
+
+    // Load queue status
+    const loadQueueStatus = useCallback(async () => {
+        if (!queueId) return;
+        
+        setLoadingQueueStatus(true);
+        try {
+            const status = await staffDashboardService.getQueueStatus(queueId);
+            setQueueStatus(status);
+        } catch (error) {
+            console.error("Error loading queue status:", error);
+        } finally {
+            setLoadingQueueStatus(false);
+        }
+    }, [queueId, setQueueStatus, setLoadingQueueStatus]);
 
     const loadDashboardData = useCallback(async () => {
         setLoadingWaitingList(true);
@@ -48,68 +73,57 @@ export function StaffDashboard() {
             // In real app, these would be API calls
             // For now, using mock data
             setWaitingList(getMockWaitingList());
-
-            // Generate next number for demo
-            generateNextNumber();
+            
+            // Load queue status if queueId is set
+            if (queueId) {
+                await loadQueueStatus();
+            }
         } catch (error) {
             console.error("Error loading dashboard data:", error);
         } finally {
             setLoadingWaitingList(false);
         }
-    }, [setWaitingList, setLoadingWaitingList]);
+    }, [queueId, loadQueueStatus, setWaitingList, setLoadingWaitingList]);
 
-    // Generate next number for demo purposes
-    const generateNextNumber = () => {
-        // Use mock data to generate next number
-        const mockList = getMockWaitingList();
-        const currentNumbers = mockList.map(c => parseInt(c.queueNumber.replace('A', '')));
-        const maxNumber = Math.max(...currentNumbers, 0);
-        setNextNumber(`A${String(maxNumber + 1).padStart(3, '0')}`);
-    };
-
-    // Call next number
+    // Call next number - using real API
     const callNextNumber = async () => {
-        if (!nextNumber || waitingList.length === 0) {
-            alert('Không có số nào trong hàng đợi!');
+        if (!queueId) {
+            alert('Vui lòng cấu hình Queue ID trước!');
             return;
         }
 
-        setIsCallingNext(true);
+        setCallingNext(true);
 
         try {
-            // Find next citizen to serve - get fresh data
-            const currentList = getMockWaitingList();
-            const nextCitizen = currentList.find(c => c.status === 'waiting') || currentList[0];
-
-            if (nextCitizen) {
-                // Set as current serving
+            const response = await staffDashboardService.callNext(queueId);
+            
+            if (response.success && response.data) {
+                // Update current serving with API data
                 setCurrentServing({
-                    id: nextCitizen.id,
-                    number: nextCitizen.queueNumber,
-                    fullName: nextCitizen.fullName,
-                    serviceType: getServiceTypeName(nextCitizen.serviceId),
+                    id: response.data.ticketNumber || '',
+                    number: response.data.ticketNumber || '',
+                    fullName: response.data.citizenName || 'Chưa có thông tin',
+                    serviceType: response.data.serviceType || 'Dịch vụ',
                     status: 'serving'
                 });
 
-                // Update citizen status in list
-                const updatedList = currentList.map(c =>
-                    c.id === nextCitizen.id
-                        ? { ...c, status: 'processing' as const }
-                        : c
-                );
-                setWaitingList(updatedList);
-
-                // Generate new next number
-                generateNextNumber();
-
-                // In real app, this would call API to update queue status
-                alert(`Đã gọi số ${nextCitizen.queueNumber} - ${nextCitizen.fullName}`);
+                alert(`Đã gọi số ${response.data.ticketNumber}`);
+                
+                // Reload queue status and dashboard data
+                await loadQueueStatus();
+                await loadDashboardData();
+            } else {
+                throw new Error(response.message || 'Failed to call next');
             }
         } catch (error) {
             console.error('Error calling next number:', error);
-            alert('Có lỗi xảy ra khi gọi số tiếp theo');
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert('Có lỗi xảy ra khi gọi số tiếp theo');
+            }
         } finally {
-            setIsCallingNext(false);
+            setCallingNext(false);
         }
     };
 
@@ -146,6 +160,29 @@ export function StaffDashboard() {
     useEffect(() => {
         loadDashboardData();
     }, [loadDashboardData]);
+
+    // Auto-refresh queue status every 10 seconds
+    useEffect(() => {
+        if (!queueId) return;
+        
+        const interval = setInterval(() => {
+            loadQueueStatus();
+        }, 10000); // 10 seconds
+
+        return () => clearInterval(interval);
+    }, [queueId, loadQueueStatus]);
+
+    // Handle queue setup
+    const handleQueueSetup = () => {
+        if (!queueIdInput.trim()) {
+            alert('Vui lòng nhập Queue ID');
+            return;
+        }
+        setQueueId(queueIdInput.trim());
+        setShowQueueSetup(false);
+        // Reload dashboard with new queueId
+        loadDashboardData();
+    };
 
 
     // Handle search and filters
@@ -212,6 +249,14 @@ export function StaffDashboard() {
                         </div>
                         <div className="flex items-center gap-3">
                             {/* <NotificationPanel notifications={notifications} /> */}
+                            <Button 
+                                onClick={() => setShowCreateCaseModal(true)}
+                                className="bg-green-600 hover:bg-green-700"
+                                size="sm"
+                            >
+                                <Plus className="w-4 h-4 mr-2" />
+                                Tạo hồ sơ mới
+                            </Button>
                             <Button variant="outline" size="sm">
                                 <Filter className="w-4 h-4 mr-2" />
                                 Lọc nâng cao
@@ -219,8 +264,120 @@ export function StaffDashboard() {
                         </div>
                     </div>
 
+                    {/* Queue Configuration Banner */}
+                    {!queueId && (
+                        <Card className="p-4 bg-yellow-50 border-yellow-200">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <AlertCircle className="w-5 h-5 text-yellow-600" />
+                                    <div>
+                                        <p className="font-medium text-gray-900">Chưa cấu hình Queue</p>
+                                        <p className="text-sm text-gray-600">Vui lòng cấu hình Queue ID để bắt đầu quản lý hàng đợi</p>
+                                    </div>
+                                </div>
+                                <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => setShowQueueSetup(true)}
+                                    className="border-yellow-600 text-yellow-700 hover:bg-yellow-100"
+                                >
+                                    <Settings className="w-4 h-4 mr-2" />
+                                    Cấu hình ngay
+                                </Button>
+                            </div>
+                        </Card>
+                    )}
+
+                    {/* Queue Setup Modal/Panel */}
+                    {showQueueSetup && (
+                        <Card className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                            <div className="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900">
+                                        Cấu hình Queue ID
+                                    </h3>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                        Nhập Queue ID từ hệ thống để quản lý hàng đợi của quầy
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setShowQueueSetup(false)}
+                                    className="text-gray-400 hover:text-gray-600"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="flex gap-3">
+                                <Input
+                                    placeholder="VD: 760de1fc-028a-46bb-92ef-b9e42f7e11bb"
+                                    value={queueIdInput}
+                                    onChange={(e) => setQueueIdInput(e.target.value)}
+                                    className="flex-1"
+                                />
+                                <Button 
+                                    onClick={handleQueueSetup}
+                                    className="bg-blue-600 hover:bg-blue-700"
+                                >
+                                    <Settings className="w-4 h-4 mr-2" />
+                                    Lưu Queue ID
+                                </Button>
+                            </div>
+                            {queueId && (
+                                <div className="mt-3 p-3 bg-white rounded-lg border border-blue-200">
+                                    <p className="text-sm text-gray-600">
+                                        Queue hiện tại: <strong className="text-gray-900">{queueId}</strong>
+                                    </p>
+                                    {queueStatus && (
+                                        <p className="text-sm text-gray-600 mt-1">
+                                            Tên queue: <strong className="text-gray-900">{queueStatus.queueName}</strong>
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </Card>
+                    )}
+
                     {/* Current Serving & Call Next Number */}
                     <Card className="p-6 bg-gradient-to-r from-red-50 to-rose-50 border-red-200">
+                        {/* Queue Info Header */}
+                        {queueId && queueStatus && (
+                            <div className="flex items-center justify-between mb-4 pb-4 border-b border-red-200">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
+                                            {isLoadingQueueStatus ? (
+                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
+                                            ) : (
+                                                <Users className="w-5 h-5 text-red-600" />
+                                            )}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700">Hàng đợi</p>
+                                            <p className="font-semibold text-gray-900">{queueStatus.queueName}</p>
+                                        </div>
+                                    </div>
+                                    <div className="h-8 w-px bg-red-200"></div>
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="w-4 h-4 text-red-600" />
+                                        <span className="text-sm text-gray-700">
+                                            <strong className="text-red-600">{queueStatus.messageCount}</strong> ticket đang chờ
+                                        </span>
+                                    </div>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setShowQueueSetup(true)}
+                                    className="border-red-300 text-red-700 hover:bg-red-100"
+                                >
+                                    <Settings className="w-4 h-4 mr-2" />
+                                    Đổi Queue
+                                </Button>
+                            </div>
+                        )}
+
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-6">
                                 {/* Current Serving Display */}
@@ -261,21 +418,24 @@ export function StaffDashboard() {
                                     </div>
                                 </div>
 
-                                {/* Next Number Display */}
-                                <div className="flex items-center space-x-2">
-                                    <span className="text-sm font-medium text-gray-700">Số tiếp theo:</span>
-                                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-600">
-                                        {nextNumber || '--'}
+                                {/* Next Number Display - Hidden when no queue configured */}
+                                {queueId && queueStatus && (
+                                    <div className="flex items-center space-x-2">
+                                        <span className="text-sm font-medium text-gray-700">Số đang chờ:</span>
+                                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-600">
+                                            {queueStatus.messageCount}
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
 
                             {/* Action Buttons */}
                             <div className="flex items-center space-x-3">
                                 <Button
                                     onClick={callNextNumber}
-                                    disabled={isCallingNext || !nextNumber}
+                                    disabled={isCallingNext || !queueId || (queueStatus?.messageCount === 0)}
                                     className="bg-red-600 hover:bg-red-700"
+                                    title={!queueId ? 'Vui lòng cấu hình Queue ID trước' : (queueStatus?.messageCount === 0 ? 'Không có ticket trong hàng đợi' : '')}
                                 >
                                     {isCallingNext ? (
                                         <>
@@ -296,7 +456,7 @@ export function StaffDashboard() {
                                         variant="outline"
                                         className="border-red-600 text-red-600 hover:bg-red-50"
                                     >
-                                        <PhoneOff className="w-4 h-4 mr-2" />
+                                        <CheckCircle className="w-4 h-4 mr-2" />
                                         Hoàn thành
                                     </Button>
                                 )}
@@ -312,9 +472,9 @@ export function StaffDashboard() {
                                     <Users className="w-6 h-6 text-yellow-600" />
                                 </div>
                                 <div className="ml-4">
-                                    <p className="text-sm font-medium text-gray-600">Đang chờ</p>
+                                    <p className="text-sm font-medium text-gray-600">Đang chờ (Queue)</p>
                                     <p className="text-2xl font-bold text-gray-900">
-                                        {stats?.totalWaiting || 0}
+                                        {queueStatus?.messageCount ?? (stats?.totalWaiting || 0)}
                                     </p>
                                 </div>
                             </div>
@@ -479,21 +639,29 @@ export function StaffDashboard() {
                 </div>
 
             </div>
+
+            {/* Modals */}
+            {showCitizenDocumentsModal && selectedCitizenId && (
+                <CitizenDocumentsModal
+                    citizenId={selectedCitizenId}
+                    onClose={() => {
+                        setShowCitizenDocumentsModal(false);
+                        setSelectedCitizenId(null);
+                    }}
+                />
+            )}
+
+            {showCreateCaseModal && (
+                <CreateCaseModal
+                    onClose={() => setShowCreateCaseModal(false)}
+                    onSuccess={(caseId) => {
+                        console.log("Case created with ID:", caseId);
+                        // Reload dashboard data
+                        loadDashboardData();
+                    }}
+                    defaultCreatedBy={queueId || undefined}
+                />
+            )}
         </div>
     );
-
-    // Citizen Documents Modal
-    if (showCitizenDocumentsModal && selectedCitizenId) {
-        return (
-            <CitizenDocumentsModal
-                citizenId={selectedCitizenId!}
-                onClose={() => {
-                    setShowCitizenDocumentsModal(false);
-                    setSelectedCitizenId(null);
-                }}
-            />
-        );
-    }
-
-    return null;
 }
