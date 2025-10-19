@@ -1,292 +1,95 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { SearchFilters } from "@/shared/components/search/SearchFilters.com";
-import { SearchResults } from "@/shared/components/search/SearchResults.com";
-import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
-
-interface Procedure {
-    id: string;
-    name: string;
-    icon: string;
-    description: string;
-    category: string;
-    department: string;
-    processingTime: string;
-    fee: string;
-    status: "active" | "inactive";
-}
-
-const allProcedures: Procedure[] = [
-    {
-        id: "birth-certificate",
-        name: "Đăng ký khai sinh",
-        icon: "👶",
-        description: "Đăng ký khai sinh cho trẻ em mới sinh",
-        category: "Hành chính",
-        department: "UBND cấp xã/phường",
-        processingTime: "1-3 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "marriage-registration",
-        name: "Đăng ký kết hôn",
-        icon: "💒",
-        description: "Đăng ký kết hôn trực tuyến",
-        category: "Hành chính",
-        department: "UBND cấp xã/phường",
-        processingTime: "3-5 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "death-certificate",
-        name: "Đăng ký khai tử",
-        icon: "🕊️",
-        description: "Đăng ký khai tử cho người đã mất",
-        category: "Hành chính",
-        department: "UBND cấp xã/phường",
-        processingTime: "1-2 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "household-registration",
-        name: "Đăng ký hộ khẩu",
-        icon: "🏠",
-        description: "Quản lý hộ khẩu gia đình",
-        category: "Hành chính",
-        department: "UBND cấp xã/phường",
-        processingTime: "3-5 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "id-card",
-        name: "Cấp thẻ căn cước công dân",
-        icon: "🆔",
-        description: "Cấp thẻ căn cước công dân",
-        category: "Hành chính",
-        department: "Công an cấp huyện",
-        processingTime: "7-10 ngày làm việc",
-        fee: "30.000 VNĐ",
-        status: "active"
-    },
-    {
-        id: "passport",
-        name: "Cấp hộ chiếu",
-        icon: "📘",
-        description: "Cấp hộ chiếu phổ thông",
-        category: "Hành chính",
-        department: "Công an cấp tỉnh",
-        processingTime: "8-10 ngày làm việc",
-        fee: "200.000 VNĐ",
-        status: "active"
-    },
-    {
-        id: "business-license",
-        name: "Đăng ký kinh doanh",
-        icon: "💼",
-        description: "Đăng ký thành lập doanh nghiệp",
-        category: "Kinh tế",
-        department: "Sở Kế hoạch và Đầu tư",
-        processingTime: "3-5 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "tax-registration",
-        name: "Đăng ký thuế",
-        icon: "💰",
-        description: "Đăng ký mã số thuế",
-        category: "Thuế",
-        department: "Cục Thuế",
-        processingTime: "1-2 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "social-insurance",
-        name: "Bảo hiểm xã hội",
-        icon: "🛡️",
-        description: "Đăng ký bảo hiểm xã hội",
-        category: "Bảo hiểm",
-        department: "Bảo hiểm xã hội Việt Nam",
-        processingTime: "1-3 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "health-insurance",
-        name: "Bảo hiểm y tế",
-        icon: "🏥",
-        description: "Đăng ký bảo hiểm y tế",
-        category: "Bảo hiểm",
-        department: "Bảo hiểm xã hội Việt Nam",
-        processingTime: "1-2 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "unemployment-benefit",
-        name: "Trợ cấp thất nghiệp",
-        icon: "💼",
-        description: "Đăng ký hưởng trợ cấp thất nghiệp",
-        category: "An sinh xã hội",
-        department: "Trung tâm dịch vụ việc làm",
-        processingTime: "5-7 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "pension",
-        name: "Lương hưu",
-        icon: "👴",
-        description: "Đăng ký hưởng lương hưu",
-        category: "An sinh xã hội",
-        department: "Bảo hiểm xã hội Việt Nam",
-        processingTime: "10-15 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "disability-benefit",
-        name: "Trợ cấp người khuyết tật",
-        icon: "♿",
-        description: "Đăng ký trợ cấp người khuyết tật",
-        category: "An sinh xã hội",
-        department: "UBND cấp xã/phường",
-        processingTime: "7-10 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "child-benefit",
-        name: "Trợ cấp trẻ em",
-        icon: "👶",
-        description: "Đăng ký trợ cấp trẻ em",
-        category: "An sinh xã hội",
-        department: "UBND cấp xã/phường",
-        processingTime: "5-7 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "education-support",
-        name: "Hỗ trợ giáo dục",
-        icon: "📚",
-        description: "Đăng ký hỗ trợ học phí",
-        category: "Giáo dục",
-        department: "Sở Giáo dục và Đào tạo",
-        processingTime: "10-15 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    },
-    {
-        id: "housing-support",
-        name: "Hỗ trợ nhà ở",
-        icon: "🏘️",
-        description: "Đăng ký hỗ trợ nhà ở xã hội",
-        category: "Nhà ở",
-        department: "Sở Xây dựng",
-        processingTime: "15-20 ngày làm việc",
-        fee: "Miễn phí",
-        status: "active"
-    }
-];
+import { useServices, useServiceFilters } from "@/modules/client/services/hooks/useServices";
+import { ServiceFilters } from "@/modules/client/services/components/ui/filter/ServiceFilters.ui";
+import { ServicesListView } from "@/modules/client/services/components/view/list/ServicesListView.view";
+import { ServicePagination } from "@/modules/client/services/components/ui/pagination/ServicePagination.ui";
 
 export default function SearchPage() {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("");
-    const [selectedDepartment, setSelectedDepartment] = useState("");
-    const [sortBy, setSortBy] = useState("name");
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+    const { filters, updateFilter, resetFilters, setPage } = useServiceFilters();
+    const { data: servicesResponse } = useServices(filters);
 
-    const categories = Array.from(new Set(allProcedures.map(p => p.category)));
-    const departments = Array.from(new Set(allProcedures.map(p => p.department)));
-
-    const filteredProcedures = useMemo(() => {
-        const filtered = allProcedures.filter(procedure => {
-            const matchesSearch = procedure.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                procedure.description.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesCategory = !selectedCategory || procedure.category === selectedCategory;
-            const matchesDepartment = !selectedDepartment || procedure.department === selectedDepartment;
-
-            return matchesSearch && matchesCategory && matchesDepartment;
+    const handleFiltersChange = (newFilters: typeof filters) => {
+        Object.entries(newFilters).forEach(([key, value]) => {
+            updateFilter(key as keyof typeof filters, value);
         });
+    };
 
-        // Sort
-        filtered.sort((a, b) => {
-            let aValue: string | number = a[sortBy as keyof Procedure];
-            let bValue: string | number = b[sortBy as keyof Procedure];
+    const handleReset = () => {
+        resetFilters();
+    };
 
-            if (sortBy === "name" || sortBy === "category" || sortBy === "department") {
-                aValue = String(aValue).toLowerCase();
-                bValue = String(bValue).toLowerCase();
-            }
-
-            if (sortOrder === "asc") {
-                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-            } else {
-                return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-            }
-        });
-
-        return filtered;
-    }, [searchTerm, selectedCategory, selectedDepartment, sortBy, sortOrder]);
-
-    const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
-        { label: "Dịch vụ công" }
-    ];
+    const handlePageChange = (page: number) => {
+        setPage(page);
+    };
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <GovernmentHeader
-                showBreadcrumb={true}
-                breadcrumbItems={breadcrumbItems}
-                currentPage="search"
-            />
-
-            <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8">
+            <div className="max-w-7xl mx-auto">
+                {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                        Tra cứu dịch vụ công
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                        Tìm kiếm dịch vụ
                     </h1>
                     <p className="text-gray-600">
-                        Tìm kiếm và lọc các dịch vụ công trực tuyến quốc gia
+                        Tìm kiếm và lọc các dịch vụ hành chính phù hợp với nhu cầu của bạn
                     </p>
                 </div>
 
-                <div className="grid lg:grid-cols-4 gap-8">
-                    {/* Filters Sidebar */}
-                    <div className="lg:col-span-1">
-                        <SearchFilters
-                            searchTerm={searchTerm}
-                            setSearchTerm={setSearchTerm}
-                            selectedCategory={selectedCategory}
-                            setSelectedCategory={setSelectedCategory}
-                            selectedDepartment={selectedDepartment}
-                            setSelectedDepartment={setSelectedDepartment}
-                            sortBy={sortBy}
-                            setSortBy={setSortBy}
-                            sortOrder={sortOrder}
-                            setSortOrder={setSortOrder}
-                            categories={categories}
-                            departments={departments}
-                        />
-                    </div>
-
-                    {/* Results */}
-                    <div className="lg:col-span-3">
-                        <SearchResults
-                            procedures={filteredProcedures}
-                            totalCount={allProcedures.length}
-                            filteredCount={filteredProcedures.length}
-                        />
-                    </div>
+                {/* Filters */}
+                <div className="mb-8">
+                    <ServiceFilters
+                        filters={filters}
+                        onFiltersChange={handleFiltersChange}
+                        onReset={handleReset}
+                    />
                 </div>
+
+                {/* Results Header */}
+                {servicesResponse && (
+                    <div className="mb-6">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <p className="text-sm text-gray-600">
+                                    Tìm thấy <span className="font-medium text-gray-900">
+                                        {servicesResponse.data.total}
+                                    </span> dịch vụ
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    Trang {servicesResponse.data.page} / {servicesResponse.data.totalPages}
+                                </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <label className="text-sm text-gray-600">Hiển thị:</label>
+                                <select
+                                    value={filters.size}
+                                    onChange={(e) => updateFilter("size", parseInt(e.target.value) as unknown as string | boolean | null)}
+                                    className="border border-gray-300 rounded px-2 py-1 text-sm"
+                                >
+                                    <option value={10}>10</option>
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Services List */}
+                <ServicesListView
+                    initialFilters={filters}
+                />
+
+                {/* Pagination */}
+                {servicesResponse && servicesResponse.data.totalPages > 1 && (
+                    <div className="mt-8">
+                        <ServicePagination
+                            pagination={servicesResponse.data}
+                            onPageChange={handlePageChange}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );

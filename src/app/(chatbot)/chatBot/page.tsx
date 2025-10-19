@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 // THÊM IMPORT: Thư viện để hiển thị Markdown
 import ReactMarkdown from "react-markdown";
 
@@ -34,27 +35,27 @@ const StopIcon = () => (
 const ChatMessageBubble = ({ message }: { message: ChatMessage }) => {
   const isUser = message.role === "user";
   return (
-    <div className={`mb-6 flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
+    <div className={`mb-4 md:mb-6 flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
       {!isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shadow-sm">
           <AssistantIcon />
         </div>
       )}
       {/* SỬA ĐỔI CHÍNH: Hiển thị Markdown */}
       <div
-        className={`prose dark:prose-invert max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-relaxed shadow-sm
+        className={`prose max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-relaxed shadow-sm border
           ${isUser
-            ? "bg-sky-600 text-white rounded-br-none prose-strong:text-white prose-p:text-white"
-            : "bg-white dark:bg-slate-800 dark:text-slate-100 rounded-bl-none"}`}
+            ? "bg-red-600 text-white border-red-600 rounded-br-none prose-strong:text-white prose-p:text-white"
+            : "bg-white/95 text-slate-900 rounded-bl-none border-red-100"}`}
       >
         {message.content ? (
           <ReactMarkdown>{message.content}</ReactMarkdown>
         ) : (
-          <span className="w-1 h-4 bg-slate-400 inline-block animate-pulse rounded-sm" />
+          <span className="w-1 h-4 bg-red-300 inline-block animate-pulse rounded-sm" />
         )}
       </div>
       {isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-600 text-white flex items-center justify-center">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center shadow-sm">
           <UserIcon />
         </div>
       )}
@@ -142,38 +143,62 @@ export default function ChatbotPage() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col bg-slate-50 dark:bg-slate-900">
-      <header className="p-4 border-b dark:border-slate-700 shadow-sm text-center">
-        <h1 className="text-xl font-semibold">PASCS Chatbot</h1>
-      </header>
-      <div ref={viewportRef} className="flex-1 w-full max-w-4xl mx-auto p-4 md:p-6 overflow-y-auto">
-        {messages.map((m, i) => (
-          <ChatMessageBubble key={i} message={m} />
-        ))}
-      </div>
-      <div className="w-full max-w-4xl mx-auto p-4 md:p-6 border-t dark:border-slate-700">
-        <form onSubmit={sendMessage} className="flex items-center gap-3">
-          <input
-            className="flex-1 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-3 text-base outline-none focus:ring-2 focus:ring-sky-500 transition"
-            placeholder="Hỏi chatbot bất cứ điều gì..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={loading}
-          />
-          {loading ? (
-            <button type="button" onClick={stop} className="flex-shrink-0 w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white flex items-center justify-center hover:bg-slate-300 dark:hover:bg-slate-600 transition">
-              <StopIcon />
-            </button>
-          ) : (
-            <button type="submit" disabled={!input.trim()} className="flex-shrink-0 w-12 h-12 rounded-full bg-sky-600 text-white flex items-center justify-center disabled:opacity-40 hover:bg-sky-700 transition">
-              <SendIcon />
-            </button>
-          )}
-        </form>
-        <div className="mt-2 text-center text-xs text-slate-500">
-          Gợi ý: “Viết một đoạn văn về tương lai của AI”, “Tạo công thức nấu ăn…”
-        </div>
-      </div>
-    </div>
+	<div className="relative h-screen w-full flex flex-col bg-gradient-to-b from-yellow-50 via-yellow-100 to-yellow-50">
+		{/* Nền hoa sen trang trí */}
+		<div className="pointer-events-none select-none absolute inset-0 z-0">
+			{/* Ảnh nền trống đồng */}
+			<div className="absolute inset-0 opacity-60">
+				<Image
+					src="/assets/image/background/trong-dong.jpg"
+					alt="Hình nền trống đồng"
+					fill
+					className="object-cover object-center md:object-center"
+					priority
+				/>
+			</div>
+			{/* Lớp phủ vàng nhạt để đồng bộ tông màu và tăng độ đọc */}
+			<div className="absolute inset-0 bg-yellow-50/70" />
+		</div>
+
+		<header className="sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-white/60 bg-white/70 border-b border-red-200">
+			<div className="mx-auto w-full max-w-4xl px-4 py-3 flex items-center justify-between">
+				<h1 className="text-lg md:text-xl font-semibold text-red-700">PASCS Chatbot</h1>
+				<span className="hidden md:inline-flex items-center gap-2 text-xs text-red-700/90 bg-red-50 border border-red-200 px-2.5 py-1 rounded-full">
+					<span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+					Trợ lý AI
+				</span>
+			</div>
+		</header>
+
+		<div ref={viewportRef} className="relative z-10 flex-1 w-full max-w-4xl mx-auto px-4 md:px-6 py-4 md:py-6 overflow-y-auto">
+			{messages.map((m, i) => (
+				<ChatMessageBubble key={i} message={m} />
+			))}
+		</div>
+
+		<div className="relative z-10 w-full max-w-4xl mx-auto px-4 md:px-6 pb-5">
+			<form onSubmit={sendMessage} className="flex items-center gap-2 md:gap-3">
+				<input
+					className="flex-1 rounded-2xl border border-red-300 bg-white/95 px-5 py-3 text-base outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 placeholder:text-slate-400 shadow-sm"
+					placeholder="Hỏi chatbot bất cứ điều gì..."
+					value={input}
+					onChange={(e) => setInput(e.target.value)}
+					disabled={loading}
+				/>
+				{loading ? (
+					<button type="button" onClick={stop} className="flex-shrink-0 w-12 h-12 rounded-xl bg-yellow-500 text-white flex items-center justify-center hover:bg-yellow-600 transition shadow-sm">
+						<StopIcon />
+					</button>
+				) : (
+					<button type="submit" disabled={!input.trim()} className="flex-shrink-0 w-12 h-12 rounded-xl bg-red-600 text-white flex items-center justify-center disabled:opacity-40 hover:bg-red-700 transition shadow-sm">
+						<SendIcon />
+					</button>
+				)}
+			</form>
+			<div className="mt-2 text-center text-xs text-red-800/70">
+				Gợi ý: “Các giấy tờ cần thiết để làm thủ tục công chứng”, “Thủ tục đăng ký giấy kết hôn”
+			</div>
+		</div>
+	</div>
   );
 }

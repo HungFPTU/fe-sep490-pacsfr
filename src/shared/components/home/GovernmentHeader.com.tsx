@@ -82,7 +82,7 @@ export function GovernmentHeader({
       {/* Navigation Bar */}
       <nav className="bg-red-600 text-white">
         <div className="container mx-auto px-4">
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center justify-center space-x-8">
             {/* Icon HOME riêng biệt */}
             <Link
               href="/"
@@ -107,7 +107,7 @@ export function GovernmentHeader({
               Giới thiệu
             </Link>
             <Link
-              href="/procedures"
+              href="/thu-tuc-hanh-chinh"
               className={`py-4 px-2 transition-colors font-medium ${currentPage === "procedures"
                 ? "bg-red-700"
                 : "hover:bg-red-700"

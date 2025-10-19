@@ -5,6 +5,18 @@ import { TokenStorage } from "@core/utils/storage";
 import type { User } from "../types";
 import { UserRole } from "../enums";
 
+// SSR-safe storage
+// const createSSRSafeStorage = () => {
+//     if (typeof window === 'undefined') {
+//         return {
+//             getItem: (key: string) => null,
+//             setItem: (key: string, value: string) => { },
+//             removeItem: (key: string) => { },
+//         };
+//     }
+//     return localStorage;
+// };
+
 interface AuthState {
     // State
     user: User | null;
@@ -82,16 +94,19 @@ export const useAuthStore = create<AuthState>()(
                     isAuthenticated: state.isAuthenticated,
                 }),
                 onRehydrateStorage: () => (state) => {
-                    // Configure HTTP client to get token from storage
-                    if (state?.token) {
-                        http.configureAuth({
-                            getToken: () => TokenStorage.getAuthToken(),
-                        });
+                    // Only run on client side
+                    if (typeof window !== 'undefined') {
+                        // Configure HTTP client to get token from storage
+                        if (state?.token) {
+                            http.configureAuth({
+                                getToken: () => TokenStorage.getAuthToken(),
+                            });
 
-                        // Restore token from localStorage
-                        const localToken = TokenStorage.getAuthToken();
-                        if (localToken && localToken === state.token) {
-                            console.log('[Auth Store] Token restored from localStorage');
+                            // Restore token from localStorage
+                            const localToken = TokenStorage.getAuthToken();
+                            if (localToken && localToken === state.token) {
+                                console.log('[Auth Store] Token restored from localStorage');
+                            }
                         }
                     }
                 },

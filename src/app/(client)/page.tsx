@@ -4,7 +4,6 @@ import { NewProceduresCarousel } from "@/shared/components/home/NewProceduresCar
 import { AdministrativeProcedures } from "@/shared/components/home/AdministrativeProcedures.com";
 import { OnlineServices } from "@/shared/components/home/OnlineServices.com";
 import { StatisticsSection } from "@/shared/components/home/StatisticsSection.com";
-import { GovernmentFooter } from "@/shared/components/home/GovernmentFooter.com";
 
 export default function Home() {
   return (
@@ -15,7 +14,6 @@ export default function Home() {
       <AdministrativeProcedures />
       <OnlineServices />
       <StatisticsSection />
-      <GovernmentFooter />
     </div>
   );
 }
