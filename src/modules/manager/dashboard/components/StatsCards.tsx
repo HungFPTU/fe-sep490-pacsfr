@@ -8,7 +8,7 @@ import {
   TrendingUp,
   AlertTriangle,
   CheckCircle,
-  Activity
+  
 } from "lucide-react"
 
 interface StatCardProps {

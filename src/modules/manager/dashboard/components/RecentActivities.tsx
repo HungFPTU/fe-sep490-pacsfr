@@ -7,7 +7,6 @@ import {
   Activity, 
   User, 
   Clock, 
-  CheckCircle, 
   AlertTriangle,
   FileText,
   Settings,
