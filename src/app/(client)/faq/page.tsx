@@ -1,3 +1,4 @@
+
 "use client";
 
 import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
@@ -176,7 +177,7 @@ export default function FAQPage() {
                                                 </h3>
                                                 {expandedQuestion === faq.id && (
                                                     <div className="mt-4 text-gray-600 leading-relaxed">
-                                                        {faq.answer.split('\n')?.map((line, index) => (
+                                                        {faq.answer.split('\n').map((line, index) => (
                                                             <div key={index} className="mb-2">
                                                                 {line.startsWith('•') ? (
                                                                     <div className="flex items-start">
