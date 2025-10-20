@@ -10,7 +10,7 @@ export default function Page() {
 
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={roles ?? []} />
+      {/*<DataTable columns={columns} data={roles ?? []} />*/}
     </div>
   )
 }

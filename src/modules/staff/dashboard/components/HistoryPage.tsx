@@ -10,7 +10,7 @@ import { getMockHistory, SERVICE_TYPES } from "../consts";
 import type { CitizenProfile } from "../types";
 import { Search, Filter, Calendar, Download, Eye } from "lucide-react";
 
-export function HistoryPage() {
+export default function HistoryPage() {
     const [history, setHistory] = useState<CitizenProfile[]>([]);
     const [filteredHistory, setFilteredHistory] = useState<CitizenProfile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -109,7 +109,7 @@ export function HistoryPage() {
 
         const csvContent = [
             Object.keys(csvData[0]).join(','),
-            ...csvData.map(row => Object.values(row).map(value =>
+            ...csvData.map(row => Object.values(row)?.map(value =>
                 `"${String(value).replace(/"/g, '""')}"`
             ).join(','))
         ].join('\n');

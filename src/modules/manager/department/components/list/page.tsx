@@ -1,20 +1,15 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { columns } from './columns';
 import { DataTable } from '@/shared/components/manager/table/BaseTable';
-import { Services } from '../../types';
-import { serviceAPI } from '../../services/services.service';
-import CreateModal from '../modal/create';
-import { getValuesPage } from '@/types/rest';
-import ViewModal from '../modal/view';
+import { Account } from '@/modules/manager/account';
+import { accountApiService } from '@/modules/manager/account/services/account.service';
 
 export default function Page() {
-  const [initData, setInitData] = useState<Services | null>(null);
-  const [openViewModal, setOpenViewModal] = useState(false);
+  const [initData, setInitData] = useState<Account | null>(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [services, setServices] = useState<Services[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,16 +17,12 @@ export default function Page() {
     setLoading(true);
     setError(null);
     try {
-      const res = await serviceAPI.getAllService('', '', '', true, 1, 100);
-      if (res?.success) {
-         setServices(getValuesPage<Services>(res)?.items ?? []);
-      } else {
-        setServices([]);
-      }
+      const data = await accountApiService.getDataAccounts();
+      //setAccounts(data ?? []);
     } catch (err) {
       console.error(err);
-      setError('Không tải được dữ liệu');
-      setServices([]);
+      setError('Không tải được danh sách tài khoản');
+      setAccounts([]);
     } finally {
       setLoading(false);
     }
@@ -41,41 +32,35 @@ export default function Page() {
     fetch();
   }, []);
 
-  const handleClose = () => {
-    setOpenViewModal(false);
-    setOpenCreateModal(false);
-    setInitData(null);
-  }
+  //const handleClose = () => {
+  //  setOpenCreateModal(false);
+  //  setInitData(null);
+  //}
 
-  const handleView = (service: Services) => {
-    setOpenViewModal(true);
-    setInitData(service);
-  }
-
-  const handleEdit = (service: Services) => {
+  const handleEdit = (account: Account) => {
     setOpenCreateModal(true);
-    setInitData(service);
+    setInitData(account);
   }
 
-  const handleDelete = async (service: Services) => {
-    if (!confirm(`Bạn có chắc muốn xóa dịch vụ "${service.serviceName}" không?`)) {
+  const handleDelete = async (account: Account) => {
+    if (!confirm(`Bạn có chắc muốn xóa tài khoản "${account.fullName}" không?`)) {
       return;
     }
 
     try {
-      await serviceAPI.deleteService(service.id);
-      setServices((prev) => prev.filter((srv) => srv.id !== service.id));
+      await accountApiService.deleteAccount(account.id);
+      setAccounts((prev) => prev.filter((acc) => acc.id !== account.id));
       fetch();
     } catch (err) {
       console.error(err);
-      setError('Xóa dịch vụ thất bại');
+      setError('Xóa tài khoản thất bại');
     }
   }
 
   return (
     <div className="container mx-auto py-10">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Quản lý dịch vụ</h1>
+        <h1 className="text-2xl font-bold">Quản lý tài khoản</h1>
         <div className="flex gap-2">
           <button
             className="rounded bg-slate-200 px-3 py-1 text-slate-700 hover:bg-slate-300"
@@ -104,27 +89,10 @@ export default function Page() {
 
       <DataTable
         columns={columns}
-        data={services}
-        onView={(record) => handleView(record)}
+        data={accounts}
         onEdit={(record) => handleEdit(record)}
         onDelete={(record) => handleDelete(record)}
       />
-
-      {openViewModal && (
-        <ViewModal
-          onClose={handleClose}
-          initData={initData}
-        />
-      )}
-
-      {openCreateModal && (
-        <CreateModal
-          onClose={handleClose}
-          fetch={fetch}
-          initData={initData}
-        />
-      )}
-      
     </div>
   );
 }

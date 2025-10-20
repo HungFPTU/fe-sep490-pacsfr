@@ -12,10 +12,13 @@ import {
 } from "../consts";
 import type { CitizenProfile, WaitingListFilters } from "../types";
 // import { NotificationPanel } from "./NotificationPanel";
-import { CitizenDocumentsModal } from "./CitizenDocumentsModal";
+//import { CitizenDocumentsModal } from "./CitizenDocumentsModal";
 import { Search, Filter, Users, Clock, CheckCircle, AlertCircle, Phone, PhoneOff, UserCheck } from "lucide-react";
 
-export function StaffDashboard() {
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export default function StaffDashboard() {
     const {
         waitingList,
         stats,
@@ -482,18 +485,4 @@ export function StaffDashboard() {
         </div>
     );
 
-    // Citizen Documents Modal
-    if (showCitizenDocumentsModal && selectedCitizenId) {
-        return (
-            <CitizenDocumentsModal
-                citizenId={selectedCitizenId!}
-                onClose={() => {
-                    setShowCitizenDocumentsModal(false);
-                    setSelectedCitizenId(null);
-                }}
-            />
-        );
-    }
-
-    return null;
 }

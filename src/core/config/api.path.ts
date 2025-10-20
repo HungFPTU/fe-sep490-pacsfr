@@ -19,19 +19,38 @@ export const API_PATH = {
     },
     MANAGER: {
         SERVICES: {
-            ALL: "/manager/services",
-            BY_ID: (id: string) => `/manager/services/${id}`,
-        },
+            GET_ALL: (Keyword: string, ServiceGroupId: string, legalBasisId: string, isActive: boolean, Page: number, Size: number) => `/Service?keyword=${Keyword}&serviceGroupId=${ServiceGroupId}&legalBasisId=${legalBasisId}&isActive=${isActive}&Page=${Page}&Size=${Size}`,
+            GET_BY_ID: (id: string) => `/Service/${id}`,
+            POST: "/Service",
+            PUT: (id: string) => `/Service/${id}`,
+            DELETE: (id: string) => `/Service/${id}`,
+            GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
+       },
         ACCOUNTS: {
-            ALL: "/manager/accounts",
-            PERMISSIONS: "/manager/accounts/permissions",
-            BY_ID: (id: string) => `/manager/accounts/${id}`,
+            GET_ALL: "/Staff",
+            GET_BY_ID: (id: string) => `/Staff/${id}`,
+            POST: "/Staff",
+            ASSIGN: (staffId: string) => `/Staff/${staffId}/assign-department`,
+            PUT: (id: string) => `/Staff/${id}`,
+            DELETE: (id: string) => `/Staff/${id}`,
+            PERMISSIONS: "/Staff/permissions",
+            BY_ID: (id: string) => `/Staff/${id}`,
         },
         QUEUES: {
-            ALL: "/manager/queues",
-            STATUS: "/manager/queues/status",
-            STATISTICS: "/manager/queues/statistics",
+            ALL: "/queues",
+            STATUS: "/queues/status",
+            STATISTICS: "/queues/statistics",
         },
+        DEPARTMENTS: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/Department?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+        },
+        ORGUNITS: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/OrgUnit/get-all?isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+        },
+        LEGALBASIS: {
+            GET_ALL: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/LegalBasis?keyword=${Keyword}&isActive=${isActive}&Page=${Page}&Size=${Size}`,
+            GET_BY_ID: (id: string) => `/LegalBasis/${id}`,
+        }
     },
     STAFF: {
         DASHBOARD: {

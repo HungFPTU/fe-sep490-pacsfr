@@ -1,7 +1,7 @@
 "use client"
 
+import { Account } from "@/modules/manager/account"
 import { ColumnDef } from "@tanstack/react-table"
-import { Account } from "../../types"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -9,22 +9,26 @@ import { Account } from "../../types"
 export const columns: ColumnDef<Account>[] = [
   {
     accessorKey: "name",
-    header: "Tên quyền hạn",
+    header: "Tên người dùng",
   },
   {
     accessorKey: "code",
-    header: "Mã quyền hạn",
+    header: "Mã người dùng",
   },
   {
     accessorKey: "status",
     header: "Trạng thái",
   },
   {
+    accessorKey: "roles",
+    header: "Vai trò",
+  },
+  {
     accessorKey: "description",
     header: "Mô tả",
   },
   {
-    accessorKey: "createTime",
+    accessorKey: "createdAt",
     header: "Thời gian tạo",
   }
 ]

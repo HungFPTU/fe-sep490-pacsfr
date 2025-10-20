@@ -1,7 +1,10 @@
 "use client";
 
+import StaffDashboard from "@/modules/staff/dashboard/components/StaffDashboard";
 import React from "react";
-import { StaffDashboard } from "@modules/staff/dashboard";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default function StaffDashboardPage() {
     return <StaffDashboard />;
