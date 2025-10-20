@@ -1,7 +1,14 @@
+import { GovernmentFooter } from "@/shared/components/home/GovernmentFooter.com";
+
 export default function AppLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    return <>{children}</>;
+    return (
+        <div className="min-h-screen bg-white">
+            {children}
+            <GovernmentFooter />
+        </div>
+    );
 }
