@@ -4,6 +4,7 @@ export { DocumentList } from './components/DocumentList';
 export { DocumentUpload } from './components/DocumentUpload';
 export { FeedbackForm } from './components/FeedbackForm';
 export { NotificationPanel } from './components/NotificationPanel';
+export { HistoryPage } from './components/HistoryPage';
 
 export { staffDashboardApi } from './api/staff-dashboard.api';
 export { staffDashboardService } from './services/staff-dashboard.service';

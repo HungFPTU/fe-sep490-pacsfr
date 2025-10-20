@@ -17,7 +17,7 @@ export default function Page() {
     setLoading(true);
     setError(null);
     try {
-      const data = await accountApiService.getDataAccounts();
+      await accountApiService.getDataAccounts();
       //setAccounts(data ?? []);
     } catch (err) {
       console.error(err);

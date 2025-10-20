@@ -10,7 +10,7 @@ import { getMockHistory, SERVICE_TYPES } from "../consts";
 import type { CitizenProfile } from "../types";
 import { Search, Filter, Calendar, Download, Eye } from "lucide-react";
 
-export default function HistoryPage() {
+export function HistoryPage() {
     const [history, setHistory] = useState<CitizenProfile[]>([]);
     const [filteredHistory, setFilteredHistory] = useState<CitizenProfile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
