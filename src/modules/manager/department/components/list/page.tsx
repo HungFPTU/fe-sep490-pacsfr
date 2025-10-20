@@ -30,7 +30,7 @@ export default function Page() {
 
   useEffect(() => {
     fetch();
-  }, []);
+  },);
 
   //const handleClose = () => {
   //  setOpenCreateModal(false);

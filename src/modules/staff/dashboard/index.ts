@@ -8,7 +8,7 @@ export { NotificationPanel } from './components/NotificationPanel';
 export { staffDashboardApi } from './api/staff-dashboard.api';
 export { staffDashboardService } from './services/staff-dashboard.service';
 export { useStaffDashboardStore } from './stores/useStaffDashboardStore';
-
+export { StaffDashboard } from './components/StaffDashboard';
 export type {
     CitizenProfile,
     Document,

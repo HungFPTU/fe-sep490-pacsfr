@@ -18,7 +18,7 @@ import { Search, Filter, Users, Clock, CheckCircle, AlertCircle, Phone, PhoneOff
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default function StaffDashboard() {
+export function StaffDashboard() {
     const {
         waitingList,
         stats,
@@ -236,8 +236,8 @@ export default function StaffDashboard() {
                                         {currentServing ? (
                                             <div className="flex items-center space-x-3">
                                                 <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${currentServing.status === 'completed'
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-red-100 text-red-800'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-red-100 text-red-800'
                                                     }`}>
                                                     {currentServing.number}
                                                 </div>
