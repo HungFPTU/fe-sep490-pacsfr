@@ -1,12 +1,10 @@
-export { StaffDashboard } from './components/StaffDashboard';
-export { CitizenProfileModal } from './components/CitizenProfileModal';
-export { CitizenDocumentsModal } from './components/CitizenDocumentsModal';
-export { CreateCaseModal } from './components/CreateCaseModal';
-export { DocumentList } from './components/DocumentList';
-export { DocumentUpload } from './components/DocumentUpload';
-export { FeedbackForm } from './components/FeedbackForm';
-export { NotificationPanel } from './components/NotificationPanel';
-export { HistoryPage } from './components/HistoryPage';
+// View Components
+export { StaffDashboardView, CreateCasePageView } from './components/view';
+
+// UI Components
+export * from './components/ui';
+
+// Other Components (Legacy/Utility)
 
 export { staffDashboardApi } from './api/staff-dashboard.api';
 export { staffDashboardService } from './services/staff-dashboard.service';
@@ -31,6 +29,14 @@ export type {
     ServiceDocument,
     ServiceListResponse,
     ServiceFilters,
+    ServiceGroup,
+    ServiceGroupListResponse,
+    ServiceGroupFilters,
+    Guest,
+    CreateGuestRequest,
+    CreateGuestResponse,
+    GetGuestsResponse,
+    GuestSearchFilters,
     PaginatedData
 } from './types';
 

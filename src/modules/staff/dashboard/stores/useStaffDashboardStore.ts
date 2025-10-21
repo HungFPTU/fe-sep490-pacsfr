@@ -18,7 +18,7 @@ interface StaffDashboardState {
     stats: DashboardStats | null;
     
     // Queue management
-    queueId: string | null;
+    serviceGroupId: string | null;
     queueStatus: QueueStatus | null;
     isLoadingQueueStatus: boolean;
     isCallingNext: boolean;
@@ -47,7 +47,7 @@ interface StaffDashboardState {
     setStats: (stats: DashboardStats) => void;
     
     // Queue management actions
-    setQueueId: (queueId: string | null) => void;
+    setServiceGroupId: (serviceGroupId: string | null) => void;
     setQueueStatus: (status: QueueStatus | null) => void;
     setLoadingQueueStatus: (loading: boolean) => void;
     setCallingNext: (calling: boolean) => void;
@@ -85,7 +85,7 @@ export const useStaffDashboardStore = create<StaffDashboardState>()(
                 stats: null,
                 
                 // Queue management
-                queueId: null,
+                serviceGroupId: null,
                 queueStatus: null,
                 isLoadingQueueStatus: false,
                 isCallingNext: false,
@@ -111,7 +111,7 @@ export const useStaffDashboardStore = create<StaffDashboardState>()(
                 setStats: (stats) => set({ stats }),
                 
                 // Queue management actions
-                setQueueId: (queueId) => set({ queueId }),
+                setServiceGroupId: (serviceGroupId) => set({ serviceGroupId }),
                 setQueueStatus: (status) => set({ queueStatus: status }),
                 setLoadingQueueStatus: (loading) => set({ isLoadingQueueStatus: loading }),
                 setCallingNext: (calling) => set({ isCallingNext: calling }),
@@ -165,7 +165,7 @@ export const useStaffDashboardStore = create<StaffDashboardState>()(
                         history: [],
                         notifications: [],
                         stats: null,
-                        queueId: null,
+                        serviceGroupId: null,
                         queueStatus: null,
                         isLoadingQueueStatus: false,
                         isCallingNext: false,
@@ -184,7 +184,7 @@ export const useStaffDashboardStore = create<StaffDashboardState>()(
             {
                 name: 'staff-dashboard-storage',
                 partialize: (state) => ({
-                    queueId: state.queueId,
+                    serviceGroupId: state.serviceGroupId,
                 }),
             }
         ),

@@ -197,3 +197,104 @@ export type ServiceFilters = {
     page?: number;
     size?: number;
 };
+
+// Service Group Types
+export type ServiceGroup = {
+    $id?: string;
+    id: string;
+    groupCode: string;
+    departmentId: string;
+    groupName: string;
+    serviceType: string;
+    description: string;
+    isActive: boolean;
+    createdAt: string;
+};
+
+export type ServiceGroupListResponse = {
+    $id?: string;
+    success: boolean;
+    message?: string;
+    data: PaginatedData<ServiceGroup>;
+    timestamp: string;
+};
+
+export type ServiceGroupFilters = {
+    keyword?: string;
+    departmentId?: string;
+    isActive?: boolean;
+    page?: number;
+    size?: number;
+};
+
+// Guest Types
+export type Guest = {
+    $id?: string;
+    id: string;
+    guestCode: string;
+    fullName: string;
+    idNumber: string;
+    idType: string;
+    idIssueDate: string;
+    idIssuePlace: string;
+    phone: string;
+    email: string;
+    birthDate: string;
+    gender: string;
+    occupation: string;
+    organization: string;
+    guestType: string;
+    notes?: string;
+    isActive: boolean;
+    address: string;
+    ward: string;
+    city: string;
+    country: string;
+};
+
+export type CreateGuestRequest = {
+    guestCode: string;
+    fullName: string;
+    idNumber: string;
+    idType: string;
+    idIssueDate: string; // yyyy-mm-dd
+    idIssuePlace: string;
+    phone: string;
+    email: string;
+    birthDate: string; // yyyy-mm-dd
+    gender: string;
+    occupation: string;
+    organization: string;
+    guestType: string;
+    notes: string;
+    address: string;
+    ward: string;
+    city: string;
+    country: string;
+};
+
+export type CreateGuestResponse = {
+    $id?: string;
+    success: boolean;
+    message: string;
+    data: string; // guestId
+    timestamp: string;
+};
+
+export type GetGuestsResponse = {
+    $id?: string;
+    success: boolean;
+    message: string;
+    data: {
+        $id?: string;
+        $values: Guest[];
+    };
+    timestamp: string;
+};
+
+export type GuestSearchFilters = {
+    keyword?: string;
+    isActive?: boolean;
+    page?: number;
+    size?: number;
+};

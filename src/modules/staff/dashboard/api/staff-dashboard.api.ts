@@ -14,7 +14,13 @@ import type {
     CreateCaseRequest,
     CreateCaseApiResponse,
     ServiceListResponse,
-    ServiceFilters
+    ServiceFilters,
+    ServiceGroupListResponse,
+    ServiceGroupFilters,
+    CreateGuestRequest,
+    CreateGuestResponse,
+    GetGuestsResponse,
+    GuestSearchFilters
 } from "../types";
 
 export const staffDashboardApi = {
@@ -111,15 +117,15 @@ export const staffDashboardApi = {
         return response.data;
     },
 
-    // Get queue status by queueId
-    async getQueueStatus(queueId: string): Promise<QueueStatusResponse> {
-        const response = await http.get<QueueStatusResponse>(API_PATH.STAFF.DASHBOARD.QUEUE_STATUS(queueId));
+    // Get queue status by serviceGroupId
+    async getQueueStatus(serviceGroupId: string): Promise<QueueStatusResponse> {
+        const response = await http.get<QueueStatusResponse>(API_PATH.STAFF.DASHBOARD.QUEUE_STATUS(serviceGroupId));
         return response.data;
     },
 
     // Call next ticket in queue
-    async callNext(queueId: string): Promise<CallNextResponse> {
-        const response = await http.post<CallNextResponse>(API_PATH.STAFF.DASHBOARD.CALL_NEXT(queueId), {});
+    async callNext(serviceGroupId: string): Promise<CallNextResponse> {
+        const response = await http.post<CallNextResponse>(API_PATH.STAFF.DASHBOARD.CALL_NEXT(serviceGroupId), {});
         return response.data;
     },
 
@@ -144,6 +150,47 @@ export const staffDashboardApi = {
         const url = `${API_PATH.STAFF.DASHBOARD.GET_SERVICES}${query ? '?' + query : ''}`;
 
         const response = await http.get<ServiceListResponse>(url);
+        return response.data;
+    },
+
+    // Get service groups with pagination and filters
+    async getServiceGroups(filters?: ServiceGroupFilters): Promise<ServiceGroupListResponse> {
+        const params = new URLSearchParams();
+        
+        if (filters?.keyword) params.append('Keyword', filters.keyword);
+        if (filters?.departmentId) params.append('DepartmentId', filters.departmentId);
+        if (filters?.isActive !== undefined) params.append('IsActive', filters.isActive.toString());
+        if (filters?.page) params.append('Page', filters.page.toString());
+        if (filters?.size) params.append('Size', filters.size.toString());
+
+        const query = params.toString();
+        const url = `${API_PATH.STAFF.DASHBOARD.GET_SERVICE_GROUPS}${query ? '?' + query : ''}`;
+
+        const response = await http.get<ServiceGroupListResponse>(url);
+        return response.data;
+    },
+
+    // Create Guest
+    async createGuest(data: CreateGuestRequest): Promise<CreateGuestResponse> {
+        const response = await http.post<CreateGuestResponse>(
+            API_PATH.STAFF.DASHBOARD.CREATE_GUEST,
+            data
+        );
+        return response.data;
+    },
+
+    // Get Guests (Search)
+    async getGuests(filters?: GuestSearchFilters): Promise<GetGuestsResponse> {
+        const params = new URLSearchParams();
+        if (filters?.keyword) params.append('keyword', filters.keyword);
+        if (filters?.isActive !== undefined) params.append('isActive', filters.isActive.toString());
+        if (filters?.page) params.append('page', filters.page.toString());
+        if (filters?.size) params.append('size', filters.size.toString());
+
+        const query = params.toString();
+        const url = `${API_PATH.STAFF.DASHBOARD.GET_GUESTS}${query ? '?' + query : ''}`;
+
+        const response = await http.get<GetGuestsResponse>(url);
         return response.data;
     },
 };

@@ -314,4 +314,20 @@ export const staffDashboardService = {
         if (level === 10) return 'bg-red-100 text-red-800';
         return 'bg-gray-100 text-gray-800';
     },
+
+    // Get service groups
+    async getServiceGroups(filters?: import('../types').ServiceGroupFilters): Promise<import('../types').ServiceGroup[]> {
+        try {
+            const response = await staffDashboardApi.getServiceGroups(filters);
+            
+            if (response.success && response.data) {
+                return response.data.items.$values || [];
+            }
+            
+            throw new Error(response.message || 'Failed to fetch service groups');
+        } catch (error) {
+            console.error('Error fetching service groups:', error);
+            throw error;
+        }
+    },
 };
