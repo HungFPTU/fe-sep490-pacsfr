@@ -82,7 +82,7 @@ export function GovernmentHeader({
       {/* Navigation Bar */}
       <nav className="bg-red-600 text-white">
         <div className="container mx-auto px-4">
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center justify-center space-x-8">
             {/* Icon HOME riêng biệt */}
             <Link
               href="/"
