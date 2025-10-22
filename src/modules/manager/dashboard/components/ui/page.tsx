@@ -4,12 +4,12 @@ import { StatsCards } from './StatsCards'
 import { QueueMonitoring } from './QueueMonitoring'
 import { ChartsSection } from './ChartsSection'
 import { RecentActivities } from './RecentActivities'
-import { QuickActions } from '../QuickActions'
 import { SystemAlerts } from './SystemAlerts'
 import { 
   TrendingUp, 
   Clock
 } from "lucide-react"
+import { QuickActions } from './QickAction'
 
 export default function Page() {
   return (
