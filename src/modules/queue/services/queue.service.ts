@@ -12,7 +12,7 @@ function getElapsedMinutes(startedAt?: string | null): number {
 // Simple mock data used as a fallback if API is unavailable
 function createMockOverview(): QueueOverview {
     const nowIso = new Date().toISOString();
-    const counters: Counter[] = Array.from({ length: 6 }, (_, i) => i + 1).map((idx) => {
+    const counters: Counter[] = Array.from({ length: 6 }, (_, i) => i + 1)?.map((idx) => {
         const isClosed = idx === 4; // minh hoạ: Quầy 4 đóng
         const serving = !isClosed && idx % 2 === 1; // quầy lẻ phục vụ, quầy chẵn chờ, trừ quầy đóng
         return {
