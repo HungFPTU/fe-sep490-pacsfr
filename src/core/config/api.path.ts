@@ -79,6 +79,13 @@ export const API_PATH = {
             FEEDBACK: "/staff/dashboard/feedback",
             HISTORY: "/staff/dashboard/history",
             NOTIFICATIONS: "/staff/dashboard/notifications",
+            QUEUE_STATUS: (serviceGroupId: string) => `/Queue/status/${serviceGroupId}`,
+            CALL_NEXT: (serviceGroupId: string) => `/Queue/${serviceGroupId}/call-next`,
+            CREATE_GUEST: "/Guests",
+            GET_GUESTS: "/Guests",
+            CREATE_CASE: "/Case",
+            GET_SERVICES: "/Service",
+            GET_SERVICE_GROUPS: "/ServiceGroup",
         },
         WORKSHIFT: {
             MY_SHIFTS: "/WorkShift/my-shifts",
