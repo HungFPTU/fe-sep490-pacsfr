@@ -1,11 +1,11 @@
 'use client'
 
-import { StatsCards } from '../StatsCards'
-import { QueueMonitoring } from '../QueueMonitoring'
-import { ChartsSection } from '../ChartsSection'
-import { RecentActivities } from '../RecentActivities'
+import { StatsCards } from './StatsCards'
+import { QueueMonitoring } from './QueueMonitoring'
+import { ChartsSection } from './ChartsSection'
+import { RecentActivities } from './RecentActivities'
 import { QuickActions } from '../QuickActions'
-import { SystemAlerts } from '../SystemAlerts'
+import { SystemAlerts } from './SystemAlerts'
 import { 
   TrendingUp, 
   Clock
