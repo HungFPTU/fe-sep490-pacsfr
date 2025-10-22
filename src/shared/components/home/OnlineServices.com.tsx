@@ -69,7 +69,7 @@ export function OnlineServices() {
                     <div className="grid md:grid-cols-2 gap-6">
                         {/* Left Column */}
                         <div className="space-y-4">
-                            {currentServices.slice(0, Math.ceil(currentServices.length / 2)).map((service) => (
+                            {currentServices.slice(0, Math.ceil(currentServices.length / 2))?.map((service) => (
                                 <div key={service.id} className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
                                     <h3 className="font-semibold text-gray-800 mb-2">
                                         {service.title}
@@ -83,7 +83,7 @@ export function OnlineServices() {
 
                         {/* Right Column */}
                         <div className="space-y-4">
-                            {currentServices.slice(Math.ceil(currentServices.length / 2)).map((service) => (
+                            {currentServices.slice(Math.ceil(currentServices.length / 2))?.map((service) => (
                                 <div key={service.id} className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
                                     <h3 className="font-semibold text-gray-800 mb-2">
                                         {service.title}
@@ -125,7 +125,7 @@ export function OnlineServices() {
                 {/* Pagination Dots */}
                 {onlineServices.length > itemsPerPage && (
                     <div className="flex justify-center mt-6 space-x-2">
-                        {Array.from({ length: Math.ceil(onlineServices.length / itemsPerPage) }).map((_, index) => (
+                        {Array.from({ length: Math.ceil(onlineServices.length / itemsPerPage) })?.map((_, index) => (
                             <button
                                 key={index}
                                 onClick={() => setCurrentIndex(index)}

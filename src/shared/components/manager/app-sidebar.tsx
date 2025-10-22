@@ -80,7 +80,11 @@ const data = {
       icon: Bot,
       items: [
         {
-          title: "Danh mục dịch vụ",
+          title: "Danh sách dịch vụ",
+          url: "/manager/service/list",
+        },
+        {
+          title: "Phân loại dịch vụ",
           url: "/manager/service/list",
         },
         {
