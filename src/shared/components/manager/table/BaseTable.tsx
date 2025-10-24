@@ -13,6 +13,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  buttonOther?: string | null;
+  onOther?: (row: TData) => void;
+  onView?: (row: TData) => void;
   onAdd?: (row: TData) => void;
   onEdit?: (row: TData) => void;
   onDelete?: (row: TData) => void;
@@ -21,7 +24,9 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  onAdd,
+  buttonOther = null,
+  onOther,
+  onView,
   onEdit,
   onDelete,
 }: DataTableProps<TData, TValue>) {
@@ -42,12 +47,16 @@ export function DataTable<TData, TValue>({
       const original = row.original as TData;
       return (
         <div className="flex items-center gap-2">
-          <Button className="cursor-pointer" size="sm" variant="outline" onClick={() => onAdd?.(original)}>
-            Thêm
+          <Button className="cursor-pointer" size="sm" variant="outline" onClick={() => onView?.(original)}>
+            Xem
           </Button>
           <Button className="cursor-pointer" size="sm" variant="outline" onClick={() => onEdit?.(original)}>
             Sửa
           </Button>
+          {buttonOther && <Button className="cursor-pointer" size="sm" variant="outline" onClick={() => onOther?.(original)}>
+            {buttonOther}
+          </Button>}
+          
           <Button
             className="cursor-pointer"
             size="sm"
@@ -80,7 +89,7 @@ export function DataTable<TData, TValue>({
     <div className="overflow-hidden rounded-md border">
       <Table>
         <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups()?.map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
@@ -103,7 +112,7 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
-                {row.getVisibleCells().map((cell) => (
+                {row.getVisibleCells()?.map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

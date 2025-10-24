@@ -162,7 +162,7 @@ export function DatePicker({
                             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <option value="">--</option>
-                        {getDayOptions().map(d => (
+                        {getDayOptions()?.map(d => (
                             <option key={d} value={d}>{d}</option>
                         ))}
                     </select>
@@ -182,7 +182,7 @@ export function DatePicker({
                             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <option value="">------</option>
-                        {getMonthOptions().map(({ value, label }) => (
+                        {getMonthOptions()?.map(({ value, label }) => (
                             <option key={value} value={value}>{label}</option>
                         ))}
                     </select>
@@ -202,7 +202,7 @@ export function DatePicker({
                             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <option value="">----</option>
-                        {getYearOptions().map(y => (
+                        {getYearOptions()?.map(y => (
                             <option key={y} value={y}>{y}</option>
                         ))}
                     </select>
@@ -213,7 +213,7 @@ export function DatePicker({
             <div className="border-t pt-3">
                 <p className="text-xs text-gray-600 mb-2">Chọn nhanh theo thế hệ:</p>
                 <div className="flex flex-wrap gap-2">
-                    {getQuickYearOptions().map(({ range, label, year }) => (
+                    {getQuickYearOptions()?.map(({ range, label, year }) => (
                         <button
                             key={year}
                             type="button"

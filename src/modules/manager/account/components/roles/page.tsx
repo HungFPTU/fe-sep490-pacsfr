@@ -1,16 +1,15 @@
 'use client'
 
-import { DataTable } from "@/shared/components/manager/table/BaseTable";
-import { usePolling } from "../../hooks/usePolling";
-import { rolesData } from "../../services/account.service";
-import { columns } from "./columns";
+// import { usePolling } from "../../hooks/usePolling";
+// import { rolesData } from "../../services/account.service";
 
 export default function Page() {
-  const { data: roles } = usePolling(rolesData.getDataPermissions, 2000);
+//   const { data: roles } = usePolling(rolesData.getDataPermissions, 2000);
 
   return (
     <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={roles ?? []} />
+      {/* <DataTable columns={columns} data={roles ?? []} /> */}
+      <h1>Con C Dũng</h1>
     </div>
   )
 }

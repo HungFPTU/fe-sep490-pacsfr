@@ -1,36 +1,41 @@
-import { servicesAPI } from "../api/services.api";
-import { Services } from "../types";
-export function createMockDataServices(count: number): Services[] {
-  const services: Services[] = [];
+import { RestPaged, RestResponse } from "@/types/rest";
+import { servicesApi } from "../api/services.api";
+import { LegalBasis, ServiceGroupResponse, Services, ServicesRequest } from "../types";
 
-  for (let i = 1; i <= count; i++) {
-    services.push({
-      id: String(i),
-      name: `Dịch vụ ${i}`,
-      code: `DV${i.toString().padStart(2, "0")}`,
-      status: i % 2 === 0 ? "INACTIVE" : "ACTIVE", 
-      description: `Mô tả dịch vụ ${i}`,
-      createTime: new Date(2025, 0, i).toISOString(),
-    });
-  }
+export const serviceAPI = {
+    async getAllService(Keyword: string, ServiceGroupId: string, legalBasisId: string, isActive: boolean, Page: number, Size: number): Promise<RestPaged<Services>> {
+    const res = await servicesApi.getAllServices(Keyword, ServiceGroupId, legalBasisId, isActive, Page, Size);
+    return res.data;
+  },
 
-  return services;
-}
+  async getServiceById(id: string): Promise<RestResponse<Services>> {
+    const res = await servicesApi.getServiceById(id);
+    return res.data;
+  },
 
-export const serviceData = {
-    getElapsedSeconds(startedAt?: string | null): number {
-        if (!startedAt) return 0;
-        const started = new Date(startedAt).getTime();
-        if (Number.isNaN(started)) return 0;
-        const diffMs = Date.now() - started;
-        return Math.max(0, Math.floor(diffMs / 1000));
-    },
-    async getDataServices(): Promise<Services[]> {
-        try {
-            const res = await servicesAPI.getAllServices();
-            return res.data;
-        } catch {
-            return createMockDataServices(20);
-        }
-    },
+  async createService(request: ServicesRequest): Promise<RestResponse<Services>> {
+    const res = await servicesApi.createService(request);
+    return res.data;
+  },
+
+  async updateService(id: string, request: ServicesRequest): Promise<RestResponse<Services>> {
+    const res = await servicesApi.updateService(id, request);
+    return res.data;
+  },
+
+  async deleteService(id: string): Promise<void> {
+    await servicesApi.deleteService(id);
+  },
+
+  async getAllServiceGroups(Keyword: string, isActive: boolean, Page: number, Size: number): Promise<RestPaged<ServiceGroupResponse>  > {
+    const res = await servicesApi.getAllServiceGroups(Keyword, isActive, Page, Size);
+    return res.data;
+  },
+
+  async getAllLegalBasics(Keyword: string, isActive: boolean, Page: number, Size: number): Promise<RestPaged<LegalBasis>  > {
+    const res = await servicesApi.getAllLegalBasic(Keyword, isActive, Page, Size);
+    return res.data;
+  },
+
+
 };
