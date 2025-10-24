@@ -52,32 +52,38 @@ export const useServiceGroupForm = ({
                     isActive: value.isActive,
                 };
 
+                let res;
                 if (initData?.id) {
                     // Update existing service group
-                    const res = await updateMutation.mutateAsync({
+                    res = await updateMutation.mutateAsync({
                         id: initData?.id ?? '',
                         request: {
                             ...request,
                             id: initData?.id ?? '',
                         },
                     });
-                    if (res?.success) {
-                        addToast({ message: 'Cập nhật nhóm dịch vụ thành công', type: 'success' });
-                        onSuccess?.();
-                        onClose();
-                    } else {
-                        addToast({ message: 'Cập nhật nhóm dịch vụ thất bại', type: 'error' });
-                    }
                 } else {
                     // Create new service group
-                    const res = await createMutation.mutateAsync(request);
-                    if (res?.success) {
-                        addToast({ message: 'Tạo nhóm dịch vụ thành công', type: 'success' });
-                        onSuccess?.();
-                        onClose();
-                    } else {
-                        addToast({ message: 'Tạo nhóm dịch vụ thất bại', type: 'error' });
-                    }
+                    res = await createMutation.mutateAsync(request);
+                }
+
+                // Always close and reset on success
+                if (res?.success) {
+                    addToast({
+                        message: initData?.id ? 'Cập nhật nhóm dịch vụ thành công' : 'Tạo nhóm dịch vụ thành công',
+                        type: 'success'
+                    });
+                    onSuccess?.();
+                    onClose();
+                    // Reset form after successful submit
+                    setTimeout(() => {
+                        form.reset(toFormValues(null));
+                    }, 100);
+                } else {
+                    addToast({
+                        message: initData?.id ? 'Cập nhật nhóm dịch vụ thất bại' : 'Tạo nhóm dịch vụ thất bại',
+                        type: 'error'
+                    });
                 }
             } catch (error) {
                 console.error('Error saving service group:', error);

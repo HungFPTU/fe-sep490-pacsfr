@@ -25,21 +25,32 @@ export const CreateServiceModal: React.FC<Props> = ({
 
     const handleSubmit = async (data: CreateServiceRequest | UpdateServiceRequest) => {
         try {
+            let res;
             if ('id' in data) {
                 // Update
-                await updateMutation.mutateAsync({
+                res = await updateMutation.mutateAsync({
                     id: data.id,
                     request: data,
                 });
-                toast.success('Cập nhật dịch vụ thành công');
+                if (res?.success) {
+                    toast.success('Cập nhật dịch vụ thành công');
+                } else {
+                    toast.error('Cập nhật dịch vụ thất bại');
+                    return;
+                }
             } else {
                 // Create
-                await createMutation.mutateAsync(data);
-                toast.success('Tạo dịch vụ mới thành công');
+                res = await createMutation.mutateAsync(data);
+                if (res?.success) {
+                    toast.success('Tạo dịch vụ mới thành công');
+                } else {
+                    toast.error('Tạo dịch vụ mới thất bại');
+                    return;
+                }
             }
             onClose();
         } catch (error) {
-            toast.error('Có lỗi xảy ra');
+            toast.error('Có lỗi xảy ra khi lưu dịch vụ');
             console.error('Submit error:', error);
         }
     };

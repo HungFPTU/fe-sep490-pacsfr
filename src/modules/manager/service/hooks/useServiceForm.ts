@@ -42,8 +42,8 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
-            if (isEdit && initData?.id) {
-                const request: UpdateServiceRequest = {
+            const request = isEdit && initData?.id
+                ? {
                     id: initData.id,
                     serviceGroupId: value.serviceGroupId,
                     serviceName: value.serviceName,
@@ -56,10 +56,8 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
                     decisionNumber: value.decisionNumber,
                     executionLevel: value.executionLevel,
                     field: value.field,
-                };
-                onSubmit(request);
-            } else {
-                const request: CreateServiceRequest = {
+                } as UpdateServiceRequest
+                : {
                     serviceGroupId: value.serviceGroupId,
                     serviceName: value.serviceName,
                     serviceCode: value.serviceCode,
@@ -71,9 +69,14 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
                     decisionNumber: value.decisionNumber,
                     executionLevel: value.executionLevel,
                     field: value.field,
-                };
-                onSubmit(request);
-            }
+                } as CreateServiceRequest;
+
+            await onSubmit(request);
+
+            // Reset form after successful submit
+            setTimeout(() => {
+                form.reset(toFormValues(null));
+            }, 100);
         },
     });
 

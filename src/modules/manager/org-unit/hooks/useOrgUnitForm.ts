@@ -58,32 +58,38 @@ export const useOrgUnitForm = ({
                     isActive: value.isActive,
                 };
 
+                let res;
                 if (initData?.id) {
                     // Update existing org unit
-                    const res = await updateMutation.mutateAsync({
+                    res = await updateMutation.mutateAsync({
                         id: initData?.id ?? '',
                         request: {
                             ...request,
                             id: initData?.id ?? '',
                         },
                     });
-                    if (res?.success) {
-                        addToast({ message: 'Cập nhật cơ quan thành công', type: 'success' });
-                        onSuccess?.();
-                        onClose();
-                    } else {
-                        addToast({ message: 'Cập nhật cơ quan thất bại', type: 'error' });
-                    }
                 } else {
                     // Create new org unit
-                    const res = await createMutation.mutateAsync(request);
-                    if (res?.success) {
-                        addToast({ message: 'Tạo cơ quan thành công', type: 'success' });
-                        onSuccess?.();
-                        onClose();
-                    } else {
-                        addToast({ message: 'Tạo cơ quan thất bại', type: 'error' });
-                    }
+                    res = await createMutation.mutateAsync(request);
+                }
+
+                // Always close and reset on success
+                if (res?.success) {
+                    addToast({
+                        message: initData?.id ? 'Cập nhật cơ quan thành công' : 'Tạo cơ quan thành công',
+                        type: 'success'
+                    });
+                    onSuccess?.();
+                    onClose();
+                    // Reset form after successful submit
+                    setTimeout(() => {
+                        form.reset(toFormValues(null));
+                    }, 100);
+                } else {
+                    addToast({
+                        message: initData?.id ? 'Cập nhật cơ quan thất bại' : 'Tạo cơ quan thất bại',
+                        type: 'error'
+                    });
                 }
             } catch (error) {
                 console.error('Error saving org unit:', error);
