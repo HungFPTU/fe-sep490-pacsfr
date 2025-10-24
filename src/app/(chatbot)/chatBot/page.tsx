@@ -91,7 +91,7 @@ export default function ChatbotPage() {
   );
   
 
-  const allMessagesForSidebar = useMemo(() => allChats.flat(), [allChats]);
+  // const allMessagesForSidebar = useMemo(() => allChats.flat(), [allChats]);
 
 
   useEffect(() => {
@@ -175,28 +175,28 @@ export default function ChatbotPage() {
     setSelectedChatIndex(allChats.length);
   };
   
-  const handleSelectChat = (index: number) => {
-    stop();
-    setSelectedChatIndex(index);
-  };
+  // const handleSelectChat = (index: number) => {
+  //   stop();
+  //   setSelectedChatIndex(index);
+  // };
   
-  const handleDeleteChat = (indexToDelete: number) => {
-    stop();
-    if (allChats.length <= 1) {
-        setAllChats([initialChat]);
-        setSelectedChatIndex(0);
-        return;
-    }
+  // const handleDeleteChat = (indexToDelete: number) => {
+  //   stop();
+  //   if (allChats.length <= 1) {
+  //       setAllChats([initialChat]);
+  //       setSelectedChatIndex(0);
+  //       return;
+  //   }
     
-    const newAllChats = allChats.filter((_, index) => index !== indexToDelete);
-    setAllChats(newAllChats);
+  //   const newAllChats = allChats.filter((_, index) => index !== indexToDelete);
+  //   setAllChats(newAllChats);
 
-    if (selectedChatIndex === indexToDelete) {
-        setSelectedChatIndex(Math.max(0, newAllChats.length - 1));
-    } else if (selectedChatIndex > indexToDelete) {
-        setSelectedChatIndex(selectedChatIndex - 1);
-    }
-  };
+  //   if (selectedChatIndex === indexToDelete) {
+  //       setSelectedChatIndex(Math.max(0, newAllChats.length - 1));
+  //   } else if (selectedChatIndex > indexToDelete) {
+  //       setSelectedChatIndex(selectedChatIndex - 1);
+  //   }
+  // };
 
   return (
     <SidebarProvider>
