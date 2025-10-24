@@ -3,20 +3,22 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Tối ưu hóa cho Bun runtime
   serverExternalPackages: [],
-  experimental: {
-    // Cấu hình Turbopack cho Bun compatibility
-    turbo: {
-      rules: {
-        "*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
-      },
-      // Tối ưu hóa cho Bun runtime
-      resolveAlias: {
-        "async_hooks": "empty-module",
+
+  // Turbopack configuration (now stable)
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
       },
     },
+    // Tối ưu hóa cho Bun runtime
+    resolveAlias: {
+      "async_hooks": "empty-module",
+    },
+  },
+
+  experimental: {
     // Tăng tốc độ build
     optimizePackageImports: [
       "@heroui/react",
@@ -58,13 +60,7 @@ const nextConfig: NextConfig = {
       config.watchOptions = {
         poll: 1000,
         aggregateTimeout: 300,
-        ignored: [
-          '**/node_modules/**',
-          '**/.git/**',
-          '**/.next/**',
-          '**/pagefile.sys', // Ignore Windows pagefile
-          'D:/pagefile.sys', // Ignore Windows pagefile on D drive
-        ],
+        ignored: /node_modules|\.git|\.next|pagefile\.sys|hiberfil\.sys|swapfile\.sys|\$RECYCLE\.BIN|System Volume Information/,
       };
     }
 
@@ -114,17 +110,13 @@ const nextConfig: NextConfig = {
   // Tối ưu hóa images
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "api.dicebear.com" },
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "avatars.githubusercontent.com" },
-      { protocol: "https", hostname: "scontent.fsgn2-10.fna.fbcdn.net" },
+      { protocol: "https", hostname: "*" },
+      { protocol: "http", hostname: "*" },
     ],
-    // Tối ưu hóa image loading
     formats: ["image/webp", "image/avif"],
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    // Hỗ trợ import images từ assets
     unoptimized: false,
   },
 
