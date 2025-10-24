@@ -5,6 +5,7 @@ import { useCreateOrgUnit, useUpdateOrgUnit } from './index';
 import type { OrgUnit, CreateOrgUnitRequest } from '../types';
 
 type FormValues = {
+    departmentId: string;
     unitCode: string;
     unitName: string;
     unitType: string;
@@ -32,6 +33,7 @@ export const useOrgUnitForm = ({
     const { addToast } = useGlobalToast();
 
     const toFormValues = (data?: Partial<OrgUnit> | null): FormValues => ({
+        departmentId: data?.departmentId ?? '',
         unitCode: data?.unitCode ?? '',
         unitName: data?.unitName ?? '',
         unitType: data?.unitType ?? '',
@@ -46,6 +48,7 @@ export const useOrgUnitForm = ({
         onSubmit: async ({ value }) => {
             try {
                 const request: CreateOrgUnitRequest = {
+                    departmentId: value.departmentId,
                     unitCode: value.unitCode,
                     unitName: value.unitName,
                     unitType: value.unitType,
@@ -93,6 +96,7 @@ export const useOrgUnitForm = ({
         if (open) {
             form.reset(toFormValues(initData));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, initData?.id]);
 
     const isLoading = createMutation.isPending || updateMutation.isPending;

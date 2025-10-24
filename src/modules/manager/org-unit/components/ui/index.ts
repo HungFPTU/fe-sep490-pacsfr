@@ -19,4 +19,5 @@ export { OrgUnitForm } from './modal/OrgUnitForm.ui';
 // Detail
 export { OrgUnitDetailModal } from './detail/OrgUnitDetailModal.ui';
 export { OrgUnitInfo } from './detail/OrgUnitInfo.ui';
+export { DepartmentDetail } from './detail/DepartmentDetail.ui';
 

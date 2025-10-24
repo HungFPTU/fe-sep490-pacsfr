@@ -4,8 +4,11 @@ import React from 'react';
 import { InputField, TextareaField, CheckboxField, SelectField } from '@/shared/components/manager/form/BaseForm';
 import { FormApiOf } from '@/types/types';
 import { ORG_UNIT_TYPES } from '../../../enums';
+import { useDepartments } from '@/modules/manager/department/hooks';
+import { getValuesPage } from '@/types/rest';
 
 type FormValues = {
+    departmentId: string;
     unitCode: string;
     unitName: string;
     unitType: string;
@@ -22,9 +25,38 @@ interface Props {
     isEdit: boolean;
 }
 
-export const OrgUnitForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
+export const OrgUnitForm: React.FC<Props> = ({ form, isEdit }) => {
+    // Fetch departments for dropdown
+    const { data: departmentsData } = useDepartments({
+        keyword: '',
+        isActive: true,
+        page: 1,
+        size: 100,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pageResult = departmentsData ? getValuesPage(departmentsData as any) : null;
+    const departments = pageResult?.items || [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const departmentOptions = departments.map((dept: any) => ({
+        value: dept.id,
+        label: dept.name,
+    }));
+
+    const unitTypeOptions = Array.from(ORG_UNIT_TYPES);
+
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <SelectField<FormValues>
+                form={form as FormApiOf<FormValues>}
+                name="departmentId"
+                label="Phòng ban"
+                required
+                options={departmentOptions}
+                placeholder="Chọn phòng ban"
+            />
+
             <InputField<FormValues>
                 form={form as FormApiOf<FormValues>}
                 name="unitCode"
@@ -47,7 +79,7 @@ export const OrgUnitForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                 name="unitType"
                 label="Loại hình"
                 required
-                options={ORG_UNIT_TYPES}
+                options={unitTypeOptions}
                 placeholder="Chọn loại hình"
             />
 

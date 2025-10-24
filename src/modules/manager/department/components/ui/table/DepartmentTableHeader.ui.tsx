@@ -2,21 +2,21 @@
 
 import React from 'react';
 
-export const OrgUnitTableHeader: React.FC = () => {
+export const DepartmentTableHeader: React.FC = () => {
     return (
         <thead className="bg-slate-50">
             <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Mã cơ quan
+                    Mã phòng ban
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Tên cơ quan
+                    Tên phòng ban
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Loại hình
+                    Cấp độ
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Liên hệ
+                    Mô tả
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
                     Trạng thái

@@ -2,50 +2,50 @@
 
 import React from 'react';
 import { formatDate } from '@/shared/lib/utils';
-import { DepartmentDetail } from './DepartmentDetail.ui';
-import type { OrgUnit } from '../../../types';
+import { ServiceGroupDetail } from './ServiceGroupDetail.ui';
+import type { Department } from '../../../types';
 
 interface Props {
-    orgUnit: OrgUnit;
+    department: Department;
 }
 
-export const OrgUnitInfo: React.FC<Props> = ({ orgUnit }) => {
+export const DepartmentInfo: React.FC<Props> = ({ department }) => {
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {/* Unit Code */}
+            {/* Code */}
             <div>
                 <label className="block text-sm font-medium text-slate-700">
-                    Mã cơ quan
+                    Mã phòng ban
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{orgUnit.unitCode}</p>
+                <p className="mt-1 text-sm text-slate-900">{department.code}</p>
             </div>
 
-            {/* Unit Name */}
+            {/* Name */}
             <div>
                 <label className="block text-sm font-medium text-slate-700">
-                    Tên cơ quan
+                    Tên phòng ban
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{orgUnit.unitName}</p>
+                <p className="mt-1 text-sm text-slate-900">{department.name}</p>
             </div>
 
-            {/* Department - Fetch full details */}
+            {/* Service Group - Fetch full details */}
             <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Phòng ban
+                    Nhóm dịch vụ
                 </label>
-                {orgUnit.departmentId ? (
-                    <DepartmentDetail departmentId={orgUnit.departmentId} />
+                {department.serviceGroupId ? (
+                    <ServiceGroupDetail serviceGroupId={department.serviceGroupId} />
                 ) : (
                     <p className="text-sm text-slate-500">-</p>
                 )}
             </div>
 
-            {/* Unit Type */}
+            {/* Level */}
             <div>
                 <label className="block text-sm font-medium text-slate-700">
-                    Loại hình
+                    Cấp độ
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{orgUnit.unitType}</p>
+                <p className="mt-1 text-sm text-slate-900">Cấp {department.levelOrder}</p>
             </div>
 
             {/* Status */}
@@ -54,29 +54,13 @@ export const OrgUnitInfo: React.FC<Props> = ({ orgUnit }) => {
                     Trạng thái
                 </label>
                 <span
-                    className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${orgUnit.isActive
+                    className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${department.isActive
                         ? 'bg-green-100 text-green-800'
                         : 'bg-gray-100 text-gray-800'
                         }`}
                 >
-                    {orgUnit.isActive ? 'Hoạt động' : 'Ngừng hoạt động'}
+                    {department.isActive ? 'Hoạt động' : 'Ngừng hoạt động'}
                 </span>
-            </div>
-
-            {/* Phone */}
-            <div>
-                <label className="block text-sm font-medium text-slate-700">
-                    Số điện thoại
-                </label>
-                <p className="mt-1 text-sm text-slate-900">{orgUnit.phone}</p>
-            </div>
-
-            {/* Email */}
-            <div>
-                <label className="block text-sm font-medium text-slate-700">
-                    Email
-                </label>
-                <p className="mt-1 text-sm text-slate-900">{orgUnit.email}</p>
             </div>
 
             {/* Created At */}
@@ -85,28 +69,28 @@ export const OrgUnitInfo: React.FC<Props> = ({ orgUnit }) => {
                     Ngày tạo
                 </label>
                 <p className="mt-1 text-sm text-slate-900">
-                    {formatDate(orgUnit.createdAt)}
+                    {formatDate(department.createdAt)}
                 </p>
             </div>
 
             {/* Modified At */}
-            {orgUnit.modifiedAt && (
+            {department.modifiedAt && (
                 <div>
                     <label className="block text-sm font-medium text-slate-700">
                         Cập nhật lần cuối
                     </label>
                     <p className="mt-1 text-sm text-slate-900">
-                        {formatDate(orgUnit.modifiedAt)}
+                        {formatDate(department.modifiedAt)}
                     </p>
                 </div>
             )}
 
-            {/* Address */}
+            {/* Description */}
             <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-700">
-                    Địa chỉ
+                    Mô tả
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{orgUnit.address}</p>
+                <p className="mt-1 text-sm text-slate-900">{department.description || '-'}</p>
             </div>
         </div>
     );

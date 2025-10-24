@@ -2,67 +2,66 @@
 
 import React from 'react';
 import { formatDate } from '@/shared/lib/utils';
-import type { OrgUnit } from '../../../types';
+import type { Department } from '../../../types';
 
 interface Props {
-    orgUnit: OrgUnit;
-    onView: (orgUnit: OrgUnit) => void;
-    onEdit: (orgUnit: OrgUnit) => void;
+    department: Department;
+    onView: (department: Department) => void;
+    onEdit: (department: Department) => void;
     onDelete: (id: string) => void;
     isDeleting?: boolean;
 }
 
-export const OrgUnitTableRow: React.FC<Props> = ({
-    orgUnit,
+export const DepartmentTableRow: React.FC<Props> = ({
+    department,
     onView,
     onEdit,
     onDelete,
     isDeleting = false,
 }) => {
     return (
-        <tr key={orgUnit.id} className="hover:bg-slate-50">
+        <tr key={department.id} className="hover:bg-slate-50">
             {/* Code */}
             <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">
-                {orgUnit.unitCode}
+                {department.code}
             </td>
 
             {/* Name */}
-            <td className="px-6 py-4 text-sm text-slate-900">{orgUnit.unitName}</td>
+            <td className="px-6 py-4 text-sm text-slate-900">{department.name}</td>
 
-            {/* Type */}
+            {/* Level */}
             <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
-                {orgUnit.unitType}
+                Cấp {department.levelOrder}
             </td>
 
-            {/* Contact */}
+            {/* Description */}
             <td className="px-6 py-4 text-sm text-slate-500">
-                <div className="flex flex-col">
-                    <span className="font-medium">{orgUnit.phone}</span>
-                    <span className="text-xs text-slate-400">{orgUnit.email}</span>
-                </div>
+                {department.description && department.description.length > 40
+                    ? `${department.description.substring(0, 40)}...`
+                    : department.description || '-'}
             </td>
 
             {/* Status Badge */}
             <td className="whitespace-nowrap px-6 py-4 text-sm">
                 <span
-                    className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${orgUnit.isActive
+                    className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${department.isActive
                         ? 'bg-green-100 text-green-800'
                         : 'bg-gray-100 text-gray-800'
                         }`}
                 >
-                    {orgUnit.isActive ? 'Hoạt động' : 'Ngừng'}
+                    {department.isActive ? 'Hoạt động' : 'Ngừng'}
                 </span>
             </td>
 
             {/* Date Cell */}
             <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                {orgUnit.modifiedAt ? (
+                {department.modifiedAt ? (
                     <div className="flex flex-col">
-                        <span>{formatDate(orgUnit.modifiedAt)}</span>
+                        <span>{formatDate(department.modifiedAt)}</span>
                     </div>
-                ) : orgUnit.createdAt ? (
+                ) : department.createdAt ? (
                     <div className="flex flex-col">
-                        <span>{formatDate(orgUnit.createdAt)}</span>
+                        <span>{formatDate(department.createdAt)}</span>
                     </div>
                 ) : (
                     '-'
@@ -72,19 +71,19 @@ export const OrgUnitTableRow: React.FC<Props> = ({
             {/* Action Buttons */}
             <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                 <button
-                    onClick={() => onView(orgUnit)}
+                    onClick={() => onView(department)}
                     className="mr-3 text-slate-600 hover:text-slate-900"
                 >
                     Xem
                 </button>
                 <button
-                    onClick={() => onEdit(orgUnit)}
+                    onClick={() => onEdit(department)}
                     className="mr-3 text-indigo-600 hover:text-indigo-900"
                 >
                     Sửa
                 </button>
                 <button
-                    onClick={() => onDelete(orgUnit.id)}
+                    onClick={() => onDelete(department.id)}
                     className="text-red-600 hover:text-red-900"
                     disabled={isDeleting}
                 >

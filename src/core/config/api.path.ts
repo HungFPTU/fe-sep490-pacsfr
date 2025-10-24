@@ -55,8 +55,12 @@ export const API_PATH = {
             STATUS: "/queues/status",
             STATISTICS: "/queues/statistics",
         },
-        DEPARTMENTS: {
+        DEPARTMENT: {
             GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/Department?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/Department/${id}`,
+            POST: "/Department",
+            PUT: (id: string) => `/Department/${id}`,
+            DELETE: (id: string) => `/Department/${id}`,
         },
         ORG_UNIT: {
             GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/OrgUnit/get-all?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,

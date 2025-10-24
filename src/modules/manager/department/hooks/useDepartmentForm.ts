@@ -1,0 +1,104 @@
+import { useEffect } from 'react';
+import { useForm } from '@tanstack/react-form';
+import { useGlobalToast } from '@core/patterns/SingletonHook';
+import { useCreateDepartment, useUpdateDepartment } from './index';
+import type { Department, CreateDepartmentRequest } from '../types';
+
+type FormValues = {
+    serviceGroupId: string;
+    code: string;
+    name: string;
+    description: string;
+    levelOrder: number;
+    isActive: boolean;
+};
+
+interface UseDepartmentFormProps {
+    initData?: Department | null;
+    open: boolean;
+    onSuccess?: () => void;
+    onClose: () => void;
+}
+
+export const useDepartmentForm = ({
+    initData,
+    open,
+    onSuccess,
+    onClose,
+}: UseDepartmentFormProps) => {
+    const createMutation = useCreateDepartment();
+    const updateMutation = useUpdateDepartment();
+    const { addToast } = useGlobalToast();
+
+    const toFormValues = (data?: Department | null): FormValues => ({
+        serviceGroupId: data?.serviceGroupId ?? '',
+        code: data?.code ?? '',
+        name: data?.name ?? '',
+        description: data?.description ?? '',
+        levelOrder: data?.levelOrder ?? 0,
+        isActive: data?.isActive ?? true,
+    });
+
+    const form = useForm({
+        defaultValues: toFormValues(initData),
+        onSubmit: async ({ value }) => {
+            try {
+                const request: CreateDepartmentRequest = {
+                    serviceGroupId: (initData as Department)?.serviceGroupId ?? value.serviceGroupId,
+                    code: value.code,
+                    name: value.name,
+                    description: value.description,
+                    levelOrder: Number(value.levelOrder),
+                    isActive: value.isActive,
+                };
+
+                if (initData?.id) {
+                    // Update existing department
+                    const res = await updateMutation.mutateAsync({
+                        id: initData?.id ?? '',
+                        request: {
+                            ...request,
+                            id: initData?.id ?? '',
+                        },
+                    });
+                    if (res?.success) {
+                        addToast({ message: 'Cập nhật phòng ban thành công', type: 'success' });
+                        onSuccess?.();
+                        onClose();
+                    } else {
+                        addToast({ message: 'Cập nhật phòng ban thất bại', type: 'error' });
+                    }
+                } else {
+                    // Create new department
+                    const res = await createMutation.mutateAsync(request);
+                    if (res?.success) {
+                        addToast({ message: 'Tạo phòng ban thành công', type: 'success' });
+                        onSuccess?.();
+                        onClose();
+                    } else {
+                        addToast({ message: 'Tạo phòng ban thất bại', type: 'error' });
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving department:', error);
+                addToast({ message: 'Đã xảy ra lỗi khi lưu phòng ban', type: 'error' });
+            }
+        },
+    });
+
+    useEffect(() => {
+        if (open) {
+            form.reset(toFormValues(initData));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open, initData?.id]);
+
+    const isLoading = createMutation.isPending || updateMutation.isPending;
+
+    return {
+        form,
+        isLoading,
+        handleSubmit: () => form.handleSubmit(),
+    };
+};
+

@@ -107,6 +107,10 @@ const data = {
       icon: BookOpen,
       items: [
         {
+          title: "Quản lý phòng ban",
+          url: "/manager/phong-ban",
+        },
+        {
           title: "Quản lý cơ quan",
           url: "/manager/co-quan",
         },
