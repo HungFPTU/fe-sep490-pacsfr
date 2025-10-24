@@ -81,7 +81,7 @@ const data = {
       items: [
         {
           title: "Danh sách dịch vụ",
-          url: "/manager/service/list",
+          url: "/manager/dich-vu",
         },
         {
           title: "Nhóm dịch vụ",

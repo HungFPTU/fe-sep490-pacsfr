@@ -19,19 +19,23 @@ export const CreateDepartmentModal: React.FC<Props> = ({
     initData,
     onSuccess
 }) => {
-    const { form, isLoading, handleSubmit } = useDepartmentForm({
+    const { form, isLoading } = useDepartmentForm({
         initData,
         open,
         onSuccess,
         onClose,
     });
 
+    const handleOk = async () => {
+        await form.handleSubmit();
+    };
+
     return (
         <BaseModal
             open={open}
             onClose={onClose}
             title={initData?.id ? 'Cập nhật phòng ban' : 'Tạo phòng ban mới'}
-            onOk={handleSubmit}
+            onOk={handleOk}
             onCancel={onClose}
             okText="Lưu"
             cancelText="Hủy"
@@ -40,6 +44,7 @@ export const CreateDepartmentModal: React.FC<Props> = ({
             maskClosable={!isLoading}
             keyboard={!isLoading}
             confirmLoading={isLoading}
+            destroyOnClose={true}
         >
             <DepartmentForm
                 form={form}

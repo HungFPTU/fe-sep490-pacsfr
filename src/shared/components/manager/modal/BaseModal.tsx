@@ -98,7 +98,7 @@ export function BaseModal(props: ModalProps) {
     afterClose,
     size = 'medium',
     width,
-    zIndex = 1000,
+    zIndex = 2000,
     className = '',
     bodyClassName = '',
     footerClassName = '',
@@ -243,7 +243,7 @@ export function BaseModal(props: ModalProps) {
                 className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" className="text-slate-500">
-                  <path d="M6.225 4.811 4.811 6.225 10.586 12l-5.775 5.775 1.414 1.414L12 13.414l5.775 5.775 1.414-1.414L13.414 12l5.775-5.775-1.414-1.414L12 10.586 6.225 4.811z"/>
+                  <path d="M6.225 4.811 4.811 6.225 10.586 12l-5.775 5.775 1.414 1.414L12 13.414l5.775 5.775 1.414-1.414L13.414 12l5.775-5.775-1.414-1.414L12 10.586 6.225 4.811z" />
                 </svg>
               </button>
             )}
@@ -272,13 +272,17 @@ export function BaseModal(props: ModalProps) {
                 <button
                   type="button"
                   disabled={!!confirmLoading}
-                  onClick={onOk}
+                  onClick={async () => {
+                    if (onOk) {
+                      await onOk();
+                    }
+                  }}
                   className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 >
                   {confirmLoading && (
                     <svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                     </svg>
                   )}
                   {okText}

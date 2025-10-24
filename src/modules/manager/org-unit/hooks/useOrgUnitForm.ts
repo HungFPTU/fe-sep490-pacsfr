@@ -94,6 +94,7 @@ export const useOrgUnitForm = ({
 
     useEffect(() => {
         if (open) {
+            // Always reset with current initData when modal opens
             form.reset(toFormValues(initData));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

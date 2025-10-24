@@ -1,79 +1,68 @@
 'use client';
 
 import React from 'react';
-import { formatDate } from '@/shared/lib/utils';
-import type { OrgUnit } from '../../../types';
+import type { Service } from '../../../types';
 
 interface Props {
-    orgUnit: OrgUnit;
-    onView: (orgUnit: OrgUnit) => void;
-    onEdit: (orgUnit: OrgUnit) => void;
-    onDelete: (id: string) => void;
-    isDeleting?: boolean;
+    service: Service;
+    onView: (service: Service) => void;
+    onEdit: (service: Service) => void;
+    onDelete: (service: Service) => void;
+    isDeleting: boolean;
 }
 
-export const OrgUnitTableRow: React.FC<Props> = ({
-    orgUnit,
-    onView,
-    onEdit,
-    onDelete,
-    isDeleting = false,
-}) => {
+export const ServiceTableRow: React.FC<Props> = ({ service, onView, onEdit, onDelete, isDeleting }) => {
     return (
-        <tr key={orgUnit.id} className="hover:bg-slate-50">
-            {/* Code */}
-            <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">
-                {orgUnit.unitCode}
+        <tr className="hover:bg-slate-50">
+            {/* Service Code */}
+            <td className="px-6 py-4 text-sm font-medium text-slate-900">
+                {service.serviceCode}
             </td>
 
-            {/* Name */}
-            <td className="px-6 py-4 text-sm text-slate-900">{orgUnit.unitName}</td>
-
-            {/* Type */}
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
-                {orgUnit.unitType}
+            {/* Service Name */}
+            <td className="px-6 py-4 text-sm text-slate-600">
+                {service.serviceName}
             </td>
 
-            {/* Contact */}
-            <td className="px-6 py-4 text-sm text-slate-500">
-                <div className="flex flex-col">
-                    <span className="font-medium">{orgUnit.phone}</span>
-                    <span className="text-xs text-slate-400">{orgUnit.email}</span>
-                </div>
+            {/* Service Group */}
+            <td className="px-6 py-4 text-sm text-slate-600">
+                {service.serviceGroupName || '-'}
             </td>
 
-            {/* Status Badge */}
-            <td className="whitespace-nowrap px-6 py-4 text-sm">
+            {/* Service Type */}
+            <td className="px-6 py-4 text-sm text-slate-600">
+                {service.serviceType}
+            </td>
+
+            {/* Online Available */}
+            <td className="px-6 py-4">
                 <span
-                    className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${orgUnit.isActive
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-800'
+                    className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${service.isOnlineAvailable
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-800'
                         }`}
                 >
-                    {orgUnit.isActive ? 'Hoạt động' : 'Ngừng'}
+                    {service.isOnlineAvailable ? 'Có' : 'Không'}
                 </span>
             </td>
 
-            {/* Date Cell */}
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                {orgUnit.modifiedAt ? (
-                    <div className="flex flex-col">
-                        <span>{formatDate(orgUnit.modifiedAt)}</span>
-                    </div>
-                ) : orgUnit.createdAt ? (
-                    <div className="flex flex-col">
-                        <span>{formatDate(orgUnit.createdAt)}</span>
-                    </div>
-                ) : (
-                    '-'
-                )}
+            {/* Status */}
+            <td className="px-6 py-4">
+                <span
+                    className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${service.isActive
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}
+                >
+                    {service.isActive ? 'Hoạt động' : 'Ngừng'}
+                </span>
             </td>
 
             {/* Actions */}
             <td className="px-6 py-4 text-right text-sm font-medium">
                 <div className="flex items-center justify-end gap-2">
                     <button
-                        onClick={() => onView(orgUnit)}
+                        onClick={() => onView(service)}
                         className="text-indigo-600 hover:text-indigo-900"
                         title="Xem chi tiết"
                     >
@@ -83,7 +72,7 @@ export const OrgUnitTableRow: React.FC<Props> = ({
                         </svg>
                     </button>
                     <button
-                        onClick={() => onEdit(orgUnit)}
+                        onClick={() => onEdit(service)}
                         className="text-blue-600 hover:text-blue-900"
                         title="Chỉnh sửa"
                     >
@@ -92,7 +81,7 @@ export const OrgUnitTableRow: React.FC<Props> = ({
                         </svg>
                     </button>
                     <button
-                        onClick={() => onDelete(orgUnit.id)}
+                        onClick={() => onDelete(service)}
                         disabled={isDeleting}
                         className="text-red-600 hover:text-red-900 disabled:opacity-50"
                         title="Xóa"

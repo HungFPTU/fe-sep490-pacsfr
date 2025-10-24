@@ -88,8 +88,10 @@ export const useServiceGroupForm = ({
 
     useEffect(() => {
         if (open) {
+            // Always reset with current initData when modal opens
             form.reset(toFormValues(initData));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, initData?.id]);
 
     const isLoading = createMutation.isPending || updateMutation.isPending;

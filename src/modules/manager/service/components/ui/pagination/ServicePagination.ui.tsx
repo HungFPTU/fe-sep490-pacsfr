@@ -11,7 +11,7 @@ interface Props {
     onPageSizeChange: (size: number) => void;
 }
 
-export const DepartmentPagination: React.FC<Props> = ({
+export const ServicePagination: React.FC<Props> = ({
     page,
     pageSize,
     total,
@@ -79,3 +79,4 @@ export const DepartmentPagination: React.FC<Props> = ({
         </div>
     );
 };
+

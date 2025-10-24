@@ -19,19 +19,23 @@ export const CreateOrgUnitModal: React.FC<Props> = ({
     initData,
     onSuccess
 }) => {
-    const { form, isLoading, handleSubmit } = useOrgUnitForm({
+    const { form, isLoading } = useOrgUnitForm({
         initData,
         open,
         onSuccess,
         onClose,
     });
 
+    const handleOk = async () => {
+        await form.handleSubmit();
+    };
+
     return (
         <BaseModal
             open={open}
             onClose={onClose}
             title={initData?.id ? 'Cập nhật cơ quan' : 'Tạo cơ quan mới'}
-            onOk={handleSubmit}
+            onOk={handleOk}
             onCancel={onClose}
             okText="Lưu"
             cancelText="Hủy"
@@ -40,6 +44,7 @@ export const CreateOrgUnitModal: React.FC<Props> = ({
             maskClosable={!isLoading}
             keyboard={!isLoading}
             confirmLoading={isLoading}
+            destroyOnClose={true}
         >
             <OrgUnitForm
                 form={form}

@@ -14,6 +14,7 @@ import { getValuesPage, RestPaged } from '@/types/rest';
 
 export const OrgUnitListPage: React.FC = () => {
     const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [keyword, setKeyword] = useState('');
     const [isActive, setIsActive] = useState<boolean>(true);
     const [modalOpen, setModalOpen] = useState(false);
@@ -24,7 +25,7 @@ export const OrgUnitListPage: React.FC = () => {
         keyword,
         isActive,
         page,
-        size: 10,
+        size: pageSize,
     });
 
     const deleteMutation = useDeleteOrgUnit();
@@ -66,7 +67,17 @@ export const OrgUnitListPage: React.FC = () => {
 
     const pageResult = data ? getValuesPage(data as RestPaged<OrgUnit>) : null;
     const orgUnits = pageResult?.items || [];
+    const total = pageResult?.total || 0;
     const totalPages = pageResult?.totalPages || 1;
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+    };
+
+    const handlePageSizeChange = (newSize: number) => {
+        setPageSize(newSize);
+        setPage(1);
+    };
 
     return (
         <div className="p-6">
@@ -88,16 +99,24 @@ export const OrgUnitListPage: React.FC = () => {
                 isDeleting={deleteMutation.isPending}
             />
 
-            <OrgUnitPagination
-                currentPage={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-            />
+            {total > 0 && (
+                <OrgUnitPagination
+                    page={page}
+                    pageSize={pageSize}
+                    total={total}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    onPageSizeChange={handlePageSizeChange}
+                />
+            )}
 
             {/* Create/Edit Modal */}
             <CreateOrgUnitModal
                 open={modalOpen}
-                onClose={() => setModalOpen(false)}
+                onClose={() => {
+                    setModalOpen(false);
+                    setSelectedOrgUnit(null);
+                }}
                 initData={selectedOrgUnit}
                 onSuccess={handleModalSuccess}
             />
