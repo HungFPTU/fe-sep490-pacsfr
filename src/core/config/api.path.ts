@@ -39,7 +39,7 @@ export const API_PATH = {
             PUT: (id: string) => `/Service/${id}`,
             DELETE: (id: string) => `/Service/${id}`,
             GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
-       },
+        },
         ACCOUNTS: {
             GET_ALL: "/Staff",
             GET_BY_ID: (id: string) => `/Staff/${id}`,
@@ -64,6 +64,13 @@ export const API_PATH = {
         LEGALBASIS: {
             GET_ALL: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/LegalBasis?keyword=${Keyword}&isActive=${isActive}&Page=${Page}&Size=${Size}`,
             GET_BY_ID: (id: string) => `/LegalBasis/${id}`,
+        },
+        SERVICE_GROUP: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/ServiceGroup?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/ServiceGroup/${id}`,
+            POST: "/ServiceGroup",
+            PUT: (id: string) => `/ServiceGroup/${id}`,
+            DELETE: (id: string) => `/ServiceGroup/${id}`,
         }
     },
     STAFF: {

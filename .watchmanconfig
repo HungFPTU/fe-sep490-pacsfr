@@ -1,0 +1,14 @@
+{
+    "ignore_dirs": [
+        "node_modules",
+        ".next",
+        ".git",
+        "dist",
+        "build"
+    ],
+    "ignore_files": [
+        "pagefile.sys",
+        "hiberfil.sys",
+        "swapfile.sys"
+    ]
+}
