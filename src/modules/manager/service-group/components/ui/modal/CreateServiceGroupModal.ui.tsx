@@ -9,6 +9,8 @@ import { FormApiOf } from '@/types/types';
 import { useCreateServiceGroup, useUpdateServiceGroup } from '../../../hooks';
 import type { ServiceGroup, CreateServiceGroupRequest } from '../../../types';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
+import { ImageUpload } from '@/shared/components/common/ImageUpload';
+import { AWS_CONFIG } from '@core/config/aws.config';
 
 type FormValues = {
     groupCode: string;
@@ -137,20 +139,26 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
 
                 <InputField<FormValues>
                     form={form as FormApiOf<FormValues>}
-                    name="iconUrl"
-                    label="URL icon"
-                    required
-                    placeholder="https://example.com/icon.png"
-                    className="md:col-span-2"
-                />
-
-                <InputField<FormValues>
-                    form={form as FormApiOf<FormValues>}
                     name="displayOrder"
                     label="Thứ tự hiển thị"
                     type="number"
                     placeholder="0"
                 />
+
+                <div className="md:col-span-2">
+                    <form.Field name="iconUrl">
+                        {(field) => (
+                            <ImageUpload
+                                value={field.state.value as string}
+                                onChange={(url) => field.handleChange(url as never)}
+                                folder={AWS_CONFIG.FOLDERS.SERVICE_GROUP_ICONS}
+                                label="Icon nhóm dịch vụ"
+                                required
+                                disabled={isLoading}
+                            />
+                        )}
+                    </form.Field>
+                </div>
 
                 <div className="flex items-end pb-2">
                     <CheckboxField<FormValues>

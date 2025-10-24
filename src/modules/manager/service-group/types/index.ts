@@ -1,8 +1,3 @@
-/**
- * Service Group types
- * Consolidated type definitions for service group domain
- */
-
 export type ServiceGroup = {
     id: string;
     groupCode: string;
