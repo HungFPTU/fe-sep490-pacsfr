@@ -18,6 +18,8 @@
     "postinstall": "bun --bun run next telemetry disable"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.916.0",
+    "@aws-sdk/lib-storage": "^3.916.0",
     "@google/generative-ai": "^0.24.1",
     "@heroui/react": "^2.8.2",
     "@heroui/theme": "^2.4.20",

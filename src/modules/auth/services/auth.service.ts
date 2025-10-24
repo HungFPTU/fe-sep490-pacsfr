@@ -133,7 +133,7 @@ export const authService = {
             }
 
             // Transform API response to internal format
-            const { user, tokens } = transformApiAuthData(response.data.data);
+            const { user, tokens } = transformApiAuthData(response.data.data as ApiAuthData);
 
             return {
                 user,
