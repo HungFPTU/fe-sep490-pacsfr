@@ -3,6 +3,11 @@
 import React, { useState } from 'react';
 import { useServiceGroups, useDeleteServiceGroup } from '../../hooks';
 import { CreateServiceGroupModal } from '../ui/modal/CreateServiceGroupModal.ui';
+import { ServiceGroupDetailModal } from '../ui/detail/ServiceGroupDetailModal.ui';
+import { ServiceGroupHeader } from '../ui/header/ServiceGroupHeader.ui';
+import { ServiceGroupFilter } from '../ui/filter/ServiceGroupFilter.ui';
+import { ServiceGroupTable } from '../ui/table/ServiceGroupTable.ui';
+import { ServiceGroupPagination } from '../ui/pagination/ServiceGroupPagination.ui';
 import type { ServiceGroup } from '../../types';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { getValuesPage } from '@/types/rest';
@@ -12,6 +17,7 @@ export const ServiceGroupListPage: React.FC = () => {
     const [keyword, setKeyword] = useState('');
     const [isActive, setIsActive] = useState<boolean>(true);
     const [modalOpen, setModalOpen] = useState(false);
+    const [detailModalOpen, setDetailModalOpen] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState<ServiceGroup | null>(null);
 
     const { data, isLoading, refetch } = useServiceGroups({
@@ -32,6 +38,11 @@ export const ServiceGroupListPage: React.FC = () => {
     const handleEdit = (group: ServiceGroup) => {
         setSelectedGroup(group);
         setModalOpen(true);
+    };
+
+    const handleViewDetail = (group: ServiceGroup) => {
+        setSelectedGroup(group);
+        setDetailModalOpen(true);
     };
 
     const handleDelete = async (id: string) => {
@@ -59,143 +70,29 @@ export const ServiceGroupListPage: React.FC = () => {
 
     return (
         <div className="p-6">
-            {/* Header */}
-            <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-slate-900">Quản lý Nhóm Dịch Vụ</h1>
-                <button
-                    onClick={handleCreate}
-                    className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
-                >
-                    + Tạo nhóm mới
-                </button>
-            </div>
+            <ServiceGroupHeader onCreateClick={handleCreate} />
 
-            {/* Filters */}
-            <div className="mb-4 flex gap-4">
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm theo tên hoặc mã..."
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    className="flex-1 rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-                />
-                <select
-                    value={String(isActive)}
-                    onChange={(e) => setIsActive(e.target.value === 'true')}
-                    className="rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-                >
-                    <option value="true">Đang kích hoạt</option>
-                    <option value="false">Ngừng kích hoạt</option>
-                </select>
-            </div>
+            <ServiceGroupFilter
+                keyword={keyword}
+                onKeywordChange={setKeyword}
+                isActive={isActive}
+                onStatusChange={setIsActive}
+            />
 
-            {/* Table */}
-            <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow">
-                <table className="w-full">
-                    <thead className="bg-slate-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Mã nhóm
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Tên nhóm
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Mô tả
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Thứ tự
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Trạng thái
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Hành động
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 bg-white">
-                        {isLoading ? (
-                            <tr>
-                                <td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">
-                                    Đang tải...
-                                </td>
-                            </tr>
-                        ) : serviceGroups.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">
-                                    Không có dữ liệu
-                                </td>
-                            </tr>
-                        ) : (
-                            serviceGroups.map((group: ServiceGroup) => (
-                                <tr key={group.id} className="hover:bg-slate-50">
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">
-                                        {group.groupCode}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-slate-900">{group.groupName}</td>
-                                    <td className="px-6 py-4 text-sm text-slate-500">
-                                        {group.description.length > 50
-                                            ? `${group.description.substring(0, 50)}...`
-                                            : group.description}
-                                    </td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                                        {group.displayOrder}
-                                    </td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm">
-                                        <span
-                                            className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${group.isActive
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-gray-100 text-gray-800'
-                                                }`}
-                                        >
-                                            {group.isActive ? 'Hoạt động' : 'Ngừng'}
-                                        </span>
-                                    </td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                        <button
-                                            onClick={() => handleEdit(group)}
-                                            className="mr-3 text-indigo-600 hover:text-indigo-900"
-                                        >
-                                            Sửa
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(group.id)}
-                                            className="text-red-600 hover:text-red-900"
-                                            disabled={deleteMutation.isPending}
-                                        >
-                                            Xóa
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+            <ServiceGroupTable
+                groups={serviceGroups}
+                isLoading={isLoading}
+                onView={handleViewDetail}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                isDeleting={deleteMutation.isPending}
+            />
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="mt-4 flex items-center justify-center gap-2">
-                    <button
-                        onClick={() => setPage((p) => Math.max(1, p - 1))}
-                        disabled={page === 1}
-                        className="rounded-lg border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
-                    >
-                        Trước
-                    </button>
-                    <span className="text-sm text-slate-600">
-                        Trang {page} / {totalPages}
-                    </span>
-                    <button
-                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={page === totalPages}
-                        className="rounded-lg border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
-                    >
-                        Sau
-                    </button>
-                </div>
-            )}
+            <ServiceGroupPagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+            />
 
             {/* Create/Edit Modal */}
             <CreateServiceGroupModal
@@ -203,6 +100,13 @@ export const ServiceGroupListPage: React.FC = () => {
                 onClose={() => setModalOpen(false)}
                 initData={selectedGroup}
                 onSuccess={handleModalSuccess}
+            />
+
+            {/* Detail Modal */}
+            <ServiceGroupDetailModal
+                open={detailModalOpen}
+                onClose={() => setDetailModalOpen(false)}
+                serviceGroup={selectedGroup}
             />
         </div>
     );

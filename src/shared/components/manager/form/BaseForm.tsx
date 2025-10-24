@@ -76,7 +76,7 @@ function getFirstError(field: { state: { meta: { touchedErrors?: FieldMetaErrors
 }
 
 const toStr = (v: unknown): string =>
-    v === undefined || v === null ? '' : String(v);
+  v === undefined || v === null ? '' : String(v);
 
 /** Input */
 export function InputField<TFormData>({
@@ -90,10 +90,12 @@ export function InputField<TFormData>({
   className,
   type = 'text',
   placeholder,
+  inputProps,
 }: CommonProps<TFormData> & {
   form: FormApiOf<TFormData>;
   type?: React.HTMLInputTypeAttribute;
   placeholder?: string;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
 }) {
   const id = useId();
   return (
@@ -105,7 +107,7 @@ export function InputField<TFormData>({
             <input
               id={id}
               type={type}
-              disabled={disabled}
+              disabled={disabled || inputProps?.disabled}
               value={(field.state.value as string | number | readonly string[] | undefined) ?? ''}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.currentTarget.value as unknown as Updater<typeof field.state.value>)}
@@ -117,6 +119,7 @@ export function InputField<TFormData>({
                 disabled && 'bg-slate-100 cursor-not-allowed',
                 sizeClass(size)
               )}
+              {...inputProps}
             />
           </FormItem>
         );
@@ -154,7 +157,7 @@ export function TextareaField<TFormData>({
               disabled={disabled}
               value={(field.state.value as string | undefined) ?? ''}
               onBlur={field.handleBlur}
-               onChange={(e) => field.handleChange(e.currentTarget.value as unknown as Updater<typeof field.state.value>)}
+              onChange={(e) => field.handleChange(e.currentTarget.value as unknown as Updater<typeof field.state.value>)}
               placeholder={placeholder}
               rows={rows}
               className={cx(
@@ -175,21 +178,21 @@ export function TextareaField<TFormData>({
 /** Select (native) */
 export function SelectField<TFormData,
   TValue extends string | number | boolean = string>({
-  form,
-  name,
-  label,
-  required,
-  help,
-  size = 'md',
-  disabled,
-  className,
-  placeholder = '— Chọn —',
-  options,
-}: CommonProps<TFormData> & {
-  form: FormApiOf<TFormData>;
-  options: Array<{ label: React.ReactNode; value: TValue; disabled?: boolean }>;
-  placeholder?: string;
-}) {
+    form,
+    name,
+    label,
+    required,
+    help,
+    size = 'md',
+    disabled,
+    className,
+    placeholder = '— Chọn —',
+    options,
+  }: CommonProps<TFormData> & {
+    form: FormApiOf<TFormData>;
+    options: Array<{ label: React.ReactNode; value: TValue; disabled?: boolean }>;
+    placeholder?: string;
+  }) {
   const id = useId();
   return (
     <form.Field name={name}>
@@ -202,7 +205,7 @@ export function SelectField<TFormData,
               disabled={disabled}
               value={(field.state.value as string | number | readonly string[] | undefined) ?? ''}
               onBlur={field.handleBlur}
-               onChange={(e) => {
+              onChange={(e) => {
                 const raw = (e.currentTarget as HTMLSelectElement).value;
                 const cur = field.state.value;
 
@@ -261,7 +264,7 @@ export function SwitchField<TFormData>({
               type="button"
               aria-pressed={checked}
               onBlur={field.handleBlur}
-              onClick={() =>  field.handleChange((checked as unknown as Updater<typeof field.state.value>))}
+              onClick={() => field.handleChange((checked as unknown as Updater<typeof field.state.value>))}
               disabled={disabled}
               className={cx(
                 'relative inline-flex w-12 items-center rounded-full transition',
