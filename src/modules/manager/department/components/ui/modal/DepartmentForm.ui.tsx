@@ -24,7 +24,7 @@ interface Props {
     isEdit: boolean;
 }
 
-export const DepartmentForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
+export const DepartmentForm: React.FC<Props> = ({ form, isEdit }) => {
     // Fetch service groups for dropdown
     const { data: serviceGroupsData } = useServiceGroups({
         keyword: '',

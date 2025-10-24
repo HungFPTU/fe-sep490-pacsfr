@@ -26,6 +26,6 @@ export const accountsAPI = {
         return http.get<RestResponse<Account[]>>(API_PATH.MANAGER.ACCOUNTS.GET_ALL);
       },
       async getAllOrgUnits(Keyword: string, IsActive: boolean, Page: number, PageSize: number) {
-        return http.get<RestPaged<OrgUnit>>(API_PATH.MANAGER.ORGUNITS.GET_ALL(Keyword, IsActive, Page, PageSize));
+        return http.get<RestPaged<OrgUnit>>(API_PATH.MANAGER.ORG_UNIT.GET_ALL(Keyword, IsActive, Page, PageSize));
   }
 };

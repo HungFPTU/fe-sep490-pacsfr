@@ -7,8 +7,8 @@ import { Account } from '@/modules/manager/account';
 import { accountApiService } from '@/modules/manager/account/services/account.service';
 
 export default function Page() {
-  const [initData, setInitData] = useState<Account | null>(null);
-  const [openCreateModal, setOpenCreateModal] = useState(false);
+  // const [initData, setInitData] = useState<Account | null>(null);
+  // const [openCreateModal, setOpenCreateModal] = useState(false);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,10 +37,10 @@ export default function Page() {
   //  setInitData(null);
   //}
 
-  const handleEdit = (account: Account) => {
-    setOpenCreateModal(true);
-    setInitData(account);
-  }
+  // const handleEdit = (account: Account) => {
+  //   // setOpenCreateModal(true);
+  //   // setInitData(account);
+  // }
 
   const handleDelete = async (account: Account) => {
     if (!confirm(`Bạn có chắc muốn xóa tài khoản "${account.fullName}" không?`)) {
@@ -73,7 +73,7 @@ export default function Page() {
           <button
             className="rounded bg-blue-600 px-4 py-1 font-semibold text-white hover:bg-blue-700"
             onClick={() => {
-              setOpenCreateModal(true);
+              // setOpenCreateModal(true);
             }}
           >
             Tạo
@@ -90,7 +90,7 @@ export default function Page() {
       <DataTable
         columns={columns}
         data={accounts}
-        onEdit={(record) => handleEdit(record)}
+        // onEdit={(record) => handleEdit(record)}
         onDelete={(record) => handleDelete(record)}
       />
     </div>
