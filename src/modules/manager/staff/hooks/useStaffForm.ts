@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
-import { Staff, CreateStaffRequest, UpdateStaffRequest } from '../types';
+import { Staff, CreateStaffRequest } from '../types';
 
 // ==================== Form Types ====================
 
@@ -22,7 +22,7 @@ export interface StaffFormValues {
 interface UseStaffFormProps {
     open: boolean;
     initData: Staff | null;
-    onSubmit: (data: CreateStaffRequest | UpdateStaffRequest) => Promise<void>;
+    onSubmit: (data: CreateStaffRequest) => Promise<void>;
     onClose: () => void;
     onSuccess?: () => void;
 }
@@ -62,24 +62,7 @@ function toFormValues(data: Staff | null): StaffFormValues {
 
 function toRequest(
     values: StaffFormValues,
-    isEdit: boolean,
-    staffId?: string
-): CreateStaffRequest | UpdateStaffRequest {
-    if (isEdit && staffId) {
-        return {
-            id: staffId,
-            orgUnitId: values.orgUnitId,
-            staffCode: values.staffCode,
-            fullName: values.fullName,
-            email: values.email,
-            phone: values.phone,
-            position: values.position,
-            roleType: values.roleType,
-            specialization: values.specialization || undefined,
-            isActive: values.isActive !== undefined ? values.isActive : true,
-        };
-    }
-
+): CreateStaffRequest {
     return {
         orgUnitId: values.orgUnitId,
         staffCode: values.staffCode,
@@ -142,7 +125,7 @@ export function useStaffForm({ open, initData, onSubmit, onClose, onSuccess }: U
             }
 
             try {
-                const request = toRequest(value, !!initData?.id, initData?.id);
+                const request = toRequest(value);
                 await onSubmit(request);
                 onSuccess?.();
             } catch (error) {

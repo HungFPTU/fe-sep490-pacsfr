@@ -32,6 +32,8 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
             <form.Field
                 name="orgUnitId"
                 validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Cơ quan là bắt buộc' : undefined,
                     onBlur: ({ value }: { value: string }) =>
                         !value || !value.trim() ? 'Cơ quan là bắt buộc' : undefined,
                 }}
@@ -54,6 +56,8 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="staffCode"
                     validators={{
+                        onChange: ({ value }: { value: string }) =>
+                            !value || !value.trim() ? 'Mã nhân viên là bắt buộc' : undefined,
                         onBlur: ({ value }: { value: string }) =>
                             !value || !value.trim() ? 'Mã nhân viên là bắt buộc' : undefined,
                     }}
@@ -73,6 +77,8 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="fullName"
                     validators={{
+                        onChange: ({ value }: { value: string }) =>
+                            !value || !value.trim() ? 'Họ tên là bắt buộc' : undefined,
                         onBlur: ({ value }: { value: string }) =>
                             !value || !value.trim() ? 'Họ tên là bắt buộc' : undefined,
                     }}
@@ -96,6 +102,8 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                     <form.Field
                         name="username"
                         validators={{
+                            onChange: ({ value }: { value: string }) =>
+                                !value || !value.trim() ? 'Tên đăng nhập là bắt buộc' : undefined,
                             onBlur: ({ value }: { value: string }) =>
                                 !value || !value.trim() ? 'Tên đăng nhập là bắt buộc' : undefined,
                         }}
@@ -115,6 +123,8 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                     <form.Field
                         name="password"
                         validators={{
+                            onChange: ({ value }: { value: ObjectValue<never, StaffFormValues, "password"> }) =>
+                                !value || !value.trim() ? 'Mật khẩu là bắt buộc' : undefined,
                             onBlur: ({ value }: { value: ObjectValue<never, StaffFormValues, "password"> }) =>
                                 !value || !value.trim() ? 'Mật khẩu là bắt buộc' : undefined,
                         }}
@@ -139,6 +149,11 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="email"
                     validators={{
+                        onChange: ({ value }: { value: string }) => {
+                            if (!value || !value.trim()) return 'Email là bắt buộc';
+                            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Email không hợp lệ';
+                            return undefined;
+                        },
                         onBlur: ({ value }: { value: string }) => {
                             if (!value || !value.trim()) return 'Email là bắt buộc';
                             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Email không hợp lệ';
@@ -162,6 +177,11 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="phone"
                     validators={{
+                        onChange: ({ value }: { value: string }) => {
+                            if (!value || !value.trim()) return 'Số điện thoại là bắt buộc';
+                            if (!/^[0-9]{10,11}$/.test(value)) return 'Số điện thoại không hợp lệ';
+                            return undefined;
+                        },
                         onBlur: ({ value }: { value: string }) => {
                             if (!value || !value.trim()) return 'Số điện thoại là bắt buộc';
                             if (!/^[0-9]{10,11}$/.test(value)) return 'Số điện thoại không hợp lệ';
@@ -187,6 +207,8 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="position"
                     validators={{
+                        onChange: ({ value }: { value: string }) =>
+                            !value || !value.trim() ? 'Chức vụ là bắt buộc' : undefined,
                         onBlur: ({ value }: { value: string }) =>
                             !value || !value.trim() ? 'Chức vụ là bắt buộc' : undefined,
                     }}
@@ -207,6 +229,8 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="roleType"
                     validators={{
+                        onChange: ({ value }: { value: string }) =>
+                            !value || !value.trim() ? 'Vai trò là bắt buộc' : undefined,
                         onBlur: ({ value }: { value: string }) =>
                             !value || !value.trim() ? 'Vai trò là bắt buộc' : undefined,
                     }}
