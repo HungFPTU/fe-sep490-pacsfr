@@ -179,21 +179,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Create user data for NavUser component
   const userData = {
-    name: user?.name || "Manager",
+    name: user?.fullName || "Manager",
     email: user?.email || "manager@pascs.com",
     avatar: user?.avatar || "/avatars/manager.jpg",
+    roleType: user?.roleType || "abc"
   }
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+      <NavUser user={userData} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={userData} />
+      <TeamSwitcher teams={data.teams} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

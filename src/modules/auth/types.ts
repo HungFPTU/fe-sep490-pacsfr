@@ -11,7 +11,8 @@ export interface User {
     id: string;
     username: string;
     email: string;
-    name: string;
+    fullName: string;
+    roleType:string;
     phone?: string;
     avatar?: string;
     role: UserRole;
