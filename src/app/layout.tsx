@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppProviders } from "@/shared/providers/AppProviders";
+import { GlobalLoadingOverlay } from "@/shared/components/common/GlobalLoadingOverlay";
+import { GlobalToast } from "@/shared/components/GlobalToast.com";
 
 export const metadata: Metadata = {
   title: "Cổng Dịch vụ công quốc gia - PASCS",
@@ -19,6 +21,8 @@ export default function RootLayout({
     <html lang="vi">
       <body>
         <AppProviders>
+          <GlobalLoadingOverlay />
+          <GlobalToast />
           {children}
         </AppProviders>
       </body>

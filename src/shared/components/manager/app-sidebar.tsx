@@ -61,6 +61,10 @@ const data = {
       isActive: true,
       items: [
         {
+          title: "Quản lý nhân viên",
+          url: "/manager/staff-management",
+        },
+        {
           title: "Danh sách nhân sự",
           url: "/manager/account/list",
         },
@@ -81,7 +85,7 @@ const data = {
       items: [
         {
           title: "Danh sách dịch vụ",
-          url: "/manager/service/list",
+          url: "/manager/dich-vu",
         },
         {
           title: "Nhóm dịch vụ",
@@ -106,6 +110,14 @@ const data = {
       url: "/manager/operation",
       icon: BookOpen,
       items: [
+        {
+          title: "Quản lý phòng ban",
+          url: "/manager/phong-ban",
+        },
+        {
+          title: "Quản lý cơ quan",
+          url: "/manager/co-quan",
+        },
         {
           title: "Giờ làm việc",
           url: "/manager/operation/hours",
