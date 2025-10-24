@@ -42,12 +42,26 @@ export const useDepartmentForm = ({
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
+            // Final validation before submit
+            if (!value.serviceGroupId?.trim()) {
+                addToast({ message: 'Vui lòng chọn nhóm dịch vụ', type: 'error' });
+                return;
+            }
+            if (!value.code?.trim()) {
+                addToast({ message: 'Vui lòng nhập mã phòng ban', type: 'error' });
+                return;
+            }
+            if (!value.name?.trim()) {
+                addToast({ message: 'Vui lòng nhập tên phòng ban', type: 'error' });
+                return;
+            }
+
             try {
                 const request: CreateDepartmentRequest = {
-                    serviceGroupId: (initData as Department)?.serviceGroupId ?? value.serviceGroupId,
-                    code: value.code,
-                    name: value.name,
-                    description: value.description,
+                    serviceGroupId: (initData as Department)?.serviceGroupId ?? value.serviceGroupId.trim(),
+                    code: value.code.trim(),
+                    name: value.name.trim(),
+                    description: value.description?.trim() || '',
                     levelOrder: Number(value.levelOrder),
                     isActive: value.isActive,
                 };

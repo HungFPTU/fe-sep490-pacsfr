@@ -7,6 +7,7 @@ import { ServiceTable } from '../ui/table/ServiceTable.ui';
 import { ServicePagination } from '../ui/pagination/ServicePagination.ui';
 import { CreateServiceModal } from '../ui/modal/CreateServiceModal.ui';
 import { ServiceDetailModal } from '../ui/detail/ServiceDetailModal.ui';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import { useServices, useDeleteService } from '../../hooks';
 import { useGlobalToast } from '@/core/patterns/SingletonHook';
 import { getValuesPage, RestPaged } from '@/types/rest';
@@ -27,11 +28,13 @@ export const ServiceListPage: React.FC = () => {
     // Modal states
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [detailModalOpen, setDetailModalOpen] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [editData, setEditData] = useState<Service | null>(null);
     const [detailData, setDetailData] = useState<Service | null>(null);
 
     // Delete state
     const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [deletingService, setDeletingService] = useState<Service | null>(null);
 
     // Fetch data
     const { data, isLoading } = useServices({
@@ -66,20 +69,25 @@ export const ServiceListPage: React.FC = () => {
         setDetailModalOpen(true);
     };
 
-    const handleDelete = async (service: Service) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa dịch vụ "${service.serviceName}"?`)) {
-            return;
-        }
-
+    const handleDelete = (service: Service) => {
+        setDeletingService(service);
         setDeletingId(service.id);
+        setConfirmDeleteOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!deletingId) return;
+
         try {
-            await deleteMutation.mutateAsync(service.id);
+            await deleteMutation.mutateAsync(deletingId);
             toast.success('Xóa dịch vụ thành công');
         } catch (error) {
             toast.error('Xóa dịch vụ thất bại');
             console.error('Delete error:', error);
         } finally {
+            setConfirmDeleteOpen(false);
             setDeletingId(null);
+            setDeletingService(null);
         }
     };
 
@@ -154,6 +162,23 @@ export const ServiceListPage: React.FC = () => {
                 open={detailModalOpen}
                 onClose={() => setDetailModalOpen(false)}
                 service={detailData}
+            />
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                open={confirmDeleteOpen}
+                title="Xác nhận xóa"
+                message={`Bạn có chắc chắn muốn xóa dịch vụ "${deletingService?.serviceName}"?\nHành động này không thể hoàn tác.`}
+                confirmText="Xóa"
+                cancelText="Hủy"
+                type="danger"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => {
+                    setConfirmDeleteOpen(false);
+                    setDeletingId(null);
+                    setDeletingService(null);
+                }}
+                loading={deleteMutation.isPending}
             />
         </div>
     );

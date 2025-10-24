@@ -1,6 +1,7 @@
 import { useForm } from '@tanstack/react-form';
 import { useEffect } from 'react';
 import type { Service, CreateServiceRequest, UpdateServiceRequest } from '../types';
+import { useGlobalToast } from '@core/patterns/SingletonHook';
 
 type FormValues = {
     serviceGroupId: string;
@@ -38,37 +39,64 @@ const toFormValues = (data?: Service | null): FormValues => ({
 
 export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps) => {
     const isEdit = !!initData?.id;
+    const { addToast } = useGlobalToast();
 
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
+            // Final validation before submit
+            if (!value.serviceGroupId?.trim()) {
+                addToast({ message: 'Vui lòng chọn nhóm dịch vụ', type: 'error' });
+                return;
+            }
+            if (!value.serviceCode?.trim()) {
+                addToast({ message: 'Vui lòng nhập mã dịch vụ', type: 'error' });
+                return;
+            }
+            if (!value.serviceName?.trim()) {
+                addToast({ message: 'Vui lòng nhập tên dịch vụ', type: 'error' });
+                return;
+            }
+            if (!value.serviceType?.trim()) {
+                addToast({ message: 'Vui lòng chọn loại dịch vụ', type: 'error' });
+                return;
+            }
+            if (!value.executionLevel?.trim()) {
+                addToast({ message: 'Vui lòng chọn cấp thực hiện', type: 'error' });
+                return;
+            }
+            if (!value.field?.trim()) {
+                addToast({ message: 'Vui lòng chọn lĩnh vực', type: 'error' });
+                return;
+            }
+
             const request = isEdit && initData?.id
                 ? {
                     id: initData.id,
-                    serviceGroupId: value.serviceGroupId,
-                    serviceName: value.serviceName,
-                    serviceCode: value.serviceCode,
-                    description: value.description,
-                    serviceType: value.serviceType,
-                    resultDocument: value.resultDocument,
+                    serviceGroupId: value.serviceGroupId.trim(),
+                    serviceName: value.serviceName.trim(),
+                    serviceCode: value.serviceCode.trim(),
+                    description: value.description?.trim() || '',
+                    serviceType: value.serviceType.trim(),
+                    resultDocument: value.resultDocument?.trim() || '',
                     isOnlineAvailable: value.isOnlineAvailable,
                     isActive: value.isActive,
-                    decisionNumber: value.decisionNumber,
-                    executionLevel: value.executionLevel,
-                    field: value.field,
+                    decisionNumber: value.decisionNumber?.trim() || '',
+                    executionLevel: value.executionLevel.trim(),
+                    field: value.field.trim(),
                 } as UpdateServiceRequest
                 : {
-                    serviceGroupId: value.serviceGroupId,
-                    serviceName: value.serviceName,
-                    serviceCode: value.serviceCode,
-                    description: value.description,
-                    serviceType: value.serviceType,
-                    resultDocument: value.resultDocument,
+                    serviceGroupId: value.serviceGroupId.trim(),
+                    serviceName: value.serviceName.trim(),
+                    serviceCode: value.serviceCode.trim(),
+                    description: value.description?.trim() || '',
+                    serviceType: value.serviceType.trim(),
+                    resultDocument: value.resultDocument?.trim() || '',
                     isOnlineAvailable: value.isOnlineAvailable,
                     isActive: value.isActive,
-                    decisionNumber: value.decisionNumber,
-                    executionLevel: value.executionLevel,
-                    field: value.field,
+                    decisionNumber: value.decisionNumber?.trim() || '',
+                    executionLevel: value.executionLevel.trim(),
+                    field: value.field.trim(),
                 } as CreateServiceRequest;
 
             await onSubmit(request);

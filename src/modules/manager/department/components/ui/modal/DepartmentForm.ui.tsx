@@ -43,43 +43,83 @@ export const DepartmentForm: React.FC<Props> = ({ form, isLoading, isEdit }) => 
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <SelectField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="serviceGroupId"
-                label="Nhóm dịch vụ"
-                required
-                options={serviceGroupOptions}
-                placeholder="Chọn nhóm dịch vụ"
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Nhóm dịch vụ là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <SelectField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="serviceGroupId"
+                        label="Nhóm dịch vụ"
+                        required
+                        options={serviceGroupOptions}
+                        placeholder="Chọn nhóm dịch vụ"
+                    />
+                )}
+            </form.Field>
 
-            <InputField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="code"
-                label="Mã phòng ban"
-                required
-                placeholder="Nhập mã phòng ban"
-                disabled={isEdit}
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Mã phòng ban là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <InputField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="code"
+                        label="Mã phòng ban"
+                        required
+                        placeholder="Nhập mã phòng ban"
+                        disabled={isEdit}
+                    />
+                )}
+            </form.Field>
 
-            <InputField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="name"
-                label="Tên phòng ban"
-                required
-                placeholder="Nhập tên phòng ban"
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Tên phòng ban là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <InputField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="name"
+                        label="Tên phòng ban"
+                        required
+                        placeholder="Nhập tên phòng ban"
+                    />
+                )}
+            </form.Field>
 
-            <SelectField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="levelOrder"
-                label="Cấp độ"
-                required
-                options={DEPARTMENT_LEVELS.map((level) => ({
-                    value: level.value.toString(),
-                    label: level.label,
-                }))}
-                placeholder="Chọn cấp độ"
-            />
+                validators={{
+                    onChange: ({ value }: { value: number }) =>
+                        value === undefined || value === null ? 'Cấp độ là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <SelectField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="levelOrder"
+                        label="Cấp độ"
+                        required
+                        options={DEPARTMENT_LEVELS.map((level) => ({
+                            value: level.value.toString(),
+                            label: level.label,
+                        }))}
+                        placeholder="Chọn cấp độ"
+                    />
+                )}
+            </form.Field>
 
             <div className="flex items-end pb-2">
                 <CheckboxField<FormValues>

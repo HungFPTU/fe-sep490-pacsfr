@@ -49,63 +49,123 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <SelectField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="serviceGroupId"
-                label="Nhóm dịch vụ"
-                required
-                options={serviceGroupOptions}
-                placeholder="Chọn nhóm dịch vụ"
-                disabled={isLoading}
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Nhóm dịch vụ là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <SelectField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="serviceGroupId"
+                        label="Nhóm dịch vụ"
+                        required
+                        options={serviceGroupOptions}
+                        placeholder="Chọn nhóm dịch vụ"
+                        disabled={isLoading}
+                    />
+                )}
+            </form.Field>
 
-            <InputField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="serviceCode"
-                label="Mã dịch vụ"
-                required
-                placeholder="Nhập mã dịch vụ"
-                disabled={isEdit || isLoading}
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Mã dịch vụ là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <InputField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="serviceCode"
+                        label="Mã dịch vụ"
+                        required
+                        placeholder="Nhập mã dịch vụ"
+                        disabled={isEdit || isLoading}
+                    />
+                )}
+            </form.Field>
 
-            <InputField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="serviceName"
-                label="Tên dịch vụ"
-                required
-                placeholder="Nhập tên dịch vụ"
-                disabled={isLoading}
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Tên dịch vụ là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <InputField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="serviceName"
+                        label="Tên dịch vụ"
+                        required
+                        placeholder="Nhập tên dịch vụ"
+                        disabled={isLoading}
+                    />
+                )}
+            </form.Field>
 
-            <SelectField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="serviceType"
-                label="Loại dịch vụ"
-                required
-                options={Array.from(SERVICE_TYPES)}
-                placeholder="Chọn loại dịch vụ"
-                disabled={isLoading}
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Loại dịch vụ là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <SelectField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="serviceType"
+                        label="Loại dịch vụ"
+                        required
+                        options={Array.from(SERVICE_TYPES)}
+                        placeholder="Chọn loại dịch vụ"
+                        disabled={isLoading}
+                    />
+                )}
+            </form.Field>
 
-            <SelectField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="executionLevel"
-                label="Cấp thực hiện"
-                required
-                options={Array.from(EXECUTION_LEVELS)}
-                placeholder="Chọn cấp thực hiện"
-                disabled={isLoading}
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Cấp thực hiện là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <SelectField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="executionLevel"
+                        label="Cấp thực hiện"
+                        required
+                        options={Array.from(EXECUTION_LEVELS)}
+                        placeholder="Chọn cấp thực hiện"
+                        disabled={isLoading}
+                    />
+                )}
+            </form.Field>
 
-            <SelectField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="field"
-                label="Lĩnh vực"
-                required
-                options={Array.from(SERVICE_FIELDS)}
-                placeholder="Chọn lĩnh vực"
-                disabled={isLoading}
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Lĩnh vực là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <SelectField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="field"
+                        label="Lĩnh vực"
+                        required
+                        options={Array.from(SERVICE_FIELDS)}
+                        placeholder="Chọn lĩnh vực"
+                        disabled={isLoading}
+                    />
+                )}
+            </form.Field>
 
             <InputField<FormValues>
                 form={form as FormApiOf<FormValues>}

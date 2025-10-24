@@ -8,6 +8,7 @@ import { DepartmentHeader } from '../ui/header/DepartmentHeader.ui';
 import { DepartmentFilter } from '../ui/filter/DepartmentFilter.ui';
 import { DepartmentTable } from '../ui/table/DepartmentTable.ui';
 import { DepartmentPagination } from '../ui/pagination/DepartmentPagination.ui';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import type { Department } from '../../types';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { getValuesPage, RestPaged } from '@/types/rest';
@@ -19,7 +20,9 @@ export const DepartmentListPage: React.FC = () => {
     const [isActive, setIsActive] = useState<boolean>(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [detailModalOpen, setDetailModalOpen] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     const { data, isLoading, refetch } = useDepartments({
         keyword,
@@ -46,18 +49,24 @@ export const DepartmentListPage: React.FC = () => {
         setDetailModalOpen(true);
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Bạn có chắc chắn muốn xóa phòng ban này?')) {
-            return;
-        }
+    const handleDelete = (id: string) => {
+        setDeletingId(id);
+        setConfirmDeleteOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!deletingId) return;
 
         try {
-            await deleteMutation.mutateAsync(id);
+            await deleteMutation.mutateAsync(deletingId);
             addToast({ message: 'Xóa phòng ban thành công', type: 'success' });
             refetch();
         } catch (error) {
             console.error('Error deleting department:', error);
             addToast({ message: 'Xóa phòng ban thất bại', type: 'error' });
+        } finally {
+            setConfirmDeleteOpen(false);
+            setDeletingId(null);
         }
     };
 
@@ -126,6 +135,22 @@ export const DepartmentListPage: React.FC = () => {
                 open={detailModalOpen}
                 onClose={() => setDetailModalOpen(false)}
                 department={selectedDepartment}
+            />
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                open={confirmDeleteOpen}
+                title="Xác nhận xóa"
+                message={`Bạn có chắc chắn muốn xóa phòng ban này?\nHành động này không thể hoàn tác.`}
+                confirmText="Xóa"
+                cancelText="Hủy"
+                type="danger"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => {
+                    setConfirmDeleteOpen(false);
+                    setDeletingId(null);
+                }}
+                loading={deleteMutation.isPending}
             />
         </div>
     );

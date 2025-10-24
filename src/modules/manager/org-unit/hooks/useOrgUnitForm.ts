@@ -46,15 +46,45 @@ export const useOrgUnitForm = ({
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
+            // Final validation before submit
+            if (!value.departmentId?.trim()) {
+                addToast({ message: 'Vui lòng chọn phòng ban', type: 'error' });
+                return;
+            }
+            if (!value.unitCode?.trim()) {
+                addToast({ message: 'Vui lòng nhập mã cơ quan', type: 'error' });
+                return;
+            }
+            if (!value.unitName?.trim()) {
+                addToast({ message: 'Vui lòng nhập tên cơ quan', type: 'error' });
+                return;
+            }
+            if (!value.unitType?.trim()) {
+                addToast({ message: 'Vui lòng chọn loại hình', type: 'error' });
+                return;
+            }
+            if (!value.address?.trim()) {
+                addToast({ message: 'Vui lòng nhập địa chỉ', type: 'error' });
+                return;
+            }
+            if (!value.phone?.trim()) {
+                addToast({ message: 'Vui lòng nhập số điện thoại', type: 'error' });
+                return;
+            }
+            if (!value.email?.trim()) {
+                addToast({ message: 'Vui lòng nhập email', type: 'error' });
+                return;
+            }
+
             try {
                 const request: CreateOrgUnitRequest = {
-                    departmentId: value.departmentId,
-                    unitCode: value.unitCode,
-                    unitName: value.unitName,
-                    unitType: value.unitType,
-                    address: value.address,
-                    phone: value.phone,
-                    email: value.email,
+                    departmentId: value.departmentId.trim(),
+                    unitCode: value.unitCode.trim(),
+                    unitName: value.unitName.trim(),
+                    unitType: value.unitType.trim(),
+                    address: value.address.trim(),
+                    phone: value.phone.trim(),
+                    email: value.email.trim(),
                     isActive: value.isActive,
                 };
 

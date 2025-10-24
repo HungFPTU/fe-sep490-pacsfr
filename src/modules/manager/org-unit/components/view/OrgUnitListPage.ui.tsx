@@ -8,6 +8,7 @@ import { OrgUnitHeader } from '../ui/header/OrgUnitHeader.ui';
 import { OrgUnitFilter } from '../ui/filter/OrgUnitFilter.ui';
 import { OrgUnitTable } from '../ui/table/OrgUnitTable.ui';
 import { OrgUnitPagination } from '../ui/pagination/OrgUnitPagination.ui';
+import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import type { OrgUnit } from '../../types';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { getValuesPage, RestPaged } from '@/types/rest';
@@ -19,7 +20,9 @@ export const OrgUnitListPage: React.FC = () => {
     const [isActive, setIsActive] = useState<boolean>(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [detailModalOpen, setDetailModalOpen] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | null>(null);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     const { data, isLoading, refetch } = useOrgUnits({
         keyword,
@@ -46,18 +49,24 @@ export const OrgUnitListPage: React.FC = () => {
         setDetailModalOpen(true);
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Bạn có chắc chắn muốn xóa cơ quan này?')) {
-            return;
-        }
+    const handleDelete = (id: string) => {
+        setDeletingId(id);
+        setConfirmDeleteOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!deletingId) return;
 
         try {
-            await deleteMutation.mutateAsync(id);
+            await deleteMutation.mutateAsync(deletingId);
             addToast({ message: 'Xóa cơ quan thành công', type: 'success' });
             refetch();
         } catch (error) {
             console.error('Error deleting org unit:', error);
             addToast({ message: 'Xóa cơ quan thất bại', type: 'error' });
+        } finally {
+            setConfirmDeleteOpen(false);
+            setDeletingId(null);
         }
     };
 
@@ -126,6 +135,22 @@ export const OrgUnitListPage: React.FC = () => {
                 open={detailModalOpen}
                 onClose={() => setDetailModalOpen(false)}
                 orgUnit={selectedOrgUnit}
+            />
+
+            {/* Delete Confirmation Dialog */}
+            <ConfirmDialog
+                open={confirmDeleteOpen}
+                title="Xác nhận xóa"
+                message={`Bạn có chắc chắn muốn xóa cơ quan này?\nHành động này không thể hoàn tác.`}
+                confirmText="Xóa"
+                cancelText="Hủy"
+                type="danger"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => {
+                    setConfirmDeleteOpen(false);
+                    setDeletingId(null);
+                }}
+                loading={deleteMutation.isPending}
             />
         </div>
     );

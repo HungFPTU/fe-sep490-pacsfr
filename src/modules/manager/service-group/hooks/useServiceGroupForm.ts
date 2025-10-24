@@ -42,12 +42,26 @@ export const useServiceGroupForm = ({
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
+            // Final validation before submit
+            if (!value.groupCode?.trim()) {
+                addToast({ message: 'Vui lòng nhập mã nhóm', type: 'error' });
+                return;
+            }
+            if (!value.groupName?.trim()) {
+                addToast({ message: 'Vui lòng nhập tên nhóm', type: 'error' });
+                return;
+            }
+            if (!value.iconUrl?.trim()) {
+                addToast({ message: 'Vui lòng tải lên icon nhóm dịch vụ', type: 'error' });
+                return;
+            }
+
             try {
                 const request: CreateServiceGroupRequest = {
-                    groupCode: value.groupCode,
-                    groupName: value.groupName,
-                    description: value.description,
-                    iconUrl: value.iconUrl,
+                    groupCode: value.groupCode.trim(),
+                    groupName: value.groupName.trim(),
+                    description: value.description?.trim() || '',
+                    iconUrl: value.iconUrl.trim(),
                     displayOrder: value.displayOrder,
                     isActive: value.isActive,
                 };
