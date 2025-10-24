@@ -79,6 +79,15 @@ export const API_PATH = {
             POST: "/ServiceGroup",
             PUT: (id: string) => `/ServiceGroup/${id}`,
             DELETE: (id: string) => `/ServiceGroup/${id}`,
+        },
+        STAFF_MANAGEMENT: {
+            BASE: "/Staff",
+            GET_BY_ID: (id: string) => `/Staff/${id}`,
+            CREATE: "/Staff",
+            UPDATE: (id: string) => `/Staff/${id}`,
+            DELETE: (id: string) => `/Staff/${id}`,
+            ASSIGN_DEPARTMENT: (staffId: string) => `/Staff/${staffId}/assign-department`,
+            ASSIGN_WORKSHIFT: (staffId: string) => `/Staff/${staffId}/assign-workshift`,
         }
     },
     STAFF: {

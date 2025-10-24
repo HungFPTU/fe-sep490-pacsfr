@@ -61,6 +61,10 @@ const data = {
       isActive: true,
       items: [
         {
+          title: "Quản lý nhân viên",
+          url: "/manager/staff-management",
+        },
+        {
           title: "Danh sách nhân sự",
           url: "/manager/account/list",
         },
