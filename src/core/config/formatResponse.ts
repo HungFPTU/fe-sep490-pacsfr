@@ -17,7 +17,8 @@ export interface PaginationData<T> {
 export interface ApiResponse<T> {
     $id: string;
     success: boolean;
+    isSuccess?: boolean;
     message: string;
-    data: PaginationData<T>;
+    data: PaginationData<T> | T;
     timestamp: string;
 }

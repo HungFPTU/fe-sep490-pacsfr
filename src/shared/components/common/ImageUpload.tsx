@@ -6,9 +6,10 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { X, Image as ImageIcon } from 'lucide-react';
 import { useFileUpload } from '@core/hooks/useFileUpload';
 import { AWS_CONFIG } from '@core/config/aws.config';
+import Image from 'next/image';
 
 interface ImageUploadProps {
   value?: string;
@@ -32,21 +33,21 @@ export function ImageUpload({
   const [preview, setPreview] = useState<string>(value || '');
   const inputRef = useRef<HTMLInputElement>(null);
   const { upload, uploading, progress, error } = useFileUpload();
-  
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     // Show preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
-    
+
     // Upload file
     const result = await upload(file, { folder });
-    
+
     if (result.success && result.url) {
       onChange(result.url);
       setPreview(result.url);
@@ -55,7 +56,7 @@ export function ImageUpload({
       setPreview(value || '');
     }
   };
-  
+
   const handleRemove = () => {
     setPreview('');
     onChange('');
@@ -63,13 +64,13 @@ export function ImageUpload({
       inputRef.current.value = '';
     }
   };
-  
+
   const handleClick = () => {
     if (!disabled) {
       inputRef.current?.click();
     }
   };
-  
+
   return (
     <div className={`w-full ${className}`}>
       {label && (
@@ -78,7 +79,7 @@ export function ImageUpload({
           {required && <span className="ml-0.5 text-red-500">*</span>}
         </label>
       )}
-      
+
       <div className="relative">
         {/* Upload Area */}
         <div
@@ -93,11 +94,15 @@ export function ImageUpload({
         >
           {preview ? (
             <>
-              <img
-                src={preview}
-                alt="Preview"
-                className="h-full w-full rounded-xl object-contain"
-              />
+              <div className="h-full w-full rounded-xl overflow-hidden">
+                <Image
+                  src={preview}
+                  alt="Preview"
+                  layout="fill"
+                  objectFit="contain"
+                  className="rounded-xl"
+                />
+              </div>
               {!disabled && (
                 <button
                   type="button"
@@ -136,7 +141,7 @@ export function ImageUpload({
             </div>
           )}
         </div>
-        
+
         {/* Hidden Input */}
         <input
           ref={inputRef}
@@ -147,14 +152,14 @@ export function ImageUpload({
           className="hidden"
         />
       </div>
-      
+
       {/* Error Message */}
       {error && (
         <div className="mt-1 text-xs text-red-600">
           {error}
         </div>
       )}
-      
+
       {/* URL Display */}
       {value && !error && (
         <div className="mt-1 text-xs text-slate-500">
