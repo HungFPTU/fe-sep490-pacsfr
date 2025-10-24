@@ -58,8 +58,12 @@ export const API_PATH = {
         DEPARTMENTS: {
             GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/Department?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
         },
-        ORGUNITS: {
-            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/OrgUnit/get-all?isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+        ORG_UNIT: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/OrgUnit/get-all?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/OrgUnit/${id}`,
+            POST: "/OrgUnit/create",
+            PUT: (id: string) => `/OrgUnit/${id}`,
+            DELETE: (id: string) => `/OrgUnit/delete/${id}`,
         },
         LEGALBASIS: {
             GET_ALL: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/LegalBasis?keyword=${Keyword}&isActive=${isActive}&Page=${Page}&Size=${Size}`,

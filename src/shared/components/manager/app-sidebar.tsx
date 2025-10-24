@@ -107,6 +107,10 @@ const data = {
       icon: BookOpen,
       items: [
         {
+          title: "Quản lý cơ quan",
+          url: "/manager/co-quan",
+        },
+        {
           title: "Giờ làm việc",
           url: "/manager/operation/hours",
         },
