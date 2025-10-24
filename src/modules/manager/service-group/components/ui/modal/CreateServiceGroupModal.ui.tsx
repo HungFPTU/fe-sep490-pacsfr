@@ -127,6 +127,11 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
                     required
                     placeholder="Nhập mã nhóm dịch vụ"
                     disabled={!!initData?.id}
+                    inputProps={
+                        initData?.id
+                            ? { disabled: true, style: { backgroundColor: "#f3f4f6", color: "#9ca3af", cursor: "not-allowed", fontWeight: 600 } }
+                            : {}
+                    }
                 />
 
                 <InputField<FormValues>

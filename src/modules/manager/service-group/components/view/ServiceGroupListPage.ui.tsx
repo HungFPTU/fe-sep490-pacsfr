@@ -1,17 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useServiceGroups, useDeleteServiceGroup } from '../../hooks';
 import { CreateServiceGroupModal } from '../ui/modal/CreateServiceGroupModal.ui';
+import { ServiceGroupDetailModal } from '../ui/detail/ServiceGroupDetailModal.ui';
 import type { ServiceGroup } from '../../types';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { getValuesPage } from '@/types/rest';
+import { formatDate } from '@/shared/lib/utils';
 
 export const ServiceGroupListPage: React.FC = () => {
     const [page, setPage] = useState(1);
     const [keyword, setKeyword] = useState('');
     const [isActive, setIsActive] = useState<boolean>(true);
     const [modalOpen, setModalOpen] = useState(false);
+    const [detailModalOpen, setDetailModalOpen] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState<ServiceGroup | null>(null);
 
     const { data, isLoading, refetch } = useServiceGroups({
@@ -32,6 +36,11 @@ export const ServiceGroupListPage: React.FC = () => {
     const handleEdit = (group: ServiceGroup) => {
         setSelectedGroup(group);
         setModalOpen(true);
+    };
+
+    const handleViewDetail = (group: ServiceGroup) => {
+        setSelectedGroup(group);
+        setDetailModalOpen(true);
     };
 
     const handleDelete = async (id: string) => {
@@ -95,6 +104,9 @@ export const ServiceGroupListPage: React.FC = () => {
                     <thead className="bg-slate-50">
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                                Icon
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
                                 Mã nhóm
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
@@ -104,10 +116,10 @@ export const ServiceGroupListPage: React.FC = () => {
                                 Mô tả
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Thứ tự
+                                Trạng thái
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Trạng thái
+                                Cập nhật
                             </th>
                             <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">
                                 Hành động
@@ -117,19 +129,36 @@ export const ServiceGroupListPage: React.FC = () => {
                     <tbody className="divide-y divide-slate-200 bg-white">
                         {isLoading ? (
                             <tr>
-                                <td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">
+                                <td colSpan={7} className="px-6 py-4 text-center text-sm text-slate-500">
                                     Đang tải...
                                 </td>
                             </tr>
                         ) : serviceGroups.length === 0 ? (
                             <tr>
-                                <td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">
+                                <td colSpan={7} className="px-6 py-4 text-center text-sm text-slate-500">
                                     Không có dữ liệu
                                 </td>
                             </tr>
                         ) : (
                             serviceGroups.map((group: ServiceGroup) => (
                                 <tr key={group.id} className="hover:bg-slate-50">
+                                    <td className="whitespace-nowrap px-6 py-4">
+                                        <div className="h-10 w-10 flex-shrink-0 relative overflow-hidden rounded-lg">
+                                            {group.iconUrl ? (
+                                                <Image
+                                                    src={group.iconUrl}
+                                                    alt={group.groupName}
+                                                    width={40}
+                                                    height={40}
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="h-10 w-10 rounded-lg bg-slate-200 flex items-center justify-center">
+                                                    <span className="text-xs text-slate-500">No img</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">
                                         {group.groupCode}
                                     </td>
@@ -138,9 +167,6 @@ export const ServiceGroupListPage: React.FC = () => {
                                         {group.description.length > 50
                                             ? `${group.description.substring(0, 50)}...`
                                             : group.description}
-                                    </td>
-                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                                        {group.displayOrder}
                                     </td>
                                     <td className="whitespace-nowrap px-6 py-4 text-sm">
                                         <span
@@ -152,7 +178,26 @@ export const ServiceGroupListPage: React.FC = () => {
                                             {group.isActive ? 'Hoạt động' : 'Ngừng'}
                                         </span>
                                     </td>
+                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
+                                        {group.modifiedAt ? (
+                                            <div className="flex flex-col">
+                                                <span>{formatDate(group.modifiedAt)}</span>
+                                            </div>
+                                        ) : group.createdAt ? (
+                                            <div className="flex flex-col">
+                                                <span>{formatDate(group.createdAt)}</span>
+                                            </div>
+                                        ) : (
+                                            '-'
+                                        )}
+                                    </td>
                                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                                        <button
+                                            onClick={() => handleViewDetail(group)}
+                                            className="mr-3 text-slate-600 hover:text-slate-900"
+                                        >
+                                            Xem
+                                        </button>
                                         <button
                                             onClick={() => handleEdit(group)}
                                             className="mr-3 text-indigo-600 hover:text-indigo-900"
@@ -203,6 +248,13 @@ export const ServiceGroupListPage: React.FC = () => {
                 onClose={() => setModalOpen(false)}
                 initData={selectedGroup}
                 onSuccess={handleModalSuccess}
+            />
+
+            {/* Detail Modal */}
+            <ServiceGroupDetailModal
+                open={detailModalOpen}
+                onClose={() => setDetailModalOpen(false)}
+                serviceGroup={selectedGroup}
             />
         </div>
     );

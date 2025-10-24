@@ -7,6 +7,7 @@ export type ServiceGroup = {
     displayOrder: number;
     isActive: boolean;
     createdAt: string | Date;
+    modifiedAt?: string | Date;
     $id?: string;
 }
 
