@@ -197,6 +197,67 @@ export const useGlobalToast = createSingletonStore("globalToast", (set) => ({
         }
     },
 
+    // Helper methods for common toast types
+    success: (message: string, duration?: number) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        set((state) => ({
+            toasts: [...state.toasts, { id, message, type: "success" as const, duration }],
+        }));
+
+        if (duration !== 0) {
+            setTimeout(() => {
+                set((state) => ({
+                    toasts: state.toasts.filter((t: ToastType) => t.id !== id),
+                }));
+            }, duration || 5000);
+        }
+    },
+
+    error: (message: string, duration?: number) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        set((state) => ({
+            toasts: [...state.toasts, { id, message, type: "error" as const, duration }],
+        }));
+
+        if (duration !== 0) {
+            setTimeout(() => {
+                set((state) => ({
+                    toasts: state.toasts.filter((t: ToastType) => t.id !== id),
+                }));
+            }, duration || 5000);
+        }
+    },
+
+    warning: (message: string, duration?: number) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        set((state) => ({
+            toasts: [...state.toasts, { id, message, type: "warning" as const, duration }],
+        }));
+
+        if (duration !== 0) {
+            setTimeout(() => {
+                set((state) => ({
+                    toasts: state.toasts.filter((t: ToastType) => t.id !== id),
+                }));
+            }, duration || 5000);
+        }
+    },
+
+    info: (message: string, duration?: number) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        set((state) => ({
+            toasts: [...state.toasts, { id, message, type: "info" as const, duration }],
+        }));
+
+        if (duration !== 0) {
+            setTimeout(() => {
+                set((state) => ({
+                    toasts: state.toasts.filter((t: ToastType) => t.id !== id),
+                }));
+            }, duration || 5000);
+        }
+    },
+
     removeToast: (id: string) => {
         set((state) => ({
             toasts: state.toasts.filter((t: ToastType) => t.id !== id),

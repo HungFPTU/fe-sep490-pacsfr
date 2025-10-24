@@ -55,11 +55,12 @@ const nextConfig: NextConfig = {
 
   // Tối ưu hóa webpack cho Bun và SSR
   webpack: (config, { dev, isServer }) => {
-    // Tối ưu hóa cho development
+    // Tối ưu hóa cho development - fix Watchpack errors
     if (dev) {
       config.watchOptions = {
         poll: 1000,
         aggregateTimeout: 300,
+        // Use RegExp để ignore node_modules, .git, .next và Windows system files
         ignored: /node_modules|\.git|\.next|pagefile\.sys|hiberfil\.sys|swapfile\.sys|\$RECYCLE\.BIN|System Volume Information/,
       };
     }

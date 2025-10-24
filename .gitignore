@@ -50,3 +50,10 @@ next-env.d.ts
 
 # bun cache
 .bun
+
+# Windows system files
+pagefile.sys
+hiberfil.sys
+swapfile.sys
+$RECYCLE.BIN/
+System Volume Information/

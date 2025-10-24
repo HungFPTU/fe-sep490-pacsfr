@@ -19,12 +19,16 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
     initData,
     onSuccess
 }) => {
-    const { form, isLoading, handleSubmit } = useServiceGroupForm({
+    const { form, isLoading } = useServiceGroupForm({
         initData,
         open,
         onSuccess,
         onClose,
     });
+
+    const handleOk = async () => {
+        await form.handleSubmit();
+    };
 
     return (
         <BaseModal
@@ -40,6 +44,7 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
             maskClosable={!isLoading}
             keyboard={!isLoading}
             confirmLoading={isLoading}
+            destroyOnClose={true}
         >
             <ServiceGroupForm
                 form={form}

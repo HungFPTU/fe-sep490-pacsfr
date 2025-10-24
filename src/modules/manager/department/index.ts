@@ -1,8 +1,17 @@
 // Types
-export type * from "./types";
+export type * from './types';
 
-// Enums
-export * from "./enums";
+// Components
+export * from './components';
+
+// Hooks
+export * from './hooks';
+
+// Services
+export { departmentService } from './services/department.service';
 
 // Constants
-export * from "./consts";
+export * from './constants';
+
+// Enums
+export * from './enums';

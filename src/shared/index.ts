@@ -20,4 +20,3 @@ export { AppProviders } from "./providers/AppProviders";
 export { ThemeProvider } from "./providers/ThemeProvider";
 export { HeroUIProvider } from "./providers/HeroUIProvider";
 export { QueryProvider } from "./providers/QueryProvider";
-export { HttpLoadingProvider } from "./hooks/useHttpLoading";
