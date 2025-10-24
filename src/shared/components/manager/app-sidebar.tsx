@@ -43,7 +43,7 @@ const data = {
     },
   ],
   navMain: [
-   {
+    {
       title: "Dashboard",
       url: "/manager/",
       icon: SquareTerminal,
@@ -82,6 +82,10 @@ const data = {
         {
           title: "Danh sách dịch vụ",
           url: "/manager/service/list",
+        },
+        {
+          title: "Nhóm dịch vụ",
+          url: "/manager/nhom-dich-vu",
         },
         {
           title: "Phân loại dịch vụ",
@@ -160,7 +164,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
-  
+
   // Create user data for NavUser component
   const userData = {
     name: user?.name || "Manager",

@@ -1,15 +1,27 @@
-// Core exports - centralized access to core functionality
+/**
+ * Core module exports
+ * Central export point for core functionality
+ */
+
+// Configuration
+export * from "./config";
+export * from "./config/env";
+export * from "./config/aws.config";
+
+// HTTP Client
+export * from "./http/client";
+
+// Services
+export * from "./services/upload.service";
+
+// Hooks
+export * from "./hooks/useFileUpload";
+
+// Logger
 export * from "./logger";
-export { http } from "./http/client";
-export type { HttpMethod, HttpRequestOptions, HttpResponse } from "./http/client";
 
 // Patterns
 export * from "./patterns/SingletonHook";
 
-// New organized exports
-export * from "./config";
+// Utils
 export * from "./utils";
-
-// Backward compatibility - re-export from new locations
-export { getPublicEnv, getServerEnv } from "./env";
-export type { PublicEnvKeys, ServerEnvKeys } from "./env";
