@@ -37,7 +37,7 @@ export const ServiceListPage: React.FC = () => {
     const [deletingService, setDeletingService] = useState<Service | null>(null);
 
     // Fetch data
-    const { data, isLoading } = useServices({
+    const { data } = useServices({
         keyword,
         serviceGroupId,
         legalBasisId,
@@ -121,32 +121,24 @@ export const ServiceListPage: React.FC = () => {
                 onReset={handleReset}
             />
 
-            {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-                </div>
-            ) : (
-                <>
-                    <ServiceTable
-                        services={services}
-                        onView={handleView}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                        isDeleting={deleteMutation.isPending}
-                        deletingId={deletingId}
-                    />
+            <ServiceTable
+                services={services}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                isDeleting={deleteMutation.isPending}
+                deletingId={deletingId}
+            />
 
-                    {total > 0 && (
-                        <ServicePagination
-                            page={page}
-                            pageSize={pageSize}
-                            total={total}
-                            totalPages={totalPages}
-                            onPageChange={handlePageChange}
-                            onPageSizeChange={handlePageSizeChange}
-                        />
-                    )}
-                </>
+            {total > 0 && (
+                <ServicePagination
+                    page={page}
+                    pageSize={pageSize}
+                    total={total}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                    onPageSizeChange={handlePageSizeChange}
+                />
             )}
 
             <CreateServiceModal

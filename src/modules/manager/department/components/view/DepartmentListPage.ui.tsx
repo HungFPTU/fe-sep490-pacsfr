@@ -24,7 +24,7 @@ export const DepartmentListPage: React.FC = () => {
     const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
-    const { data, isLoading, refetch } = useDepartments({
+    const { data, refetch } = useDepartments({
         keyword,
         isActive,
         page,
@@ -101,7 +101,7 @@ export const DepartmentListPage: React.FC = () => {
 
             <DepartmentTable
                 departments={departments}
-                isLoading={isLoading}
+                isLoading={false}
                 onView={handleViewDetail}
                 onEdit={handleEdit}
                 onDelete={handleDelete}

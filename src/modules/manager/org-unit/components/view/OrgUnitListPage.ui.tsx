@@ -24,7 +24,7 @@ export const OrgUnitListPage: React.FC = () => {
     const [selectedOrgUnit, setSelectedOrgUnit] = useState<OrgUnit | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
-    const { data, isLoading, refetch } = useOrgUnits({
+    const { data, refetch } = useOrgUnits({
         keyword,
         isActive,
         page,
@@ -101,7 +101,7 @@ export const OrgUnitListPage: React.FC = () => {
 
             <OrgUnitTable
                 orgUnits={orgUnits}
-                isLoading={isLoading}
+                isLoading={false}
                 onView={handleViewDetail}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
