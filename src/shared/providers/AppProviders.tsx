@@ -5,7 +5,7 @@ import { ThemeProvider } from "./ThemeProvider";
 import { HeroUIProvider } from "./HeroUIProvider";
 import { QueryProvider } from "./QueryProvider";
 import { AuthProvider } from "./AuthProvider";
-import { HttpLoadingProvider } from "@shared/hooks/useHttpLoading";
+import { HttpLoadingProvider } from "@shared/hooks";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
     // const [mounted, setMounted] = useState(false);

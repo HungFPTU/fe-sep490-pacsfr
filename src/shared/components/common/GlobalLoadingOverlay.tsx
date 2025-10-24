@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useHttpLoading } from '@/shared/hooks/useHttpLoading';
+import { useHttpLoading } from '@shared/hooks';
 import { APP_CONFIG } from '@/core/config/constants';
 import Image from 'next/image';
 

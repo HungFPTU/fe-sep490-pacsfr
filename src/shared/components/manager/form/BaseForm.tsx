@@ -67,10 +67,17 @@ export function FormItem({
 }
 
 type FieldMetaErrors = Array<string | undefined> | undefined;
-function getFirstError(field: { state: { meta: { touchedErrors?: FieldMetaErrors; errors?: FieldMetaErrors } } }) {
+function getFirstError(field: { state: { meta: { touchedErrors?: FieldMetaErrors; errors?: FieldMetaErrors; isTouched?: boolean } } }) {
+  // Show errors immediately if field has been touched at least once
   const te = field.state.meta.touchedErrors;
   const e = field.state.meta.errors;
-  const arr = (Array.isArray(te) && te.length ? te : Array.isArray(e) ? e : []);
+  const isTouched = field.state.meta.isTouched;
+
+  // If touched, always show current errors (not just touchedErrors)
+  const arr = isTouched
+    ? (Array.isArray(e) && e.length ? e : [])
+    : (Array.isArray(te) && te.length ? te : []);
+
   const first = (arr as Array<string | undefined>).find((m): m is string => typeof m === 'string' && m.length > 0);
   return first ?? null;
 }
