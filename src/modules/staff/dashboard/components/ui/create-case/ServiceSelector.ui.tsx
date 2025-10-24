@@ -72,7 +72,7 @@ export function ServiceSelector({
                             <div className="font-medium text-gray-900">{service.serviceName}</div>
                             <div className="text-sm text-gray-600">Mã dịch vụ: {service.serviceCode}</div>
                             <div className="text-xs text-gray-500 mt-1">
-                                Loại: {service.serviceType} • Phí: {service.feeAmount.toLocaleString('vi-VN')}đ
+                                Loại: {service.serviceType} • Phí: {service.feeAmount?.toLocaleString('vi-VN') ?? '0'}đ
                             </div>
                         </button>
                     ))}
@@ -92,7 +92,7 @@ export function ServiceSelector({
                                 Mã: {selectedService.serviceCode} • Service ID: {selectedService.id}
                             </p>
                             <p className="text-xs text-green-700">
-                                Phí: {selectedService.feeAmount.toLocaleString('vi-VN')}đ • Thời gian xử lý: {selectedService.processingTime}
+                                Phí: {selectedService.feeAmount?.toLocaleString('vi-VN') ?? '0'}đ • Thời gian xử lý: {selectedService.processingTime}
                             </p>
                         </div>
                     </div>
