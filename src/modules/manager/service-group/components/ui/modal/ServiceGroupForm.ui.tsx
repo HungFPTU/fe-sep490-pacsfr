@@ -73,10 +73,10 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
             <div className="md:col-span-2">
                 <form.Field
                     name="iconUrl"
-                    validators={{
-                        onChange: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Icon nhóm dịch vụ là bắt buộc' : undefined,
-                    }}
+                // validators={{
+                //     onChange: ({ value }: { value: string }) =>
+                //         !value || !value.trim() ? 'Icon nhóm dịch vụ là bắt buộc' : undefined,
+                // }}
                 >
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {(field: any) => (
