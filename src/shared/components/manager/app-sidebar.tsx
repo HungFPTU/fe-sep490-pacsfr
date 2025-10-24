@@ -106,7 +106,7 @@ const data = {
       ],
     },
     {
-      title: "Thiết lập hoạt động",
+      title: "Quản lý phòng ban",
       url: "/manager/operation",
       icon: BookOpen,
       items: [
