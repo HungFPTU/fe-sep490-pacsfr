@@ -5,6 +5,9 @@ import { serviceGroupService } from "../services/service-group.service";
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
 import type { CreateServiceGroupRequest, UpdateServiceGroupRequest, ServiceGroupFilters } from "../types";
 
+// Re-export custom hooks
+export { useServiceGroupForm } from './useServiceGroupForm';
+
 // Hook for getting service groups with filters
 export const useServiceGroups = (filters: ServiceGroupFilters) => {
     return useQuery({
