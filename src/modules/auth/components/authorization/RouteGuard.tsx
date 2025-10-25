@@ -15,6 +15,7 @@ import { useLogoutState } from '../../hooks/useLogoutState';
 // import { GlobalLoadingOverlay } from '@/shared/components'; // No longer used
 import { LoadingRedirect } from '@/shared/components/common/LoadingRedirect';
 
+
 interface RouteGuardProps {
   children: ReactNode;
 }
@@ -23,7 +24,6 @@ function RouteGuardContent({ children }: RouteGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, isAuthenticated } = useAuthStore();
-  const { isLoggingOut } = useLogoutState();
   const { isLoggingOut } = useLogoutState();
   const isLoading = false; // TODO: Add loading state to auth store if needed
 
@@ -79,7 +79,6 @@ function RouteGuardContent({ children }: RouteGuardProps) {
       }
     }
   }, [pathname, user?.role, user, isAuthenticated, isLoading, router, isLoggingOut]);
-}, [pathname, user?.role, user, isAuthenticated, isLoading, router, isLoggingOut]);
 
 // Show loading state while checking
 if (isLoading) {
@@ -115,13 +114,6 @@ if (isLoggingOut) {
 const hasAccess = hasRouteAccess(pathname, user?.role);
 
 if (!hasAccess) {
-  // Show loading while redirecting instead of 403
-  const defaultRoute = getDefaultRoute(user?.role);
-  console.log('[RouteGuard] No access, redirecting to:', defaultRoute);
-  if (defaultRoute !== pathname) {
-    router.push(defaultRoute);
-  }
-  return <LoadingRedirect message="Đang chuyển hướng đến trang phù hợp..." />;
   // Show loading while redirecting instead of 403
   const defaultRoute = getDefaultRoute(user?.role);
   console.log('[RouteGuard] No access, redirecting to:', defaultRoute);
