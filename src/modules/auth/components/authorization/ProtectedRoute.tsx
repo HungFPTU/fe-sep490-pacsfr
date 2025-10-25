@@ -11,7 +11,9 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { UserRole } from '../../enums';
 import { ClientOnly } from './ClientOnly';
-import { AccessDeniedPage } from '@/shared/components/common/403';
+// import { AccessDeniedPage } from '@/shared/components/common/403'; // No longer used
+import { LoadingRedirect } from '@/shared/components/common/LoadingRedirect';
+import { useLogoutState } from '../../hooks/useLogoutState';
 
 
 interface ProtectedRouteProps {
@@ -32,6 +34,7 @@ function ProtectedRouteContent({
 }: ProtectedRouteProps) {
   const router = useRouter();
   const { user, isAuthenticated } = useAuthStore();
+  const { isLoggingOut } = useLogoutState();
   const isLoading = false; // TODO: Add loading state to auth store if needed
 
   useEffect(() => {
@@ -39,42 +42,64 @@ function ProtectedRouteContent({
 
     // Check authentication
     if (!isAuthenticated || !user) {
+      console.log('[ProtectedRoute] User not authenticated, redirecting to login');
       if (redirectTo) {
-        router.push(redirectTo);
+        // If user is logging out, don't redirect immediately to prevent 403 flash
+        if (isLoggingOut) {
+          console.log('[ProtectedRoute] User is logging out, delaying redirect');
+          setTimeout(() => {
+            router.push(redirectTo);
+          }, 200);
+        } else {
+          router.push(redirectTo);
+        }
         return;
       }
       return;
     }
+
     // Check role-based access
     if (allowedRoles && allowedRoles.length > 0) {
       // Defensive: don't even try role checks if user.role is missing
       const hasUserRole = typeof user.role !== 'undefined' && user.role !== null;
+      const userRoleType = (user as { roleType?: string })?.roleType;
       let hasAccess = false;
 
+      console.log('[ProtectedRoute] Role check:', {
+        hasUserRole,
+        userRole: user.role,
+        userRoleType,
+        allowedRoles,
+        user: user
+      });
+
+      // Try user.role first
       if (hasUserRole) {
         hasAccess =
           allowedRoles.includes(user.role) ||
           allowedRoles.some(role => role.toString() === user.role?.toString()) ||
           allowedRoles.some(role => role === user.role);
+        console.log('[ProtectedRoute] Using user.role:', user.role, 'hasAccess:', hasAccess);
       }
-      if (!hasUserRole || !hasAccess) {
-        // Log explicit message for missing role or failure
-        if (!hasUserRole) {
-          console.log(
-            `[ProtectedRoute] Access denied for role: undefined Allowed: ${JSON.stringify(allowedRoles.map(r => r?.toString()))}`
-          );
-        } else {
-          console.log(
-            `[ProtectedRoute] Access denied for role: ${user.role} Allowed: ${JSON.stringify(allowedRoles.map(r => r?.toString()))}`
-          );
-        }
+
+      // If no access with user.role, try roleType fallback
+      if (!hasAccess && userRoleType) {
+        console.log('[ProtectedRoute] Using roleType fallback:', userRoleType);
+        hasAccess = allowedRoles.some(role => role.toString() === userRoleType);
+        console.log('[ProtectedRoute] roleType hasAccess:', hasAccess);
+      }
+
+      if (!hasAccess) {
+        console.log(
+          `[ProtectedRoute] Access denied for role: ${hasUserRole ? user.role : 'undefined'} Allowed: ${JSON.stringify(allowedRoles.map(r => r?.toString()))}`
+        );
         if (redirectTo) {
           router.push(redirectTo);
           return;
         }
       }
     }
-  }, [isAuthenticated, user, allowedRoles, redirectTo, router, isLoading]);
+  }, [isAuthenticated, user, allowedRoles, redirectTo, router, isLoading, isLoggingOut]);
 
   // Show loading state
   if (isLoading) {
@@ -90,17 +115,34 @@ function ProtectedRouteContent({
 
   // Check authentication
   if (!isAuthenticated || !user) {
+    // Skip 403 page if user is logging out
+    if (isLoggingOut) {
+      console.log('[ProtectedRoute] User is logging out, skipping 403 page');
+      return <>{children}</>;
+    }
+
     if (fallback) {
       return <>{fallback}</>;
     }
 
-    return (
-      <AccessDeniedPage />
-    );
+    // Show loading while redirecting instead of 403 page
+    console.log('[ProtectedRoute] User not authenticated, redirecting to login');
+    if (redirectTo) {
+      router.push(redirectTo);
+    } else {
+      router.push('/login');
+    }
+    return <LoadingRedirect message="Đang chuyển hướng đến trang đăng nhập..." />;
   }
 
   // Check role-based access
   if (allowedRoles && allowedRoles.length > 0) {
+    // Skip role check if user is logging out
+    if (isLoggingOut) {
+      console.log('[ProtectedRoute] User is logging out, skipping role check');
+      return <>{children}</>;
+    }
+
     const hasUserRole = typeof user.role !== 'undefined' && user.role !== null;
     const userRoleType = (user as { roleType?: string })?.roleType;
     let hasAccess = false;
@@ -130,12 +172,14 @@ function ProtectedRouteContent({
     }
 
     if (!hasAccess) {
-      // Professional message, auto-redirect to login after a short delay
-      if (fallback) {
-        return <>{fallback}</>;
+      // Show loading while redirecting instead of 403 page
+      console.log('[ProtectedRoute] Access denied, redirecting to login');
+      if (redirectTo) {
+        router.push(redirectTo);
+      } else {
+        router.push('/login');
       }
-
-      return <AccessDeniedPage />;
+      return <LoadingRedirect message="Đang chuyển hướng đến trang đăng nhập..." />;
     }
   }
 

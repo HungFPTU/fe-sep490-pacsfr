@@ -11,7 +11,9 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { hasRouteAccess, getDefaultRoute } from '../../config/role-permissions.config';
 import { ClientOnly } from './ClientOnly';
+import { useLogoutState } from '../../hooks/useLogoutState';
 import { GlobalLoadingOverlay } from '@/shared/components';
+import { LoadingRedirect } from '@/shared/components/common/LoadingRedirect';
 
 interface RouteGuardProps {
   children: ReactNode;
@@ -21,6 +23,7 @@ function RouteGuardContent({ children }: RouteGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { user, isAuthenticated } = useAuthStore();
+  const { isLoggingOut } = useLogoutState();
   const isLoading = false; // TODO: Add loading state to auth store if needed
 
   useEffect(() => {
@@ -37,20 +40,32 @@ function RouteGuardContent({ children }: RouteGuardProps) {
 
     // Only check access if user is authenticated
     if (!isAuthenticated || !user) {
+      console.log('[RouteGuard] User not authenticated, skipping route guard');
+      // If user is logging out, don't check access to prevent 403 flash
+      if (isLoggingOut) {
+        console.log('[RouteGuard] User is logging out, skipping access check');
+        return;
+      }
       return;
     }
 
     // Check if user has access to current route
     const hasAccess = hasRouteAccess(pathname, user?.role);
+    console.log('[RouteGuard] Route access check:', {
+      pathname,
+      userRole: user?.role,
+      hasAccess
+    });
 
     if (!hasAccess) {
       // Authenticated but no access - redirect to default route for role
       const defaultRoute = getDefaultRoute(user?.role);
+      console.log('[RouteGuard] No access, redirecting to:', defaultRoute);
       if (defaultRoute !== pathname) {
         router.push(defaultRoute);
       }
     }
-  }, [pathname, user?.role, user, isAuthenticated, isLoading, router]);
+  }, [pathname, user?.role, user, isAuthenticated, isLoading, router, isLoggingOut]);
 
   // Show loading state while checking
   if (isLoading) {
@@ -77,12 +92,23 @@ function RouteGuardContent({ children }: RouteGuardProps) {
     return <>{children}</>;
   }
 
+  // Skip access check if user is logging out
+  if (isLoggingOut) {
+    console.log('[RouteGuard] User is logging out, skipping access check');
+    return <>{children}</>;
+  }
+
   // Check access for other routes
   const hasAccess = hasRouteAccess(pathname, user?.role);
 
   if (!hasAccess) {
-    // Return null while redirecting
-    return null;
+    // Show loading while redirecting instead of 403
+    const defaultRoute = getDefaultRoute(user?.role);
+    console.log('[RouteGuard] No access, redirecting to:', defaultRoute);
+    if (defaultRoute !== pathname) {
+      router.push(defaultRoute);
+    }
+    return <LoadingRedirect message="Đang chuyển hướng đến trang phù hợp..." />;
   }
 
   // Render children if access is granted

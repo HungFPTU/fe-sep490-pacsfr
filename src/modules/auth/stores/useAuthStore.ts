@@ -115,7 +115,7 @@ const createAuthStore = () => create<AuthState>()(
                     role: state.role,
                     isAuthenticated: state.isAuthenticated,
                 }),
-                onRehydrateStorage: () => (state) => {
+                onRehydrateStorage: () => (state, error) => {
                     console.log('[Auth Store] onRehydrateStorage called with state:', state);
                     // Only run on client side
                     if (typeof window !== 'undefined') {
@@ -129,7 +129,13 @@ const createAuthStore = () => create<AuthState>()(
                             const localToken = TokenStorage.getAuthToken();
                             if (localToken && localToken === state.token) {
                                 console.log('[Auth Store] Token restored from localStorage');
+                            } else {
+                                console.warn('[Auth Store] Token mismatch, clearing state');
+                                // Clear state if token doesn't match - will be handled by store
                             }
+                        } else {
+                            console.log('[Auth Store] No token in state, clearing auth');
+                            // Clear state - will be handled by store
                         }
                     }
                 },

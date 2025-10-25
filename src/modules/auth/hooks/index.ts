@@ -11,7 +11,7 @@ import type { LoginPayload, RegisterPayload } from "../types";
  * Service handles business logic, Hook handles UI state
  */
 export function useAuth() {
-    const { user, token, role, isAuthenticated, setCredentials, clearCredentials } = useAuthStore();
+    const { user, token, role, isAuthenticated, setCredentials } = useAuthStore();
     const { addToast } = useGlobalToast();
 
     // Track if user just logged in to prevent duplicate API calls
@@ -81,12 +81,11 @@ export function useAuth() {
             return authService.logout();
         },
         onSettled: () => {
-            clearCredentials();
+            // Don't clear credentials here - already done in service
             setJustLoggedIn(false); // Reset login flag
             setIsRedirecting(false); // Reset redirect flag
             addToast({ message: "Đã đăng xuất", type: "info" });
-            // Navigate to home page after logout
-            window.location.href = '/login';
+            // Don't redirect here - already done in service
         },
     });
 
