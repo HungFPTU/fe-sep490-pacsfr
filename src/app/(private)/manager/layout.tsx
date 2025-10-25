@@ -1,47 +1,33 @@
-import { AppSidebar } from "@/shared/components/manager/app-sidebar"
-//import {
-//  Breadcrumb,
-//  BreadcrumbItem,
-//  BreadcrumbLink,
-//  BreadcrumbList,
-//  BreadcrumbPage,
-//  BreadcrumbSeparator
-//} from "@/shared/components/manager/ui/breadcrumb"
-import { Separator } from "@/shared/components/manager/ui/separator"
+'use client';
+
+import { AppSidebar, ManagerHeader, ManagerBreadcrumb } from "@/shared/components/manager"
 import {
   SidebarInset,
-  SidebarProvider,
-  SidebarTrigger
+  SidebarProvider
 } from "@/shared/components/manager/ui/sidebar"
+import { ProtectedRoute } from "@/modules/auth/components/authorization/ProtectedRoute"
+import { UserRole } from "@/modules/auth/enums"
 
-export default function ManagerLayout({children}: {children: React.ReactNode}) {
+export default function ManagerLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            {/*<Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>*/}
-          </div>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <ProtectedRoute allowedRoles={[UserRole.MANAGER]} redirectTo="/login">
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          {/* Professional Header with Search, Notifications, User Menu */}
+          <ManagerHeader />
+
+          {/* Dynamic Breadcrumb Navigation */}
+          <ManagerBreadcrumb />
+
+          {/* Main Content Area */}
+          <main className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-slate-50/50">
+            <div className="rounded-lg bg-white shadow-sm border border-slate-200 p-6">
+              {children}
+            </div>
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </ProtectedRoute>
   )
 }

@@ -42,42 +42,62 @@ export const useServiceGroupForm = ({
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
+            // Final validation before submit
+            if (!value.groupCode?.trim()) {
+                addToast({ message: 'Vui lòng nhập mã nhóm', type: 'error' });
+                return;
+            }
+            if (!value.groupName?.trim()) {
+                addToast({ message: 'Vui lòng nhập tên nhóm', type: 'error' });
+                return;
+            }
+            // if (!value.iconUrl?.trim()) {
+            //     addToast({ message: 'Vui lòng tải lên icon nhóm dịch vụ', type: 'error' });
+            //     return;
+            // }
+
             try {
                 const request: CreateServiceGroupRequest = {
-                    groupCode: value.groupCode,
-                    groupName: value.groupName,
-                    description: value.description,
-                    iconUrl: value.iconUrl,
+                    groupCode: value.groupCode.trim(),
+                    groupName: value.groupName.trim(),
+                    description: value.description?.trim() || '',
+                    iconUrl: value.iconUrl.trim(),
                     displayOrder: value.displayOrder,
                     isActive: value.isActive,
                 };
 
+                let res;
                 if (initData?.id) {
                     // Update existing service group
-                    const res = await updateMutation.mutateAsync({
+                    res = await updateMutation.mutateAsync({
                         id: initData?.id ?? '',
                         request: {
                             ...request,
                             id: initData?.id ?? '',
                         },
                     });
-                    if (res?.success) {
-                        addToast({ message: 'Cập nhật nhóm dịch vụ thành công', type: 'success' });
-                        onSuccess?.();
-                        onClose();
-                    } else {
-                        addToast({ message: 'Cập nhật nhóm dịch vụ thất bại', type: 'error' });
-                    }
                 } else {
                     // Create new service group
-                    const res = await createMutation.mutateAsync(request);
-                    if (res?.success) {
-                        addToast({ message: 'Tạo nhóm dịch vụ thành công', type: 'success' });
-                        onSuccess?.();
-                        onClose();
-                    } else {
-                        addToast({ message: 'Tạo nhóm dịch vụ thất bại', type: 'error' });
-                    }
+                    res = await createMutation.mutateAsync(request);
+                }
+
+                // Always close and reset on success
+                if (res?.success) {
+                    addToast({
+                        message: initData?.id ? 'Cập nhật nhóm dịch vụ thành công' : 'Tạo nhóm dịch vụ thành công',
+                        type: 'success'
+                    });
+                    onSuccess?.();
+                    onClose();
+                    // Reset form after successful submit
+                    setTimeout(() => {
+                        form.reset(toFormValues(null));
+                    }, 100);
+                } else {
+                    addToast({
+                        message: initData?.id ? 'Cập nhật nhóm dịch vụ thất bại' : 'Tạo nhóm dịch vụ thất bại',
+                        type: 'error'
+                    });
                 }
             } catch (error) {
                 console.error('Error saving service group:', error);
@@ -88,8 +108,10 @@ export const useServiceGroupForm = ({
 
     useEffect(() => {
         if (open) {
+            // Always reset with current initData when modal opens
             form.reset(toFormValues(initData));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, initData?.id]);
 
     const isLoading = createMutation.isPending || updateMutation.isPending;

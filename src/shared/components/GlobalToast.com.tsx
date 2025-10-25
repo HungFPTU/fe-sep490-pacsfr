@@ -8,10 +8,10 @@ import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from "lucide-react";
 export function GlobalToast() {
     const { toasts, removeToast } = useGlobalToast();
 
-    if (toasts.length === 0) return null;
+    if (!toasts || toasts.length === 0) return null;
 
     return (
-        <div className="fixed top-4 right-4 z-50 space-y-2">
+        <div className="fixed top-4 right-4 z-[9999] space-y-2">
             {toasts.map((toast: { id: string; message: string; type: "success" | "error" | "warning" | "info" }) => (
                 <ToastItem
                     key={toast.id}

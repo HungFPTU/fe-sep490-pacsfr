@@ -7,13 +7,14 @@ import {
   Users, 
   Building2, 
   // Clock, 
-  // Settings,
+  Settings,
   // FileText,
   // BarChart3,
   // Bell,
   // Download,
   Upload,
-  RefreshCw
+  RefreshCw,
+  Building
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
@@ -34,10 +35,10 @@ export function QuickActions() {
     {
       id: 'add-staff',
       title: 'Thêm nhân viên',
-      description: 'Tạo tài khoản nhân viên mới',
+      description: 'Tạo tài khoản nhân sự',
       icon: <Users className="h-5 w-5" />,
       color: 'bg-blue-500 hover:bg-blue-600',
-      onClick: () => router.push('/manager/account/list')
+      onClick: () => router.push('/manager/staff-management')
     },
     {
       id: 'add-service',
@@ -45,32 +46,32 @@ export function QuickActions() {
       description: 'Tạo dịch vụ công mới',
       icon: <Building2 className="h-5 w-5" />,
       color: 'bg-green-500 hover:bg-green-600',
-      onClick: () => router.push('/manager/service/list')
+      onClick: () => router.push('/manager/dich-vu')
     },
-    // {
-    //   id: 'queue-settings',
-    //   title: 'Cài đặt hàng đợi',
-    //   description: 'Cấu hình quy tắc xếp hàng',
-    //   icon: <Clock className="h-5 w-5" />,
-    //   color: 'bg-orange-500 hover:bg-orange-600',
-    //   onClick: () => router.push('/manager/queue')
-    // },
-    // {
-    //   id: 'system-settings',
-    //   title: 'Cài đặt hệ thống',
-    //   description: 'Cấu hình tham số hệ thống',
-    //   icon: <Settings className="h-5 w-5" />,
-    //   color: 'bg-purple-500 hover:bg-purple-600',
-    //   onClick: () => console.log('System settings')
-    // },
-    // {
-    //   id: 'generate-report',
-    //   title: 'Tạo báo cáo',
-    //   description: 'Xuất báo cáo thống kê',
-    //   icon: <FileText className="h-5 w-5" />,
-    //   color: 'bg-indigo-500 hover:bg-indigo-600',
-    //   onClick: () => console.log('Generate report')
-    // },
+    {
+      id: 'group-services',
+      title: 'Thêm nhóm dịch vụ',
+      description: 'Tạo mới nhóm dịch vụ',
+      icon: <Building2 className="h-5 w-5" />,
+      color: 'bg-orange-500 hover:bg-orange-600',
+      onClick: () => router.push('/manager/nhom-dich-vu')
+    },
+    {
+      id: 'org-unit',
+      title: 'Quản lý phòng ban',
+      description: 'Tạo mới phòng ban',
+      icon: <Settings className="h-5 w-5" />,
+      color: 'bg-purple-500 hover:bg-purple-600',
+      onClick: () => console.log('/manager/phong-ban')
+    },
+    {
+      id: 'department',
+      title: 'Quản lý cơ quan',
+      description: 'Tạo mới cơ quan',
+      icon: <Building className="h-5 w-5" />,
+      color: 'bg-indigo-500 hover:bg-indigo-600',
+      onClick: () => console.log('/manager/co-quan')
+    },
     // {
     //   id: 'view-analytics',
     //   title: 'Xem phân tích',

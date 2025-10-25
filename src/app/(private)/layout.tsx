@@ -1,7 +1,15 @@
+'use client';
+
+import { RouteGuard } from '@/modules/auth/components/authorization/RouteGuard';
+
 export default function PrivateLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    return <>{children}</>;
+    return (
+        <RouteGuard>
+            {children}
+        </RouteGuard>
+    );
 }

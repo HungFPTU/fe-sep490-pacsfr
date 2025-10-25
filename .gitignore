@@ -35,6 +35,14 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# turbo
+.turbo/
+
+# temp files
+*.tmp
+*.temp
+*.log
+
 # env files (can opt-in for committing if needed)
 .env*
 .env.local
@@ -50,3 +58,10 @@ next-env.d.ts
 
 # bun cache
 .bun
+
+# Windows system files
+pagefile.sys
+hiberfil.sys
+swapfile.sys
+$RECYCLE.BIN/
+System Volume Information/

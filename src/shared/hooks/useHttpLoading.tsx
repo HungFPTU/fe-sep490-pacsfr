@@ -1,42 +1,47 @@
-import React from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 
-interface LoadingState {
-    [key: string]: boolean;
-}
+// HTTP Loading State Management
+type LoadingState = Record<string, boolean>;
 
-interface HttpLoadingContextValue {
+type HttpLoadingContextValue = {
     loadingStates: LoadingState;
     isLoading: (key?: string) => boolean;
     isAnyLoading: () => boolean;
-}
+};
 
-const HttpLoadingContext = React.createContext<HttpLoadingContextValue | undefined>(undefined);
+// Export the context itself for consumption and type safety in providers
+export const HttpLoadingContext = createContext<HttpLoadingContextValue | undefined>(undefined);
 
-export function HttpLoadingProvider({ children }: { children: React.ReactNode }) {
-    const [loadingStates, setLoadingStates] = React.useState<LoadingState>({});
+export const HttpLoadingProvider = ({ children }: { children: ReactNode }) => {
+    const [loadingStates, setLoadingStates] = useState<LoadingState>({});
 
-    React.useEffect(() => {
-        const handleLoadingChange = (event: CustomEvent<{ key: string; loading: boolean }>) => {
-            const { key, loading } = event.detail;
+    useEffect(() => {
+        const handleLoadingChange = (event: Event) => {
+            // Since dispatched event is CustomEvent
+            const customEvent = event as CustomEvent<{ key: string; loading: boolean }>;
+            const { key, loading } = customEvent.detail;
             setLoadingStates(prev => ({
                 ...prev,
                 [key]: loading,
             }));
         };
 
-        window.addEventListener("http-loading-change", handleLoadingChange as EventListener);
+        window.addEventListener("http-loading-change", handleLoadingChange);
 
         return () => {
-            window.removeEventListener("http-loading-change", handleLoadingChange as EventListener);
+            window.removeEventListener("http-loading-change", handleLoadingChange);
         };
     }, []);
 
-    const isLoading = React.useCallback((key?: string) => {
-        if (!key) return Object.values(loadingStates).some(Boolean);
-        return loadingStates[key] || false;
-    }, [loadingStates]);
+    const isLoading = useCallback(
+        (key?: string) => {
+            if (!key) return Object.values(loadingStates).some(Boolean);
+            return !!loadingStates[key];
+        },
+        [loadingStates]
+    );
 
-    const isAnyLoading = React.useCallback(() => {
+    const isAnyLoading = useCallback(() => {
         return Object.values(loadingStates).some(Boolean);
     }, [loadingStates]);
 
@@ -51,13 +56,13 @@ export function HttpLoadingProvider({ children }: { children: React.ReactNode })
             {children}
         </HttpLoadingContext.Provider>
     );
-}
+};
 
 export function useHttpLoading(key?: string) {
-    const context = React.useContext(HttpLoadingContext);
+    const context = useContext(HttpLoadingContext);
 
     if (!context) {
-        throw new Error("useHttpLoading must be used within HttpLoadingProvider");
+        throw new Error("useHttpLoading must be used within a HttpLoadingProvider");
     }
 
     return {
@@ -69,10 +74,10 @@ export function useHttpLoading(key?: string) {
 
 // Hook for specific API endpoints
 export function useApiLoading() {
-    const context = React.useContext(HttpLoadingContext);
+    const context = useContext(HttpLoadingContext);
 
     if (!context) {
-        throw new Error("useApiLoading must be used within HttpLoadingProvider");
+        throw new Error("useApiLoading must be used within a HttpLoadingProvider");
     }
 
     return {

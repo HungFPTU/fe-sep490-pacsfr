@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { ServiceGroupForm } from './ServiceGroupForm.ui';
 import { useServiceGroupForm } from '../../../hooks/useServiceGroupForm';
 import type { ServiceGroup } from '../../../types';
@@ -19,19 +19,23 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
     initData,
     onSuccess
 }) => {
-    const { form, isLoading, handleSubmit } = useServiceGroupForm({
+    const { form, isLoading } = useServiceGroupForm({
         initData,
         open,
         onSuccess,
         onClose,
     });
 
+    const handleOk = async () => {
+        await form.handleSubmit();
+    };
+
     return (
         <BaseModal
             open={open}
             onClose={onClose}
             title={initData?.id ? 'Cập nhật nhóm dịch vụ' : 'Tạo nhóm dịch vụ mới'}
-            onOk={handleSubmit}
+            onOk={handleOk}
             onCancel={onClose}
             okText="Lưu"
             cancelText="Hủy"
@@ -40,6 +44,7 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
             maskClosable={!isLoading}
             keyboard={!isLoading}
             confirmLoading={isLoading}
+            destroyOnClose={true}
         >
             <ServiceGroupForm
                 form={form}

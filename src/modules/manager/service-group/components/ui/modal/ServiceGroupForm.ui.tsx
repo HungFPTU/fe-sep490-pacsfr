@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { InputField, TextareaField, CheckboxField } from '@/shared/components/manager/form/BaseForm';
+import { InputField, TextareaField, CheckboxField } from '@/shared/components/layout/manager/form/BaseForm';
 import { ImageUpload } from '@/shared/components/common/ImageUpload';
 import { FormApiOf } from '@/types/types';
 import { AWS_CONFIG } from '@core/config/aws.config';
@@ -25,22 +25,42 @@ interface Props {
 export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <InputField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="groupCode"
-                label="Mã nhóm"
-                required
-                placeholder="Nhập mã nhóm dịch vụ"
-                disabled={isEdit}
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Mã nhóm là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <InputField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="groupCode"
+                        label="Mã nhóm"
+                        required
+                        placeholder="Nhập mã nhóm dịch vụ"
+                        disabled={isEdit}
+                    />
+                )}
+            </form.Field>
 
-            <InputField<FormValues>
-                form={form as FormApiOf<FormValues>}
+            <form.Field
                 name="groupName"
-                label="Tên nhóm"
-                required
-                placeholder="Nhập tên nhóm dịch vụ"
-            />
+                validators={{
+                    onChange: ({ value }: { value: string }) =>
+                        !value || !value.trim() ? 'Tên nhóm là bắt buộc' : undefined,
+                }}
+            >
+                {() => (
+                    <InputField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="groupName"
+                        label="Tên nhóm"
+                        required
+                        placeholder="Nhập tên nhóm dịch vụ"
+                    />
+                )}
+            </form.Field>
 
             <InputField<FormValues>
                 form={form as FormApiOf<FormValues>}
@@ -51,17 +71,30 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
             />
 
             <div className="md:col-span-2">
-                <form.Field name="iconUrl">
+                <form.Field
+                    name="iconUrl"
+                // validators={{
+                //     onChange: ({ value }: { value: string }) =>
+                //         !value || !value.trim() ? 'Icon nhóm dịch vụ là bắt buộc' : undefined,
+                // }}
+                >
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {(field: any) => (
-                        <ImageUpload
-                            value={field.state.value as string}
-                            onChange={(url) => field.handleChange(url as never)}
-                            folder={AWS_CONFIG.FOLDERS.SERVICE_GROUP_ICONS}
-                            label="Icon nhóm dịch vụ"
-                            required
-                            disabled={isLoading}
-                        />
+                        <div>
+                            <ImageUpload
+                                value={field.state.value as string}
+                                onChange={(url) => field.handleChange(url as never)}
+                                folder={AWS_CONFIG.FOLDERS.SERVICE_GROUP_ICONS}
+                                label="Icon nhóm dịch vụ"
+                                required
+                                disabled={isLoading}
+                            />
+                            {field.state.meta.touchedErrors && field.state.meta.touchedErrors[0] && (
+                                <div className="mt-1 text-xs text-red-600">
+                                    {field.state.meta.touchedErrors[0]}
+                                </div>
+                            )}
+                        </div>
                     )}
                 </form.Field>
             </div>
