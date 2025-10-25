@@ -12,12 +12,12 @@ export function usePermissions() {
     const permissions = useMemo(() => {
         if (!user?.role) {
             return {
-                isAdmin: false,
+                isManager: false,
                 isStaff: false,
                 isCitizen: false,
-                canAccessAdminPanel: false,
+                canAccessManagerPanel: false,
                 canManageQueues: false,
-                canViewAllUsers: false,
+                canViewAllStaff: false,
                 canEditProfile: false,
                 hasPermission: () => false,
             };
@@ -28,18 +28,16 @@ export function usePermissions() {
 
         return {
             // Role checks using enum values directly
-            isAdmin: userRole === UserRole.ADMIN,
-            isStaff: userRole === UserRole.STAFF || userRole === UserRole.ADMIN,
-            isCitizen: userRole === UserRole.CITIZEN,
+            isManager: userRole === UserRole.MANAGER,
+            isStaff: userRole === UserRole.STAFF,
+            isGuest: userRole === UserRole.GUEST,
 
             // Permission checks using utility functions
-            canAccessAdminPanel: hasRoleLevel(userRole, UserRole.ADMIN),
-            canManageQueues: hasRoleLevel(userRole, UserRole.ADMIN),
-            canViewAllUsers: hasRoleLevel(userRole, UserRole.STAFF),
-            canEditProfile: true, // All authenticated users can edit their profile
-
-            // Generic permission checker
-            hasPermission: (requiredRole: UserRole) => hasRoleLevel(userRole, requiredRole),
+            canAccessManagerPanel: hasRoleLevel(userRole, UserRole.MANAGER),
+            canManageServices: hasRoleLevel(userRole, UserRole.MANAGER),
+            canManageDepartments: hasRoleLevel(userRole, UserRole.MANAGER),
+            canManageStaff: hasRoleLevel(userRole, UserRole.MANAGER),
+            canViewAllStaff: hasRoleLevel(userRole, UserRole.STAFF),
         };
     }, [user?.role]);
 

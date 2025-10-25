@@ -1,0 +1,36 @@
+# Watchman ignore patterns
+# System files
+pagefile.sys
+hiberfil.sys
+swapfile.sys
+$RECYCLE.BIN
+System Volume Information
+
+# Development files
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+.next/
+.turbo/
+
+# Dependencies
+node_modules/
+.pnp/
+.yarn/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -9,14 +9,14 @@ import { ROLE_HIERARCHY, REGISTRATION_ROLES, ROLE_LABELS } from '../consts';
  * Check if user has required role level
  */
 export function hasRoleLevel(userRole: UserRole, requiredRole: UserRole): boolean {
-    return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[requiredRole];
+    return ROLE_HIERARCHY[userRole as keyof typeof ROLE_HIERARCHY] >= ROLE_HIERARCHY[requiredRole as keyof typeof ROLE_HIERARCHY];
 }
 
 /**
  * Check if user is admin
  */
-export function isAdmin(userRole: UserRole): boolean {
-    return userRole === UserRole.ADMIN;
+export function isManager(userRole: UserRole): boolean {
+    return userRole === UserRole.MANAGER;
 }
 
 /**
@@ -37,7 +37,7 @@ export function getAvailableRolesForRegistration(): readonly UserRole[] {
  * Get role display label
  */
 export function getRoleLabel(role: UserRole): string {
-    return ROLE_LABELS[role] || role;
+    return ROLE_LABELS[role as keyof typeof ROLE_LABELS] as string;
 }
 
 /**

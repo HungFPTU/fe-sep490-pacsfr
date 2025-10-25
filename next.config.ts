@@ -60,8 +60,18 @@ const nextConfig: NextConfig = {
       config.watchOptions = {
         poll: 1000,
         aggregateTimeout: 300,
-        // Use RegExp để ignore node_modules, .git, .next và Windows system files
-        ignored: /node_modules|\.git|\.next|pagefile\.sys|hiberfil\.sys|swapfile\.sys|\$RECYCLE\.BIN|System Volume Information/,
+        // Simplified ignore patterns - let .watchmanconfig handle system files
+        ignored: [
+          "**/node_modules/**",
+          "**/.git/**",
+          "**/.next/**",
+          "**/.turbo/**",
+          "**/dist/**",
+          "**/build/**",
+          "**/*.log",
+          "**/*.tmp",
+          "**/*.temp"
+        ],
       };
     }
 
@@ -87,7 +97,6 @@ const nextConfig: NextConfig = {
       ...config.resolve.alias,
       'async_hooks': 'empty-module',
     };
-
 
     // Xử lý lỗi "i.M" trong build
     config.optimization = {

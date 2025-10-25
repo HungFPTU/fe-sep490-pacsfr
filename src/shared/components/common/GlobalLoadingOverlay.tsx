@@ -13,7 +13,7 @@ export function GlobalLoadingOverlay() {
     return (
         <div className="fixed inset-0 z-[5000] flex items-center justify-center">
             {/* Background overlay - Mờ đục */}
-            <div className="absolute inset-0 bg-white/90 backdrop-blur-md" />
+            <div className="absolute inset-0 bg-white/50 backdrop-blur-sm" />
 
             <div className="relative z-10">
                 <div className="absolute inset-0 rounded-full animate-spin-slow">

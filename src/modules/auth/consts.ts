@@ -6,21 +6,21 @@ import { UserRole } from './enums';
 
 // Role configurations
 export const ROLE_LABELS = {
-    [UserRole.ADMIN]: "Quản trị viên",
+    [UserRole.MANAGER]: "Quản lý",
     [UserRole.STAFF]: "Nhân viên",
-    [UserRole.CITIZEN]: "Công dân",
+    [UserRole.GUEST]: "Khách",
 } as const;
 
 export const ROLE_HIERARCHY = {
-    [UserRole.ADMIN]: 3,
+    [UserRole.MANAGER]: 3,
     [UserRole.STAFF]: 2,
-    [UserRole.CITIZEN]: 1,
+    [UserRole.GUEST]: 1,
 } as const;
 
-export const DEFAULT_ROLE = UserRole.CITIZEN;
+export const DEFAULT_ROLE = UserRole.GUEST;
 
 // Available roles for registration
-export const REGISTRATION_ROLES = [UserRole.CITIZEN] as const;
+export const REGISTRATION_ROLES = [UserRole.GUEST] as const;
 
 // Auth routes
 export const AUTH_ROUTES = {
