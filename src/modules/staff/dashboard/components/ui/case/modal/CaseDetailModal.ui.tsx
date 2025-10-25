@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useCaseDetail } from '../../../../hooks/useCaseDetail';
 import { CaseDetailView } from '../../../view/CaseDetailView.view';
-import { CaseDetailResponse } from '@/modules/staff/dashboard/types/case-search';
-
+import type { CaseDetailResponse } from '../../../../types/case-search';
 interface CaseDetailModalProps {
   open: boolean;
   onClose: () => void;
