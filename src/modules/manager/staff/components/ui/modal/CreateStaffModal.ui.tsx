@@ -56,14 +56,20 @@ export function CreateStaffModal({ open, onClose, initData, onSuccess }: CreateS
             title="Tạo nhân viên mới"
             onOk={handleOk}
             onCancel={onClose}
-            okText="Tạo mới"
+            okText="Tạo tài khoản"
             cancelText="Hủy"
             confirmLoading={isLoading}
             centered
             size="large"
+            maskClosable={!isLoading}
+            keyboard={!isLoading}
             destroyOnClose={true}
         >
-            <StaffForm form={form} isLoading={isLoading} isEdit={false} />
+            <StaffForm
+                form={form}
+                isLoading={isLoading}
+                isEdit={false}
+            />
         </BaseModal>
     );
 }
