@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useConfirmPayment } from '../../../../hooks/useConfirmPayment';
 
 interface PaymentConfirmButtonProps {
