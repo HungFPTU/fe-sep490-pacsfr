@@ -182,7 +182,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     name: user?.fullName || "Manager",
     email: user?.email || "manager@pascs.com",
     avatar: user?.avatar || "/avatars/manager.jpg",
-    roleType: user?.roleType || "abc"
   }
 
   return (
