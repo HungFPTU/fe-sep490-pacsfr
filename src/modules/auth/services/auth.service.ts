@@ -180,10 +180,14 @@ export const authService = {
     // Logout with cleanup
     async logout(): Promise<void> {
         try {
-            // const router = useRouter();
+            // Clear credentials first
             const authStore = useAuthStore.getState();
             authStore.clearCredentials();
-            window.location.href = '/';
+
+            // Longer delay to ensure state is cleared and prevent 403 flash
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 300);
         } catch (error) {
             console.warn("Logout API failed:", error);
             throw error;

@@ -27,6 +27,9 @@ export function middleware(request: NextRequest) {
     // Get token from cookies
     const token = request.cookies.get('auth-token')?.value;
 
+    // Debug logging for middleware
+    console.log('[Middleware] Path:', pathname, 'Token:', token ? 'Present' : 'Missing');
+
     // Public routes that don't require authentication
     const publicRoutes = [
         '/',
