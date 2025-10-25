@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useStaffDetail } from '../../../hooks';
 import { Chip } from '@heroui/react';
 import { ROLE_TYPE_LABELS } from '../../../enums';
