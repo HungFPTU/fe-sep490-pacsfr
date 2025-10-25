@@ -18,9 +18,10 @@ interface StatCardProps {
   changeType?: 'increase' | 'decrease' | 'neutral'
   icon: React.ReactNode
   description?: string
+  bgColor?: string
 }
 
-function StatCard({ title, value, change, changeType = 'neutral', icon, description }: StatCardProps) {
+function StatCard({ title, value, change, changeType = 'neutral', icon, description, bgColor }: StatCardProps) {
   const getChangeColor = () => {
     switch (changeType) {
       case 'increase': return 'text-green-600'
@@ -38,7 +39,7 @@ function StatCard({ title, value, change, changeType = 'neutral', icon, descript
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow duration-200">
+    <Card className={`hover:shadow-lg transition-shadow duration-200 ${bgColor || 'bg-white'}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-gray-600">
           {title}
@@ -72,7 +73,8 @@ export function StatsCards() {
       change: "+12% so với tháng trước",
       changeType: "increase" as const,
       icon: <Users className="h-4 w-4" />,
-      description: "Nhân viên đang hoạt động"
+      description: "Nhân viên đang hoạt động",
+      bgColor: "bg-blue-50"
     },
     {
       title: "Dịch vụ đang cung cấp",
@@ -80,7 +82,8 @@ export function StatsCards() {
       change: "+2 dịch vụ mới",
       changeType: "increase" as const,
       icon: <Building2 className="h-4 w-4" />,
-      description: "Dịch vụ công trực tuyến"
+      description: "Dịch vụ công trực tuyến",
+      bgColor: "bg-green-50"
     },
     {
       title: "Hàng đợi hiện tại",
@@ -88,7 +91,8 @@ export function StatsCards() {
       change: "-8% so với hôm qua",
       changeType: "decrease" as const,
       icon: <Clock className="h-4 w-4" />,
-      description: "Người đang chờ phục vụ"
+      description: "Người đang chờ phục vụ",
+      bgColor: "bg-orange-50"
     },
     {
       title: "Hiệu suất hệ thống",
@@ -96,7 +100,8 @@ export function StatsCards() {
       change: "+0.3% so với tuần trước",
       changeType: "increase" as const,
       icon: <TrendingUp className="h-4 w-4" />,
-      description: "Thời gian hoạt động"
+      description: "Thời gian hoạt động",
+      bgColor: "bg-purple-50"
     },
     {
       title: "Cảnh báo hệ thống",
@@ -104,7 +109,8 @@ export function StatsCards() {
       change: "2 cảnh báo mới",
       changeType: "neutral" as const,
       icon: <AlertTriangle className="h-4 w-4" />,
-      description: "Cần xử lý ngay"
+      description: "Cần xử lý ngay",
+      bgColor: "bg-red-50"
     },
     {
       title: "Hoàn thành hôm nay",
@@ -112,7 +118,8 @@ export function StatsCards() {
       change: "+15% so với hôm qua",
       changeType: "increase" as const,
       icon: <CheckCircle className="h-4 w-4" />,
-      description: "Yêu cầu đã xử lý"
+      description: "Yêu cầu đã xử lý",
+      bgColor: "bg-emerald-50"
     }
   ]
 
@@ -127,6 +134,7 @@ export function StatsCards() {
           changeType={stat.changeType}
           icon={stat.icon}
           description={stat.description}
+          bgColor={stat.bgColor}
         />
       ))}
     </div>
