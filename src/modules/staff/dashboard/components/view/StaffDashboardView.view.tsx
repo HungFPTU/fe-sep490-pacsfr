@@ -18,6 +18,7 @@ import {
     SearchFilters,
     WaitingList,
 } from "../ui";
+import { StaffDashboardTabsView } from "./StaffDashboardTabsView.view";
 
 export function StaffDashboardView() {
     const router = useRouter();
@@ -290,102 +291,98 @@ export function StaffDashboardView() {
     };
 
     return (
-        <div className="bg-gray-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="space-y-6">
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Bảng điều khiển Nhân viên
-                            </h1>
-                            <p className="text-gray-600 mt-1">
-                                Quản lý hàng đợi và hồ sơ công dân
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <Button 
-                                onClick={() => router.push('/staff/create-case')}
-                                className="bg-green-600 hover:bg-green-700"
-                                size="sm"
-                            >
-                                <Plus className="w-4 h-4 mr-2" />
-                                Tạo hồ sơ mới
-                            </Button>
-                            <Button variant="outline" size="sm">
-                                <Filter className="w-4 h-4 mr-2" />
-                                Lọc nâng cao
-                            </Button>
-                        </div>
+        <StaffDashboardTabsView>
+            <div className="space-y-6">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                            Bảng điều khiển Nhân viên
+                        </h1>
+                        <p className="text-gray-600 mt-1">
+                            Quản lý hàng đợi và hồ sơ công dân
+                        </p>
                     </div>
-
-                    {/* Service Group Status */}
-                    <ServiceGroupStatus
-                        serviceGroupId={serviceGroupId}
-                        selectedServiceGroup={selectedServiceGroup}
-                        queueStatus={queueStatus}
-                        onOpenSetup={() => setShowQueueSetup(true)}
-                    />
-
-                    {/* Service Group Setup Modal */}
-                    <ServiceGroupSetup
-                        show={showQueueSetup}
-                        serviceGroups={serviceGroups}
-                        isLoadingServiceGroups={isLoadingServiceGroups}
-                        selectedServiceGroup={selectedServiceGroup}
-                        searchInput={serviceGroupSearchInput}
-                        searchKeyword={serviceGroupSearchKeyword}
-                        queueStatus={queueStatus}
-                        onClose={() => {
-                            setShowQueueSetup(false);
-                            setServiceGroupSearchInput("");
-                            setServiceGroupSearchKeyword("");
-                        }}
-                        onSearchInputChange={setServiceGroupSearchInput}
-                        onSearch={handleSearchServiceGroups}
-                        onClearSearch={handleClearSearch}
-                        onSearchKeyPress={handleSearchKeyPress}
-                        onSelectGroup={handleServiceGroupSelect}
-                    />
-
-                    {/* Current Serving & Call Next Number */}
-                    <CurrentServingPanel
-                        serviceGroupId={serviceGroupId}
-                        queueStatus={queueStatus}
-                        isLoadingQueueStatus={isLoadingQueueStatus}
-                        currentServing={currentServing}
-                        isCallingNext={isCallingNext}
-                        onCallNext={callNextNumber}
-                        onComplete={completeCurrentServing}
-                        onChangeQueue={() => setShowQueueSetup(true)}
-                    />
-
-                    {/* Stats Cards */}
-                    <StatsCards stats={stats} queueStatus={queueStatus} />
-
-                    {/* Search and Filters */}
-                    <SearchFilters
-                        searchQuery={searchQuery}
-                        selectedServiceType={selectedServiceType}
-                        serviceTypes={SERVICE_TYPES}
-                        onSearchChange={handleSearch}
-                        onServiceTypeChange={handleServiceTypeFilter}
-                    />
-
-                    {/* Waiting List */}
-                    <WaitingList
-                        waitingList={waitingList}
-                        isLoading={isLoadingWaitingList}
-                        onRefresh={loadDashboardData}
-                        onViewCitizen={handleViewCitizen}
-                        getServiceTypeName={getServiceTypeName}
-                        getStatusBadge={getStatusBadge}
-                    />
+                    <div className="flex items-center gap-3">
+                        <Button 
+                            onClick={() => router.push('/staff/create-case')}
+                            className="bg-green-600 hover:bg-green-700"
+                            size="sm"
+                        >
+                            <Plus className="w-4 h-4 mr-2" />
+                            Tạo hồ sơ mới
+                        </Button>
+                        <Button variant="outline" size="sm">
+                            <Filter className="w-4 h-4 mr-2" />
+                            Lọc nâng cao
+                        </Button>
+                    </div>
                 </div>
-            </div>
 
-            
-        </div>
+                {/* Service Group Status */}
+                <ServiceGroupStatus
+                    serviceGroupId={serviceGroupId}
+                    selectedServiceGroup={selectedServiceGroup}
+                    queueStatus={queueStatus}
+                    onOpenSetup={() => setShowQueueSetup(true)}
+                />
+
+                {/* Service Group Setup Modal */}
+                <ServiceGroupSetup
+                    show={showQueueSetup}
+                    serviceGroups={serviceGroups}
+                    isLoadingServiceGroups={isLoadingServiceGroups}
+                    selectedServiceGroup={selectedServiceGroup}
+                    searchInput={serviceGroupSearchInput}
+                    searchKeyword={serviceGroupSearchKeyword}
+                    queueStatus={queueStatus}
+                    onClose={() => {
+                        setShowQueueSetup(false);
+                        setServiceGroupSearchInput("");
+                        setServiceGroupSearchKeyword("");
+                    }}
+                    onSearchInputChange={setServiceGroupSearchInput}
+                    onSearch={handleSearchServiceGroups}
+                    onClearSearch={handleClearSearch}
+                    onSearchKeyPress={handleSearchKeyPress}
+                    onSelectGroup={handleServiceGroupSelect}
+                />
+
+                {/* Current Serving & Call Next Number */}
+                <CurrentServingPanel
+                    serviceGroupId={serviceGroupId}
+                    queueStatus={queueStatus}
+                    isLoadingQueueStatus={isLoadingQueueStatus}
+                    currentServing={currentServing}
+                    isCallingNext={isCallingNext}
+                    onCallNext={callNextNumber}
+                    onComplete={completeCurrentServing}
+                    onChangeQueue={() => setShowQueueSetup(true)}
+                />
+
+                {/* Stats Cards */}
+                <StatsCards stats={stats} queueStatus={queueStatus} />
+
+                {/* Search and Filters */}
+                <SearchFilters
+                    searchQuery={searchQuery}
+                    selectedServiceType={selectedServiceType}
+                    serviceTypes={SERVICE_TYPES}
+                    onSearchChange={handleSearch}
+                    onServiceTypeChange={handleServiceTypeFilter}
+                />
+
+                {/* Waiting List */}
+                <WaitingList
+                    waitingList={waitingList}
+                    isLoading={isLoadingWaitingList}
+                    onRefresh={loadDashboardData}
+                    onViewCitizen={handleViewCitizen}
+                    getServiceTypeName={getServiceTypeName}
+                    getStatusBadge={getStatusBadge}
+                />
+            </div>
+        </StaffDashboardTabsView>
     );
 }
 
