@@ -51,11 +51,19 @@ export default function StaffLayout({
         await logout();
     };
 
+    // Check if current page is login page
+    const isLoginPage = pathname === "/staff/login";
+
     // Update current navigation item based on pathname
     const currentNavigation = navigation.map((item) => ({
         ...item,
         current: pathname === item.href || pathname.startsWith(item.href + "/"),
     }));
+
+    // If it's login page, render without sidebar
+    if (isLoginPage) {
+        return <>{children}</>;
+    }
 
     return (
         <div className="min-h-screen bg-gray-100">
