@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { StaffForm } from './StaffForm.ui';
 import { useStaffForm } from '../../../hooks/useStaffForm';
 import { useCreateStaff } from '../../../hooks';
@@ -56,14 +56,20 @@ export function CreateStaffModal({ open, onClose, initData, onSuccess }: CreateS
             title="Tạo nhân viên mới"
             onOk={handleOk}
             onCancel={onClose}
-            okText="Tạo mới"
+            okText="Tạo tài khoản"
             cancelText="Hủy"
             confirmLoading={isLoading}
             centered
             size="large"
+            maskClosable={!isLoading}
+            keyboard={!isLoading}
             destroyOnClose={true}
         >
-            <StaffForm form={form} isLoading={isLoading} isEdit={false} />
+            <StaffForm
+                form={form}
+                isLoading={isLoading}
+                isEdit={false}
+            />
         </BaseModal>
     );
 }

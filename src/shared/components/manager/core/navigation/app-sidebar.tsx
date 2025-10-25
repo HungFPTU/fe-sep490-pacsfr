@@ -2,11 +2,8 @@
 
 import * as React from "react"
 import {
-  AudioWaveform,
   BookOpen,
   Bot,
-  Command,
-  GalleryVerticalEnd,
   Settings2,
   SquareTerminal,
 } from "lucide-react"
@@ -17,31 +14,14 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "./ui/sidebar"
-import { TeamSwitcher } from "./team-switcher"
+} from "../../ui/sidebar"
+import { SidebarBrand } from "./SidebarBrand"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { useAuth } from "@/modules/auth/hooks"
 
-// This is sample data.
+// Navigation data
 const data = {
-  teams: [
-    {
-      name: "Viet Dung",
-      logo: GalleryVerticalEnd,
-      plan: "Dev",
-    },
-    {
-      name: "Dan Huy",
-      logo: AudioWaveform,
-      plan: "Dev",
-    },
-    {
-      name: "Hung FPTU",
-      logo: Command,
-      plan: "Dev",
-    },
-  ],
   navMain: [
     {
       title: "Dashboard",
@@ -62,7 +42,7 @@ const data = {
       items: [
         {
           title: "Quản lý nhân viên",
-          url: "/manager/staff-management",
+          url: "/manager/quan-ly-nhan-vien",
         },
         {
           title: "Danh sách nhân sự",
@@ -187,7 +167,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <SidebarBrand />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
