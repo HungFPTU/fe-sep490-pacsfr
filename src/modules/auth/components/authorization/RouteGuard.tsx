@@ -12,7 +12,7 @@ import { useAuthStore } from '../../stores/useAuthStore';
 import { hasRouteAccess, getDefaultRoute } from '../../config/role-permissions.config';
 import { ClientOnly } from './ClientOnly';
 import { useLogoutState } from '../../hooks/useLogoutState';
-import { GlobalLoadingOverlay } from '@/shared/components';
+// import { GlobalLoadingOverlay } from '@/shared/components'; // No longer used
 import { LoadingRedirect } from '@/shared/components/common/LoadingRedirect';
 
 interface RouteGuardProps {
@@ -69,14 +69,7 @@ function RouteGuardContent({ children }: RouteGuardProps) {
 
   // Show loading state while checking
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <GlobalLoadingOverlay />
-          <p className="mt-4 text-sm text-slate-600">Đang kiểm tra quyền truy cập...</p>
-        </div>
-      </div>
-    );
+    return <>{children}</>;
   }
 
   // Skip access check for login/register pages
@@ -118,14 +111,7 @@ function RouteGuardContent({ children }: RouteGuardProps) {
 export function RouteGuard(props: RouteGuardProps) {
   return (
     <ClientOnly
-      fallback={
-        <div className="flex h-screen items-center justify-center">
-          <div className="text-center">
-            <GlobalLoadingOverlay />
-            <p className="mt-4 text-sm text-slate-600">Đang kiểm tra quyền truy cập...</p>
-          </div>
-        </div>
-      }
+      fallback={<>{props.children}</>}
     >
       <RouteGuardContent {...props} />
     </ClientOnly>
