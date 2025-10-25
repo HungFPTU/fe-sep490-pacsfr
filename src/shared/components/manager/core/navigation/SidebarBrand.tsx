@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { Building2, ChevronDown, Check } from 'lucide-react';
+import Image from 'next/image';
 import {
     SidebarMenu,
     SidebarMenuButton,
@@ -66,12 +67,12 @@ export function SidebarBrand({
                         asChild
                     >
                         <Link href="/manager">
-                            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 text-white">
-                                <Building2 className="size-4" />
+                            <div className="relative w-8 h-8">
+                                <Image src="/logo.png" alt="Logo" fill className="object-contain" />
                             </div>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-semibold">
-                                    PACSFR Manager
+                                    PASCS Manager
                                 </span>
                                 <span className="truncate text-xs text-slate-500">
                                     Hệ thống quản lý
