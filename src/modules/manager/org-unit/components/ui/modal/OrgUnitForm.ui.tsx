@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { InputField, TextareaField, CheckboxField, SelectField } from '@/shared/components/manager/form/BaseForm';
+import { InputField, TextareaField, CheckboxField, SelectField } from '@/shared/components/layout/manager/form/BaseForm';
 import { FormApiOf } from '@/types/types';
 import { ORG_UNIT_TYPES } from '../../../enums';
 import { useDepartments } from '@/modules/manager/department/hooks';

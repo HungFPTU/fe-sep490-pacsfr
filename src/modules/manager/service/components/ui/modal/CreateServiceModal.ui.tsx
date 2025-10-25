@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { ServiceForm } from './ServiceForm.ui';
 import { useServiceForm } from '../../../hooks/useServiceForm';
 import { useCreateService, useUpdateService } from '../../../hooks';

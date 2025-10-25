@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { StaffForm } from './StaffForm.ui';
 import { useStaffForm } from '../../../hooks/useStaffForm';
 import { useCreateStaff } from '../../../hooks';
