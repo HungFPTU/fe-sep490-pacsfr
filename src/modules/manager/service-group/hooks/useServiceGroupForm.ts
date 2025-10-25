@@ -51,10 +51,10 @@ export const useServiceGroupForm = ({
                 addToast({ message: 'Vui lòng nhập tên nhóm', type: 'error' });
                 return;
             }
-            if (!value.iconUrl?.trim()) {
-                addToast({ message: 'Vui lòng tải lên icon nhóm dịch vụ', type: 'error' });
-                return;
-            }
+            // if (!value.iconUrl?.trim()) {
+            //     addToast({ message: 'Vui lòng tải lên icon nhóm dịch vụ', type: 'error' });
+            //     return;
+            // }
 
             try {
                 const request: CreateServiceGroupRequest = {

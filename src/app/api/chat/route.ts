@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) { // Sửa Request thành NextReque
     const { history = [], prompt = "" }: { history?: ChatMessage[]; prompt?: string } = await req.json();
     if (!prompt) return new Response("Invalid 'prompt'", { status: 400 });
 
-    const apiKey = "AIzaSyDd0SOhjvVcjxl9tErvnFdoWBDfC_-lWcU";
+    const apiKey = "AIzaSyDEotv1pTlrNNHMwYAPvLmKKcMYZU63i6U";
     if (!apiKey) return new Response("Missing GEMINI_API_KEY", { status: 500 });
 
     const { version, models } = await listModels(apiKey);
