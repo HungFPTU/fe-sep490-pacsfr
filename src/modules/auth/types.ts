@@ -6,6 +6,7 @@ import { ApiResponse } from "@/core/config";
  */
 
 import { UserRole } from "./enums";
+import { Position } from "./config/role-permissions.config";
 
 export interface User {
     id: string;
@@ -16,6 +17,8 @@ export interface User {
     phone?: string;
     avatar?: string;
     role: UserRole;
+    roleType?: string; // API response field
+    position?: Position;
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
