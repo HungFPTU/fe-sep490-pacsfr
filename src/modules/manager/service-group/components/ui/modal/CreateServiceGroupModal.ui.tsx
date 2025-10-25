@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { ServiceGroupForm } from './ServiceGroupForm.ui';
 import { useServiceGroupForm } from '../../../hooks/useServiceGroupForm';
 import type { ServiceGroup } from '../../../types';

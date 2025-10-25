@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { DepartmentForm } from './DepartmentForm.ui';
 import { useDepartmentForm } from '../../../hooks/useDepartmentForm';
 import type { Department } from '../../../types';

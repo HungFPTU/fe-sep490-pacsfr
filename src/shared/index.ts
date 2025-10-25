@@ -10,6 +10,9 @@ export * from "./hooks/useHttpLoading";
 export { Container } from "./components/layout/Container";
 export { GlobalToast } from "./components/GlobalToast.com";
 
+// Manager Components
+export { ManagerHeader, ManagerBreadcrumb, UserMenu, NotificationsMenu, AppSidebar } from "./components/manager";
+
 // UI Components
 export { Button } from "./components/ui/button.ui";
 export { Input } from "./components/ui/input.ui";

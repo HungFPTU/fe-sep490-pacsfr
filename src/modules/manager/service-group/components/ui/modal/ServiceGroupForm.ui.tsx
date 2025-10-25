@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { InputField, TextareaField, CheckboxField } from '@/shared/components/manager/form/BaseForm';
+import { InputField, TextareaField, CheckboxField } from '@/shared/components/layout/manager/form/BaseForm';
 import { ImageUpload } from '@/shared/components/common/ImageUpload';
 import { FormApiOf } from '@/types/types';
 import { AWS_CONFIG } from '@core/config/aws.config';

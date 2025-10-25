@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useForm } from '@tanstack/react-form';
 import { useAssignWorkShift } from '../../../hooks';
 import { useGlobalToast } from '@core/patterns/SingletonHook';

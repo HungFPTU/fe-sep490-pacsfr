@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ObjectValue } from '@tanstack/react-form';
-import { InputField, SelectField, CheckboxField } from '@/shared/components/manager/form/BaseForm';
+import { InputField, SelectField, CheckboxField } from '@/shared/components/layout/manager/form/BaseForm';
 import { StaffFormValues } from '../../../hooks/useStaffForm';
 import { ROLE_TYPE_OPTIONS, STAFF_POSITION_OPTIONS } from '../../../constants';
 import { useOrgUnits } from '@/modules/manager/org-unit/hooks';

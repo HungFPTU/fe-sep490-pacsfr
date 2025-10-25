@@ -2,13 +2,13 @@
 
 import * as React from "react"
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  GalleryVerticalEnd,
-  Settings2,
-  SquareTerminal,
+  LayoutDashboard,
+  Users,
+  Briefcase,
+  Building2,
+  MonitorDot,
+  BarChart3,
+  ListChecks,
 } from "lucide-react"
 
 import {
@@ -17,36 +17,20 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "./ui/sidebar"
-import { TeamSwitcher } from "./team-switcher"
+} from "../../ui/sidebar"
+import { SidebarBrand } from "./SidebarBrand"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { useAuth } from "@/modules/auth/hooks"
+import { User } from "@/modules/auth/types";
 
-// This is sample data.
+// Navigation data
 const data = {
-  teams: [
-    {
-      name: "Viet Dung",
-      logo: GalleryVerticalEnd,
-      plan: "Dev",
-    },
-    {
-      name: "Dan Huy",
-      logo: AudioWaveform,
-      plan: "Dev",
-    },
-    {
-      name: "Hung FPTU",
-      logo: Command,
-      plan: "Dev",
-    },
-  ],
   navMain: [
     {
       title: "Dashboard",
       url: "/manager/",
-      icon: SquareTerminal,
+      icon: LayoutDashboard,
       items: [
         {
           title: "Bảng điều khiển",
@@ -56,17 +40,13 @@ const data = {
     },
     {
       title: "Quản lý nhân sự",
-      url: "/manager/account",
-      icon: SquareTerminal,
+      url: "",
+      icon: Users,
       isActive: true,
       items: [
         {
           title: "Quản lý nhân viên",
-          url: "/manager/staff-management",
-        },
-        {
-          title: "Danh sách nhân sự",
-          url: "/manager/account/list",
+          url: "/manager/quan-ly-nhan-vien",
         },
         {
           title: "Phân quyền & Vai trò",
@@ -80,8 +60,8 @@ const data = {
     },
     {
       title: "Quản lý dịch vụ",
-      url: "/manager/service",
-      icon: Bot,
+      url: "",
+      icon: Briefcase,
       items: [
         {
           title: "Danh sách dịch vụ",
@@ -107,8 +87,8 @@ const data = {
     },
     {
       title: "Quản lý phòng ban",
-      url: "/manager/operation",
-      icon: BookOpen,
+      url: "",
+      icon: Building2,
       items: [
         {
           title: "Quản lý phòng ban",
@@ -134,8 +114,8 @@ const data = {
     },
     {
       title: "Giám sát thời gian thực",
-      url: "/manager/monitoring",
-      icon: Settings2,
+      url: "",
+      icon: MonitorDot,
       items: [
         {
           title: "Tình trạng hàng chờ",
@@ -154,12 +134,12 @@ const data = {
     {
       title: "Thống kê & Báo cáo",
       url: "/manager/reporting",
-      icon: Settings2,
+      icon: BarChart3,
     },
     {
       title: "Quản lý hàng đợi",
-      url: "/manager/queue",
-      icon: Settings2,
+      url: "",
+      icon: ListChecks,
       items: [
         {
           title: "Tình trạng hàng chờ",
@@ -179,22 +159,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Create user data for NavUser component
   const userData = {
-    name: user?.fullName || "Manager",
+    fullName: user?.fullName || "Manager",
     email: user?.email || "manager@pascs.com",
     avatar: user?.avatar || "/avatars/manager.jpg",
-    roleType: user?.roleType || "abc"
-  }
+  } satisfies Omit<User, 'id' | 'username' | 'role' | 'isActive' | 'createdAt' | 'updatedAt' | 'phone' | 'name'>;
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-      <NavUser user={userData} />
+        <SidebarBrand />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-      <TeamSwitcher teams={data.teams} />
+        <NavUser user={userData} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
