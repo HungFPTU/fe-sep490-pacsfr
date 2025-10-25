@@ -35,7 +35,6 @@ export function NavUser({
   user: {
     name: string
     email: string
-    roleType:string
     avatar: string
   }
 }) {
@@ -64,7 +63,6 @@ export function NavUser({
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
-                <span className="truncate text-xs">{user.roleType}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
