@@ -1,7 +1,7 @@
 import React from "react";
-import { UserRole } from "../enums";
-import { ROLE_LABELS } from "../consts";
-import { getAvailableRolesForRegistration } from "../utils/role.utils";
+import { UserRole } from "../../enums";
+import { ROLE_LABELS } from "../../consts";
+import { getAvailableRolesForRegistration } from "../../utils/role.utils";
 
 interface RoleSelectorProps {
     value: UserRole;
@@ -38,7 +38,7 @@ export function RoleSelector({
         >
             {availableRoles.map((role) => (
                 <option key={role} value={role}>
-                    {ROLE_LABELS[role]}
+                    {ROLE_LABELS[role as keyof typeof ROLE_LABELS] as string}
                 </option>
             ))}
         </select>

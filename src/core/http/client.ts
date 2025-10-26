@@ -309,10 +309,9 @@ http.addErrorInterceptor(async (error) => {
 
     // Handle common error scenarios
     if (error.status === 401) {
-        // Unauthorized - redirect to login or refresh token
-        if (typeof window !== "undefined") {
-            window.dispatchEvent(new CustomEvent("auth-error", { detail: error }));
-        }
+        // Unauthorized - only log, don't dispatch event to avoid auto-logout
+        console.warn('[HTTP Client] 401 Unauthorized:', error.message);
+        // Let ProtectedRoute handle authentication checks
     }
 
     if (error.status === 403) {

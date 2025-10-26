@@ -4,11 +4,12 @@
         ".next",
         ".git",
         "dist",
-        "build"
+        "build",
+        ".turbo"
     ],
     "ignore_files": [
-        "pagefile.sys",
-        "hiberfil.sys",
-        "swapfile.sys"
+        "*.log",
+        "*.tmp",
+        "*.temp"
     ]
 }

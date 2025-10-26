@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/useAuthStore";
 import { authService } from "../services/auth.service";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
-import { useRouter } from "next/navigation";
+// Removed useAuthRedirect to prevent redirect loops
 import type { LoginPayload, RegisterPayload } from "../types";
 
 /**
@@ -11,12 +11,12 @@ import type { LoginPayload, RegisterPayload } from "../types";
  * Service handles business logic, Hook handles UI state
  */
 export function useAuth() {
-    const { user, token, role, isAuthenticated, setCredentials, clearCredentials } = useAuthStore();
+    const { user, token, role, isAuthenticated, setCredentials } = useAuthStore();
     const { addToast } = useGlobalToast();
-    const router = useRouter();
 
     // Track if user just logged in to prevent duplicate API calls
     const [justLoggedIn, setJustLoggedIn] = React.useState(false);
+    const [isRedirecting, setIsRedirecting] = React.useState(false);
 
     // Login mutation - Service handles API + business logic
     const loginMutation = useMutation({
@@ -24,10 +24,21 @@ export function useAuth() {
             return authService.login(credentials);
         },
         onSuccess: (response) => {
+            console.log('[useAuth] Login success response:', response);
+            console.log('[useAuth] User data from API:', {
+                user: response.user,
+                role: response.role,
+                userRole: response.user.role,
+                userRoleType: (response.user as { roleType?: string })?.roleType
+            });
+
             // Hook handles UI state updates
             setCredentials(response.user, response.tokens.accessToken, response.role);
             setJustLoggedIn(true); // Mark as just logged in to prevent profile query
             addToast({ message: "Đăng nhập thành công!", type: "success" });
+
+            // ✅ REMOVED: Auto redirect to prevent loops
+            // Login pages will handle their own redirects
         },
         onError: (error) => {
             addToast({
@@ -47,6 +58,9 @@ export function useAuth() {
             setCredentials(response.user, response.tokens.accessToken, response?.role);
             setJustLoggedIn(true); // Mark as just logged in to prevent profile query
             addToast({ message: "Đăng ký thành công! Chào mừng bạn!", type: "success" });
+
+            // ✅ REMOVED: Auto redirect to prevent loops
+            // Login pages will handle their own redirects
         },
         onError: (error) => {
             console.error("[Auth Hook] Register error:", error);
@@ -67,11 +81,11 @@ export function useAuth() {
             return authService.logout();
         },
         onSettled: () => {
-            clearCredentials();
+            // Don't clear credentials here - already done in service
             setJustLoggedIn(false); // Reset login flag
+            setIsRedirecting(false); // Reset redirect flag
             addToast({ message: "Đã đăng xuất", type: "info" });
-            // Navigate to home page after logout
-            router.push("/");
+            // Don't redirect here - already done in service
         },
     });
 
@@ -115,7 +129,7 @@ export function useAuth() {
         logout: logoutMutation.mutateAsync,
 
         // Loading states
-        isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending || profileQuery.isLoading,
+        isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending || profileQuery.isLoading || isRedirecting,
 
         // Error states
         error: loginMutation.error || registerMutation.error || logoutMutation.error || profileQuery.error,

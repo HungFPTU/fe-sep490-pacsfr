@@ -49,16 +49,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     }, [auth.isAuthenticated, auth.token]);
 
-    // Auto-logout on token expiration
+    // Handle auth errors without auto-logout
     useEffect(() => {
-        const handleUnauthorized = () => {
-            if (auth.isAuthenticated) {
-                auth.logout();
-            }
+        const handleUnauthorized = (event: Event) => {
+            console.warn('[AuthProvider] 401 Unauthorized:', (event as CustomEvent).detail);
+            // Don't auto-logout, let ProtectedRoute handle it
         };
 
         const handleServerError = (event: Event) => {
-            console.error('Server error:', (event as CustomEvent).detail);
+            console.error('[AuthProvider] Server error:', (event as CustomEvent).detail);
         };
 
         // Listen for auth errors from HTTP client
@@ -69,7 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             window.removeEventListener('auth-error', handleUnauthorized);
             window.removeEventListener('server-error', handleServerError);
         };
-    }, [auth.isAuthenticated, auth.logout, auth]);
+    }, []);
 
     const contextValue: AuthContextValue = {
         user: auth.user,
