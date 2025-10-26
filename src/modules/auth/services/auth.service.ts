@@ -11,6 +11,8 @@ import type {
     ApiLoginData,
     AuthTokens
 } from "../types";
+import { useAuthStore } from "@/modules/auth/stores/useAuthStore";
+// import { AUTH_ROUTES } from "@/modules/auth/consts";
 
 /**
  * Transform API auth data to internal format (old format)
@@ -44,6 +46,21 @@ function transformApiAuthData(apiData: ApiAuthData): { user: User; tokens: AuthT
  * Transform new API login data to internal format
  */
 function transformLoginData(apiData: ApiLoginData): { user: User; tokens: AuthTokens, role: UserRole } {
+    console.log('[Auth Service] Raw API data:', apiData);
+    console.log('[Auth Service] API role:', apiData.role, 'type:', typeof apiData.role);
+
+    // Map API role to UserRole enum first
+    let role: UserRole;
+    if (apiData.role === 'Manager') {
+        role = UserRole.MANAGER;
+    } else if (apiData.role === 'Staff') {
+        role = UserRole.STAFF;
+    } else {
+        role = UserRole.GUEST;
+    }
+
+    console.log('[Auth Service] Mapped role:', apiData.role, '->', role);
+
     // Transform API data to internal User format
     const user: User = {
         id: apiData.username, // Use username as ID
@@ -51,11 +68,14 @@ function transformLoginData(apiData: ApiLoginData): { user: User; tokens: AuthTo
         email: "", // Not provided in login response
         name: apiData.fullName,
         phone: "", // Not provided in login response
-        role: apiData.role as UserRole,
+        role: role, // ✅ Use mapped role
+        roleType: apiData.role, // ✅ Store original API role
         isActive: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
+
+    console.log('[Auth Service] Transformed user:', user);
 
     // Transform API token data to internal AuthTokens format
     const tokens: AuthTokens = {
@@ -63,7 +83,6 @@ function transformLoginData(apiData: ApiLoginData): { user: User; tokens: AuthTo
         expiresIn: 12 * 60 * 60 * 1000 // 12 hours from JWT
     };
 
-    const role = apiData.role as UserRole;
 
     return { user, tokens, role };
 }
@@ -161,9 +180,17 @@ export const authService = {
     // Logout with cleanup
     async logout(): Promise<void> {
         try {
-            await authApi.logout();
+            // Clear credentials first
+            const authStore = useAuthStore.getState();
+            authStore.clearCredentials();
+
+            // Longer delay to ensure state is cleared and prevent 403 flash
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 300);
         } catch (error) {
             console.warn("Logout API failed:", error);
+            throw error;
         }
     },
 
@@ -178,9 +205,9 @@ export const authService = {
         if (!user) return false;
 
         // Convert normalized role back to enum for permission checking
-        const userRole = user.role === UserRole.ADMIN ? UserRole.ADMIN :
+        const userRole = user.role === UserRole.MANAGER ? UserRole.MANAGER :
             user.role === UserRole.STAFF ? UserRole.STAFF :
-                UserRole.CITIZEN;
+                UserRole.GUEST;
 
         return hasRoleLevel(userRole, requiredRole);
     },

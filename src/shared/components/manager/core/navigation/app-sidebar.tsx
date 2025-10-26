@@ -2,10 +2,13 @@
 
 import * as React from "react"
 import {
-  BookOpen,
-  Bot,
-  Settings2,
-  SquareTerminal,
+  LayoutDashboard,
+  Users,
+  Briefcase,
+  Building2,
+  MonitorDot,
+  BarChart3,
+  ListChecks,
 } from "lucide-react"
 
 import {
@@ -19,6 +22,7 @@ import { SidebarBrand } from "./SidebarBrand"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { useAuth } from "@/modules/auth/hooks"
+import { User } from "@/modules/auth/types";
 
 // Navigation data
 const data = {
@@ -26,7 +30,7 @@ const data = {
     {
       title: "Dashboard",
       url: "/manager/",
-      icon: SquareTerminal,
+      icon: LayoutDashboard,
       items: [
         {
           title: "Bảng điều khiển",
@@ -36,17 +40,13 @@ const data = {
     },
     {
       title: "Quản lý nhân sự",
-      url: "/manager/account",
-      icon: SquareTerminal,
+      url: "",
+      icon: Users,
       isActive: true,
       items: [
         {
           title: "Quản lý nhân viên",
           url: "/manager/quan-ly-nhan-vien",
-        },
-        {
-          title: "Danh sách nhân sự",
-          url: "/manager/account/list",
         },
         {
           title: "Phân quyền & Vai trò",
@@ -60,8 +60,8 @@ const data = {
     },
     {
       title: "Quản lý dịch vụ",
-      url: "/manager/service",
-      icon: Bot,
+      url: "",
+      icon: Briefcase,
       items: [
         {
           title: "Danh sách dịch vụ",
@@ -87,8 +87,8 @@ const data = {
     },
     {
       title: "Quản lý phòng ban",
-      url: "/manager/operation",
-      icon: BookOpen,
+      url: "",
+      icon: Building2,
       items: [
         {
           title: "Quản lý phòng ban",
@@ -114,8 +114,8 @@ const data = {
     },
     {
       title: "Giám sát thời gian thực",
-      url: "/manager/monitoring",
-      icon: Settings2,
+      url: "",
+      icon: MonitorDot,
       items: [
         {
           title: "Tình trạng hàng chờ",
@@ -134,12 +134,12 @@ const data = {
     {
       title: "Thống kê & Báo cáo",
       url: "/manager/reporting",
-      icon: Settings2,
+      icon: BarChart3,
     },
     {
       title: "Quản lý hàng đợi",
-      url: "/manager/queue",
-      icon: Settings2,
+      url: "",
+      icon: ListChecks,
       items: [
         {
           title: "Tình trạng hàng chờ",
@@ -159,10 +159,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Create user data for NavUser component
   const userData = {
-    name: user?.name || "Manager",
+    fullName: user?.fullName || "Manager",
     email: user?.email || "manager@pascs.com",
     avatar: user?.avatar || "/avatars/manager.jpg",
-  }
+  } satisfies Omit<User, 'id' | 'username' | 'role' | 'isActive' | 'createdAt' | 'updatedAt' | 'phone' | 'name'>;
 
   return (
     <Sidebar collapsible="icon" {...props}>

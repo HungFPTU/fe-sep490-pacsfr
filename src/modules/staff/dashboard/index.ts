@@ -1,53 +1,22 @@
-// View Components
-export { StaffDashboardView, CreateCasePageView } from './components/view';
+// Export all view components
+export * from './components/view';
 
-// UI Components
-export * from './components/ui';
+// Export UI components
+export * from './components/ui/case';
 
-// Other Components (Legacy/Utility)
+// Export types
+export * from './types';
+export * from './types/case-search';
 
-export { staffDashboardApi } from './api/staff-dashboard.api';
-export { staffDashboardService } from './services/staff-dashboard.service';
-export { useStaffDashboardStore } from './stores/useStaffDashboardStore';
+// Export hooks
+export * from './hooks/useCaseLookup';
+export * from './hooks/useCaseSearch';
+export * from './hooks/useCaseDetail';
+export * from './hooks/useConfirmPayment';
 
-export type {
-    CitizenProfile,
-    Document,
-    CitizenFeedback,
-    StatusUpdateRequest,
-    WaitingListFilters,
-    HistoryFilters,
-    Notification,
-    DashboardStats,
-    QueueStatus,
-    QueueStatusResponse,
-    CallNextResponse,
-    CreateCaseRequest,
-    CaseResponse,
-    CreateCaseApiResponse,
-    Service,
-    ServiceDocument,
-    ServiceListResponse,
-    ServiceFilters,
-    ServiceGroup,
-    ServiceGroupListResponse,
-    ServiceGroupFilters,
-    Guest,
-    CreateGuestRequest,
-    CreateGuestResponse,
-    GetGuestsResponse,
-    GuestSearchFilters,
-    PaginatedData
-} from './types';
-
-export {
-    MOCK_CITIZENS,
-    MOCK_HISTORY,
-    MOCK_STATS,
-    MOCK_NOTIFICATIONS,
-    SERVICE_TYPES,
-    getMockCitizenById,
-    getMockDocumentsByCitizenId,
-    getMockWaitingList,
-    getMockHistory
-} from './consts';
+// Export services
+export * from './services/case-lookup.service';
+export * from './services/case-search.service';
+export * from './services/case-detail.service';
+export * from './services/case-payment.service';
+export * from './services/staff-dashboard.service';

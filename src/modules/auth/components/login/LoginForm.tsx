@@ -57,7 +57,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
           Username: form.phone,
           Password: form.password,
         };
-        
+
         await onSubmit(apiPayload as unknown as LoginPayload);
       } catch (error) {
         console.error("Login error:", error);
@@ -97,15 +97,6 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
 
   return (
     <div className="w-full max-w-sm mx-auto bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
-      <div className="text-center mb-6">
-        <h1 className="text-xl font-semibold mb-2 text-black">
-          Đăng nhập PASCS
-        </h1>
-        <p className="text-sm text-gray-600">
-          Hệ thống Dịch vụ Hành chính Công trực tuyến
-        </p>
-      </div>
-
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField
           label="Số điện thoại"
@@ -184,7 +175,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
             />
             Ghi nhớ đăng nhập
           </label>
-          <a href="#" className="text-blue-600 hover:text-blue-700 hover:underline">
+          <a href="#" className="text-red-500 hover:text-red-600 hover:underline">
             Quên mật khẩu?
           </a>
         </div>
@@ -192,7 +183,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
             <>

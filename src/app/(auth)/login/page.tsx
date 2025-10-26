@@ -2,30 +2,118 @@
 
 import { LoginForm } from "@/modules/auth/components/login/LoginForm";
 import { useAuth } from "@/modules/auth/hooks";
+import { UserRole } from "@/modules/auth/enums";
+import { LoginPayload } from "@/modules/auth/types";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
+// Simple decryption for URL params
+const decrypt = (encrypted: string): string => {
+    try {
+        return decodeURIComponent(atob(encrypted));
+    } catch {
+        return '';
+    }
+};
+
+function doRedirect(href: string) {
+    if (typeof window !== "undefined" && window.location) {
+        window.location.href = href;
+    }
+}
 
 export default function LoginPage() {
     const { login, isLoading, isAuthenticated, role } = useAuth();
-    const router = useRouter();
+    const searchParams = useSearchParams();
+    const [intendedRole, setIntendedRole] = useState<UserRole | null>(null);
+    const [returnUrl, setReturnUrl] = useState<string | null>(null);
 
+    // Parse encrypted URL params
+    useEffect(() => {
+        const roleParam = searchParams.get('r');
+        const urlParam = searchParams.get('u');
+
+        if (roleParam) {
+            const decryptedRole = decrypt(roleParam);
+            if (Object.values(UserRole).includes(decryptedRole as UserRole)) {
+                setIntendedRole(decryptedRole as UserRole);
+            }
+        }
+
+        if (urlParam) {
+            const decryptedUrl = decrypt(urlParam);
+            setReturnUrl(decryptedUrl);
+        }
+    }, [searchParams]);
+
+    // Handle successful login redirect
+    const handleLogin = async (credentials: LoginPayload) => {
+        try {
+            const result = await login(credentials);
+            console.log('[Login] Login successful, redirecting based on role:', role);
+
+            // Wait for cookie to be set before redirect
+            setTimeout(() => {
+                // Use returnUrl if available, otherwise redirect based on role
+                if (returnUrl) {
+                    console.log('[Login] Post-login redirecting to returnUrl:', returnUrl);
+                    doRedirect(returnUrl);
+                } else if (role === UserRole.MANAGER) {
+                    console.log('[Login] Post-login redirecting Manager to /manager');
+                    doRedirect('/manager');
+                } else if (role === UserRole.STAFF) {
+                    console.log('[Login] Post-login redirecting Staff to /staff/dashboard');
+                    doRedirect('/staff/dashboard');
+                } else {
+                    console.log('[Login] Post-login redirecting to home');
+                    doRedirect('/');
+                }
+            }, 1000); // 1 second delay to ensure state is stable
+
+            return result;
+        } catch (error) {
+            console.error('[Login] Login failed:', error);
+            throw error;
+        }
+    };
 
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated && role) {
-            console.log('[Login Page] Redirecting based on role:', role);
+            console.log('[Login Page] User already authenticated with role:', role);
 
-            if (role === 'Admin') {
-                router.push("/manager");
-            } else if (role === 'Staff') {
-                router.push("/staff/dashboard");
-            } else {
-                router.push("/queue");
-            }
+            // Add delay to prevent redirect loop
+            const timeoutId = setTimeout(() => {
+                // Check if user role matches intended role
+                if (intendedRole && role !== intendedRole) {
+                    console.warn('[Login] Role mismatch. Expected:', intendedRole, 'Got:', role);
+                    // Still redirect but log the mismatch
+                }
+
+                // Use returnUrl if available, otherwise redirect based on role
+                if (returnUrl) {
+                    console.log('[Login] Redirecting to returnUrl:', returnUrl);
+                    doRedirect(returnUrl);
+                } else if (role === UserRole.MANAGER) {
+                    console.log('[Login] Redirecting Manager to /manager');
+                    doRedirect('/manager');
+                } else if (role === UserRole.STAFF) {
+                    console.log('[Login] Redirecting Staff to /staff/dashboard');
+                    doRedirect('/staff/dashboard');
+                } else {
+                    console.log('[Login] Redirecting to home');
+                    doRedirect('/');
+                }
+            }, 1000); // 1 second delay to ensure state is stable
+
+            return () => clearTimeout(timeoutId);
         }
-    }, [isAuthenticated, router, role]);
+
+        // Return undefined for non-authenticated case
+        return undefined;
+    }, [isAuthenticated, role, intendedRole, returnUrl]);
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
             {/* Background decorative elements */}
@@ -35,75 +123,20 @@ export default function LoginPage() {
             </div>
 
             <div className="relative z-10 w-full max-w-md">
-                {/* Logo và brand */}
-                <div className="text-center mb-8">
-                    <Link href="/" className="inline-flex items-center space-x-3 group">
-                        <div className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                            <Image src="/logo.png" width={48} height={48} alt="Logo PASCS" />
-                        </div>
-                        <div className="text-left">
-                            <h1 className="text-2xl font-bold text-gray-900">PASCS</h1>
-                            <p className="text-sm text-gray-500">Dịch vụ hành chính công</p>
-                        </div>
-                    </Link>
-                </div>
-
-                {/* Card đăng nhập */}
                 <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8">
-                    {/* Header */}
                     <div className="text-center mb-8">
-                        <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
-                            Đăng nhập hệ thống
-                        </h2>
-                        <p className="text-gray-600">
-                            Truy cập bảng điều khiển quản trị và nghiệp vụ
-                        </p>
-                        <div className="mt-4 w-16 h-1 bg-gradient-to-r from-blue-500 to-blue-600 mx-auto rounded-full"></div>
-                    </div>
-
-                    {/* Form */}
-                    <LoginForm onSubmit={login} isLoading={isLoading} />
-
-                    {/* Navigation to register */}
-                    <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-600">
-                            Chưa có tài khoản?{" "}
-                            <Link
-                                href="/register"
-                                className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
-                            >
-                                Đăng ký ngay
+                        <div className="flex flex-col items-center mb-8">
+                            <Link href="/" className="inline-flex items-center space-x-3 group">
+                                <Image src="/logo.png" width={48} height={48} alt="Logo PASCS" />
+                                <div className="text-left">
+                                    <h1 className="text-2xl font-bold text-gray-900">PASCS</h1>
+                                    <p className="text-sm text-gray-500">Dịch vụ hành chính công</p>
+                                </div>
                             </Link>
-                        </p>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="mt-8 pt-6 border-t border-gray-200">
-                        <div className="text-center">
-                            <p className="text-sm text-gray-500 mb-4">
-                                Cần hỗ trợ? Liên hệ bộ phận IT của đơn vị
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
-                                <Link href="/help" className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
-                                    Trung tâm trợ giúp
-                                </Link>
-                                <span className="hidden sm:inline text-gray-300">•</span>
-                                <Link href="/contact" className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
-                                    Liên hệ hỗ trợ
-                                </Link>
-                            </div>
+                            <div className="mt-6 w-16 h-1 bg-gradient-to-r from-red-500 to-red-600 rounded-full"></div>
                         </div>
                     </div>
-                </div>
-
-                {/* Security notice */}
-                <div className="mt-6 text-center">
-                    <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                        Kết nối được bảo mật với SSL/TLS
-                    </div>
+                    <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
                 </div>
             </div>
         </div>

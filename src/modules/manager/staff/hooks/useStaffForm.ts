@@ -80,7 +80,7 @@ function toRequest(
 
 // ==================== Custom Hook ====================
 
-export function useStaffForm({ open, initData, onSubmit, onClose, onSuccess }: UseStaffFormProps) {
+export function useStaffForm({ open, initData, onSubmit, onSuccess }: UseStaffFormProps) {
     const { addToast } = useGlobalToast();
 
     const form = useForm({

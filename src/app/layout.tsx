@@ -5,8 +5,8 @@ import { GlobalLoadingOverlay } from "@/shared/components/common/GlobalLoadingOv
 import { GlobalToast } from "@/shared/components/GlobalToast.com";
 
 export const metadata: Metadata = {
-  title: "Cổng Dịch vụ công quốc gia - PASCS",
-  description: "Cổng Dịch vụ công quốc gia - PASCS",
+  title: "Cổng Dịch vụ công quốc gia",
+  description: "Cổng Dịch vụ công quốc gia",
 };
 
 // Force dynamic rendering for the root layout
