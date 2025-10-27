@@ -23,9 +23,10 @@ interface AuthState {
     role?: UserRole | null;
     token: string | null;
     isAuthenticated: boolean;
+    rememberMe: boolean;
 
     // Actions
-    setCredentials: (user: User, token: string, role: UserRole) => void;
+    setCredentials: (user: User, token: string, role: UserRole, rememberMe?: boolean) => void;
     clearCredentials: () => void;
     updateUser: (user: Partial<User>) => void;
 }
@@ -40,10 +41,11 @@ const createAuthStore = () => create<AuthState>()(
                 token: null,
                 role: null,
                 isAuthenticated: false,
+                rememberMe: false,
 
                 // Actions
-                setCredentials: (user, token, role) => {
-                    console.log('[Auth Store] setCredentials called with:', { user, token, role });
+                setCredentials: (user, token, role, rememberMe = false) => {
+                    console.log('[Auth Store] setCredentials called with:', { user, token, role, rememberMe });
                     console.log('[Auth Store] User data details:', {
                         id: user.id,
                         username: user.username,
@@ -57,6 +59,7 @@ const createAuthStore = () => create<AuthState>()(
                         token,
                         role,
                         isAuthenticated: true,
+                        rememberMe,
                     });
 
                     // Lưu token vào localStorage
@@ -65,8 +68,10 @@ const createAuthStore = () => create<AuthState>()(
 
                     // ✅ NEW: Also save token to cookies for middleware
                     if (typeof document !== 'undefined') {
-                        document.cookie = `auth-token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
-                        console.log('[Auth Store] Token saved to cookies');
+                        // Set cookie expiration based on rememberMe
+                        const maxAge = rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60; // 30 days if rememberMe, 7 days otherwise
+                        document.cookie = `auth-token=${token}; path=/; max-age=${maxAge}; secure; samesite=strict`;
+                        console.log('[Auth Store] Token saved to cookies with rememberMe:', rememberMe);
                     }
 
                     // Configure HTTP client to get token from storage
@@ -89,8 +94,20 @@ const createAuthStore = () => create<AuthState>()(
                     set({
                         user: null,
                         token: null,
+                        role: null,
                         isAuthenticated: false,
+                        rememberMe: false,
                     });
+
+                    // Xóa auth-storage khỏi localStorage (xóa mục lưu trữ persist)
+                    if (typeof window !== 'undefined') {
+                        try {
+                            localStorage.removeItem("auth-storage");
+                            console.log('[Auth Store] auth-storage removed from localStorage');
+                        } catch (err) {
+                            console.warn('[Auth Store] Failed to remove auth-storage from localStorage', err);
+                        }
+                    }
 
                     // Clear HTTP client auth
                     http.configureAuth({
@@ -114,8 +131,9 @@ const createAuthStore = () => create<AuthState>()(
                     token: state.token,
                     role: state.role,
                     isAuthenticated: state.isAuthenticated,
+                    rememberMe: state.rememberMe,
                 }),
-                onRehydrateStorage: () => (state, error) => {
+                onRehydrateStorage: () => (state) => {
                     console.log('[Auth Store] onRehydrateStorage called with state:', state);
                     // Only run on client side
                     if (typeof window !== 'undefined') {

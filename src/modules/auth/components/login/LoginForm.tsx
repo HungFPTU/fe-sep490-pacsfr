@@ -14,7 +14,7 @@ interface LoginFormProps {
 
 export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const [form, setForm] = useState<LoginPayload>({
-    phone: "",
+    username: "",
     password: "",
     rememberMe: false,
   });
@@ -29,9 +29,9 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Phone validation - only check if not empty
-    if (!form.phone.trim()) {
-      newErrors.phone = "Số điện thoại là bắt buộc";
+    // Username validation - only check if not empty
+    if (!form.username.trim()) {
+      newErrors.username = "Tên đăng nhập là bắt buộc";
     }
 
     // Password validation - only check if not empty
@@ -54,7 +54,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
       try {
         // Transform payload to match API requirement (Username, Password with capital letters)
         const apiPayload = {
-          Username: form.phone,
+          Username: form.username,
           Password: form.password,
         };
 
@@ -64,7 +64,7 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
         // Handle specific error cases
         if (error instanceof Error) {
           if (error.message.includes("401") || error.message.includes("Unauthorized")) {
-            setErrors({ phone: "Thông tin đăng nhập không chính xác" });
+            setErrors({ username: "Thông tin đăng nhập không chính xác" });
           } else {
             setErrors({ password: error.message });
           }
@@ -99,19 +99,19 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
     <div className="w-full max-w-sm mx-auto bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField
-          label="Số điện thoại"
-          name="phone"
-          error={errors.phone}
+          label="Tên đăng nhập"
+          name="username"
+          error={errors.username}
           required
         >
           <Input
-            id="phone"
+            id="username"
             type="text"
-            placeholder="Nhập số điện thoại"
-            autoComplete="phone"
-            value={form.phone}
-            onChange={handleInputChange("phone")}
-            error={!!errors.phone}
+            placeholder="Nhập tên đăng nhập"
+            autoComplete="username"
+            value={form.username}
+            onChange={handleInputChange("username")}
+            error={!!errors.username}
             leftIcon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

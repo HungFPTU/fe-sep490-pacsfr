@@ -198,7 +198,7 @@ export function getAccessibleRoutesFromStorage(): string[] {
     if (userRole === UserRole.MANAGER) {
         accessibleRoutes.push(
             '/manager',
-            '/manager/staff-management',
+            '/manager/quan-ly-nhan-vien',
             '/manager/co-quan',
             '/manager/phong-ban',
             '/manager/dich-vu',
