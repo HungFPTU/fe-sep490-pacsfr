@@ -26,7 +26,7 @@ export interface User {
 
 // Authentication payloads
 export interface LoginPayload {
-    phone: string;
+    username: string;
     password: string;
     rememberMe?: boolean;
 }
@@ -67,6 +67,7 @@ export interface ApiAuthData {
     token: string;
     expiration: string;
     userId: string;
+    username: string;
     fullName: string;
     phone: string;
     role: string;
