@@ -88,6 +88,14 @@ export const API_PATH = {
             DELETE: (id: string) => `/Staff/${id}`,
             ASSIGN_DEPARTMENT: (staffId: string) => `/Staff/${staffId}/assign-department`,
             ASSIGN_WORKSHIFT: (staffId: string) => `/Staff/${staffId}/assign-workshift`,
+        },
+        WORKSHIFT: {
+            GET_ALL: (keyword: string, isActive: boolean, Page: number, Size: number) => `/WorkShift?keyword=${keyword}&isActive=${isActive}&Page=${Page}&Size=${Size}`,
+            GET_BY_ID: (id: string) => `/WorkShift/${id}`,
+            POST: "/WorkShift",
+            PUT: (id: string) => `/WorkShift/${id}`,
+            DELETE: (id: string) => `/WorkShift/${id}`,
+            MY_SHIFTS: "/WorkShift/my-shifts",
         }
     },
      STAFF: {
