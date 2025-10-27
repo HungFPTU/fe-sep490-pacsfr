@@ -21,7 +21,7 @@ function transformApiAuthData(apiData: ApiAuthData): { user: User; tokens: AuthT
     // Transform API data to internal User format
     const user: User = {
         id: apiData.userId,
-        username: apiData.phone, // Use phone as username since API doesn't return username
+        username: apiData.username, // Use phone as username since old API doesn't return username
         email: "", // Will need to be fetched separately if needed
         name: apiData.fullName,
         phone: apiData.phone,
