@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
+import { PUBLIC_ROUTES } from './core/config';
 /**
  * Middleware for handling authentication redirects
  * 
@@ -31,26 +31,11 @@ export function middleware(request: NextRequest) {
     console.log('[Middleware] Path:', pathname, 'Token:', token ? 'Present' : 'Missing');
 
     // Public routes that don't require authentication
-    const publicRoutes = [
-        '/',
-        '/about',
-        '/contact',
-        '/faq',
-        '/guide',
-        '/lookup',
-        '/news',
-        '/search',
-        '/search-questions',
-        '/survey',
-        '/thu-tuc-hanh-chinh',
-        '/tin-tuc',
-    ];
-
-    // Check if route is public
-    const isPublicRoute = publicRoutes.some(route =>
+    const isPublicRoute = PUBLIC_ROUTES.some(route =>
         pathname === route || pathname.startsWith(route + '/')
     );
 
+    // Check if route is public
     if (isPublicRoute) {
         return NextResponse.next();
     }
