@@ -79,7 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         login: async (credentials) => {
             return auth.login({
                 ...credentials,
-                phone: credentials.username // Map username to phone for API compatibility
+                username: credentials.username // Map username to phone for API compatibility
             });
         },
         register: auth.register,

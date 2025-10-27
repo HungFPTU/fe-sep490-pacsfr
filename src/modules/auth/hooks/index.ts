@@ -21,7 +21,9 @@ export function useAuth() {
     // Login mutation - Service handles API + business logic
     const loginMutation = useMutation({
         mutationFn: async (credentials: LoginPayload) => {
-            return authService.login(credentials);
+            const result = await authService.login(credentials);
+            // Store rememberMe in the response for use in onSuccess
+            return { ...result, rememberMe: credentials.rememberMe };
         },
         onSuccess: (response) => {
             console.log('[useAuth] Login success response:', response);
@@ -33,7 +35,7 @@ export function useAuth() {
             });
 
             // Hook handles UI state updates
-            setCredentials(response.user, response.tokens.accessToken, response.role);
+            setCredentials(response.user, response.tokens.accessToken, response.role, response.rememberMe);
             setJustLoggedIn(true); // Mark as just logged in to prevent profile query
             addToast({ message: "Đăng nhập thành công!", type: "success" });
 
