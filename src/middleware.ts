@@ -77,16 +77,13 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    // Minimal matcher - only match pages that need middleware
-    // This allows Bun to auto-reload properly while keeping middleware lightweight
+    // TEMPORARILY DISABLED: Disable middleware completely to fix Vercel deployment
+    // TODO: Re-enable after fixing middleware issues
     matcher: [
-        /*
-         * Match only specific routes that need middleware processing
-         * This reduces middleware overhead and improves auto-reload
-         */
-        '/manager/:path*',
-        '/staff/:path*',
-        '/login',
-        '/register',
+        // Disable all routes temporarily
+        // '/manager/:path*',
+        // '/staff/:path*',
+        // '/login',
+        // '/register',
     ],
 };
