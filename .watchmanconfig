@@ -1,15 +1,59 @@
 {
     "ignore_dirs": [
+        ".git",
         "node_modules",
         ".next",
-        ".git",
+        ".turbo",
         "dist",
         "build",
-        ".turbo"
+        "out",
+        "coverage",
+        ".nyc_output",
+        ".cache",
+        "tmp",
+        "temp",
+        "logs",
+        "D:",
+        "C:",
+        "System Volume Information",
+        "Windows",
+        "Program Files",
+        "Program Files (x86)",
+        "ProgramData",
+        "Users",
+        "Recovery",
+        "$Recycle.Bin",
+        "System32",
+        "SysWOW64"
     ],
     "ignore_files": [
+        "pagefile.sys",
+        "hiberfil.sys",
+        "swapfile.sys",
+        "Thumbs.db",
+        ".DS_Store",
+        "desktop.ini",
         "*.log",
         "*.tmp",
-        "*.temp"
-    ]
+        "*.temp",
+        "*.cache",
+        "*.pid",
+        "*.lock",
+        "*.swp",
+        "*.swo",
+        "*~",
+        ".gitkeep",
+        ".gitignore",
+        ".env.local",
+        ".env.development.local",
+        ".env.test.local",
+        ".env.production.local"
+    ],
+    "ignore_vcs": [
+        ".git",
+        ".hg",
+        ".svn"
+    ],
+    "settle": 20,
+    "fsevents_latency": 0.01
 }

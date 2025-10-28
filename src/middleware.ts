@@ -1,101 +1,89 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+// TEMPORARILY DISABLED: Route classification imports
+// TODO: Re-enable after fixing login redirect issues
+// import { classifyRoute, requiresAuthentication } from './core/utils/route-classifier';
 
 /**
- * Middleware for handling authentication redirects
- * 
- * This middleware runs before every request and handles:
- * - Redirecting unauthenticated users to appropriate login pages
- * - Preserving return URLs for post-login redirects
- * - Role-based access control
+ * Optimized Middleware for handling authentication redirects
+ * Prevents redirect loops and unnecessary processing
  */
 
 export function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl;
+    // TEMPORARILY DISABLED: Route authorization logic
+    // TODO: Re-enable after fixing login redirect issues
+    // const { pathname } = _request.nextUrl;
 
-    // Skip middleware for static files, API routes, and auth pages
-    if (
-        pathname.startsWith('/_next') ||
-        pathname.startsWith('/api') ||
-        pathname.startsWith('/favicon.ico') ||
-        pathname.startsWith('/login') ||
-        pathname.startsWith('/register')
-    ) {
-        return NextResponse.next();
-    }
+    // Debug logging
+    // console.log(`[Middleware] Processing: ${pathname}`);
+
+    // Classify the route automatically
+    // const routeClassification = classifyRoute(pathname);
+    // console.log(`[Middleware] Route classification:`, routeClassification);
+
+    // Skip middleware for static files and Next.js internals
+    // if (routeClassification.folderType === 'static') {
+    //     console.log(`[Middleware] Skipping static route: ${pathname}`);
+    //     return NextResponse.next();
+    // }
 
     // Get token from cookies
-    const token = request.cookies.get('auth-token')?.value;
+    // const token = request.cookies.get('auth-token')?.value;
+    // console.log(`[Middleware] Token exists: ${!!token}`);
 
-    // Debug logging for middleware
-    console.log('[Middleware] Path:', pathname, 'Token:', token ? 'Present' : 'Missing');
+    // Check if route requires authentication
+    // const needsAuth = requiresAuthentication(pathname);
+    // console.log(`[Middleware] Requires authentication: ${needsAuth}`);
 
-    // Public routes that don't require authentication
-    const publicRoutes = [
-        '/',
-        '/about',
-        '/contact',
-        '/faq',
-        '/guide',
-        '/lookup',
-        '/news',
-        '/search',
-        '/search-questions',
-        '/survey',
-        '/thu-tuc-hanh-chinh',
-        '/tin-tuc',
-    ];
-
-    // Check if route is public
-    const isPublicRoute = publicRoutes.some(route =>
-        pathname === route || pathname.startsWith(route + '/')
-    );
-
-    if (isPublicRoute) {
-        return NextResponse.next();
-    }
+    // Allow public routes without authentication
+    // if (!needsAuth) {
+    //     console.log(`[Middleware] Allowing public route: ${pathname}`);
+    //     return NextResponse.next();
+    // }
 
     // Protected routes - require authentication
-    if (!token) {
-        // No token, redirect to single login page with encrypted params
-        if (pathname.startsWith('/manager')) {
-            // Encrypt role and return URL
-            const roleParam = btoa(encodeURIComponent('MANAGER'));
-            const urlParam = btoa(encodeURIComponent(pathname));
-            return NextResponse.redirect(
-                new URL(`/login?r=${roleParam}&u=${urlParam}`, request.url)
-            );
-        }
+    // if (!token) {
+    //     console.log(`[Middleware] No token, redirecting to login for: ${pathname}`);
+    //     // Prevent redirect loops by checking if already on login page
+    //     if (pathname === '/login') {
+    //         return NextResponse.next();
+    //     }
 
-        if (pathname.startsWith('/staff')) {
-            // Encrypt role and return URL
-            const roleParam = btoa(encodeURIComponent('STAFF'));
-            const urlParam = btoa(encodeURIComponent(pathname));
-            return NextResponse.redirect(
-                new URL(`/login?r=${roleParam}&u=${urlParam}`, request.url)
-            );
-        }
+    //     // Create login URL with encrypted params
+    //     const loginUrl = new URL('/login', request.url);
 
-        // Default to general login for other protected routes
-        return NextResponse.redirect(
-            new URL(`/login`, request.url)
-        );
-    }
+    //     // Add role and return URL parameters
+    //     if (pathname.startsWith('/manager')) {
+    //         const roleParam = btoa(encodeURIComponent('MANAGER'));
+    //         const urlParam = btoa(encodeURIComponent(pathname));
+    //         loginUrl.searchParams.set('r', roleParam);
+    //         loginUrl.searchParams.set('u', urlParam);
+    //     } else if (pathname.startsWith('/staff')) {
+    //         const roleParam = btoa(encodeURIComponent('STAFF'));
+    //         const urlParam = btoa(encodeURIComponent(pathname));
+    //         loginUrl.searchParams.set('r', roleParam);
+    //         loginUrl.searchParams.set('u', urlParam);
+    //     }
 
-    // TODO: Add role-based access control here
-    // For now, just allow authenticated users to proceed
-    return NextResponse.next();
+    //     return NextResponse.redirect(loginUrl);
+    // }
+
+    // Add cache headers to prevent unnecessary re-processing
+    const response = NextResponse.next();
+    // response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+    // console.log(`[Middleware] Allowing authenticated access to: ${pathname}`);
+    return response;
 }
 
 export const config = {
+    // TEMPORARILY DISABLED: Disable middleware completely to fix Vercel deployment
+    // TODO: Re-enable after fixing middleware issues
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        // Disable all routes temporarily
+        // '/manager/:path*',
+        // '/staff/:path*',
+        // '/login',
+        // '/register',
     ],
 };

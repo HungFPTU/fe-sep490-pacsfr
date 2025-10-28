@@ -14,12 +14,16 @@
     "noEmit": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    // Tối ưu hóa module resolution cho Bun
+    // Tối ưu hóa module resolution cho Bun và fix CommonJS issues
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    // Fix for CommonJS/ESM compatibility
+    "allowImportingTsExtensions": false,
+    "verbatimModuleSyntax": false,
+    "moduleDetection": "force",
     // Tối ưu hóa incremental compilation
     "incremental": true,
     "tsBuildInfoFile": ".next/cache/tsconfig.tsbuildinfo",
@@ -58,11 +62,7 @@
       "@public/*": [
         "../public/*"
       ]
-    },
-    // Tối ưu hóa cho Bun
-    "allowImportingTsExtensions": false,
-    "verbatimModuleSyntax": false,
-    "moduleDetection": "force"
+    }
   },
   "include": [
     "next-env.d.ts",
