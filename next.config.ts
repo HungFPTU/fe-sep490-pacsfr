@@ -60,7 +60,7 @@ const nextConfig: NextConfig = {
       config.watchOptions = {
         poll: 1000,
         aggregateTimeout: 300,
-        // Simplified ignore patterns - let .watchmanconfig handle system files
+        // Comprehensive ignore patterns to fix Watchpack errors
         ignored: [
           "**/node_modules/**",
           "**/.git/**",
@@ -70,7 +70,15 @@ const nextConfig: NextConfig = {
           "**/build/**",
           "**/*.log",
           "**/*.tmp",
-          "**/*.temp"
+          "**/*.temp",
+          "**/pagefile.sys",
+          "**/hiberfil.sys",
+          "**/swapfile.sys",
+          "**/System Volume Information/**",
+          "**/Thumbs.db",
+          "**/.DS_Store",
+          "**/desktop.ini",
+          "**/D:/**", // Ignore entire D: drive system files
         ],
       };
     }
@@ -98,17 +106,58 @@ const nextConfig: NextConfig = {
       'async_hooks': 'empty-module',
     };
 
-    // Xử lý lỗi "i.M" trong build
+    // Fix for "exports is not defined" error
+    config.resolve.extensionAlias = {
+      '.js': ['.js', '.ts', '.tsx'],
+      '.jsx': ['.jsx', '.tsx'],
+    };
+
+    // Additional fixes for CommonJS/ESM compatibility
+    config.module = {
+      ...config.module,
+      rules: [
+        ...(config.module?.rules || []),
+        {
+          test: /\.m?js$/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
+      ],
+    };
+
+    // Fix for module resolution issues
+    config.resolve.mainFields = ['browser', 'module', 'main'];
+    config.resolve.conditionNames = ['browser', 'import', 'module', 'main', 'require'];
+
+    // Xử lý lỗi "i.M" trong build và chunk loading
     config.optimization = {
       ...config.optimization,
       splitChunks: {
         ...config.optimization.splitChunks,
+        chunks: 'all',
+        minSize: 20000,
+        maxSize: 244000,
         cacheGroups: {
           ...config.optimization.splitChunks?.cacheGroups,
           default: {
             ...config.optimization.splitChunks?.cacheGroups?.default,
             minChunks: 1,
             reuseExistingChunk: true,
+            priority: -20,
+          },
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            priority: -10,
+            chunks: 'all',
+          },
+          common: {
+            name: 'common',
+            minChunks: 2,
+            priority: -5,
+            reuseExistingChunk: true,
+            chunks: 'all',
           },
         },
       },

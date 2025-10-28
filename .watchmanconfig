@@ -1,15 +1,20 @@
 {
     "ignore_dirs": [
+        ".git",
         "node_modules",
         ".next",
-        ".git",
+        ".turbo",
         "dist",
         "build",
-        ".turbo"
+        "D:",
+        "System Volume Information"
     ],
     "ignore_files": [
-        "*.log",
-        "*.tmp",
-        "*.temp"
+        "pagefile.sys",
+        "hiberfil.sys",
+        "swapfile.sys",
+        "Thumbs.db",
+        ".DS_Store",
+        "desktop.ini"
     ]
 }

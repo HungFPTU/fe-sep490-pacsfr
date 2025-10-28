@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { PUBLIC_ROUTES } from './core/config';
+
 /**
- * Middleware for handling authentication redirects
- * 
- * This middleware runs before every request and handles:
- * - Redirecting unauthenticated users to appropriate login pages
- * - Preserving return URLs for post-login redirects
- * - Role-based access control
+ * Optimized Middleware for handling authentication redirects
+ * Prevents redirect loops and unnecessary processing
  */
 
 export function middleware(request: NextRequest) {
@@ -19,16 +16,15 @@ export function middleware(request: NextRequest) {
         pathname.startsWith('/api') ||
         pathname.startsWith('/favicon.ico') ||
         pathname.startsWith('/login') ||
-        pathname.startsWith('/register')
+        pathname.startsWith('/register') ||
+        pathname.startsWith('/_vercel') ||
+        pathname.includes('.')
     ) {
         return NextResponse.next();
     }
 
     // Get token from cookies
     const token = request.cookies.get('auth-token')?.value;
-
-    // Debug logging for middleware
-    console.log('[Middleware] Path:', pathname, 'Token:', token ? 'Present' : 'Missing');
 
     // Public routes that don't require authentication
     const isPublicRoute = PUBLIC_ROUTES.some(route =>
@@ -42,34 +38,35 @@ export function middleware(request: NextRequest) {
 
     // Protected routes - require authentication
     if (!token) {
-        // No token, redirect to single login page with encrypted params
+        // Prevent redirect loops by checking if already on login page
+        if (pathname === '/login') {
+            return NextResponse.next();
+        }
+
+        // Create login URL with encrypted params
+        const loginUrl = new URL('/login', request.url);
+
+        // Add role and return URL parameters
         if (pathname.startsWith('/manager')) {
-            // Encrypt role and return URL
             const roleParam = btoa(encodeURIComponent('MANAGER'));
             const urlParam = btoa(encodeURIComponent(pathname));
-            return NextResponse.redirect(
-                new URL(`/login?r=${roleParam}&u=${urlParam}`, request.url)
-            );
-        }
-
-        if (pathname.startsWith('/staff')) {
-            // Encrypt role and return URL
+            loginUrl.searchParams.set('r', roleParam);
+            loginUrl.searchParams.set('u', urlParam);
+        } else if (pathname.startsWith('/staff')) {
             const roleParam = btoa(encodeURIComponent('STAFF'));
             const urlParam = btoa(encodeURIComponent(pathname));
-            return NextResponse.redirect(
-                new URL(`/login?r=${roleParam}&u=${urlParam}`, request.url)
-            );
+            loginUrl.searchParams.set('r', roleParam);
+            loginUrl.searchParams.set('u', urlParam);
         }
 
-        // Default to general login for other protected routes
-        return NextResponse.redirect(
-            new URL(`/login`, request.url)
-        );
+        return NextResponse.redirect(loginUrl);
     }
 
-    // TODO: Add role-based access control here
-    // For now, just allow authenticated users to proceed
-    return NextResponse.next();
+    // Add cache headers to prevent unnecessary re-processing
+    const response = NextResponse.next();
+    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+    return response;
 }
 
 export const config = {
@@ -80,7 +77,9 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
+         * - _vercel (Vercel internal)
+         * - files with extensions (static assets)
          */
-        '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|_vercel|.*\\..*).*)',
     ],
 };

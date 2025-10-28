@@ -1,0 +1,1 @@
+export { LegalDocumentService } from './legal-document.service';

@@ -5,18 +5,6 @@ import { TokenStorage } from "@core/utils/storage";
 import type { User } from "../types";
 import { UserRole } from "../enums";
 
-// SSR-safe storage
-// const createSSRSafeStorage = () => {
-//     if (typeof window === 'undefined') {
-//         return {
-//             getItem: (key: string) => null,
-//             setItem: (key: string, value: string) => { },
-//             removeItem: (key: string) => { },
-//         };
-//     }
-//     return localStorage;
-// };
-
 interface AuthState {
     // State
     user: User | null;
@@ -24,14 +12,16 @@ interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
     rememberMe: boolean;
+    isHydrated: boolean; // Track hydration state
 
     // Actions
     setCredentials: (user: User, token: string, role: UserRole, rememberMe?: boolean) => void;
     clearCredentials: () => void;
     updateUser: (user: Partial<User>) => void;
+    setHydrated: (hydrated: boolean) => void;
 }
 
-// Create store with skipHydration
+// Create store with optimized configuration
 const createAuthStore = () => create<AuthState>()(
     devtools(
         persist(
@@ -42,18 +32,12 @@ const createAuthStore = () => create<AuthState>()(
                 role: null,
                 isAuthenticated: false,
                 rememberMe: false,
+                isHydrated: false,
 
                 // Actions
                 setCredentials: (user, token, role, rememberMe = false) => {
-                    console.log('[Auth Store] setCredentials called with:', { user, token, role, rememberMe });
-                    console.log('[Auth Store] User data details:', {
-                        id: user.id,
-                        username: user.username,
-                        role: user.role,
-                        roleType: (user as { roleType?: string })?.roleType,
-                        position: user.position,
-                        fullName: user.fullName
-                    });
+                    console.log('[Auth Store] setCredentials called');
+
                     set({
                         user,
                         token,
@@ -64,31 +48,26 @@ const createAuthStore = () => create<AuthState>()(
 
                     // Lưu token vào localStorage
                     TokenStorage.setAuthToken(token);
-                    console.log('[Auth Store] Token saved to localStorage');
 
-                    // ✅ NEW: Also save token to cookies for middleware
+                    // Set cookie for middleware
                     if (typeof document !== 'undefined') {
-                        // Set cookie expiration based on rememberMe
-                        const maxAge = rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60; // 30 days if rememberMe, 7 days otherwise
+                        const maxAge = rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60;
                         document.cookie = `auth-token=${token}; path=/; max-age=${maxAge}; secure; samesite=strict`;
-                        console.log('[Auth Store] Token saved to cookies with rememberMe:', rememberMe);
                     }
 
-                    // Configure HTTP client to get token from storage
+                    // Configure HTTP client
                     http.configureAuth({
                         getToken: () => TokenStorage.getAuthToken(),
                     });
                 },
 
                 clearCredentials: () => {
-                    // Xóa token từ localStorage
+                    // Clear localStorage
                     TokenStorage.removeAuthToken();
-                    console.log('[Auth Store] Token removed from localStorage');
 
-                    // ✅ NEW: Also clear token from cookies
+                    // Clear cookies
                     if (typeof document !== 'undefined') {
                         document.cookie = 'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-                        console.log('[Auth Store] Token removed from cookies');
                     }
 
                     set({
@@ -99,13 +78,12 @@ const createAuthStore = () => create<AuthState>()(
                         rememberMe: false,
                     });
 
-                    // Xóa auth-storage khỏi localStorage (xóa mục lưu trữ persist)
+                    // Clear persist storage
                     if (typeof window !== 'undefined') {
                         try {
                             localStorage.removeItem("auth-storage");
-                            console.log('[Auth Store] auth-storage removed from localStorage');
                         } catch (err) {
-                            console.warn('[Auth Store] Failed to remove auth-storage from localStorage', err);
+                            console.warn('[Auth Store] Failed to remove auth-storage', err);
                         }
                     }
 
@@ -123,6 +101,10 @@ const createAuthStore = () => create<AuthState>()(
                         });
                     }
                 },
+
+                setHydrated: (hydrated) => {
+                    set({ isHydrated: hydrated });
+                },
             }),
             {
                 name: "auth-storage",
@@ -134,35 +116,18 @@ const createAuthStore = () => create<AuthState>()(
                     rememberMe: state.rememberMe,
                 }),
                 onRehydrateStorage: () => (state) => {
-                    console.log('[Auth Store] onRehydrateStorage called with state:', state);
-                    // Only run on client side
-                    if (typeof window !== 'undefined') {
-                        // Configure HTTP client to get token from storage
-                        if (state?.token) {
-                            http.configureAuth({
-                                getToken: () => TokenStorage.getAuthToken(),
-                            });
-
-                            // Restore token from localStorage
-                            const localToken = TokenStorage.getAuthToken();
-                            if (localToken && localToken === state.token) {
-                                console.log('[Auth Store] Token restored from localStorage');
-                            } else {
-                                console.warn('[Auth Store] Token mismatch, clearing state');
-                                // Clear state if token doesn't match - will be handled by store
-                            }
-                        } else {
-                            console.log('[Auth Store] No token in state, clearing auth');
-                            // Clear state - will be handled by store
-                        }
+                    if (typeof window !== 'undefined' && state?.token) {
+                        // Configure HTTP client
+                        http.configureAuth({
+                            getToken: () => TokenStorage.getAuthToken(),
+                        });
                     }
                 },
             }
         ),
         {
             name: "auth-store",
-            // Fix hydration mismatch
-            skipHydration: true,
+            skipHydration: true, // Prevent hydration mismatch
         }
     )
 );
@@ -170,9 +135,11 @@ const createAuthStore = () => create<AuthState>()(
 // Create the store
 const authStore = createAuthStore();
 
-// Manual hydration
+// Manual hydration with proper timing
 if (typeof window !== 'undefined') {
-    authStore.persist.rehydrate();
+    authStore.persist.rehydrate().then(() => {
+        authStore.getState().setHydrated(true);
+    });
 }
 
 export const useAuthStore = authStore;

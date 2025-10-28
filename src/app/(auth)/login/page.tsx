@@ -6,8 +6,9 @@ import { UserRole } from "@/modules/auth/enums";
 import { LoginPayload } from "@/modules/auth/types";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { APP_CONFIG } from "@/core";
 
 // Simple decryption for URL params
 const decrypt = (encrypted: string): string => {
@@ -27,29 +28,34 @@ function doRedirect(href: string) {
 export default function LoginPage() {
     const { login, isLoading, isAuthenticated, role } = useAuth();
     const searchParams = useSearchParams();
+
+    // Memoized state to prevent unnecessary re-renders
     const [intendedRole, setIntendedRole] = useState<UserRole | null>(null);
     const [returnUrl, setReturnUrl] = useState<string | null>(null);
 
-    // Parse encrypted URL params
-    useEffect(() => {
+    // Parse encrypted URL params - memoized to prevent re-parsing
+    const urlParams = useMemo(() => {
         const roleParam = searchParams.get('r');
         const urlParam = searchParams.get('u');
 
-        if (roleParam) {
-            const decryptedRole = decrypt(roleParam);
-            if (Object.values(UserRole).includes(decryptedRole as UserRole)) {
-                setIntendedRole(decryptedRole as UserRole);
-            }
-        }
-
-        if (urlParam) {
-            const decryptedUrl = decrypt(urlParam);
-            setReturnUrl(decryptedUrl);
-        }
+        return {
+            role: roleParam ? decrypt(roleParam) : null,
+            url: urlParam ? decrypt(urlParam) : null
+        };
     }, [searchParams]);
 
-    // Handle successful login redirect
-    const handleLogin = async (credentials: LoginPayload) => {
+    // Update state when URL params change
+    useEffect(() => {
+        if (urlParams.role && Object.values(UserRole).includes(urlParams.role as UserRole)) {
+            setIntendedRole(urlParams.role as UserRole);
+        }
+        if (urlParams.url) {
+            setReturnUrl(urlParams.url);
+        }
+    }, [urlParams]);
+
+    // Memoized login handler to prevent unnecessary re-renders
+    const handleLogin = useCallback(async (credentials: LoginPayload) => {
         try {
             const result = await login(credentials);
             console.log('[Login] Login successful, redirecting based on role:', role);
@@ -77,9 +83,9 @@ export default function LoginPage() {
             console.error('[Login] Login failed:', error);
             throw error;
         }
-    };
+    }, [login, role, returnUrl]);
 
-    // Redirect if already authenticated
+    // Redirect if already authenticated - memoized to prevent unnecessary re-renders
     useEffect(() => {
         if (isAuthenticated && role) {
             console.log('[Login Page] User already authenticated with role:', role);
@@ -114,6 +120,7 @@ export default function LoginPage() {
         // Return undefined for non-authenticated case
         return undefined;
     }, [isAuthenticated, role, intendedRole, returnUrl]);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
             {/* Background decorative elements */}
@@ -127,7 +134,7 @@ export default function LoginPage() {
                     <div className="text-center mb-8">
                         <div className="flex flex-col items-center mb-8">
                             <Link href="/" className="inline-flex items-center space-x-3 group">
-                                <Image src="/logo.png" width={48} height={48} alt="Logo PASCS" />
+                                <Image src={APP_CONFIG.LOGO} width={48} height={48} alt="Logo PASCS" />
                                 <div className="text-left">
                                     <h1 className="text-2xl font-bold text-gray-900">PASCS</h1>
                                     <p className="text-sm text-gray-500">Dịch vụ hành chính công</p>

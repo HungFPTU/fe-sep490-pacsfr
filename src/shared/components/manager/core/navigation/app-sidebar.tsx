@@ -9,6 +9,7 @@ import {
   MonitorDot,
   BarChart3,
   ListChecks,
+  FileText,
 } from "lucide-react"
 
 import {
@@ -148,6 +149,25 @@ const data = {
         {
           title: "Thống kê hàng đợi",
           url: "/manager/queue/statistics",
+        },
+      ],
+    },
+    {
+      title: "Quản lý văn bản pháp luật",
+      url: "",
+      icon: FileText,
+      items: [
+        {
+          title: "Danh sách văn bản",
+          url: "/manager/van-ban-phap-luat",
+        },
+        {
+          title: "Phân loại văn bản",
+          url: "/manager/van-ban-phap-luat/phan-loai",
+        },
+        {
+          title: "Báo cáo văn bản",
+          url: "/manager/van-ban-phap-luat/bao-cao",
         },
       ],
     },

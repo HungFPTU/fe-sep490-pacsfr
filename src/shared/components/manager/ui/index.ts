@@ -13,6 +13,9 @@ export * from './button';
 // Input
 export * from './input';
 
+// Select
+export * from './select';
+
 // Separator
 export * from './separator';
 

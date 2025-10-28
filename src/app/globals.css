@@ -123,3 +123,95 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Fix dropdown z-index issues */
+@layer components {
+  /* HeroUI Select dropdown fixes - Ultra high z-index */
+  [data-slot="listbox"] {
+    z-index: 99999 !important;
+  }
+  
+  [data-slot="popover"] {
+    z-index: 99999 !important;
+  }
+  
+  [data-slot="popoverContent"] {
+    z-index: 99999 !important;
+  }
+  
+  /* Ensure dropdowns appear above everything */
+  .heroui-select-dropdown {
+    z-index: 99999 !important;
+  }
+  
+  /* Custom dropdown styling */
+  .dropdown-elevated {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    background: white !important;
+    z-index: 99999 !important;
+    position: relative !important;
+  }
+  
+  /* Additional HeroUI specific fixes */
+  .heroui-select .heroui-select-listbox {
+    z-index: 99999 !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    background: white !important;
+  }
+  
+  /* Force dropdown to appear above modals and other elements */
+  [data-heroui-select-listbox] {
+    z-index: 99999 !important;
+  }
+  
+  [data-heroui-popover] {
+    z-index: 99999 !important;
+  }
+  
+  /* Target all possible dropdown containers */
+  .heroui-popover-content {
+    z-index: 99999 !important;
+  }
+  
+  .heroui-listbox {
+    z-index: 99999 !important;
+  }
+  
+  /* Modal-specific fixes */
+  [role="dialog"] .heroui-select [data-slot="listbox"] {
+    z-index: 99999 !important;
+  }
+  
+  [role="dialog"] .heroui-select [data-slot="popover"] {
+    z-index: 99999 !important;
+  }
+  
+  /* Portal rendering fixes */
+  body > .heroui-popover-content {
+    z-index: 99999 !important;
+  }
+  
+  body > [data-slot="popover"] {
+    z-index: 99999 !important;
+  }
+  
+  body > [data-slot="listbox"] {
+    z-index: 99999 !important;
+  }
+  
+  /* Ensure dropdowns render outside modal containers */
+  .heroui-select-popover {
+    z-index: 99999 !important;
+  }
+  
+  /* Override any container z-index */
+  * .heroui-select [data-slot="listbox"] {
+    z-index: 99999 !important;
+  }
+  
+  * .heroui-select [data-slot="popover"] {
+    z-index: 99999 !important;
+  }
+}

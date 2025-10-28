@@ -1,46 +1,47 @@
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/useAuthStore";
 import { authService } from "../services/auth.service";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
-// Removed useAuthRedirect to prevent redirect loops
 import type { LoginPayload, RegisterPayload } from "../types";
 
 /**
- * Simple Auth Hook - TanStack Query + Zustand + Service
- * Service handles business logic, Hook handles UI state
+ * Optimized Auth Hook - TanStack Query + Zustand + Service
+ * Prevents unnecessary re-renders and duplicate API calls
  */
 export function useAuth() {
-    const { user, token, role, isAuthenticated, setCredentials } = useAuthStore();
+    const {
+        user,
+        token,
+        role,
+        isAuthenticated,
+        isHydrated,
+        setCredentials
+    } = useAuthStore();
     const { addToast } = useGlobalToast();
 
-    // Track if user just logged in to prevent duplicate API calls
-    const [justLoggedIn, setJustLoggedIn] = React.useState(false);
-    const [isRedirecting, setIsRedirecting] = React.useState(false);
+    // Memoized state to prevent unnecessary re-renders
+    const authState = useMemo(() => ({
+        user,
+        token,
+        role,
+        isAuthenticated: isAuthenticated && isHydrated, // Only consider authenticated if hydrated
+    }), [user, token, role, isAuthenticated, isHydrated]);
 
-    // Login mutation - Service handles API + business logic
+    // Track login state to prevent duplicate profile calls
+    const [justLoggedIn, setJustLoggedIn] = React.useState(false);
+
+    // Memoized login mutation
     const loginMutation = useMutation({
         mutationFn: async (credentials: LoginPayload) => {
             const result = await authService.login(credentials);
-            // Store rememberMe in the response for use in onSuccess
             return { ...result, rememberMe: credentials.rememberMe };
         },
         onSuccess: (response) => {
-            console.log('[useAuth] Login success response:', response);
-            console.log('[useAuth] User data from API:', {
-                user: response.user,
-                role: response.role,
-                userRole: response.user.role,
-                userRoleType: (response.user as { roleType?: string })?.roleType
-            });
-
-            // Hook handles UI state updates
+            console.log('[useAuth] Login success');
             setCredentials(response.user, response.tokens.accessToken, response.role, response.rememberMe);
-            setJustLoggedIn(true); // Mark as just logged in to prevent profile query
+            setJustLoggedIn(true);
             addToast({ message: "Đăng nhập thành công!", type: "success" });
-
-            // ✅ REMOVED: Auto redirect to prevent loops
-            // Login pages will handle their own redirects
         },
         onError: (error) => {
             addToast({
@@ -50,19 +51,15 @@ export function useAuth() {
         },
     });
 
-    // Register mutation - Service handles API + business logic
+    // Memoized register mutation
     const registerMutation = useMutation({
         mutationFn: async (payload: RegisterPayload) => {
             return authService.register(payload);
         },
         onSuccess: (response) => {
-            // Hook handles UI state updates
             setCredentials(response.user, response.tokens.accessToken, response?.role);
-            setJustLoggedIn(true); // Mark as just logged in to prevent profile query
+            setJustLoggedIn(true);
             addToast({ message: "Đăng ký thành công! Chào mừng bạn!", type: "success" });
-
-            // ✅ REMOVED: Auto redirect to prevent loops
-            // Login pages will handle their own redirects
         },
         onError: (error) => {
             console.error("[Auth Hook] Register error:", error);
@@ -71,59 +68,59 @@ export function useAuth() {
                 type: "error"
             });
         },
-        // Prevent auto-retry to avoid duplicate submissions
         retry: false,
-        // Prevent duplicate mutations
         networkMode: "offlineFirst",
     });
 
-    // Logout mutation
+    // Memoized logout mutation
     const logoutMutation = useMutation({
         mutationFn: async () => {
             return authService.logout();
         },
         onSettled: () => {
-            // Don't clear credentials here - already done in service
-            setJustLoggedIn(false); // Reset login flag
-            setIsRedirecting(false); // Reset redirect flag
+            setJustLoggedIn(false);
             addToast({ message: "Đã đăng xuất", type: "info" });
-            // Don't redirect here - already done in service
         },
     });
 
-    // Profile query - Service handles data fetching
+    // Optimized profile query - only run when necessary
     const profileQuery = useQuery({
-        queryKey: ["auth", "profile"],
+        queryKey: ["auth", "profile", token],
         queryFn: () => authService.getProfile(),
-        enabled: isAuthenticated && !!token && !justLoggedIn, // Prevent duplicate call after login
-        staleTime: 5 * 60 * 1000,
+        enabled: authState.isAuthenticated && !!authState.token && !justLoggedIn && isHydrated,
+        staleTime: 10 * 60 * 1000, // 10 minutes - longer cache
+        gcTime: 15 * 60 * 1000, // 15 minutes garbage collection
         retry: false,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
     });
 
-    // Reset justLoggedIn flag when profile query is disabled to allow future queries
+    // Reset justLoggedIn flag after successful login
     React.useEffect(() => {
-        if (justLoggedIn && isAuthenticated) {
+        if (justLoggedIn && authState.isAuthenticated) {
             const timer = setTimeout(() => {
                 setJustLoggedIn(false);
-            }, 1000); // Reset after 1 second to allow future profile queries
+            }, 2000); // Increased to 2 seconds
             return () => clearTimeout(timer);
         }
-        return undefined; // Explicit return for all code paths
-    }, [justLoggedIn, isAuthenticated]);
+    }, [justLoggedIn, authState.isAuthenticated]);
 
-    // Sync profile data to store when available (only if not from recent login)
+    // Sync profile data to store (only if not from recent login)
     React.useEffect(() => {
-        if (profileQuery.data && token && role && !justLoggedIn) {
-            setCredentials(profileQuery.data, token, role);
+        if (profileQuery.data && authState.token && authState.role && !justLoggedIn) {
+            setCredentials(profileQuery.data, authState.token, authState.role);
         }
-    }, [profileQuery.data, token, role, setCredentials, justLoggedIn]);
+    }, [profileQuery.data, authState.token, authState.role, setCredentials, justLoggedIn]);
 
-    return {
+    // Memoized return object to prevent unnecessary re-renders
+    return useMemo(() => ({
         // State
-        user: profileQuery.data || user,
-        token,
-        role,
-        isAuthenticated,
+        user: profileQuery.data || authState.user,
+        token: authState.token,
+        role: authState.role,
+        isAuthenticated: authState.isAuthenticated,
+        isHydrated,
 
         // Actions
         login: loginMutation.mutateAsync,
@@ -131,9 +128,28 @@ export function useAuth() {
         logout: logoutMutation.mutateAsync,
 
         // Loading states
-        isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending || profileQuery.isLoading || isRedirecting,
+        isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending || (profileQuery.isLoading && !justLoggedIn),
 
         // Error states
         error: loginMutation.error || registerMutation.error || logoutMutation.error || profileQuery.error,
-    };
+    }), [
+        profileQuery.data,
+        authState.user,
+        authState.token,
+        authState.role,
+        authState.isAuthenticated,
+        isHydrated,
+        loginMutation.mutateAsync,
+        registerMutation.mutateAsync,
+        logoutMutation.mutateAsync,
+        loginMutation.isPending,
+        registerMutation.isPending,
+        logoutMutation.isPending,
+        profileQuery.isLoading,
+        justLoggedIn,
+        loginMutation.error,
+        registerMutation.error,
+        logoutMutation.error,
+        profileQuery.error,
+    ]);
 }
