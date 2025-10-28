@@ -4,10 +4,12 @@ import { LoginForm } from "@/modules/auth/components/login/LoginForm";
 import { useAuth } from "@/modules/auth/hooks";
 import { UserRole } from "@/modules/auth/enums";
 import { LoginPayload } from "@/modules/auth/types";
+import { getPostLoginRedirectUrl } from "@/modules/auth/utils/login-redirect.utils";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { APP_CONFIG } from "@/core";
 
 // Simple decryption for URL params
 const decrypt = (encrypted: string): string => {
@@ -18,68 +20,79 @@ const decrypt = (encrypted: string): string => {
     }
 };
 
-function doRedirect(href: string) {
-    if (typeof window !== "undefined" && window.location) {
-        window.location.href = href;
-    }
-}
-
 export default function LoginPage() {
     const { login, isLoading, isAuthenticated, role } = useAuth();
     const searchParams = useSearchParams();
+
+    // Memoized state to prevent unnecessary re-renders
     const [intendedRole, setIntendedRole] = useState<UserRole | null>(null);
     const [returnUrl, setReturnUrl] = useState<string | null>(null);
 
-    // Parse encrypted URL params
-    useEffect(() => {
+    // Parse encrypted URL params - memoized to prevent re-parsing
+    const urlParams = useMemo(() => {
         const roleParam = searchParams.get('r');
         const urlParam = searchParams.get('u');
 
-        if (roleParam) {
-            const decryptedRole = decrypt(roleParam);
-            if (Object.values(UserRole).includes(decryptedRole as UserRole)) {
-                setIntendedRole(decryptedRole as UserRole);
-            }
-        }
+        console.log('[Login] Raw URL params:', { roleParam, urlParam });
+        console.log('[Login] All search params:', Object.fromEntries(searchParams.entries()));
 
-        if (urlParam) {
-            const decryptedUrl = decrypt(urlParam);
-            setReturnUrl(decryptedUrl);
-        }
+        const result = {
+            role: roleParam ? decrypt(roleParam) : null,
+            url: urlParam ? decrypt(urlParam) : null
+        };
+
+        console.log('[Login] Decrypted URL params:', result);
+        return result;
     }, [searchParams]);
 
-    // Handle successful login redirect
-    const handleLogin = async (credentials: LoginPayload) => {
-        try {
-            const result = await login(credentials);
-            console.log('[Login] Login successful, redirecting based on role:', role);
+    // Update state when URL params change
+    useEffect(() => {
+        if (urlParams.role && Object.values(UserRole).includes(urlParams.role as UserRole)) {
+            setIntendedRole(urlParams.role as UserRole);
+        }
+        if (urlParams.url) {
+            setReturnUrl(urlParams.url);
+        }
+    }, [urlParams]);
 
-            // Wait for cookie to be set before redirect
+    // Memoized login handler to prevent unnecessary re-renders
+    const handleLogin = useCallback(async (credentials: LoginPayload) => {
+        try {
+            console.log('[Login] Starting login process...');
+            const result = await login(credentials);
+            console.log('[Login] Login successful, result:', result);
+            console.log('[Login] Current role from hook:', role);
+            console.log('[Login] Intended role:', intendedRole);
+            console.log('[Login] Return URL:', returnUrl);
+
+            // Determine redirect URL using utility function
+            const redirectUrl = getPostLoginRedirectUrl({
+                intendedRole,
+                returnUrl,
+                userRole: result?.role || role
+            });
+
+            console.log('[Login] Final redirect URL:', redirectUrl);
+
+            // Perform redirect with proper timing
+            window.location.href = redirectUrl;
+
+            // Also try immediate redirect as backup
             setTimeout(() => {
-                // Use returnUrl if available, otherwise redirect based on role
-                if (returnUrl) {
-                    console.log('[Login] Post-login redirecting to returnUrl:', returnUrl);
-                    doRedirect(returnUrl);
-                } else if (role === UserRole.MANAGER) {
-                    console.log('[Login] Post-login redirecting Manager to /manager');
-                    doRedirect('/manager');
-                } else if (role === UserRole.STAFF) {
-                    console.log('[Login] Post-login redirecting Staff to /staff/dashboard');
-                    doRedirect('/staff/dashboard');
-                } else {
-                    console.log('[Login] Post-login redirecting to home');
-                    doRedirect('/');
+                console.log('[Login] Backup immediate redirect to:', redirectUrl);
+                if (typeof window !== 'undefined' && window.location) {
+                    window.location.href = redirectUrl;
                 }
-            }, 1000); // 1 second delay to ensure state is stable
+            }, 2000);
 
             return result;
         } catch (error) {
             console.error('[Login] Login failed:', error);
             throw error;
         }
-    };
+    }, [login, role, returnUrl, intendedRole]);
 
-    // Redirect if already authenticated
+    // Redirect if already authenticated - memoized to prevent unnecessary re-renders
     useEffect(() => {
         if (isAuthenticated && role) {
             console.log('[Login Page] User already authenticated with role:', role);
@@ -92,20 +105,15 @@ export default function LoginPage() {
                     // Still redirect but log the mismatch
                 }
 
-                // Use returnUrl if available, otherwise redirect based on role
-                if (returnUrl) {
-                    console.log('[Login] Redirecting to returnUrl:', returnUrl);
-                    doRedirect(returnUrl);
-                } else if (role === UserRole.MANAGER) {
-                    console.log('[Login] Redirecting Manager to /manager');
-                    doRedirect('/manager');
-                } else if (role === UserRole.STAFF) {
-                    console.log('[Login] Redirecting Staff to /staff/dashboard');
-                    doRedirect('/staff/dashboard');
-                } else {
-                    console.log('[Login] Redirecting to home');
-                    doRedirect('/');
-                }
+                // Determine redirect URL using utility function
+                const redirectUrl = getPostLoginRedirectUrl({
+                    intendedRole,
+                    returnUrl,
+                    userRole: role
+                });
+
+                // Perform redirect
+                window.location.href = redirectUrl;
             }, 1000); // 1 second delay to ensure state is stable
 
             return () => clearTimeout(timeoutId);
@@ -114,6 +122,7 @@ export default function LoginPage() {
         // Return undefined for non-authenticated case
         return undefined;
     }, [isAuthenticated, role, intendedRole, returnUrl]);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-12">
             {/* Background decorative elements */}
@@ -127,7 +136,7 @@ export default function LoginPage() {
                     <div className="text-center mb-8">
                         <div className="flex flex-col items-center mb-8">
                             <Link href="/" className="inline-flex items-center space-x-3 group">
-                                <Image src="/logo.png" width={48} height={48} alt="Logo PASCS" />
+                                <Image src={APP_CONFIG.LOGO} width={48} height={48} alt="Logo PASCS" />
                                 <div className="text-left">
                                     <h1 className="text-2xl font-bold text-gray-900">PASCS</h1>
                                     <p className="text-sm text-gray-500">Dịch vụ hành chính công</p>

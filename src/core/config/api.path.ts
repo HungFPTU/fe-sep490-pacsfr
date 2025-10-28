@@ -73,6 +73,15 @@ export const API_PATH = {
             GET_ALL: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/LegalBasis?keyword=${Keyword}&isActive=${isActive}&Page=${Page}&Size=${Size}`,
             GET_BY_ID: (id: string) => `/LegalBasis/${id}`,
         },
+        LEGAL_DOCUMENT: {
+            GET_ALL: (Keyword: string, DocumentType: string, Status: string, isActive: boolean, Page: number, Size: number) => `/LegislationDocument?keyword=${Keyword}&documentType=${DocumentType}&status=${Status}&isActive=${isActive}&Page=${Page}&Size=${Size}`,
+            GET_BY_ID: (id: string) => `/LegislationDocument/${id}`,
+            POST: "/LegislationDocument",
+            PUT: (id: string) => `/LegislationDocument/${id}`,
+            DELETE: (id: string) => `/LegislationDocument/${id}`,
+            UPLOAD_FILE: (id: string) => `/LegislationDocument/${id}/upload`,
+            DOWNLOAD_FILE: (id: string) => `/LegislationDocument/${id}/download`,
+        },
         SERVICE_GROUP: {
             GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) => `/ServiceGroup?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
             GET_BY_ID: (id: string) => `/ServiceGroup/${id}`,
@@ -98,39 +107,39 @@ export const API_PATH = {
             MY_SHIFTS: "/WorkShift/my-shifts",
         }
     },
-     STAFF: {
-         DASHBOARD: {
-             WAITING_LIST: "/staff/dashboard/waiting",
-             CITIZEN_PROFILE: (id: string) => `/staff/dashboard/citizen/${id}`,
-             UPDATE_STATUS: "/staff/dashboard/citizen/status",
-             DOCUMENTS: {
-                 UPLOAD: "/staff/dashboard/documents/upload",
-                 DOWNLOAD: (id: string) => `/staff/dashboard/documents/${id}/download`,
-                 LIST: (citizenId: string) => `/staff/dashboard/citizen/${citizenId}/documents`,
-             },
-             FEEDBACK: "/staff/dashboard/feedback",
-             HISTORY: "/staff/dashboard/history",
-             NOTIFICATIONS: "/staff/dashboard/notifications",
-             QUEUE_STATUS: (serviceGroupId: string) => `/Queue/status/${serviceGroupId}`,
-             CALL_NEXT: (serviceGroupId: string) => `/Queue/${serviceGroupId}/call-next`,
-             CREATE_GUEST: "/Guests",
-             GET_GUESTS: "/Guests",
-             CREATE_CASE: "/Case",
-             GET_SERVICES: "/Service",
-             GET_SERVICE_GROUPS: "/ServiceGroup",
-             CASE_LOOKUP: (caseId: string) => `/Case/${caseId}`,
-             CASE_LIST: "/Case",
-         },
-         CASE: {
-             LIST: "/Case",
-             DETAIL: "/Case",
-             LOOKUP: (caseId: string) => `/Case/${caseId}`,
-             UPDATE_PAYMENT: (caseId: string) => `/Case/${caseId}/payment`,
-         },
-         WORKSHIFT: {
-             MY_SHIFTS: "/WorkShift/my-shifts",
-         },
-     },
+    STAFF: {
+        DASHBOARD: {
+            WAITING_LIST: "/staff/dashboard/waiting",
+            CITIZEN_PROFILE: (id: string) => `/staff/dashboard/citizen/${id}`,
+            UPDATE_STATUS: "/staff/dashboard/citizen/status",
+            DOCUMENTS: {
+                UPLOAD: "/staff/dashboard/documents/upload",
+                DOWNLOAD: (id: string) => `/staff/dashboard/documents/${id}/download`,
+                LIST: (citizenId: string) => `/staff/dashboard/citizen/${citizenId}/documents`,
+            },
+            FEEDBACK: "/staff/dashboard/feedback",
+            HISTORY: "/staff/dashboard/history",
+            NOTIFICATIONS: "/staff/dashboard/notifications",
+            QUEUE_STATUS: (serviceGroupId: string) => `/Queue/status/${serviceGroupId}`,
+            CALL_NEXT: (serviceGroupId: string) => `/Queue/${serviceGroupId}/call-next`,
+            CREATE_GUEST: "/Guests",
+            GET_GUESTS: "/Guests",
+            CREATE_CASE: "/Case",
+            GET_SERVICES: "/Service",
+            GET_SERVICE_GROUPS: "/ServiceGroup",
+            CASE_LOOKUP: (caseId: string) => `/Case/${caseId}`,
+            CASE_LIST: "/Case",
+        },
+        CASE: {
+            LIST: "/Case",
+            DETAIL: "/Case",
+            LOOKUP: (caseId: string) => `/Case/${caseId}`,
+            UPDATE_PAYMENT: (caseId: string) => `/Case/${caseId}/payment`,
+        },
+        WORKSHIFT: {
+            MY_SHIFTS: "/WorkShift/my-shifts",
+        },
+    },
 
 };
 

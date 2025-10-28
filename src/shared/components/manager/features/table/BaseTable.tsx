@@ -19,6 +19,11 @@ interface DataTableProps<TData, TValue> {
   onAdd?: (row: TData) => void;
   onEdit?: (row: TData) => void;
   onDelete?: (row: TData) => void;
+  // Icon props
+  viewIcon?: React.ReactNode;
+  editIcon?: React.ReactNode;
+  deleteIcon?: React.ReactNode;
+  otherIcon?: React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -29,6 +34,10 @@ export function DataTable<TData, TValue>({
   onView,
   onEdit,
   onDelete,
+  viewIcon,
+  editIcon,
+  deleteIcon,
+  otherIcon,
 }: DataTableProps<TData, TValue>) {
   // Cột STT
   const indexColumn: ColumnDef<TData, unknown> = {
@@ -47,24 +56,50 @@ export function DataTable<TData, TValue>({
       const original = row.original as TData;
       return (
         <div className="flex items-center gap-2">
-          <Button className="cursor-pointer" size="sm" variant="outline" onClick={() => onView?.(original)}>
-            Xem
-          </Button>
-          <Button className="cursor-pointer" size="sm" variant="outline" onClick={() => onEdit?.(original)}>
-            Sửa
-          </Button>
-          {buttonOther && <Button className="cursor-pointer" size="sm" variant="outline" onClick={() => onOther?.(original)}>
-            {buttonOther}
-          </Button>}
-
-          <Button
-            className="cursor-pointer"
-            size="sm"
-            variant="destructive"
-            onClick={() => onDelete?.(original)}
-          >
-            Xóa
-          </Button>
+          {onView && (
+            <Button
+              className="cursor-pointer"
+              size="sm"
+              variant="outline"
+              onClick={() => onView(original)}
+              title="Xem chi tiết"
+            >
+              {viewIcon || "Xem"}
+            </Button>
+          )}
+          {onEdit && (
+            <Button
+              className="cursor-pointer"
+              size="sm"
+              variant="outline"
+              onClick={() => onEdit(original)}
+              title="Chỉnh sửa"
+            >
+              {editIcon || "Sửa"}
+            </Button>
+          )}
+          {buttonOther && onOther && (
+            <Button
+              className="cursor-pointer"
+              size="sm"
+              variant="outline"
+              onClick={() => onOther(original)}
+              title={buttonOther}
+            >
+              {otherIcon || buttonOther}
+            </Button>
+          )}
+          {onDelete && (
+            <Button
+              className="cursor-pointer"
+              size="sm"
+              variant="destructive"
+              onClick={() => onDelete(original)}
+              title="Xóa"
+            >
+              {deleteIcon || "Xóa"}
+            </Button>
+          )}
         </div>
       );
     },
