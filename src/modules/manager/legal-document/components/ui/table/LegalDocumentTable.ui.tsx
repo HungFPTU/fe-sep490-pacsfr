@@ -4,6 +4,7 @@ import React from 'react';
 import { DataTable } from '@/shared/components/manager';
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@heroui/react';
+import { Eye, Edit, Trash2, Download } from 'lucide-react';
 import type { LegalDocument } from '../../../types';
 
 interface Props {
@@ -125,6 +126,10 @@ export const LegalDocumentTable: React.FC<Props> = ({
             onDelete={onDelete}
             buttonOther={onDownload ? "Tải xuống" : null}
             onOther={onDownload}
+            viewIcon={<Eye className="h-4 w-4" />}
+            editIcon={<Edit className="h-4 w-4" />}
+            deleteIcon={<Trash2 className="h-4 w-4" />}
+            otherIcon={onDownload ? <Download className="h-4 w-4" /> : undefined}
         />
     );
 };

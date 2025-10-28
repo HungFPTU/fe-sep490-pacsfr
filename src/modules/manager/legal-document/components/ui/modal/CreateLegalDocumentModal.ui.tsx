@@ -19,18 +19,25 @@ export const CreateLegalDocumentModal: React.FC<Props> = ({
     initData,
     onSuccess
 }) => {
+    // Debug logging
+    console.log('[CreateLegalDocumentModal] initData:', initData);
+    console.log('[CreateLegalDocumentModal] isEdit:', !!initData?.id);
+
     const { formData, errors, updateField, validateForm, resetForm } = useLegalDocumentForm(
         initData ? {
             documentNumber: initData.documentNumber,
             documentType: initData.documentType,
             name: initData.name,
-            issueDate: initData.issueDate.toString(),
+            issueDate: initData.issueDate ? (typeof initData.issueDate === 'string' ? initData.issueDate.split('T')[0] : new Date(initData.issueDate).toISOString().split('T')[0]) : '',
             issueBody: initData.issueBody,
-            effectiveDate: initData.effectiveDate.toString(),
+            effectiveDate: initData.effectiveDate ? (typeof initData.effectiveDate === 'string' ? initData.effectiveDate.split('T')[0] : new Date(initData.effectiveDate).toISOString().split('T')[0]) : '',
             status: initData.status,
             isActive: initData.isActive,
         } : undefined
     );
+
+    // Debug form data
+    console.log('[CreateLegalDocumentModal] formData:', formData);
 
     const createMutation = useCreateLegalDocument();
     const updateMutation = useUpdateLegalDocument();

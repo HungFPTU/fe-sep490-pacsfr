@@ -1,92 +1,80 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@heroui/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Props {
-    currentPage: number;
+    page: number;
+    pageSize: number;
+    total: number;
     totalPages: number;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
     onPageChange: (page: number) => void;
+    onPageSizeChange: (size: number) => void;
 }
 
 export const LegalDocumentPagination: React.FC<Props> = ({
-    currentPage,
+    page,
+    pageSize,
+    total,
     totalPages,
-    hasPreviousPage,
-    hasNextPage,
     onPageChange,
+    onPageSizeChange,
 }) => {
-    const getPageNumbers = () => {
-        const pages = [];
-        const maxVisiblePages = 5;
-
-        if (totalPages <= maxVisiblePages) {
-            for (let i = 1; i <= totalPages; i++) {
-                pages.push(i);
-            }
-        } else {
-            const startPage = Math.max(1, currentPage - 2);
-            const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-            for (let i = startPage; i <= endPage; i++) {
-                pages.push(i);
-            }
-        }
-
-        return pages;
-    };
-
-    const pageNumbers = getPageNumbers();
+    const startItem = (page - 1) * pageSize + 1;
+    const endItem = Math.min(page * pageSize, total);
 
     return (
-        <div className="flex items-center justify-between px-6 py-3 bg-white border-t border-slate-200">
-            <div className="flex items-center text-sm text-slate-700">
-                <span>Trang {currentPage} của {totalPages}</span>
-            </div>
-
-            <div className="flex items-center space-x-2">
-                {/* Previous Button */}
-                <Button
-                    size="sm"
-                    variant="light"
-                    color="primary"
-                    onClick={() => onPageChange(currentPage - 1)}
-                    disabled={!hasPreviousPage}
-                    startContent={<ChevronLeft className="h-4 w-4" />}
-                >
-                    Trước
-                </Button>
-
-                {/* Page Numbers */}
-                <div className="flex items-center space-x-1">
-                    {pageNumbers.map((page) => (
-                        <Button
-                            key={page}
-                            size="sm"
-                            variant={page === currentPage ? "solid" : "light"}
-                            color={page === currentPage ? "primary" : "default"}
-                            onClick={() => onPageChange(page)}
-                            className="min-w-8 h-8"
-                        >
-                            {page}
-                        </Button>
-                    ))}
+        <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 sm:px-6">
+            <div className="flex flex-1 items-center justify-between">
+                <div>
+                    <p className="text-sm text-slate-700">
+                        Hiển thị <span className="font-medium">{startItem}</span> đến{' '}
+                        <span className="font-medium">{endItem}</span> trong tổng số{' '}
+                        <span className="font-medium">{total}</span> văn bản pháp luật
+                    </p>
                 </div>
+                <div className="flex items-center gap-4">
+                    {/* Page Size Selector */}
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm text-slate-700">Số dòng:</label>
+                        <select
+                            value={pageSize}
+                            onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                            className="rounded-md border border-slate-300 px-3 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        >
+                            <option value={10}>10</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                            <option value={100}>100</option>
+                        </select>
+                    </div>
 
-                {/* Next Button */}
-                <Button
-                    size="sm"
-                    variant="light"
-                    color="primary"
-                    onClick={() => onPageChange(currentPage + 1)}
-                    disabled={!hasNextPage}
-                    endContent={<ChevronRight className="h-4 w-4" />}
-                >
-                    Sau
-                </Button>
+                    {/* Pagination Controls */}
+                    <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm">
+                        <button
+                            onClick={() => onPageChange(page - 1)}
+                            disabled={page === 1}
+                            className="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <span className="sr-only">Trước</span>
+                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                            </svg>
+                        </button>
+                        <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-900 ring-1 ring-inset ring-slate-300">
+                            {page} / {totalPages}
+                        </span>
+                        <button
+                            onClick={() => onPageChange(page + 1)}
+                            disabled={page === totalPages}
+                            className="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <span className="sr-only">Sau</span>
+                            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                            </svg>
+                        </button>
+                    </nav>
+                </div>
             </div>
         </div>
     );

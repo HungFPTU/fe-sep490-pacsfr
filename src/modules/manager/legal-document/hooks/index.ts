@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LegalDocumentService } from '../services/legal-document.service';
 import type {
@@ -101,6 +101,16 @@ export const useLegalDocumentForm = (initialData?: Partial<LegalDocumentFormData
     });
 
     const [errors, setErrors] = useState<Partial<Record<keyof LegalDocumentFormData, string>>>({});
+
+    // Update form data when initialData changes (for edit mode)
+    React.useEffect(() => {
+        if (initialData) {
+            setFormData(prev => ({
+                ...prev,
+                ...initialData,
+            }));
+        }
+    }, [initialData]);
 
     const updateField = useCallback((field: keyof LegalDocumentFormData, value: string | File | boolean) => {
         setFormData(prev => ({ ...prev, [field]: value }));
