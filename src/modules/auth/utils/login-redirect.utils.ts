@@ -71,43 +71,43 @@ export function getPostLoginRedirectUrl(options: RedirectOptions): string {
   return '/';
 }
 
-function performRedirect(url: string, delay: number = 1500): void {
-  console.log(`[Redirect] Performing redirect to ${url} in ${delay}ms`);
+// function performRedirect(url: string, delay: number = 1500): void {
+//   console.log(`[Redirect] Performing redirect to ${url} in ${delay}ms`);
 
-    setTimeout(() => {
-        if (typeof window !== 'undefined' && window.location) {
-            console.log(`[Redirect] Executing redirect to: ${url}`);
-            console.log(`[Redirect] Current URL: ${window.location.href}`);
+//     setTimeout(() => {
+//         if (typeof window !== 'undefined' && window.location) {
+//             console.log(`[Redirect] Executing redirect to: ${url}`);
+//             console.log(`[Redirect] Current URL: ${window.location.href}`);
 
-            // Force redirect using multiple methods
-            try {
-                // Method 1: window.location.href
-                window.location.href = url;
-                console.log(`[Redirect] ✅ Redirected using window.location.href`);
-            } catch (error) {
-                console.error(`[Redirect] ❌ window.location.href failed:`, error);
+//             // Force redirect using multiple methods
+//             try {
+//                 // Method 1: window.location.href
+//                 window.location.href = url;
+//                 console.log(`[Redirect] ✅ Redirected using window.location.href`);
+//             } catch (error) {
+//                 console.error(`[Redirect] ❌ window.location.href failed:`, error);
 
-                try {
-                    // Method 2: window.location.replace
-                    window.location.replace(url);
-                    console.log(`[Redirect] ✅ Redirected using window.location.replace`);
-                } catch (error2) {
-                    console.error(`[Redirect] ❌ window.location.replace failed:`, error2);
+//                 try {
+//                     // Method 2: window.location.replace
+//                     window.location.replace(url);
+//                     console.log(`[Redirect] ✅ Redirected using window.location.replace`);
+//                 } catch (error2) {
+//                     console.error(`[Redirect] ❌ window.location.replace failed:`, error2);
 
-                    try {
-                        // Method 3: window.location.assign
-                        window.location.assign(url);
-                        console.log(`[Redirect] ✅ Redirected using window.location.assign`);
-                    } catch (error3) {
-                        console.error(`[Redirect] ❌ All redirect methods failed:`, error3);
-                    }
-                }
-            }
-        } else {
-            console.error(`[Redirect] ❌ Window not available for redirect`);
-        }
-    }, delay);
-}
+//                     try {
+//                         // Method 3: window.location.assign
+//                         window.location.assign(url);
+//                         console.log(`[Redirect] ✅ Redirected using window.location.assign`);
+//                     } catch (error3) {
+//                         console.error(`[Redirect] ❌ All redirect methods failed:`, error3);
+//                     }
+//                 }
+//             }
+//         } else {
+//             console.error(`[Redirect] ❌ Window not available for redirect`);
+//         }
+//     }, delay);
+// }
 
 /**
  * Check if user has permission to access a route

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
@@ -53,7 +53,7 @@ const SelectContext = React.createContext<{
     setIsOpen: () => { },
 });
 
-export function Select({ value, onValueChange, disabled, className, children }: SelectProps) {
+export function Select({ value, onValueChange, className, children }: SelectProps) {
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
@@ -95,7 +95,7 @@ export function SelectTrigger({ children, className, onClick }: SelectTriggerPro
 export function SelectContent({ children, className }: SelectContentProps) {
     const { isOpen, setIsOpen } = React.useContext(SelectContext);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Element;
             if (!target.closest('[data-select-content]')) {
@@ -107,6 +107,9 @@ export function SelectContent({ children, className }: SelectContentProps) {
             document.addEventListener('mousedown', handleClickOutside);
             return () => document.removeEventListener('mousedown', handleClickOutside);
         }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, [isOpen, setIsOpen]);
 
     if (!isOpen) return null;

@@ -137,9 +137,14 @@ const authStore = createAuthStore();
 
 // Manual hydration with proper timing
 if (typeof window !== 'undefined') {
-    authStore.persist.rehydrate().then(() => {
+    const rehydratePromise = authStore.persist.rehydrate();
+    if (rehydratePromise) {
+        rehydratePromise.then(() => {
+            authStore.getState().setHydrated(true);
+        });
+    } else {
         authStore.getState().setHydrated(true);
-    });
+    }
 }
 
 export const useAuthStore = authStore;

@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/useAuthStore";
 import { authService } from "../services/auth.service";
@@ -99,19 +99,9 @@ export function useAuth() {
     // Reset justLoggedIn flag after successful login
     React.useEffect(() => {
         if (justLoggedIn && authState.isAuthenticated) {
-            const timer = setTimeout(() => {
-                setJustLoggedIn(false);
-            }, 2000); // Increased to 2 seconds
-            return () => clearTimeout(timer);
+            setJustLoggedIn(false);
         }
     }, [justLoggedIn, authState.isAuthenticated]);
-
-    // Sync profile data to store (only if not from recent login)
-    React.useEffect(() => {
-        if (profileQuery.data && authState.token && authState.role && !justLoggedIn) {
-            setCredentials(profileQuery.data, authState.token, authState.role);
-        }
-    }, [profileQuery.data, authState.token, authState.role, setCredentials, justLoggedIn]);
 
     // Memoized return object to prevent unnecessary re-renders
     return useMemo(() => ({

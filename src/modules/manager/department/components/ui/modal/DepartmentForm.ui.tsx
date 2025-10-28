@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { InputField, TextareaField, CheckboxField, SelectField } from '@/shared/components/layout/manager/form/BaseForm';
+import { InputField, TextareaField, SelectField } from '@/shared/components/layout/manager/form/BaseForm';
 import { ToggleSwitch } from '@/shared/components/manager/ui';
 import { FormApiOf } from '@/types/types';
 import { DEPARTMENT_LEVELS } from '../../../enums';

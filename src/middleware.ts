@@ -12,7 +12,7 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
     // TEMPORARILY DISABLED: Route authorization logic
     // TODO: Re-enable after fixing login redirect issues
-    // const { pathname } = request.nextUrl;
+    // const { pathname } = _request.nextUrl;
 
     // Debug logging
     // console.log(`[Middleware] Processing: ${pathname}`);
