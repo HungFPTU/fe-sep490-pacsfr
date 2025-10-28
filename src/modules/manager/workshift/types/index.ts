@@ -1,12 +1,14 @@
 // Main WorkShift entity type
 export type WorkShift = {
     id: string;
-    name: string;
-    startTime: string;  // Time string like "08:00"
+    counterId: string;
+    staffId: string;
+    shiftDate: string | Date;
+    startTime: string;  
     endTime: string;
     shiftType: string;    
     description?: string;
-    isActive: boolean;
+    isActive?: boolean;
     createdAt: string | Date;
     modifiedAt?: string | Date;
     $id?: string;
@@ -14,20 +16,24 @@ export type WorkShift = {
 
 // Request types
 export type CreateWorkShiftRequest = {
-    name: string;
+    counterId: string;
+    staffId: string;
+    shiftDate: string | Date;
     startTime: string;
     endTime: string;
+    shiftType: string;
     description?: string;
-    isActive: boolean;
 };
 
 export type UpdateWorkShiftRequest = {
     id: string;
-    name: string;
+    counterId: string;
+    staffId: string;
+    shiftDate: string | Date;
     startTime: string;
     endTime: string;
+    shiftType: string;
     description?: string;
-    isActive: boolean;
 };
 
 // Filter types
@@ -36,5 +42,40 @@ export type WorkShiftFilters = {
     isActive?: boolean;
     page?: number;
     size?: number;
+};
+
+// Counter types
+export type Counter = {
+    id: string;
+    counterCode: string;
+    counterName: string;
+    isActive: boolean;
+    serviceGroups?: {
+        $id?: string;
+        $values?: ServiceGroup[];
+    };
+};
+
+export type ServiceGroup = {
+    id: string;
+    groupName: string;
+    currentLength: number;
+    status: string;
+};
+
+// Staff types
+export type Staff = {
+    id: string;
+    staffCode: string;
+    fullName: string;
+    username?: string;
+    email?: string;
+    phone?: string;
+    position?: string;
+    roleType?: string;
+    specialization?: string;
+    isActive: boolean;
+    orgUnitName?: string;
+    createdAt?: string | Date;
 };
 

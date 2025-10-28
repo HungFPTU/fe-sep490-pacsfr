@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { workshiftService } from "../services/workshift.service";
+import { WorkShiftService } from "../services/workshift.service";
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
 import type { CreateWorkShiftRequest, UpdateWorkShiftRequest, WorkShiftFilters } from "../types";
 
@@ -12,7 +12,7 @@ export { useWorkShiftForm } from './useWorkShiftForm';
 export const useWorkShifts = (filters: WorkShiftFilters) => {
     return useQuery({
         queryKey: QUERY_KEYS.WORKSHIFT_LIST(filters),
-        queryFn: () => workshiftService.getWorkShiftList(filters),
+        queryFn: () => WorkShiftService.getWorkShifts(filters),
         gcTime: CACHE_TIME,
         staleTime: STALE_TIME,
     });
@@ -22,7 +22,7 @@ export const useWorkShifts = (filters: WorkShiftFilters) => {
 export const useWorkShiftDetail = (id: string) => {
     return useQuery({
         queryKey: QUERY_KEYS.WORKSHIFT_DETAIL(id),
-        queryFn: () => workshiftService.getWorkShiftById(id),
+        queryFn: () => WorkShiftService.getWorkShiftDetail(id),
         enabled: !!id,
     });
 };
@@ -32,7 +32,7 @@ export const useCreateWorkShift = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: CreateWorkShiftRequest) => workshiftService.createWorkShift(data),
+        mutationFn: (data: CreateWorkShiftRequest) => WorkShiftService.createWorkShift(data),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.WORKSHIFT_BASE
@@ -47,7 +47,7 @@ export const useUpdateWorkShift = () => {
 
     return useMutation({
         mutationFn: ({ id, request }: { id: string; request: UpdateWorkShiftRequest }) =>
-            workshiftService.updateWorkShift(id, request),
+            WorkShiftService.updateWorkShift(id, request),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.WORKSHIFT_BASE
@@ -61,12 +61,32 @@ export const useDeleteWorkShift = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (id: string) => workshiftService.deleteWorkShift(id),
+        mutationFn: (id: string) => WorkShiftService.deleteWorkShift(id),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.WORKSHIFT_BASE
             });
         },
+    });
+};
+
+// GET active counters hook
+export const useActiveCounters = () => {
+    return useQuery({
+        queryKey: ['active-counters'],
+        queryFn: () => WorkShiftService.getActiveCounters(),
+        gcTime: CACHE_TIME,
+        staleTime: STALE_TIME,
+    });
+};
+
+// GET staff list hook
+export const useStaffList = () => {
+    return useQuery({
+        queryKey: ['staff-list'],
+        queryFn: () => WorkShiftService.getStaffList(),
+        gcTime: CACHE_TIME,
+        staleTime: STALE_TIME,
     });
 };
 

@@ -105,6 +105,8 @@ export const API_PATH = {
             PUT: (id: string) => `/WorkShift/${id}`,
             DELETE: (id: string) => `/WorkShift/${id}`,
             MY_SHIFTS: "/WorkShift/my-shifts",
+            GET_ACTIVE_COUNTERS: "/Counter/active",
+            GET_STAFF_LIST: "/Staff",
         }
     },
     STAFF: {
