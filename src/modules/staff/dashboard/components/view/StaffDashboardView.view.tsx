@@ -8,6 +8,7 @@ import { staffDashboardService } from "../../services/staff-dashboard.service";
 import { getMockWaitingList, SERVICE_TYPES } from "../../consts";
 import type { CitizenProfile, ServiceGroup } from "../../types";
 import { Filter, Plus } from "lucide-react";
+import { useMinimumLoadingTime } from "@/shared/hooks";
 
 // UI Components
 import {
@@ -22,6 +23,8 @@ import { StaffDashboardTabsView } from "./StaffDashboardTabsView.view";
 
 export function StaffDashboardView() {
     const router = useRouter();
+    const { withMinimumLoadingTime } = useMinimumLoadingTime(1500); // 1.5 seconds minimum
+    
     const {
         waitingList,
         stats,
@@ -64,28 +67,30 @@ export function StaffDashboardView() {
     const loadServiceGroups = useCallback(async (keyword?: string) => {
         setIsLoadingServiceGroups(true);
         try {
-            const groups = await staffDashboardService.getServiceGroups({
-                keyword: keyword || undefined,
-                isActive: true,
-                page: 1,
-                size: 100
-            });
-            setServiceGroups(groups);
-            
-            // Auto-select if serviceGroupId exists (only on first load)
-            if (!keyword && serviceGroupId) {
-                const found = groups.find((g: ServiceGroup) => g.id === serviceGroupId);
-                if (found) {
-                    setSelectedServiceGroup(found);
+            await withMinimumLoadingTime(async () => {
+                const groups = await staffDashboardService.getServiceGroups({
+                    keyword: keyword || undefined,
+                    isActive: true,
+                    page: 1,
+                    size: 100
+                });
+                setServiceGroups(groups);
+                
+                // Auto-select if serviceGroupId exists (only on first load)
+                if (!keyword && serviceGroupId) {
+                    const found = groups.find((g: ServiceGroup) => g.id === serviceGroupId);
+                    if (found) {
+                        setSelectedServiceGroup(found);
+                    }
                 }
-            }
+            });
         } catch (error) {
             console.error("Error loading service groups:", error);
             alert("Lỗi khi tải danh sách nhóm dịch vụ. Vui lòng thử lại!");
         } finally {
             setIsLoadingServiceGroups(false);
         }
-    }, [serviceGroupId]);
+    }, [serviceGroupId, withMinimumLoadingTime]);
 
     // Handle search button click
     const handleSearchServiceGroups = () => {
@@ -114,32 +119,36 @@ export function StaffDashboardView() {
         
         setLoadingQueueStatus(true);
         try {
-            const status = await staffDashboardService.getQueueStatus(serviceGroupId);
-            setQueueStatus(status);
+            await withMinimumLoadingTime(async () => {
+                const status = await staffDashboardService.getQueueStatus(serviceGroupId);
+                setQueueStatus(status);
+            });
         } catch (error) {
             console.error("Error loading queue status:", error);
         } finally {
             setLoadingQueueStatus(false);
         }
-    }, [serviceGroupId, setQueueStatus, setLoadingQueueStatus]);
+    }, [serviceGroupId, setQueueStatus, setLoadingQueueStatus, withMinimumLoadingTime]);
 
     const loadDashboardData = useCallback(async () => {
         setLoadingWaitingList(true);
         try {
-            // In real app, these would be API calls
-            // For now, using mock data
-            setWaitingList(getMockWaitingList());
-            
-            // Load queue status if serviceGroupId is set
-            if (serviceGroupId) {
-                await loadQueueStatus();
-            }
+            await withMinimumLoadingTime(async () => {
+                // In real app, these would be API calls
+                // For now, using mock data
+                setWaitingList(getMockWaitingList());
+                
+                // Load queue status if serviceGroupId is set
+                if (serviceGroupId) {
+                    await loadQueueStatus();
+                }
+            });
         } catch (error) {
             console.error("Error loading dashboard data:", error);
         } finally {
             setLoadingWaitingList(false);
         }
-    }, [serviceGroupId, loadQueueStatus, setWaitingList, setLoadingWaitingList]);
+    }, [serviceGroupId, loadQueueStatus, setWaitingList, setLoadingWaitingList, withMinimumLoadingTime]);
 
     // Call next number - using real API
     const callNextNumber = async () => {
@@ -151,26 +160,28 @@ export function StaffDashboardView() {
         setCallingNext(true);
 
         try {
-            const response = await staffDashboardService.callNext(serviceGroupId);
-            
-            if (response.success && response.data) {
-                // Update current serving with API data
-                setCurrentServing({
-                    id: response.data.ticketNumber || '',
-                    number: response.data.ticketNumber || '',
-                    fullName: response.data.citizenName || 'Chưa có thông tin',
-                    serviceType: response.data.serviceType || 'Dịch vụ',
-                    status: 'serving'
-                });
-
-                alert(`Đã gọi số ${response.data.ticketNumber}`);
+            await withMinimumLoadingTime(async () => {
+                const response = await staffDashboardService.callNext(serviceGroupId);
                 
-                // Reload queue status and dashboard data
-                await loadQueueStatus();
-                await loadDashboardData();
-            } else {
-                throw new Error(response.message || 'Failed to call next');
-            }
+                if (response.success && response.data) {
+                    // Update current serving with API data
+                    setCurrentServing({
+                        id: response.data.ticketNumber || '',
+                        number: response.data.ticketNumber || '',
+                        fullName: response.data.citizenName || 'Chưa có thông tin',
+                        serviceType: response.data.serviceType || 'Dịch vụ',
+                        status: 'serving'
+                    });
+
+                    alert(`Đã gọi số ${response.data.ticketNumber}`);
+                    
+                    // Reload queue status and dashboard data
+                    await loadQueueStatus();
+                    await loadDashboardData();
+                } else {
+                    throw new Error(response.message || 'Failed to call next');
+                }
+            });
         } catch (error) {
             console.error('Error calling next number:', error);
             if (error instanceof Error) {

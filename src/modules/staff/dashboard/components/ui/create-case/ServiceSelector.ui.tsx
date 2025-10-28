@@ -38,7 +38,7 @@ export function ServiceSelector({
                     <Input
                         value={searchKeyword}
                         onChange={(e) => onSearchKeywordChange(e.target.value)}
-                        placeholder="Nhập tên hoặc mã dịch vụ..."
+                        placeholder="Nhập tên hoặc mã dịch vụ (để trống để xem tất cả)..."
                         disabled={isSearching}
                         onKeyPress={(e) => {
                             if (e.key === 'Enter') {

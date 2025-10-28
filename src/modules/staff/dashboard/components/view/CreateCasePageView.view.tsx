@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/shared/components/ui/card.ui";
 import { Button } from "@/shared/components/ui/button.ui";
 import { staffDashboardApi } from "../../api/staff-dashboard.api";
-import type { CreateGuestRequest, CreateCaseRequest, Guest, Service } from "../../types";
+import type { CreateGuestRequest, CreateCaseRequest, Guest, Service, PaginatedData } from "../../types";
 import { ArrowLeft, FileText } from "lucide-react";
 
 // UI Components
@@ -13,7 +13,7 @@ import {
     ModeSelector,
     GuestForm,
     GuestSearchForm,
-    ServiceSelector,
+    ServiceListWithPagination,
     CaseFormFields,
 } from "../ui/create-case";
 
@@ -68,10 +68,10 @@ export function CreateCasePageView() {
 
     // Service Search
     const [serviceSearchKeyword, setServiceSearchKeyword] = useState("");
-    const [serviceSearchResults, setServiceSearchResults] = useState<Service[]>([]);
+    const [serviceData, setServiceData] = useState<PaginatedData<Service> | null>(null);
     const [isSearchingService, setIsSearchingService] = useState(false);
     const [selectedService, setSelectedService] = useState<Service | null>(null);
-    const [showServiceDropdown, setShowServiceDropdown] = useState(false);
+    const [servicePage, setServicePage] = useState(1);
 
     const idTypes = ["CCCD", "CMND", "Hộ chiếu"];
     const genders = ["Nam", "Nữ", "Khác"];
@@ -138,26 +138,21 @@ export function CreateCasePageView() {
         setShowGuestDropdown(false);
     };
 
-    const handleSearchServices = async () => {
-        if (!serviceSearchKeyword.trim()) {
-            alert("Vui lòng nhập từ khóa tìm kiếm dịch vụ!");
-            return;
-        }
-
+    const handleSearchServices = async (page: number = 1) => {
         setIsSearchingService(true);
         try {
             const response = await staffDashboardApi.getServices({
-                keyword: serviceSearchKeyword,
+                keyword: serviceSearchKeyword.trim(),
                 isActive: true,
-                page: 1,
-                size: 20
+                page: page,
+                size: 10
             });
 
-            if (response.success && response.data?.items?.$values) {
-                setServiceSearchResults(response.data.items.$values);
-                setShowServiceDropdown(true);
+            if (response.success && response.data) {
+                setServiceData(response.data);
+                setServicePage(page);
             } else {
-                setServiceSearchResults([]);
+                setServiceData(null);
                 alert("Không tìm thấy dịch vụ nào!");
             }
         } catch (error) {
@@ -168,11 +163,13 @@ export function CreateCasePageView() {
         }
     };
 
+    const handleServicePageChange = (page: number) => {
+        handleSearchServices(page);
+    };
+
     const handleSelectService = (service: Service) => {
         setSelectedService(service);
         setCaseData({ ...caseData, serviceId: service.id });
-        setServiceSearchKeyword(`${service.serviceName} - ${service.serviceCode}`);
-        setShowServiceDropdown(false);
     };
 
     const handleCreateGuest = async (e: React.FormEvent) => {
@@ -352,15 +349,16 @@ export function CreateCasePageView() {
                             />
 
                             {/* Service Search */}
-                            <ServiceSelector
+                            <ServiceListWithPagination
                                 searchKeyword={serviceSearchKeyword}
                                 isSearching={isSearchingService}
-                                searchResults={serviceSearchResults}
+                                serviceData={serviceData}
                                 selectedService={selectedService}
-                                showDropdown={showServiceDropdown}
+                                currentPage={servicePage}
                                 onSearchKeywordChange={setServiceSearchKeyword}
-                                onSearch={handleSearchServices}
+                                onSearch={() => handleSearchServices(1)}
                                 onSelectService={handleSelectService}
+                                onPageChange={handleServicePageChange}
                             />
 
                             {/* Case Form Fields */}
