@@ -30,22 +30,51 @@ export class LegalDocumentService {
         }
     }
 
-    // Create new legal document
+    // Create new legal document (two-step process)
     static async createLegalDocument(data: CreateLegalDocumentRequest) {
         try {
+            console.log('[LegalDocument Service] Creating document:', data);
+
+            // Step 1: Create document with JSON
             const response = await legalDocumentApi.create(data);
-            return response.data;
+            const createdDocument = response.data;
+
+            console.log('[LegalDocument Service] Document created:', createdDocument);
+
+            // Step 2: Upload file if exists
+            if (data.file && createdDocument.data && '$id' in createdDocument.data && createdDocument.data.$id) {
+                const documentId = createdDocument.data.$id;
+                console.log('[LegalDocument Service] Uploading file for document:', documentId);
+                await legalDocumentApi.uploadFile(documentId, data.file);
+                console.log('[LegalDocument Service] File uploaded successfully');
+            }
+
+            return createdDocument;
         } catch (error) {
             console.error("Error creating legal document:", error);
             throw error;
         }
     }
 
-    // Update legal document
+    // Update legal document (two-step process)
     static async updateLegalDocument(id: string, data: UpdateLegalDocumentRequest) {
         try {
+            console.log('[LegalDocument Service] Updating document:', { id, data });
+
+            // Step 1: Update document with JSON
             const response = await legalDocumentApi.update(id, data);
-            return response.data;
+            const updatedDocument = response.data;
+
+            console.log('[LegalDocument Service] Document updated:', updatedDocument);
+
+            // Step 2: Upload file if exists
+            if (data.file) {
+                console.log('[LegalDocument Service] Uploading file for document:', id);
+                await legalDocumentApi.uploadFile(id, data.file);
+                console.log('[LegalDocument Service] File uploaded successfully');
+            }
+
+            return updatedDocument;
         } catch (error) {
             console.error("Error updating legal document:", error);
             throw error;

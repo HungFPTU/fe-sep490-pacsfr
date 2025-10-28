@@ -1,36 +1,114 @@
-# Watchman ignore patterns
+# Watchman ignore patterns - Comprehensive Windows System Files
 # System files
 pagefile.sys
 hiberfil.sys
 swapfile.sys
 $RECYCLE.BIN
 System Volume Information
+Windows/
+Program Files/
+Program Files (x86)/
+ProgramData/
+Users/
+Recovery/
+System32/
+SysWOW64/
+
+# Drive root files
+D:/
+C:/
+D:\*
+C:\*
 
 # Development files
 *.log
 *.tmp
 *.temp
+*.cache
+*.pid
+*.lock
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Build artifacts
 dist/
 build/
 .next/
 .turbo/
+out/
+coverage/
+.nyc_output/
 
 # Dependencies
 node_modules/
 .pnp/
 .yarn/
+.pnpm/
 
 # IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# OS files
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git files
+.git/
+.gitignore
+.gitkeep
+
+# OS specific
 .DS_Store
 Thumbs.db
 desktop.ini
+*.lnk
+*.url
+*.exe
+*.dll
+*.sys
+*.bat
+*.cmd
+*.com
+*.pif
+*.scr
+*.vbs
+*.js
+*.jar
+*.msi
+*.msm
+*.msp
+*.deb
+*.rpm
+*.dmg
+*.iso
+*.img
+*.bin
+*.cue
+*.nrg
+*.mdf
+*.mds
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx
+*.qcow2
+*.raw
+*.img
+*.bin
+*.cue
+*.nrg
+*.mdf
+*.mds
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx
+*.qcow2
+*.raw

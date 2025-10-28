@@ -6,8 +6,25 @@
         ".turbo",
         "dist",
         "build",
+        "out",
+        "coverage",
+        ".nyc_output",
+        ".cache",
+        "tmp",
+        "temp",
+        "logs",
         "D:",
-        "System Volume Information"
+        "C:",
+        "System Volume Information",
+        "Windows",
+        "Program Files",
+        "Program Files (x86)",
+        "ProgramData",
+        "Users",
+        "Recovery",
+        "$Recycle.Bin",
+        "System32",
+        "SysWOW64"
     ],
     "ignore_files": [
         "pagefile.sys",
@@ -15,6 +32,28 @@
         "swapfile.sys",
         "Thumbs.db",
         ".DS_Store",
-        "desktop.ini"
-    ]
+        "desktop.ini",
+        "*.log",
+        "*.tmp",
+        "*.temp",
+        "*.cache",
+        "*.pid",
+        "*.lock",
+        "*.swp",
+        "*.swo",
+        "*~",
+        ".gitkeep",
+        ".gitignore",
+        ".env.local",
+        ".env.development.local",
+        ".env.test.local",
+        ".env.production.local"
+    ],
+    "ignore_vcs": [
+        ".git",
+        ".hg",
+        ".svn"
+    ],
+    "settle": 20,
+    "fsevents_latency": 0.01
 }

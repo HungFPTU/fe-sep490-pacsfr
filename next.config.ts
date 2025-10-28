@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
+// DISABLE WATCHPACK completely
+process.env.WEBPACK_DISABLE_WATCHPACK = 'true';
+process.env.WEBPACK_WATCH_OPTIONS = 'false';
+
 const nextConfig: NextConfig = {
   // Tối ưu hóa cho Bun runtime
   serverExternalPackages: [],
@@ -46,6 +50,15 @@ const nextConfig: NextConfig = {
     serverActions: {
       allowedOrigins: ["localhost:3000"],
     },
+    // Bun-specific optimizations for better auto-reload
+    ...(process.env.BUN && {
+      // Enable faster refresh for Bun
+      fastRefresh: true,
+      // Optimize file watching for Bun
+      optimizeServerReact: true,
+    }),
+    // DISABLE WATCHPACK completely
+    webpackBuildWorker: false,
   },
 
   // Tối ưu hóa build performance
@@ -58,31 +71,24 @@ const nextConfig: NextConfig = {
 
   // Tối ưu hóa webpack cho Bun và SSR
   webpack: (config, { dev, isServer }) => {
-    // Tối ưu hóa cho development - fix Watchpack errors
+    // Tối ưu hóa cho development - DISABLE WATCHPACK completely
     if (dev) {
+      // Disable Watchpack completely to avoid EINVAL errors
       config.watchOptions = {
-        poll: 1000,
-        aggregateTimeout: 300,
-        // Comprehensive ignore patterns to fix Watchpack errors
-        ignored: [
-          "**/node_modules/**",
-          "**/.git/**",
-          "**/.next/**",
-          "**/.turbo/**",
-          "**/dist/**",
-          "**/build/**",
-          "**/*.log",
-          "**/*.tmp",
-          "**/*.temp",
-          "**/pagefile.sys",
-          "**/hiberfil.sys",
-          "**/swapfile.sys",
-          "**/System Volume Information/**",
-          "**/Thumbs.db",
-          "**/.DS_Store",
-          "**/desktop.ini",
-          "**/D:/**", // Ignore entire D: drive system files
-        ],
+        // Disable polling completely
+        poll: false,
+        // Disable Watchpack by setting ignored to everything
+        ignored: /.*/,
+        // Use minimal timeout
+        aggregateTimeout: 100,
+      };
+
+      // Alternative: Disable file watching entirely
+      config.watch = false;
+
+      // Use Bun's native file watching instead
+      config.infrastructureLogging = {
+        level: 'error', // Reduce logging
       };
     }
 

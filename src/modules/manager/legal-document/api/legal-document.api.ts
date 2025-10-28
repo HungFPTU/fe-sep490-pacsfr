@@ -5,9 +5,7 @@ import type {
     LegalDocument,
     CreateLegalDocumentRequest,
     UpdateLegalDocumentRequest,
-    LegalDocumentFilters,
-    LegalDocumentListResponse,
-    LegalDocumentDetailResponse
+    LegalDocumentFilters
 } from '../types';
 
 export const legalDocumentApi = {
@@ -32,56 +30,45 @@ export const legalDocumentApi = {
         );
     },
 
-    // POST create
+    // POST create - Always use JSON (no file in this step)
     create: (data: CreateLegalDocumentRequest) => {
-        const formData = new FormData();
-        formData.append('DocumentNumber', data.documentNumber);
-        formData.append('DocumentType', data.documentType);
-        formData.append('Name', data.name);
-        formData.append('IssueDate', data.issueDate.toString());
-        formData.append('IssueBody', data.issueBody);
-        formData.append('EffectiveDate', data.effectiveDate.toString());
-        formData.append('Status', data.status);
-        formData.append('IsActive', data.isActive.toString());
+        console.log('[LegalDocument API] Creating JSON request:', data);
 
-        if (data.file) {
-            formData.append('File', data.file);
-        }
-
+        // Always use JSON request for document creation
         return http.post<RestResponse<LegalDocument>>(
             API_PATH.MANAGER.LEGAL_DOCUMENT.POST,
-            formData,
             {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                documentNumber: data.documentNumber,
+                documentType: data.documentType,
+                name: data.name,
+                issueDate: data.issueDate,
+                issueBody: data.issueBody,
+                effectiveDate: data.effectiveDate,
+                status: data.status,
+                isActive: data.isActive,
+                // Note: file will be uploaded separately
             }
         );
     },
 
-    // PUT update
+    // PUT update - Always use JSON (no file in this step)
     update: (id: string, data: UpdateLegalDocumentRequest) => {
-        const formData = new FormData();
-        formData.append('DocumentNumber', data.documentNumber);
-        formData.append('DocumentType', data.documentType);
-        formData.append('Name', data.name);
-        formData.append('IssueDate', data.issueDate.toString());
-        formData.append('IssueBody', data.issueBody);
-        formData.append('EffectiveDate', data.effectiveDate.toString());
-        formData.append('Status', data.status);
-        formData.append('IsActive', data.isActive.toString());
+        console.log('[LegalDocument API] Updating JSON request:', { id, data });
 
-        if (data.file) {
-            formData.append('File', data.file);
-        }
-
+        // Always use JSON request for document update
         return http.put<RestResponse<LegalDocument>>(
             API_PATH.MANAGER.LEGAL_DOCUMENT.PUT(id),
-            formData,
             {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                id: data.id,
+                documentNumber: data.documentNumber,
+                documentType: data.documentType,
+                name: data.name,
+                issueDate: data.issueDate,
+                issueBody: data.issueBody,
+                effectiveDate: data.effectiveDate,
+                status: data.status,
+                isActive: data.isActive,
+                // Note: file will be uploaded separately if needed
             }
         );
     },
@@ -93,29 +80,31 @@ export const legalDocumentApi = {
         );
     },
 
-    // Upload file
+    // Upload file - Separate step after document creation/update
     uploadFile: (id: string, file: File) => {
+        console.log('[LegalDocument API] Uploading file:', { id, fileName: file.name, fileSize: file.size, fileType: file.type });
+
         const formData = new FormData();
-        formData.append('File', file);
+        formData.append('file', file);
+
+        // Debug FormData contents
+        console.log('[LegalDocument API] FormData entries:');
+        for (const [key, value] of formData.entries()) {
+            console.log(`  ${key}:`, value);
+        }
 
         return http.post<RestResponse<object>>(
             API_PATH.MANAGER.LEGAL_DOCUMENT.UPLOAD_FILE(id),
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
+            formData
+            // Don't set Content-Type manually - let browser set it with boundary
         );
     },
 
     // Download file
     downloadFile: (id: string) => {
         return http.get(
-            API_PATH.MANAGER.LEGAL_DOCUMENT.DOWNLOAD_FILE(id),
-            {
-                responseType: 'blob',
-            }
+            API_PATH.MANAGER.LEGAL_DOCUMENT.DOWNLOAD_FILE(id)
+            // Note: responseType is handled by the HTTP client automatically for blob responses
         );
     },
 };

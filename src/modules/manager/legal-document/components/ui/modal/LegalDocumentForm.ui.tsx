@@ -195,17 +195,38 @@ export const LegalDocumentForm: React.FC<Props> = ({
                 </div>
             </div>
 
-            {/* Active Status (Simple Switch) */}
-            <div className="flex items-center space-x-3 mt-2">
-                <label className="text-sm font-medium text-slate-700">
+            {/* Active Status - Switch Style */}
+            <div className="flex flex-col mt-4">
+                <label htmlFor="active-status-switch" className="text-sm font-medium text-slate-700 mb-1 flex items-center">
                     Kích hoạt văn bản
+                    <span
+                        className={`ml-2 inline-block rounded px-2 text-xs font-semibold ${
+                            formData.isActive
+                                ? 'bg-green-100 text-green-700 border border-green-300'
+                                : 'bg-slate-100 text-slate-500 border border-slate-200'
+                        } transition-colors duration-200`}
+                    >
+                        {formData.isActive ? 'Đang kích hoạt' : 'Không kích hoạt'}
+                    </span>
                 </label>
-                <Switch
-                    isSelected={formData.isActive}
-                    onValueChange={(value) => updateField('isActive', value)}
-                    size="md"
-                    color="success"
-                />
+                <div className="flex items-center">
+                    <Switch
+                        id="active-status-switch"
+                        isSelected={formData.isActive}
+                        onValueChange={(value) => updateField('isActive', value)}
+                        size="lg"
+                        color={formData.isActive ? 'success' : 'default'}
+                        aria-label="Kích hoạt văn bản"
+                        className={`focus-visible:ring-2 focus-visible:ring-offset-2 ${
+                            formData.isActive ? 'focus-visible:ring-green-400' : 'focus-visible:ring-slate-300'
+                        }`}
+                    />
+                    <span className="ml-3 text-xs text-slate-400">
+                        {formData.isActive
+                            ? 'Văn bản sẽ hiển thị cho người dùng'
+                            : 'Văn bản bị ẩn khỏi các danh sách'}
+                    </span>
+                </div>
             </div>
         </div>
     );

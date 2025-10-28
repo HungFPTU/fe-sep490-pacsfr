@@ -163,15 +163,33 @@ class HttpClient {
         try {
             const authHeader = this.resolveAuthHeader(headers, auth);
 
+            // Handle FormData vs JSON body
+            const isFormData = body instanceof FormData;
+            const fetchHeaders: HeadersInit = {
+                ...(headers || {}),
+                ...authHeader,
+            };
+
+            // Only set Content-Type for non-FormData requests
+            if (!isFormData) {
+                (fetchHeaders as Record<string, string>)["Content-Type"] = "application/json";
+            }
+
+            // Debug logging for FormData
+            if (isFormData) {
+                console.log('[HTTP Client] Sending FormData request to:', `${resolvedBase}${url}`);
+                console.log('[HTTP Client] FormData entries:');
+                for (const [key, value] of (body as FormData).entries()) {
+                    console.log(`  ${key}:`, value);
+                }
+                console.log('[HTTP Client] Headers:', fetchHeaders);
+            }
+
             const fetchInit: RequestInit = {
                 ...rest,
                 method,
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(headers || {}),
-                    ...authHeader,
-                },
-                body: body !== undefined ? JSON.stringify(body) : undefined,
+                headers: fetchHeaders,
+                body: body !== undefined ? (isFormData ? body : JSON.stringify(body)) : undefined,
             };
 
             // Chỗ này chưa có API auth/me, lỗi ở đây
