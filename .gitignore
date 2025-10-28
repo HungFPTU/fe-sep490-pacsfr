@@ -63,5 +63,35 @@ next-env.d.ts
 pagefile.sys
 hiberfil.sys
 swapfile.sys
+Thumbs.db
+desktop.ini
 $RECYCLE.BIN/
 System Volume Information/
+
+# Windows system directories
+Windows/
+Program Files/
+Program Files (x86)/
+ProgramData/
+Users/
+Recovery/
+System32/
+SysWOW64/
+
+# Drive root files
+D:/
+C:/
+D:\*
+C:\*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Additional temp files
+*.cache
+*.pid
+*.lock

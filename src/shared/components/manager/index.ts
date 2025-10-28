@@ -43,6 +43,9 @@ export { DataTable } from './features/table';
 // Sidebar
 export { Sidebar, SidebarProvider, SidebarInset, SidebarTrigger } from './ui/sidebar';
 
+// Select
+export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+
 // Other UI components available via './ui' import
 // Example: import { Button } from '@/shared/components/manager/ui/button';
 

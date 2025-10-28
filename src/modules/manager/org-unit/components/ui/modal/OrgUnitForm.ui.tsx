@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
-import { InputField, TextareaField, CheckboxField, SelectField } from '@/shared/components/layout/manager/form/BaseForm';
+import React, { useState, useEffect } from 'react';
+import { InputField, TextareaField, SelectField } from '@/shared/components/layout/manager/form/BaseForm';
+import { ToggleSwitch } from '@/shared/components/manager/ui';
 import { FormApiOf } from '@/types/types';
 import { ORG_UNIT_TYPES } from '../../../enums';
 import { useDepartments } from '@/modules/manager/department/hooks';
@@ -26,6 +27,19 @@ interface Props {
 }
 
 export const OrgUnitForm: React.FC<Props> = ({ form, isEdit }) => {
+    // Local state for toggle switch to ensure reactivity
+    const [isActive, setIsActive] = useState(form.getFieldValue('isActive') || false);
+
+    // Sync local state with form values
+    useEffect(() => {
+        setIsActive(form.getFieldValue('isActive') || false);
+    }, [form]);
+
+    // Handle toggle change
+    const handleActiveChange = (checked: boolean) => {
+        setIsActive(checked);
+        form.setFieldValue('isActive', checked);
+    };
     // Fetch departments for dropdown
     const { data: departmentsData } = useDepartments({
         keyword: '',
@@ -160,13 +174,13 @@ export const OrgUnitForm: React.FC<Props> = ({ form, isEdit }) => {
                 )}
             </form.Field>
 
-            <div className="flex items-end pb-2">
-                <CheckboxField<FormValues>
-                    form={form as FormApiOf<FormValues>}
-                    name="isActive"
-                    label="Kích hoạt"
-                />
-            </div>
+            <ToggleSwitch
+                checked={isActive}
+                onChange={handleActiveChange}
+                label="Kích hoạt đơn vị"
+                description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                aria-label="Kích hoạt đơn vị"
+            />
 
             <form.Field
                 name="address"
