@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { classifyRoute, requiresAuthentication } from './core/utils/route-classifier';
+// TEMPORARILY DISABLED: Route classification imports
+// TODO: Re-enable after fixing login redirect issues
+// import { classifyRoute, requiresAuthentication } from './core/utils/route-classifier';
 
 /**
  * Optimized Middleware for handling authentication redirects
@@ -8,81 +10,88 @@ import { classifyRoute, requiresAuthentication } from './core/utils/route-classi
  */
 
 export function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl;
+    // TEMPORARILY DISABLED: Route authorization logic
+    // TODO: Re-enable after fixing login redirect issues
+    // const { pathname } = request.nextUrl;
 
     // Debug logging
-    console.log(`[Middleware] Processing: ${pathname}`);
+    // console.log(`[Middleware] Processing: ${pathname}`);
 
     // Classify the route automatically
-    const routeClassification = classifyRoute(pathname);
-    console.log(`[Middleware] Route classification:`, routeClassification);
+    // const routeClassification = classifyRoute(pathname);
+    // console.log(`[Middleware] Route classification:`, routeClassification);
 
     // Skip middleware for static files and Next.js internals
-    if (routeClassification.folderType === 'static') {
-        console.log(`[Middleware] Skipping static route: ${pathname}`);
-        return NextResponse.next();
-    }
+    // if (routeClassification.folderType === 'static') {
+    //     console.log(`[Middleware] Skipping static route: ${pathname}`);
+    //     return NextResponse.next();
+    // }
 
     // Get token from cookies
-    const token = request.cookies.get('auth-token')?.value;
-    console.log(`[Middleware] Token exists: ${!!token}`);
+    // const token = request.cookies.get('auth-token')?.value;
+    // console.log(`[Middleware] Token exists: ${!!token}`);
 
     // Check if route requires authentication
-    const needsAuth = requiresAuthentication(pathname);
-    console.log(`[Middleware] Requires authentication: ${needsAuth}`);
+    // const needsAuth = requiresAuthentication(pathname);
+    // console.log(`[Middleware] Requires authentication: ${needsAuth}`);
 
     // Allow public routes without authentication
-    if (!needsAuth) {
-        console.log(`[Middleware] Allowing public route: ${pathname}`);
-        return NextResponse.next();
-    }
+    // if (!needsAuth) {
+    //     console.log(`[Middleware] Allowing public route: ${pathname}`);
+    //     return NextResponse.next();
+    // }
 
     // Protected routes - require authentication
-    if (!token) {
-        console.log(`[Middleware] No token, redirecting to login for: ${pathname}`);
-        // Prevent redirect loops by checking if already on login page
-        if (pathname === '/login') {
-            return NextResponse.next();
-        }
+    // if (!token) {
+    //     console.log(`[Middleware] No token, redirecting to login for: ${pathname}`);
+    //     // Prevent redirect loops by checking if already on login page
+    //     if (pathname === '/login') {
+    //         return NextResponse.next();
+    //     }
 
-        // Create login URL with encrypted params
-        const loginUrl = new URL('/login', request.url);
+    //     // Create login URL with encrypted params
+    //     const loginUrl = new URL('/login', request.url);
 
-        // Add role and return URL parameters
-        if (pathname.startsWith('/manager')) {
-            const roleParam = btoa(encodeURIComponent('MANAGER'));
-            const urlParam = btoa(encodeURIComponent(pathname));
-            loginUrl.searchParams.set('r', roleParam);
-            loginUrl.searchParams.set('u', urlParam);
-        } else if (pathname.startsWith('/staff')) {
-            const roleParam = btoa(encodeURIComponent('STAFF'));
-            const urlParam = btoa(encodeURIComponent(pathname));
-            loginUrl.searchParams.set('r', roleParam);
-            loginUrl.searchParams.set('u', urlParam);
-        }
+    //     // Add role and return URL parameters
+    //     if (pathname.startsWith('/manager')) {
+    //         const roleParam = btoa(encodeURIComponent('MANAGER'));
+    //         const urlParam = btoa(encodeURIComponent(pathname));
+    //         loginUrl.searchParams.set('r', roleParam);
+    //         loginUrl.searchParams.set('u', urlParam);
+    //     } else if (pathname.startsWith('/staff')) {
+    //         const roleParam = btoa(encodeURIComponent('STAFF'));
+    //         const urlParam = btoa(encodeURIComponent(pathname));
+    //         loginUrl.searchParams.set('r', roleParam);
+    //         loginUrl.searchParams.set('u', urlParam);
+    //     }
 
-        return NextResponse.redirect(loginUrl);
-    }
+    //     return NextResponse.redirect(loginUrl);
+    // }
 
     // Add cache headers to prevent unnecessary re-processing
     const response = NextResponse.next();
-    response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    // response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-    console.log(`[Middleware] Allowing authenticated access to: ${pathname}`);
+    // console.log(`[Middleware] Allowing authenticated access to: ${pathname}`);
     return response;
 }
 
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api (API routes)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * - _vercel (Vercel internal)
-         * - files with extensions (static assets)
-         */
-        '/((?!api|_next/static|_next/image|favicon.ico|_vercel|.*\\..*).*)',
-    ],
+    // TEMPORARILY DISABLED: Middleware matcher
+    // TODO: Re-enable after fixing login redirect issues
+    matcher: [],
+
+    // Original matcher (commented out):
+    // matcher: [
+    //     /*
+    //      * Match all request paths except for the ones starting with:
+    //      * - api (API routes)
+    //      * - _next/static (static files)
+    //      * - _next/image (image optimization files)
+    //      * - favicon.ico (favicon file)
+    //      * - _vercel (Vercel internal)
+    //      * - files with extensions (static assets)
+    //      */
+    //     '/((?!api|_next/static|_next/image|favicon.ico|_vercel|.*\\..*).*)',
+    // ],
 };
