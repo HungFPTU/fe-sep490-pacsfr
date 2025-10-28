@@ -5,7 +5,10 @@ import { useCreateWorkShift, useUpdateWorkShift } from './index';
 import type { WorkShift, CreateWorkShiftRequest } from '../types';
 
 type FormValues = {
-    name: string;
+    counterId : string;
+    staffId : string;
+    shiftDate: string;
+    shiftType: string;
     startTime: string;
     endTime: string;
     description?: string;
@@ -30,7 +33,10 @@ export const useWorkShiftForm = ({
     const { addToast } = useGlobalToast();
 
     const toFormValues = (data?: WorkShift | null): FormValues => ({
-        name: data?.name ?? '',
+        counterId: data?.counterId ?? '',
+        staffId: data?.staffId ?? '',
+        shiftDate: data?.shiftDate ? new Date(data.shiftDate).toISOString().split('T')[0] : '',
+        shiftType: data?.shiftType ?? '',
         startTime: data?.startTime ?? '',
         endTime: data?.endTime ?? '',
         description: data?.description ?? '',
@@ -41,7 +47,7 @@ export const useWorkShiftForm = ({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
             // Final validation before submit
-            if (!value.name?.trim()) {
+            if (!value.shiftType?.trim()) {
                 addToast({ message: 'Vui lòng nhập tên ca', type: 'error' });
                 return;
             }
@@ -56,11 +62,13 @@ export const useWorkShiftForm = ({
 
             try {
                 const request: CreateWorkShiftRequest = {
-                    name: value.name.trim(),
+                    shiftType: value.shiftType.trim(),
                     startTime: value.startTime.trim(),
                     endTime: value.endTime.trim(),
                     description: value.description?.trim() || '',
-                    isActive: value.isActive,
+                    counterId: value.counterId.trim(), // (Hoặc lấy giá trị từ đâu đó)
+                    staffId: value.staffId.trim(),
+                    shiftDate: value.shiftDate.trim()
                 };
 
                 let res;
