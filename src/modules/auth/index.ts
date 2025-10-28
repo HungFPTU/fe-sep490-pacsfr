@@ -33,6 +33,7 @@ export {
 // Utilities
 export * from "./utils/role.utils";
 export * from "./utils/auth-redirect.utils";
+export * from "./utils/login-redirect.utils";
 export {
     getUserDataFromStorage,
     getUserRoleFromStorage,

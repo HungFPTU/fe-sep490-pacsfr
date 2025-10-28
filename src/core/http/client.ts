@@ -1,5 +1,6 @@
 // import { useGlobalLoading } from "@core/patterns/SingletonHook";
 import { ENV } from "@/core/config/env";
+import { useAuthStore } from "@/modules/auth/stores/useAuthStore";
 
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -46,7 +47,14 @@ class HttpClient {
         header: string;
         scheme: string;
     }> = {
-            getToken: () => undefined,
+            getToken: () => {
+                // Get token from auth store
+                if (typeof window !== 'undefined') {
+                    const authStore = useAuthStore.getState();
+                    return authStore.token;
+                }
+                return null;
+            },
             header: "Authorization",
             scheme: "Bearer",
         };
@@ -85,6 +93,41 @@ class HttpClient {
         if (config.getToken) this.globalAuthConfig.getToken = config.getToken;
         if (config.header) this.globalAuthConfig.header = config.header;
         if (config.scheme) this.globalAuthConfig.scheme = config.scheme;
+    }
+
+    // Method to get current auth state
+    getAuthState() {
+        if (typeof window !== 'undefined') {
+            const authStore = useAuthStore.getState();
+            return {
+                token: authStore.token,
+                isAuthenticated: authStore.isAuthenticated,
+                user: authStore.user,
+                role: authStore.role
+            };
+        }
+        return {
+            token: null,
+            isAuthenticated: false,
+            user: null,
+            role: null
+        };
+    }
+
+    // Method to handle logout
+    handleLogout(reason: string = 'manual') {
+        if (typeof window !== 'undefined') {
+            const authStore = useAuthStore.getState();
+            authStore.clearCredentials();
+
+            // Dispatch logout event
+            window.dispatchEvent(new CustomEvent("auth-logout", {
+                detail: { reason, message: 'User logged out' }
+            }));
+
+            // Redirect to login page
+            window.location.href = '/login';
+        }
     }
 
     private getBaseUrl(): string {
@@ -163,15 +206,33 @@ class HttpClient {
         try {
             const authHeader = this.resolveAuthHeader(headers, auth);
 
+            // Handle FormData vs JSON body
+            const isFormData = body instanceof FormData;
+            const fetchHeaders: HeadersInit = {
+                ...(headers || {}),
+                ...authHeader,
+            };
+
+            // Only set Content-Type for non-FormData requests
+            if (!isFormData) {
+                (fetchHeaders as Record<string, string>)["Content-Type"] = "application/json";
+            }
+
+            // Debug logging for FormData
+            if (isFormData) {
+                console.log('[HTTP Client] Sending FormData request to:', `${resolvedBase}${url}`);
+                console.log('[HTTP Client] FormData entries:');
+                for (const [key, value] of (body as FormData).entries()) {
+                    console.log(`  ${key}:`, value);
+                }
+                console.log('[HTTP Client] Headers:', fetchHeaders);
+            }
+
             const fetchInit: RequestInit = {
                 ...rest,
                 method,
-                headers: {
-                    "Content-Type": "application/json",
-                    ...(headers || {}),
-                    ...authHeader,
-                },
-                body: body !== undefined ? JSON.stringify(body) : undefined,
+                headers: fetchHeaders,
+                body: body !== undefined ? (isFormData ? body : JSON.stringify(body)) : undefined,
             };
 
             // Chỗ này chưa có API auth/me, lỗi ở đây
@@ -309,9 +370,13 @@ http.addErrorInterceptor(async (error) => {
 
     // Handle common error scenarios
     if (error.status === 401) {
-        // Unauthorized - only log, don't dispatch event to avoid auto-logout
+        // Unauthorized - logout user and redirect to login
         console.warn('[HTTP Client] 401 Unauthorized:', error.message);
-        // Let ProtectedRoute handle authentication checks
+
+        if (typeof window !== "undefined") {
+            // Use http client's logout method
+            http.handleLogout('unauthorized');
+        }
     }
 
     if (error.status === 403) {

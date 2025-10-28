@@ -4,7 +4,17 @@ export type RestResponse<T extends object> = RestMany<T> | RestOne<T>;
 export interface RestMany<T extends object> {
   $id?: string;
   success: boolean;
-  data: { $id?: string; $values: (T & { $id?: string })[] };
+  data: {
+    $id?: string;
+    items?: { $id?: string; $values?: (T & { $id?: string })[] };
+    $values?: (T & { $id?: string })[];
+    size: number;
+    page: number;
+    total: number;
+    totalPages: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+  };
 }
 export interface RestOne<T extends object> {
   $id?: string;
@@ -31,7 +41,7 @@ export const getValues = <T extends object>(r: RestResponse<T>): T[] => {
 
 export const getOne = <T extends object>(r: RestResponse<T>): T | null =>
   !r?.success || !r.data ? null :
-  isMany(r) ? null : stripDollarMeta<T>(r.data as T & { $id?: string });
+    isMany(r) ? null : stripDollarMeta<T>(r.data as T & { $id?: string });
 
 // ================== Paged ==================
 export interface RestPaged<T extends object> {
@@ -48,8 +58,8 @@ export interface RestPaged<T extends object> {
     hasNextPage: boolean;
 
     items:
-      | { $id?: string; $values?: (T & { $id?: string })[] }
-      | (T & { $id?: string })[];
+    | { $id?: string; $values?: (T & { $id?: string })[] }
+    | (T & { $id?: string })[];
 
     $values?: (T & { $id?: string })[];
   };
