@@ -195,66 +195,18 @@ export const LegalDocumentForm: React.FC<Props> = ({
                 </div>
             </div>
 
-            {/* Active Status */}
-            <div className="relative overflow-hidden bg-white border-2 border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group">
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-blue-50 to-indigo-50 opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-                <div className="relative flex items-center justify-between p-8">
-                    <div className="flex items-center space-x-6">
-                        <div className="relative">
-                            <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-100 via-blue-100 to-indigo-100 shadow-lg group-hover:shadow-xl transition-all duration-300">
-                                <svg className="w-8 h-8 text-emerald-600 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full border-2 border-white shadow-sm ${formData.isActive ? 'bg-emerald-500' : 'bg-slate-400'}`}>
-                                <div className={`w-full h-full rounded-full ${formData.isActive ? 'bg-emerald-400' : 'bg-slate-300'}`}></div>
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <h3 className="text-lg font-bold text-slate-800 tracking-tight group-hover:text-slate-900 transition-colors duration-300">
-                                Trạng thái kích hoạt văn bản
-                            </h3>
-                            <p className="text-sm text-slate-600 leading-relaxed max-w-md">
-                                Văn bản sẽ được hiển thị và có thể sử dụng trong hệ thống quản lý
-                            </p>
-                            <div className="flex items-center space-x-3 mt-3">
-                                <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-full ${formData.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
-                                    <div className={`w-2 h-2 rounded-full ${formData.isActive ? 'bg-emerald-500' : 'bg-slate-400'}`}></div>
-                                    <span className="text-xs font-semibold">
-                                        {formData.isActive ? 'Đang hoạt động' : 'Tạm dừng'}
-                                    </span>
-                                </div>
-                                <div className={`text-xs font-medium px-2 py-1 rounded-md ${formData.isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-50 text-slate-500 border border-slate-200'}`}>
-                                    {formData.isActive ? '✓ Có thể sử dụng' : '✗ Không sử dụng'}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col items-center space-y-3">
-                        <div className="relative">
-                            <Switch
-                                isSelected={formData.isActive}
-                                onValueChange={(value) => updateField('isActive', value)}
-                                size="lg"
-                                color="success"
-                                classNames={{
-                                    wrapper: "group-data-[selected=true]:bg-gradient-to-r group-data-[selected=true]:from-emerald-500 group-data-[selected=true]:to-green-500 shadow-xl group-data-[selected=true]:shadow-emerald-200",
-                                    thumb: "group-data-[selected=true]:ml-6 shadow-lg",
-                                }}
-                            />
-                            <div className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-1 rounded-full ${formData.isActive ? 'bg-emerald-300' : 'bg-slate-300'} transition-colors duration-300`}></div>
-                        </div>
-                        <div className="text-center">
-                            <span className={`text-sm font-bold uppercase tracking-wider ${formData.isActive ? 'text-emerald-600' : 'text-slate-500'}`}>
-                                {formData.isActive ? 'BẬT' : 'TẮT'}
-                            </span>
-                            <p className="text-xs text-slate-500 mt-1">
-                                {formData.isActive ? 'Kích hoạt' : 'Vô hiệu hóa'}
-                            </p>
-                        </div>
-                    </div>
-                </div>
+            {/* Active Status (Simple Switch) */}
+            <div className="flex items-center space-x-3 mt-2">
+                <label className="text-sm font-medium text-slate-700">
+                    Kích hoạt văn bản
+                </label>
+                <Switch
+                    isSelected={formData.isActive}
+                    onValueChange={(value) => updateField('isActive', value)}
+                    size="md"
+                    color="success"
+                />
             </div>
-        </div >
+        </div>
     );
 };

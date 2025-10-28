@@ -38,7 +38,7 @@ export function useAuth() {
             return { ...result, rememberMe: credentials.rememberMe };
         },
         onSuccess: (response) => {
-            console.log('[useAuth] Login success');
+            console.log('[useAuth] Login success, role:', response.role);
             setCredentials(response.user, response.tokens.accessToken, response.role, response.rememberMe);
             setJustLoggedIn(true);
             addToast({ message: "Đăng nhập thành công!", type: "success" });

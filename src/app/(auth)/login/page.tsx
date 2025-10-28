@@ -4,6 +4,7 @@ import { LoginForm } from "@/modules/auth/components/login/LoginForm";
 import { useAuth } from "@/modules/auth/hooks";
 import { UserRole } from "@/modules/auth/enums";
 import { LoginPayload } from "@/modules/auth/types";
+import { getPostLoginRedirectUrl } from "@/modules/auth/utils/login-redirect.utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useCallback, useMemo } from "react";
@@ -19,12 +20,6 @@ const decrypt = (encrypted: string): string => {
     }
 };
 
-function doRedirect(href: string) {
-    if (typeof window !== "undefined" && window.location) {
-        window.location.href = href;
-    }
-}
-
 export default function LoginPage() {
     const { login, isLoading, isAuthenticated, role } = useAuth();
     const searchParams = useSearchParams();
@@ -38,10 +33,16 @@ export default function LoginPage() {
         const roleParam = searchParams.get('r');
         const urlParam = searchParams.get('u');
 
-        return {
+        console.log('[Login] Raw URL params:', { roleParam, urlParam });
+        console.log('[Login] All search params:', Object.fromEntries(searchParams.entries()));
+
+        const result = {
             role: roleParam ? decrypt(roleParam) : null,
             url: urlParam ? decrypt(urlParam) : null
         };
+
+        console.log('[Login] Decrypted URL params:', result);
+        return result;
     }, [searchParams]);
 
     // Update state when URL params change
@@ -57,33 +58,39 @@ export default function LoginPage() {
     // Memoized login handler to prevent unnecessary re-renders
     const handleLogin = useCallback(async (credentials: LoginPayload) => {
         try {
+            console.log('[Login] Starting login process...');
             const result = await login(credentials);
-            console.log('[Login] Login successful, redirecting based on role:', role);
+            console.log('[Login] Login successful, result:', result);
+            console.log('[Login] Current role from hook:', role);
+            console.log('[Login] Intended role:', intendedRole);
+            console.log('[Login] Return URL:', returnUrl);
 
-            // Wait for cookie to be set before redirect
+            // Determine redirect URL using utility function
+            const redirectUrl = getPostLoginRedirectUrl({
+                intendedRole,
+                returnUrl,
+                userRole: result?.role || role
+            });
+
+            console.log('[Login] Final redirect URL:', redirectUrl);
+
+            // Perform redirect with proper timing
+            window.location.href = redirectUrl;
+
+            // Also try immediate redirect as backup
             setTimeout(() => {
-                // Use returnUrl if available, otherwise redirect based on role
-                if (returnUrl) {
-                    console.log('[Login] Post-login redirecting to returnUrl:', returnUrl);
-                    doRedirect(returnUrl);
-                } else if (role === UserRole.MANAGER) {
-                    console.log('[Login] Post-login redirecting Manager to /manager');
-                    doRedirect('/manager');
-                } else if (role === UserRole.STAFF) {
-                    console.log('[Login] Post-login redirecting Staff to /staff/dashboard');
-                    doRedirect('/staff/dashboard');
-                } else {
-                    console.log('[Login] Post-login redirecting to home');
-                    doRedirect('/');
+                console.log('[Login] Backup immediate redirect to:', redirectUrl);
+                if (typeof window !== 'undefined' && window.location) {
+                    window.location.href = redirectUrl;
                 }
-            }, 1000); // 1 second delay to ensure state is stable
+            }, 2000);
 
             return result;
         } catch (error) {
             console.error('[Login] Login failed:', error);
             throw error;
         }
-    }, [login, role, returnUrl]);
+    }, [login, role, returnUrl, intendedRole]);
 
     // Redirect if already authenticated - memoized to prevent unnecessary re-renders
     useEffect(() => {
@@ -98,20 +105,15 @@ export default function LoginPage() {
                     // Still redirect but log the mismatch
                 }
 
-                // Use returnUrl if available, otherwise redirect based on role
-                if (returnUrl) {
-                    console.log('[Login] Redirecting to returnUrl:', returnUrl);
-                    doRedirect(returnUrl);
-                } else if (role === UserRole.MANAGER) {
-                    console.log('[Login] Redirecting Manager to /manager');
-                    doRedirect('/manager');
-                } else if (role === UserRole.STAFF) {
-                    console.log('[Login] Redirecting Staff to /staff/dashboard');
-                    doRedirect('/staff/dashboard');
-                } else {
-                    console.log('[Login] Redirecting to home');
-                    doRedirect('/');
-                }
+                // Determine redirect URL using utility function
+                const redirectUrl = getPostLoginRedirectUrl({
+                    intendedRole,
+                    returnUrl,
+                    userRole: role
+                });
+
+                // Perform redirect
+                window.location.href = redirectUrl;
             }, 1000); // 1 second delay to ensure state is stable
 
             return () => clearTimeout(timeoutId);

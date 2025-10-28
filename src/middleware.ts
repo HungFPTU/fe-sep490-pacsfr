@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { PUBLIC_ROUTES } from './core/config';
+import { classifyRoute, requiresAuthentication } from './core/utils/route-classifier';
 
 /**
  * Optimized Middleware for handling authentication redirects
@@ -10,34 +10,36 @@ import { PUBLIC_ROUTES } from './core/config';
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Skip middleware for static files, API routes, and auth pages
-    if (
-        pathname.startsWith('/_next') ||
-        pathname.startsWith('/api') ||
-        pathname.startsWith('/favicon.ico') ||
-        pathname.startsWith('/login') ||
-        pathname.startsWith('/register') ||
-        pathname.startsWith('/_vercel') ||
-        pathname.includes('.')
-    ) {
+    // Debug logging
+    console.log(`[Middleware] Processing: ${pathname}`);
+
+    // Classify the route automatically
+    const routeClassification = classifyRoute(pathname);
+    console.log(`[Middleware] Route classification:`, routeClassification);
+
+    // Skip middleware for static files and Next.js internals
+    if (routeClassification.folderType === 'static') {
+        console.log(`[Middleware] Skipping static route: ${pathname}`);
         return NextResponse.next();
     }
 
     // Get token from cookies
     const token = request.cookies.get('auth-token')?.value;
+    console.log(`[Middleware] Token exists: ${!!token}`);
 
-    // Public routes that don't require authentication
-    const isPublicRoute = PUBLIC_ROUTES.some(route =>
-        pathname === route || pathname.startsWith(route + '/')
-    );
+    // Check if route requires authentication
+    const needsAuth = requiresAuthentication(pathname);
+    console.log(`[Middleware] Requires authentication: ${needsAuth}`);
 
-    // Check if route is public
-    if (isPublicRoute) {
+    // Allow public routes without authentication
+    if (!needsAuth) {
+        console.log(`[Middleware] Allowing public route: ${pathname}`);
         return NextResponse.next();
     }
 
     // Protected routes - require authentication
     if (!token) {
+        console.log(`[Middleware] No token, redirecting to login for: ${pathname}`);
         // Prevent redirect loops by checking if already on login page
         if (pathname === '/login') {
             return NextResponse.next();
@@ -66,6 +68,7 @@ export function middleware(request: NextRequest) {
     const response = NextResponse.next();
     response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
+    console.log(`[Middleware] Allowing authenticated access to: ${pathname}`);
     return response;
 }
 

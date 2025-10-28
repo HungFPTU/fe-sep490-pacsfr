@@ -34,6 +34,9 @@ const nextConfig: NextConfig = {
       "@tanstack/react-table",
       "lucide-react",
       "framer-motion",
+      "@emotion/react",
+      "@emotion/styled",
+      "@emotion/is-prop-valid",
     ],
     // Tối ưu hóa memory usage
     memoryBasedWorkersCount: true,
@@ -104,6 +107,10 @@ const nextConfig: NextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       'async_hooks': 'empty-module',
+      // Fix for emotion dependencies
+      '@emotion/is-prop-valid': require.resolve('@emotion/is-prop-valid'),
+      '@emotion/styled': require.resolve('@emotion/styled'),
+      '@emotion/react': require.resolve('@emotion/react'),
     };
 
     // Fix for "exports is not defined" error
@@ -129,6 +136,14 @@ const nextConfig: NextConfig = {
     // Fix for module resolution issues
     config.resolve.mainFields = ['browser', 'module', 'main'];
     config.resolve.conditionNames = ['browser', 'import', 'module', 'main', 'require'];
+
+    // Handle emotion dependencies properly for client-side
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        // Don't fallback emotion packages to false - let them resolve normally
+      };
+    }
 
     // Xử lý lỗi "i.M" trong build và chunk loading
     config.optimization = {
