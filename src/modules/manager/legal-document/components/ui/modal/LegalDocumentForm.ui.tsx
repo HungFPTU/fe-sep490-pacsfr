@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Input } from '@/shared/components/manager/ui/input';
-import { Switch } from '@heroui/react';
+// Removed Switch import - using custom toggle instead
 import { UploadCloud } from 'lucide-react';
 import { LegalDocumentService } from '../../../services/legal-document.service';
 import type { LegalDocumentFormData } from '../../../types';
@@ -34,7 +34,7 @@ export const LegalDocumentForm: React.FC<Props> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Document Number */}
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-gray-900">
                         Số văn bản <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -44,21 +44,21 @@ export const LegalDocumentForm: React.FC<Props> = ({
                         className={errors.documentNumber ? 'border-red-500' : ''}
                     />
                     {errors.documentNumber && (
-                        <p className="text-red-500 text-sm mt-1">{errors.documentNumber}</p>
+                        <p className="text-red-500 text-sm">{errors.documentNumber}</p>
                     )}
                 </div>
 
                 {/* Document Type */}
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-gray-900">
                         Loại văn bản <span className="text-red-500">*</span>
                     </label>
                     <select
                         value={formData.documentType || ''}
                         onChange={(e) => updateField('documentType', e.target.value)}
-                        className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 ${errors.documentType
+                        className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.documentType
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                            : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500'
+                            : 'border-gray-300'
                             }`}
                     >
                         <option value="">Chọn loại văn bản</option>
@@ -69,14 +69,14 @@ export const LegalDocumentForm: React.FC<Props> = ({
                         ))}
                     </select>
                     {errors.documentType && (
-                        <p className="text-red-500 text-sm mt-1">{errors.documentType}</p>
+                        <p className="text-red-500 text-sm">{errors.documentType}</p>
                     )}
                 </div>
             </div>
 
             {/* Document Name */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-gray-900">
                     Tên văn bản <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -86,14 +86,14 @@ export const LegalDocumentForm: React.FC<Props> = ({
                     className={errors.name ? 'border-red-500' : ''}
                 />
                 {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                    <p className="text-red-500 text-sm">{errors.name}</p>
                 )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Issue Date */}
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-gray-900">
                         Ngày ban hành <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -103,13 +103,13 @@ export const LegalDocumentForm: React.FC<Props> = ({
                         className={errors.issueDate ? 'border-red-500' : ''}
                     />
                     {errors.issueDate && (
-                        <p className="text-red-500 text-sm mt-1">{errors.issueDate}</p>
+                        <p className="text-red-500 text-sm">{errors.issueDate}</p>
                     )}
                 </div>
 
                 {/* Effective Date */}
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-gray-900">
                         Ngày có hiệu lực <span className="text-red-500">*</span>
                     </label>
                     <Input
@@ -119,14 +119,14 @@ export const LegalDocumentForm: React.FC<Props> = ({
                         className={errors.effectiveDate ? 'border-red-500' : ''}
                     />
                     {errors.effectiveDate && (
-                        <p className="text-red-500 text-sm mt-1">{errors.effectiveDate}</p>
+                        <p className="text-red-500 text-sm">{errors.effectiveDate}</p>
                     )}
                 </div>
             </div>
 
             {/* Issue Body */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-gray-900">
                     Cơ quan ban hành <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -136,21 +136,21 @@ export const LegalDocumentForm: React.FC<Props> = ({
                     className={errors.issueBody ? 'border-red-500' : ''}
                 />
                 {errors.issueBody && (
-                    <p className="text-red-500 text-sm mt-1">{errors.issueBody}</p>
+                    <p className="text-red-500 text-sm">{errors.issueBody}</p>
                 )}
             </div>
 
             {/* Status */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-gray-900">
                     Trạng thái <span className="text-red-500">*</span>
                 </label>
                 <select
                     value={formData.status || ''}
                     onChange={(e) => updateField('status', e.target.value)}
-                    className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-1 ${errors.status
+                    className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.status
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                        : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-500'
+                        : 'border-gray-300'
                         }`}
                 >
                     <option value="">Chọn trạng thái</option>
@@ -161,13 +161,13 @@ export const LegalDocumentForm: React.FC<Props> = ({
                     ))}
                 </select>
                 {errors.status && (
-                    <p className="text-red-500 text-sm mt-1">{errors.status}</p>
+                    <p className="text-red-500 text-sm">{errors.status}</p>
                 )}
             </div>
 
             {/* File Upload */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
+                <label className="text-sm font-medium text-gray-900">
                     File đính kèm
                 </label>
                 <div className="flex items-center space-x-4">
@@ -180,52 +180,55 @@ export const LegalDocumentForm: React.FC<Props> = ({
                     />
                     <label
                         htmlFor="file-upload"
-                        className="flex items-center space-x-2 px-4 py-2 border border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50"
+                        className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
                     >
-                        <UploadCloud className="h-5 w-5 text-slate-500" />
-                        <span className="text-sm text-slate-700">
+                        <UploadCloud className="h-5 w-5 text-gray-500" />
+                        <span className="text-sm text-gray-900">
                             {formData.file ? formData.file.name : 'Chọn file'}
                         </span>
                     </label>
                     {formData.file && (
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-gray-500">
                             {LegalDocumentService.formatFileSize(formData.file.size)}
                         </span>
                     )}
                 </div>
             </div>
 
-            {/* Active Status - Switch Style */}
-            <div className="flex flex-col mt-4">
-                <label htmlFor="active-status-switch" className="text-sm font-medium text-slate-700 mb-1 flex items-center">
-                    Kích hoạt văn bản
-                    <span
-                        className={`ml-2 inline-block rounded px-2 text-xs font-semibold ${
-                            formData.isActive
-                                ? 'bg-green-100 text-green-700 border border-green-300'
-                                : 'bg-slate-100 text-slate-500 border border-slate-200'
-                        } transition-colors duration-200`}
-                    >
-                        {formData.isActive ? 'Đang kích hoạt' : 'Không kích hoạt'}
-                    </span>
+            {/* Active Status - Simple Switch */}
+            <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-900">
+                    Trạng thái hiển thị
                 </label>
-                <div className="flex items-center">
-                    <Switch
-                        id="active-status-switch"
-                        isSelected={formData.isActive}
-                        onValueChange={(value) => updateField('isActive', value)}
-                        size="lg"
-                        color={formData.isActive ? 'success' : 'default'}
-                        aria-label="Kích hoạt văn bản"
-                        className={`focus-visible:ring-2 focus-visible:ring-offset-2 ${
-                            formData.isActive ? 'focus-visible:ring-green-400' : 'focus-visible:ring-slate-300'
-                        }`}
-                    />
-                    <span className="ml-3 text-xs text-slate-400">
-                        {formData.isActive
-                            ? 'Văn bản sẽ hiển thị cho người dùng'
-                            : 'Văn bản bị ẩn khỏi các danh sách'}
-                    </span>
+                <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => updateField('isActive', !formData.isActive)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${formData.isActive ? 'bg-gray-600' : 'bg-gray-200'
+                                }`}
+                            aria-label="Kích hoạt văn bản"
+                        >
+                            <span
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isActive ? 'translate-x-6' : 'translate-x-1'
+                                    }`}
+                            />
+                        </button>
+                        <div>
+                            <span className="text-sm font-medium text-gray-900">
+                                Kích hoạt văn bản
+                            </span>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                                {formData.isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                            </p>
+                        </div>
+                    </div>
+                    <div className={`px-2 py-1 rounded text-xs font-medium ${formData.isActive
+                        ? 'bg-gray-100 text-gray-900'
+                        : 'bg-gray-100 text-gray-500'
+                        }`}>
+                        {formData.isActive ? 'BẬT' : 'TẮT'}
+                    </div>
                 </div>
             </div>
         </div>
