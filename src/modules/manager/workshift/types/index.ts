@@ -3,7 +3,8 @@ export type WorkShift = {
     id: string;
     name: string;
     startTime: string;  // Time string like "08:00"
-    endTime: string;    // Time string like "17:00"
+    endTime: string;
+    shiftType: string;    
     description?: string;
     isActive: boolean;
     createdAt: string | Date;

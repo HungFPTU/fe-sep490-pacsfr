@@ -110,7 +110,7 @@ export const WorkShiftListPage: React.FC = () => {
                         ) : (
                             workShifts.map((ws) => (
                                 <tr key={ws.id} className="hover:bg-slate-50">
-                                    <td className="px-6 py-4 text-sm font-medium text-slate-900">{ws.name}</td>
+                                    <td className="px-6 py-4 text-sm font-medium text-slate-900">{ws.shiftType}</td>
                                     <td className="px-6 py-4 text-sm text-slate-600">{ws.startTime}</td>
                                     <td className="px-6 py-4 text-sm text-slate-600">{ws.endTime}</td>
                                     <td className="px-6 py-4 text-sm">
@@ -119,7 +119,7 @@ export const WorkShiftListPage: React.FC = () => {
                                                 ? 'bg-green-100 text-green-800'
                                                 : 'bg-gray-100 text-gray-800'
                                         }`}>
-                                            {ws.isActive ? 'Hoạt động' : 'Ngừng'}
+                                            {ws.shiftType}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right text-sm font-medium">
