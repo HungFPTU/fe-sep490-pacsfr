@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BaseModal } from '@/shared/components/manager';
 import { LegalDocumentForm } from './LegalDocumentForm.ui';
 import { useLegalDocumentForm, useCreateLegalDocument, useUpdateLegalDocument } from '../../../hooks';
-import type { LegalDocument } from '../../../types';
+import type { LegalDocument, DocumentType, DocumentStatus } from '../../../types';
 
 interface Props {
     open: boolean;
@@ -51,12 +51,12 @@ export const CreateLegalDocumentModal: React.FC<Props> = ({
         try {
             const requestData = {
                 documentNumber: formData.documentNumber,
-                documentType: formData.documentType,
+                documentType: formData.documentType as DocumentType,
                 name: formData.name,
                 issueDate: new Date(formData.issueDate),
                 issueBody: formData.issueBody,
                 effectiveDate: new Date(formData.effectiveDate),
-                status: formData.status,
+                status: formData.status as DocumentStatus,
                 isActive: formData.isActive,
                 file: formData.file,
             };
@@ -85,6 +85,14 @@ export const CreateLegalDocumentModal: React.FC<Props> = ({
         resetForm();
         onClose();
     };
+
+    // Reset form when modal opens with new initData
+    useEffect(() => {
+        if (open && initData) {
+            console.log('[CreateLegalDocumentModal] Modal opened with initData, resetting form');
+            resetForm();
+        }
+    }, [open, initData, resetForm]);
 
     const isLoading = createMutation.isPending || updateMutation.isPending;
 

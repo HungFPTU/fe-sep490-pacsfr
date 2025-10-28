@@ -1,1 +1,1 @@
-export { legalDocumentApi } from './legal-document.api';
+export * from './legal-document.api';

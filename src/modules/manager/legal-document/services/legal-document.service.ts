@@ -1,6 +1,6 @@
 import { legalDocumentApi } from '../api/legal-document.api';
-import { DOCUMENT_TYPE_OPTIONS, DOCUMENT_STATUS_OPTIONS } from '../constant';
-import { DocumentType, DocumentStatus } from '../enums';
+import { DOCUMENT_TYPE_LABELS, DOCUMENT_STATUS_LABELS } from '../constants';
+// Removed unused type imports
 import type {
     CreateLegalDocumentRequest,
     UpdateLegalDocumentRequest,
@@ -116,38 +116,22 @@ export class LegalDocumentService {
 
     // Format document type for display
     static formatDocumentType(type: string): string {
-        const typeMap: Record<string, string> = {
-            [DocumentType.LAW]: "Luật",
-            [DocumentType.DECREE]: "Nghị định",
-            [DocumentType.CIRCULAR]: "Thông tư",
-            [DocumentType.DECISION]: "Quyết định",
-            [DocumentType.DIRECTIVE]: "Chỉ thị",
-            [DocumentType.NOTIFICATION]: "Thông báo",
-            [DocumentType.OTHER]: "Khác"
-        };
-        return typeMap[type] || type;
+        return DOCUMENT_TYPE_LABELS[type as keyof typeof DOCUMENT_TYPE_LABELS] || type;
     }
 
     // Format document status for display
     static formatDocumentStatus(status: string): string {
-        const statusMap: Record<string, string> = {
-            [DocumentStatus.DRAFT]: "Nháp",
-            [DocumentStatus.PUBLISHED]: "Đã công bố",
-            [DocumentStatus.EFFECTIVE]: "Có hiệu lực",
-            [DocumentStatus.EXPIRED]: "Hết hiệu lực",
-            [DocumentStatus.CANCELLED]: "Đã hủy"
-        };
-        return statusMap[status] || status;
+        return DOCUMENT_STATUS_LABELS[status as keyof typeof DOCUMENT_STATUS_LABELS] || status;
     }
 
     // Get status color for UI
     static getStatusColor(status: string): string {
         const colorMap: Record<string, string> = {
-            [DocumentStatus.DRAFT]: "warning",
-            [DocumentStatus.PUBLISHED]: "primary",
-            [DocumentStatus.EFFECTIVE]: "success",
-            [DocumentStatus.EXPIRED]: "danger",
-            [DocumentStatus.CANCELLED]: "default"
+            'DRAFT': "warning",
+            'PUBLISHED': "primary",
+            'EFFECTIVE': "success",
+            'EXPIRED': "danger",
+            'CANCELLED': "default"
         };
         return colorMap[status] || "default";
     }
@@ -183,11 +167,19 @@ export class LegalDocumentService {
 
     // Get document type options
     static getDocumentTypeOptions() {
-        return DOCUMENT_TYPE_OPTIONS;
+        return Object.entries(DOCUMENT_TYPE_LABELS).map(([value, label]) => ({
+            value,
+            label,
+        }));
     }
 
     // Get document status options
     static getDocumentStatusOptions() {
-        return DOCUMENT_STATUS_OPTIONS;
+        return Object.entries(DOCUMENT_STATUS_LABELS).map(([value, label]) => ({
+            value,
+            label,
+        }));
     }
 }
+
+export const legalDocumentService = new LegalDocumentService();

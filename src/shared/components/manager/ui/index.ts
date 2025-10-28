@@ -43,3 +43,6 @@ export * from './table';
 // Breadcrumb
 export * from './breadcrumb';
 
+// Toggle Switch
+export * from './toggle-switch';
+

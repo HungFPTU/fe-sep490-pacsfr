@@ -1,19 +1,23 @@
-// Document Type enum
-export enum DocumentType {
-    LAW = "Luật",
-    DECREE = "Nghị định",
-    CIRCULAR = "Thông tư",
-    DECISION = "Quyết định",
-    DIRECTIVE = "Chỉ thị",
-    NOTIFICATION = "Thông báo",
-    OTHER = "Khác"
+import { DOCUMENT_TYPES, DOCUMENT_STATUS } from '../constants';
+
+export type DocumentType = typeof DOCUMENT_TYPES[keyof typeof DOCUMENT_TYPES];
+export type DocumentStatus = typeof DOCUMENT_STATUS[keyof typeof DOCUMENT_STATUS];
+
+export enum DocumentTypeEnum {
+    LAW = 'LAW',
+    DECREE = 'DECREE',
+    CIRCULAR = 'CIRCULAR',
+    DECISION = 'DECISION',
+    NOTIFICATION = 'NOTIFICATION',
+    DIRECTIVE = 'DIRECTIVE',
+    RESOLUTION = 'RESOLUTION',
+    OTHER = 'OTHER',
 }
 
-// Document Status enum
-export enum DocumentStatus {
-    DRAFT = "Draft",
-    PUBLISHED = "Published",
-    EFFECTIVE = "Effective",
-    EXPIRED = "Expired",
-    CANCELLED = "Cancelled"
+export enum DocumentStatusEnum {
+    DRAFT = 'DRAFT',
+    PUBLISHED = 'PUBLISHED',
+    EFFECTIVE = 'EFFECTIVE',
+    EXPIRED = 'EXPIRED',
+    CANCELLED = 'CANCELLED',
 }

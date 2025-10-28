@@ -1,63 +1,30 @@
-// Main Legal Document entity type
-export type LegalDocument = {
+import type { DocumentType, DocumentStatus } from '../enums';
+
+// Re-export types for external use
+export type { DocumentType, DocumentStatus };
+
+// Base Legal Document
+export interface LegalDocument {
     id: string;
     documentNumber: string;
-    documentType: string;
+    documentType: DocumentType;
     name: string;
     issueDate: string | Date;
     issueBody: string;
     effectiveDate: string | Date;
-    status: string;
+    status: DocumentStatus;
     isActive: boolean;
-    createdAt: string | Date;
-    modifiedAt?: string | Date;
-    $id?: string;
-
-    // File related fields
-    fileName?: string;
     fileUrl?: string;
+    fileName?: string;
     fileSize?: number;
-    fileType?: string;
-};
+    createdAt: string | Date;
+    updatedAt: string | Date;
+    createdBy?: string;
+    updatedBy?: string;
+}
 
-// Request types
-export type CreateLegalDocumentRequest = {
-    documentNumber: string;
-    documentType: string;
-    name: string;
-    issueDate: string | Date;
-    issueBody: string;
-    effectiveDate: string | Date;
-    status: string;
-    isActive: boolean;
-    file?: File;
-};
-
-export type UpdateLegalDocumentRequest = {
-    id: string;
-    documentNumber: string;
-    documentType: string;
-    name: string;
-    issueDate: string | Date;
-    issueBody: string;
-    effectiveDate: string | Date;
-    status: string;
-    isActive: boolean;
-    file?: File;
-};
-
-// Filter types
-export type LegalDocumentFilters = {
-    keyword?: string;
-    documentType?: string;
-    status?: string;
-    isActive?: boolean;
-    page?: number;
-    size?: number;
-};
-
-// Form validation types
-export type LegalDocumentFormData = {
+// Form Data
+export interface LegalDocumentFormData {
     documentNumber: string;
     documentType: string;
     name: string;
@@ -67,33 +34,70 @@ export type LegalDocumentFormData = {
     status: string;
     isActive: boolean;
     file?: File;
-};
+}
 
-// API Response types
-export type LegalDocumentListResponse = {
-    $id: string;
-    success: boolean;
-    message: string;
-    data: {
-        $id: string;
-        size: number;
+// API Request Types
+export interface CreateLegalDocumentRequest {
+    documentNumber: string;
+    documentType: DocumentType;
+    name: string;
+    issueDate: Date;
+    issueBody: string;
+    effectiveDate: Date;
+    status: DocumentStatus;
+    isActive: boolean;
+    file?: File;
+}
+
+export interface UpdateLegalDocumentRequest {
+    id: string;
+    documentNumber: string;
+    documentType: DocumentType;
+    name: string;
+    issueDate: Date;
+    issueBody: string;
+    effectiveDate: Date;
+    status: DocumentStatus;
+    isActive: boolean;
+    file?: File;
+}
+
+// Filters
+export interface LegalDocumentFilters {
+    keyword?: string;
+    documentType?: string;
+    status?: string;
+    isActive?: boolean;
+    page?: number;
+    size?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+}
+
+// API Response Types
+export interface LegalDocumentListResponse {
+    data: LegalDocument[];
+    pagination: {
         page: number;
+        size: number;
         total: number;
         totalPages: number;
-        hasPreviousPage: boolean;
         hasNextPage: boolean;
-        items: {
-            $id: string;
-            $values: LegalDocument[];
-        };
+        hasPreviousPage: boolean;
     };
-    timestamp: string;
-};
+}
 
-export type LegalDocumentDetailResponse = {
-    $id: string;
-    success: boolean;
-    message: string;
+export interface LegalDocumentDetailResponse {
     data: LegalDocument;
-    timestamp: string;
-};
+}
+
+// Service Options
+export interface DocumentTypeOption {
+    value: string;
+    label: string;
+}
+
+export interface DocumentStatusOption {
+    value: string;
+    label: string;
+}

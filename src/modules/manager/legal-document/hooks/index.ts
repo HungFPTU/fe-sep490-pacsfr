@@ -105,6 +105,7 @@ export const useLegalDocumentForm = (initialData?: Partial<LegalDocumentFormData
     // Update form data when initialData changes (for edit mode)
     React.useEffect(() => {
         if (initialData) {
+            console.log('[useLegalDocumentForm] Updating form data with initialData:', initialData);
             setFormData(prev => ({
                 ...prev,
                 ...initialData,

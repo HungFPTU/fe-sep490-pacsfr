@@ -1,11 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Input } from '@/shared/components/manager/ui/input';
-// Removed Switch import - using custom toggle instead
+import { Input, ToggleSwitch } from '@/shared/components/manager/ui';
 import { UploadCloud } from 'lucide-react';
 import { LegalDocumentService } from '../../../services/legal-document.service';
-import type { LegalDocumentFormData } from '../../../types';
+import type { LegalDocumentFormData, DocumentTypeOption, DocumentStatusOption } from '../../../types';
 
 interface Props {
     formData: LegalDocumentFormData;
@@ -62,7 +61,7 @@ export const LegalDocumentForm: React.FC<Props> = ({
                             }`}
                     >
                         <option value="">Chọn loại văn bản</option>
-                        {documentTypeOptions.map((option) => (
+                        {documentTypeOptions.map((option: DocumentTypeOption) => (
                             <option key={option.value} value={option.value}>
                                 {option.label}
                             </option>
@@ -154,7 +153,7 @@ export const LegalDocumentForm: React.FC<Props> = ({
                         }`}
                 >
                     <option value="">Chọn trạng thái</option>
-                    {documentStatusOptions.map((option) => (
+                    {documentStatusOptions.map((option: DocumentStatusOption) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
                         </option>
@@ -195,42 +194,14 @@ export const LegalDocumentForm: React.FC<Props> = ({
                 </div>
             </div>
 
-            {/* Active Status - Simple Switch */}
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">
-                    Trạng thái hiển thị
-                </label>
-                <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
-                    <div className="flex items-center gap-3">
-                        <button
-                            type="button"
-                            onClick={() => updateField('isActive', !formData.isActive)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${formData.isActive ? 'bg-gray-600' : 'bg-gray-200'
-                                }`}
-                            aria-label="Kích hoạt văn bản"
-                        >
-                            <span
-                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isActive ? 'translate-x-6' : 'translate-x-1'
-                                    }`}
-                            />
-                        </button>
-                        <div>
-                            <span className="text-sm font-medium text-gray-900">
-                                Kích hoạt văn bản
-                            </span>
-                            <p className="text-xs text-gray-500 mt-0.5">
-                                {formData.isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
-                            </p>
-                        </div>
-                    </div>
-                    <div className={`px-2 py-1 rounded text-xs font-medium ${formData.isActive
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'bg-gray-100 text-gray-500'
-                        }`}>
-                        {formData.isActive ? 'BẬT' : 'TẮT'}
-                    </div>
-                </div>
-            </div>
+            {/* Active Status - Toggle Switch */}
+            <ToggleSwitch
+                checked={formData.isActive}
+                onChange={(checked) => updateField('isActive', checked)}
+                label="Kích hoạt văn bản"
+                description={formData.isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                aria-label="Kích hoạt văn bản"
+            />
         </div>
     );
 };
