@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ToggleSwitch } from '@/shared/components/manager/ui';
 import { InputField } from '@/shared/components/layout/manager/form/BaseForm';
 import { UploadCloud, CheckCircle, AlertCircle } from 'lucide-react';
 import { LegalDocumentService } from '../../../services/legal-document.service';
 import { useFileUpload } from '@/core/hooks/useFileUpload';
 import { FormApiOf } from '@/types/types';
 import type { DocumentTypeOption, DocumentStatusOption } from '../../../types';
+import { ToggleSwitch } from '@/shared/components/manager/ui';
 
 type FormValues = {
     documentNumber: string;
@@ -32,12 +32,16 @@ interface Props {
 export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
     const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
     const [uploadedFileName, setUploadedFileName] = useState<string>('');
+    const [isActive, setIsActive] = useState<boolean>(false);
 
     // Sync uploadedFileUrl with form fileUrl
     const formFileUrl = form.state.values.fileUrl;
     useEffect(() => {
         if (formFileUrl && formFileUrl !== uploadedFileUrl) {
             setUploadedFileUrl(formFileUrl);
+            // Extract filename from URL for display
+            const fileName = formFileUrl.split('/').pop() || 'Unknown file';
+            setUploadedFileName(fileName);
             console.log('[LegalDocumentForm] Synced fileUrl from form:', formFileUrl);
         }
     }, [formFileUrl, uploadedFileUrl]);
@@ -84,6 +88,7 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                 // Update local state
                 setUploadedFileUrl(fileUrl);
                 setUploadedFileName(fileName);
+                setIsActive(true);
 
                 // Update form using setFieldValue with callback
                 form.setFieldValue('fileUrl', fileUrl, {
@@ -362,16 +367,19 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                     </div>
                 )}
 
-                {/* Current File Preview */}
-                {form.state.values.fileUrl && !uploadedFileUrl && (
-                    <div className="p-3 bg-gray-50 border border-gray-200 rounded-md">
+                {/* Current File Preview (for edit mode with existing file) */}
+                {form.state.values.fileUrl && !uploadedFileUrl && isEdit && (
+                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                         <div className="flex items-center space-x-3">
-                            <UploadCloud className="w-8 h-8 text-gray-400" />
+                            <UploadCloud className="w-8 h-8 text-blue-500" />
                             <div>
-                                <p className="text-sm text-gray-700 font-medium">
+                                <p className="text-sm text-blue-700 font-medium">
                                     File hiện tại
                                 </p>
-                                <p className="text-xs text-gray-500">
+                                <p className="text-xs text-blue-600">
+                                    {form.state.values.fileUrl.split('/').pop() || 'Unknown file'}
+                                </p>
+                                <p className="text-xs text-blue-500">
                                     Click để thay đổi
                                 </p>
                             </div>
@@ -396,8 +404,8 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                     </div>
                 )}
 
-                {/* Current File Info */}
-                {form.state.values.file && !uploadedFileUrl && (
+                {/* Selected File Info (for new file selection) */}
+                {form.state.values.file && !uploadedFileUrl && !isEdit && (
                     <div className="p-3 bg-gray-50 border border-gray-200 rounded-md">
                         <p className="text-sm text-gray-700">
                             <strong>File đã chọn:</strong> {form.state.values.file.name}
@@ -409,19 +417,21 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                 )}
             </div>
 
-            {/* Active Status - Toggle Switch (only for edit mode) */}
-            {isEdit && (
-                <div className="flex items-end pb-2">
-                    <ToggleSwitch
-                        checked={form.state.values.isActive || false}
-                        onChange={(value) => form.setFieldValue('isActive', value)}
-                        label="Kích hoạt văn bản"
-                        description={form.state.values.isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
-                        aria-label="Kích hoạt văn bản"
-                        disabled={isLoading}
-                    />
+            {/* Active Status - Toggle Switch (always show, but different behavior for create vs edit) */}
+            <div className="flex items-end pb-2">
+                <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <ToggleSwitch
+                            checked={isActive}
+                            onChange={(value: boolean) => setIsActive(value)}
+                            label="Kích hoạt văn bản"
+                            description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                            aria-label="Kích hoạt văn bản"
+                            disabled={isLoading}
+                        />
+                    </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 };

@@ -167,13 +167,15 @@ export const useLegalDocumentForm = ({
     useEffect(() => {
         if (open) {
             // Always reset with current initData when modal opens
-            form.reset(toFormValues(initData));
+            const formValues = toFormValues(initData);
+            console.log('[useLegalDocumentForm] Resetting form with values:', formValues);
+            form.reset(formValues);
         } else {
             // Clear form when modal closes
             form.reset(toFormValues(null));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open, initData?.id]);
+    }, [open, initData?.id, initData?.fileUrl]);
 
     const isLoading = createMutation.isPending || updateMutation.isPending;
 

@@ -174,14 +174,6 @@ export const OrgUnitForm: React.FC<Props> = ({ form, isEdit }) => {
                 )}
             </form.Field>
 
-            <ToggleSwitch
-                checked={isActive}
-                onChange={handleActiveChange}
-                label="Kích hoạt đơn vị"
-                description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
-                aria-label="Kích hoạt đơn vị"
-            />
-
             <form.Field
                 name="address"
                 validators={{
@@ -201,6 +193,14 @@ export const OrgUnitForm: React.FC<Props> = ({ form, isEdit }) => {
                     />
                 )}
             </form.Field>
+
+            <ToggleSwitch
+                checked={isActive}
+                onChange={handleActiveChange}
+                label="Kích hoạt đơn vị"
+                description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                aria-label="Kích hoạt đơn vị"
+            />
         </div>
     );
 };

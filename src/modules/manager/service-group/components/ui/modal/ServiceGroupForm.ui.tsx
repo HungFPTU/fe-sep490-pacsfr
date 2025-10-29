@@ -27,6 +27,7 @@ interface Props {
 export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
     const [uploadedIconUrl, setUploadedIconUrl] = useState<string>('');
     const [uploadedIconName, setUploadedIconName] = useState<string>('');
+    const [isActive, setIsActive] = useState<boolean>(false);
 
     // Debug logging
     console.log('[ServiceGroupForm] Form values:', {
@@ -97,6 +98,7 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                 // Update local state
                 setUploadedIconUrl(fileUrl);
                 setUploadedIconName(fileName);
+                setIsActive(true);
 
                 // Update form using setFieldValue with callback
                 form.setFieldValue('iconUrl', fileUrl, {
@@ -305,10 +307,10 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
 
             <div className="flex items-end pb-2">
                 <ToggleSwitch
-                    checked={form.state.values.isActive || false}
-                    onChange={(value) => form.setFieldValue('isActive', value)}
+                    checked={isActive}
+                    onChange={(value: boolean) => setIsActive(value)}
                     label="Kích hoạt nhóm dịch vụ"
-                    description={form.state.values.isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                    description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
                     aria-label="Kích hoạt nhóm dịch vụ"
                 />
             </div>
