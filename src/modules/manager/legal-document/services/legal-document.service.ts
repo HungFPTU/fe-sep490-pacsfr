@@ -1,6 +1,5 @@
 import { legalDocumentApi } from '../api/legal-document.api';
 import { DOCUMENT_TYPE_LABELS, DOCUMENT_STATUS_LABELS } from '../constants';
-import { FileUploadService } from '@/core/services/file-upload.service';
 import type {
     CreateLegalDocumentRequest,
     UpdateLegalDocumentRequest,
@@ -30,32 +29,17 @@ export class LegalDocumentService {
         }
     }
 
-    // Create new legal document (two-step process)
+    // Create new legal document
     static async createLegalDocument(data: CreateLegalDocumentRequest) {
         try {
             console.log('[LegalDocument Service] Creating document:', data);
 
-            // Step 1: Upload file first if exists
-            let fileUrl = data.fileUrl || '';
-            console.log('[LegalDocument Service] File check:', {
-                hasFile: !!data.file,
-                hasFileUrl: !!data.fileUrl,
-                fileUrl: data.fileUrl
-            });
+            // Use the provided fileUrl directly - no need to re-upload
+            // The file was already uploaded when user selected it in the form
+            const fileUrl = data.fileUrl || '';
+            console.log('[LegalDocument Service] Using provided fileUrl:', fileUrl);
 
-            if (data.file) {
-                console.log('[LegalDocument Service] Uploading new file...');
-                const uploadResult = await FileUploadService.uploadFile(data.file, 'legal_documents');
-                fileUrl = uploadResult.data.fileUrl;
-                console.log('[LegalDocument Service] File uploaded, URL:', fileUrl);
-            } else if (data.fileUrl) {
-                console.log('[LegalDocument Service] Using existing fileUrl (no upload needed):', data.fileUrl);
-                fileUrl = data.fileUrl;
-            } else {
-                console.log('[LegalDocument Service] No file provided');
-            }
-
-            // Step 2: Create document with fileUrl
+            // Create document with fileUrl
             const documentData = {
                 ...data,
                 fileUrl,
@@ -72,32 +56,17 @@ export class LegalDocumentService {
         }
     }
 
-    // Update legal document (two-step process)
+    // Update legal document
     static async updateLegalDocument(id: string, data: UpdateLegalDocumentRequest) {
         try {
             console.log('[LegalDocument Service] Updating document:', { id, data });
 
-            // Step 1: Upload file first if exists
-            let fileUrl = data.fileUrl || '';
-            console.log('[LegalDocument Service] File check:', {
-                hasFile: !!data.file,
-                hasFileUrl: !!data.fileUrl,
-                fileUrl: data.fileUrl
-            });
+            // Use the provided fileUrl directly - no need to re-upload
+            // The file was already uploaded when user selected it in the form
+            const fileUrl = data.fileUrl || '';
+            console.log('[LegalDocument Service] Using provided fileUrl for update:', fileUrl);
 
-            if (data.file) {
-                console.log('[LegalDocument Service] Uploading new file...');
-                const uploadResult = await FileUploadService.uploadFile(data.file, 'legal_documents');
-                fileUrl = uploadResult.data.fileUrl;
-                console.log('[LegalDocument Service] File uploaded, URL:', fileUrl);
-            } else if (data.fileUrl) {
-                console.log('[LegalDocument Service] Using existing fileUrl (no upload needed):', data.fileUrl);
-                fileUrl = data.fileUrl;
-            } else {
-                console.log('[LegalDocument Service] No file provided');
-            }
-
-            // Step 2: Update document with fileUrl
+            // Update document with fileUrl
             const documentData = {
                 ...data,
                 fileUrl,

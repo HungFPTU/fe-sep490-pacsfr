@@ -27,39 +27,17 @@ export class ImageUploadService {
      */
     static async uploadImage(file: File, folder: string = 'images'): Promise<ImageUploadResponse> {
         try {
-            console.log('[ImageUploadService] Starting image upload...');
-            console.log('[ImageUploadService] File details:', {
-                fileName: file.name,
-                fileSize: file.size,
-                fileType: file.type,
-                folder
-            });
-
             const formData = new FormData();
-            formData.append('file', file);
-            formData.append('folder', folder);
-
-            console.log('[ImageUploadService] FormData created, sending request to /api/FileUpload...');
-            console.log('[ImageUploadService] FormData entries:');
-            for (const [key, value] of formData.entries()) {
-                console.log(`  ${key}:`, value);
-            }
+            formData.append('File', file);
+            formData.append('Folder', folder);
 
             const response = await http.post<ImageUploadResponse>('/FileUpload/image', formData, {
                 // Don't set Content-Type manually for FormData
                 // Browser will set it automatically with boundary
             });
 
-            console.log('[ImageUploadService] Upload response received:', response);
-            console.log('[ImageUploadService] Response data:', response.data);
             return response.data;
         } catch (error) {
-            console.error('[ImageUploadService] Upload error:', error);
-            console.error('[ImageUploadService] Error details:', {
-                message: error instanceof Error ? error.message : 'Unknown error',
-                stack: error instanceof Error ? error.stack : undefined,
-                name: error instanceof Error ? error.name : undefined
-            });
             throw new Error(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
@@ -73,9 +51,8 @@ export class ImageUploadService {
         try {
             const response = await http.delete(`/FileUpload/image/${publicId}`);
             return (response.data as ImageUploadResponse).success || false;
-        } catch (error) {
-            console.error('Image delete error:', error);
-            throw new Error('Failed to delete image');
+        } catch (error) {   
+            throw new Error(`Failed to delete image: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 

@@ -33,15 +33,6 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
     const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
     const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
-    // Debug logging
-    console.log('[LegalDocumentForm] Form values:', {
-        fileUrl: form.state.values.fileUrl,
-        isActive: form.state.values.isActive,
-        documentNumber: form.state.values.documentNumber,
-        name: form.state.values.name,
-        formState: form.state
-    });
-
     // Sync uploadedFileUrl with form fileUrl
     const formFileUrl = form.state.values.fileUrl;
     useEffect(() => {
@@ -73,19 +64,8 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
             return;
         }
 
-        console.log('[LegalDocumentForm] File selected:', file.name);
-        console.log('[LegalDocumentForm] File details:', {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            lastModified: file.lastModified
-        });
-        console.log('[LegalDocumentForm] Current form values before upload:', form.state.values);
-
         // Validate file first
-        console.log('[LegalDocumentForm] Validating file...');
         const validation = validateFile(file);
-        console.log('[LegalDocumentForm] Validation result:', validation);
 
         if (!validation.isValid) {
             console.error('[LegalDocumentForm] Validation failed:', validation.error);
@@ -93,18 +73,13 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
             return;
         }
 
-        console.log('[LegalDocumentForm] File validation passed, starting upload...');
         try {
             // Upload file to backend
-            console.log('[LegalDocumentForm] Calling uploadFile...');
             const result = await uploadFile(file);
-            console.log('[LegalDocumentForm] Upload result:', result);
 
             if (result && result.data && result.data.fileUrl) {
                 const fileUrl = result.data.fileUrl;
                 const fileName = result.data.originalFileName;
-
-                console.log('[LegalDocumentForm] Setting fileUrl to:', fileUrl);
 
                 // Update local state
                 setUploadedFileUrl(fileUrl);
@@ -121,10 +96,6 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                     shouldDirty: true
                 });
 
-                // Force form to re-render
-                form.notify('fileUrl', 'change');
-                form.notify('file', 'change');
-
                 // Clear input to prevent duplicate uploads
                 if (event.target) {
                     event.target.value = '';
@@ -135,7 +106,13 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
             }
         } catch (err) {
             console.error('File upload failed:', err);
-            alert('Upload file thất bại. Vui lòng thử lại.');
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+            console.error('File upload error details:', {
+                error: err,
+                message: errorMessage,
+                stack: err instanceof Error ? err.stack : undefined
+            });
+            alert(`Upload file thất bại: ${errorMessage}`);
         }
     };
 
