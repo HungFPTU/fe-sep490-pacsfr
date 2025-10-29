@@ -235,6 +235,11 @@ class HttpClient {
                 body: body !== undefined ? (isFormData ? body : JSON.stringify(body)) : undefined,
             };
 
+            // Remove Content-Type header for FormData to let browser set it with boundary
+            if (isFormData && fetchHeaders['Content-Type']) {
+                delete (fetchHeaders as any)['Content-Type'];
+            }
+
             // Chỗ này chưa có API auth/me, lỗi ở đây
             const response = await fetch(`${resolvedBase}${url}`, fetchInit);
 

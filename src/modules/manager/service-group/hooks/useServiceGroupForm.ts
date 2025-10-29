@@ -9,6 +9,7 @@ type FormValues = {
     groupName: string;
     description: string;
     iconUrl: string;
+    iconFile?: File; // Add iconFile field
     displayOrder: number;
     isActive: boolean;
 };
@@ -57,6 +58,8 @@ export const useServiceGroupForm = ({
             // }
 
             try {
+                console.log('[useServiceGroupForm] Form values before submit:', value);
+
                 const request: CreateServiceGroupRequest = {
                     groupCode: value.groupCode.trim(),
                     groupName: value.groupName.trim(),
@@ -65,6 +68,8 @@ export const useServiceGroupForm = ({
                     displayOrder: value.displayOrder,
                     isActive: value.isActive,
                 };
+
+                console.log('[useServiceGroupForm] Request data:', request);
 
                 let res;
                 if (initData?.id) {

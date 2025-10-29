@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Input, ToggleSwitch } from '@/shared/components/manager/ui';
-import { UploadCloud } from 'lucide-react';
+import { UploadCloud, CheckCircle, AlertCircle } from 'lucide-react';
 import { LegalDocumentService } from '../../../services/legal-document.service';
+import { useFileUpload } from '@/core/hooks/useFileUpload';
 import type { LegalDocumentFormData, DocumentTypeOption, DocumentStatusOption } from '../../../types';
 
 interface Props {
@@ -18,10 +19,42 @@ export const LegalDocumentForm: React.FC<Props> = ({
     errors,
     updateField,
 }) => {
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
+    const [uploadedFileName, setUploadedFileName] = useState<string>('');
+
+    const { uploadFile, isUploading, error: uploadError, validateFile, formatFileSize } = useFileUpload({
+        maxSize: 10 * 1024 * 1024, // 10MB
+        allowedTypes: [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'text/plain'
+        ],
+        folder: 'legal_documents'
+    });
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            updateField('file', file);
+            // Validate file first
+            const validation = validateFile(file);
+            if (!validation.isValid) {
+                alert(validation.error);
+                return;
+            }
+
+            try {
+                // Upload file to backend
+                const result = await uploadFile(file);
+                setUploadedFileUrl(result.data.fileUrl);
+                setUploadedFileName(result.data.originalFileName);
+
+                // Update form data with file
+                updateField('file', file);
+            } catch (err) {
+                console.error('File upload failed:', err);
+                alert('Upload file thất bại. Vui lòng thử lại.');
+            }
         }
     };
 
@@ -169,29 +202,76 @@ export const LegalDocumentForm: React.FC<Props> = ({
                 <label className="text-sm font-medium text-gray-900">
                     File đính kèm
                 </label>
-                <div className="flex items-center space-x-4">
+
+                {/* File Upload Area */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
                     <input
                         type="file"
                         onChange={handleFileChange}
                         accept=".pdf,.doc,.docx,.txt"
                         className="hidden"
                         id="file-upload"
+                        disabled={isUploading}
                     />
                     <label
                         htmlFor="file-upload"
-                        className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50"
+                        className={`cursor-pointer flex flex-col items-center space-y-2 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
-                        <UploadCloud className="h-5 w-5 text-gray-500" />
-                        <span className="text-sm text-gray-900">
-                            {formData.file ? formData.file.name : 'Chọn file'}
-                        </span>
+                        {isUploading ? (
+                            <>
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                                <span className="text-sm text-gray-600">Đang upload...</span>
+                            </>
+                        ) : (
+                            <>
+                                <UploadCloud className="w-8 h-8 text-gray-400" />
+                                <div>
+                                    <span className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                                        Chọn file để upload
+                                    </span>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        PDF, DOC, DOCX, TXT (tối đa 10MB)
+                                    </p>
+                                </div>
+                            </>
+                        )}
                     </label>
-                    {formData.file && (
-                        <span className="text-xs text-gray-500">
-                            {LegalDocumentService.formatFileSize(formData.file.size)}
-                        </span>
-                    )}
                 </div>
+
+                {/* Upload Error */}
+                {uploadError && (
+                    <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                        <AlertCircle className="w-4 h-4 text-red-500" />
+                        <span className="text-sm text-red-600">{uploadError}</span>
+                    </div>
+                )}
+
+                {/* Upload Success */}
+                {uploadedFileUrl && (
+                    <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <div className="flex-1">
+                            <p className="text-sm text-green-800 font-medium">
+                                File đã upload thành công!
+                            </p>
+                            <p className="text-xs text-green-600">
+                                {uploadedFileName}
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Current File Info */}
+                {formData.file && !uploadedFileUrl && (
+                    <div className="p-3 bg-gray-50 border border-gray-200 rounded-md">
+                        <p className="text-sm text-gray-700">
+                            <strong>File đã chọn:</strong> {formData.file.name}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                            Kích thước: {formatFileSize(formData.file.size)}
+                        </p>
+                    </div>
+                )}
             </div>
 
             {/* Active Status - Toggle Switch */}

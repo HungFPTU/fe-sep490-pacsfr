@@ -47,6 +47,7 @@ export interface CreateLegalDocumentRequest {
     status: DocumentStatus;
     isActive: boolean;
     file?: File;
+    fileUrl?: string; // Added for backend integration
 }
 
 export interface UpdateLegalDocumentRequest {
@@ -60,6 +61,7 @@ export interface UpdateLegalDocumentRequest {
     status: DocumentStatus;
     isActive: boolean;
     file?: File;
+    fileUrl?: string; // Added for backend integration
 }
 
 // Filters

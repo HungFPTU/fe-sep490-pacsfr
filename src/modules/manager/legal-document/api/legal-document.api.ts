@@ -59,7 +59,7 @@ export const legalDocumentApi = {
         return http.put<RestResponse<LegalDocument>>(
             API_PATH.MANAGER.LEGAL_DOCUMENT.PUT(id),
             {
-                id: data.id,
+                id: id, // Use the id parameter, not data.id
                 documentNumber: data.documentNumber,
                 documentType: data.documentType,
                 name: data.name,
@@ -68,6 +68,7 @@ export const legalDocumentApi = {
                 effectiveDate: data.effectiveDate,
                 status: data.status,
                 isActive: data.isActive,
+                fileUrl: data.fileUrl, // Include fileUrl if available
                 // Note: file will be uploaded separately if needed
             }
         );
