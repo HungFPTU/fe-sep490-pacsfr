@@ -3,9 +3,10 @@
 import React from 'react';
 import { DataTable } from '@/shared/components/manager';
 import { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '@heroui/react';
-import { Eye, Edit, Trash2, Download } from 'lucide-react';
 import type { LegalDocument } from '../../../types';
+import { formatDateVN } from '@/core';
+import { DOCUMENT_STATUS_LABELS, DOCUMENT_TYPE_LABELS } from '../../../constants';
+import { getDocumentTypeStyle, getStatusStyle, getActiveStatusStyle, getBadgeStyle } from '../../../utils';
 
 interface Props {
     legalDocuments: LegalDocument[];
@@ -46,32 +47,24 @@ export const LegalDocumentTable: React.FC<Props> = ({
         {
             accessorKey: 'documentType',
             header: 'Loại văn bản',
-            cell: ({ row }) => (
-                <Badge color="primary" variant="flat" size="sm">
-                    {row.getValue('documentType')}
-                </Badge>
-            ),
+            cell: ({ row }) => {
+                const documentType = row.getValue('documentType') as string;
+                return (
+                    <span className={`${getBadgeStyle()} ${getDocumentTypeStyle(documentType)}`}>
+                        {DOCUMENT_TYPE_LABELS[documentType as keyof typeof DOCUMENT_TYPE_LABELS] || documentType}
+                    </span>
+                );
+            },
         },
         {
             accessorKey: 'status',
             header: 'Trạng thái',
             cell: ({ row }) => {
                 const status = row.getValue('status') as string;
-                const getStatusColor = (status: string) => {
-                    switch (status) {
-                        case 'Draft': return 'warning';
-                        case 'Published': return 'success';
-                        case 'Effective': return 'primary';
-                        case 'Expired': return 'danger';
-                        case 'Cancelled': return 'default';
-                        default: return 'default';
-                    }
-                };
-
                 return (
-                    <Badge color={getStatusColor(status)} variant="flat" size="sm">
-                        {status}
-                    </Badge>
+                    <span className={`${getBadgeStyle()} ${getStatusStyle(status)}`}>
+                        {DOCUMENT_STATUS_LABELS[status as keyof typeof DOCUMENT_STATUS_LABELS] || status}
+                    </span>
                 );
             },
         },
@@ -80,7 +73,7 @@ export const LegalDocumentTable: React.FC<Props> = ({
             header: 'Ngày ban hành',
             cell: ({ row }) => {
                 const date = row.getValue('issueDate') as string;
-                return new Date(date).toLocaleDateString('vi-VN');
+                return date ? formatDateVN(date) : 'N/A';
             },
         },
         {
@@ -94,15 +87,14 @@ export const LegalDocumentTable: React.FC<Props> = ({
         {
             accessorKey: 'isActive',
             header: 'Hoạt động',
-            cell: ({ row }) => (
-                <Badge
-                    color={row.getValue('isActive') ? 'success' : 'danger'}
-                    variant="flat"
-                    size="sm"
-                >
-                    {row.getValue('isActive') ? 'Hoạt động' : 'Không hoạt động'}
-                </Badge>
-            ),
+            cell: ({ row }) => {
+                const isActive = row.getValue('isActive') as boolean;
+                return (
+                    <span className={`${getBadgeStyle()} ${getActiveStatusStyle(isActive)}`}>
+                        {isActive ? 'Hoạt động' : 'Không hoạt động'}
+                    </span>
+                );
+            },
         },
     ];
 

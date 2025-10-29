@@ -4,6 +4,7 @@ import React from 'react';
 import { Download } from 'lucide-react';
 import { LegalDocumentService } from '@modules/manager/legal-document/services/legal-document.service';
 import type { LegalDocument } from '@modules/manager/legal-document/types';
+import { formatDateVN } from '@/core';
 
 interface Props {
     legalDocument: LegalDocument;
@@ -58,12 +59,12 @@ export const LegalDocumentInfo: React.FC<Props> = ({ legalDocument }) => {
 
                     <div>
                         <label className="text-sm font-medium text-slate-500">Ngày ban hành</label>
-                        <p className="text-sm text-slate-900">{LegalDocumentService.formatDate(legalDocument.issueDate)}</p>
+                        <p className="text-sm text-slate-900">{legalDocument.issueDate ? formatDateVN(legalDocument.issueDate) : 'N/A'}</p>
                     </div>
 
                     <div>
                         <label className="text-sm font-medium text-slate-500">Ngày có hiệu lực</label>
-                        <p className="text-sm text-slate-900">{LegalDocumentService.formatDate(legalDocument.effectiveDate)}</p>
+                        <p className="text-sm text-slate-900">{legalDocument.effectiveDate ? formatDateVN(legalDocument.effectiveDate) : 'N/A'}</p>
                     </div>
                 </div>
 
@@ -96,7 +97,7 @@ export const LegalDocumentInfo: React.FC<Props> = ({ legalDocument }) => {
                     <div>
                         <label className="text-sm font-medium text-slate-500">Ngày tạo</label>
                         <p className="text-sm text-slate-900">
-                            {legalDocument.createdAt ? LegalDocumentService.formatDate(legalDocument.createdAt) : 'N/A'}
+                            {legalDocument.createdAt ? formatDateVN(legalDocument.createdAt) : 'N/A'}
                         </p>
                     </div>
                 </div>

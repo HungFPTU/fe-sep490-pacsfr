@@ -5,6 +5,7 @@ import type {
     UpdateLegalDocumentRequest,
     LegalDocumentFilters
 } from '../types';
+import { formatDateInput } from '@/core';
 
 export class LegalDocumentService {
     // Get legal documents list with filters
@@ -136,13 +137,6 @@ export class LegalDocumentService {
             'CANCELLED': "default"
         };
         return colorMap[status] || "default";
-    }
-
-    // Format date for display
-    static formatDate(date: string | Date): string {
-        if (!date) return "";
-        const d = new Date(date);
-        return d.toLocaleDateString('vi-VN');
     }
 
     // Format file size for display
