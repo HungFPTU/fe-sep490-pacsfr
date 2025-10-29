@@ -236,8 +236,8 @@ class HttpClient {
             };
 
             // Remove Content-Type header for FormData to let browser set it with boundary
-            if (isFormData && fetchHeaders['Content-Type']) {
-                delete (fetchHeaders as any)['Content-Type'];
+            if (isFormData && (fetchHeaders as Record<string, string>)['Content-Type']) {
+                delete (fetchHeaders as Record<string, string>)['Content-Type'];
             }
 
             // Chỗ này chưa có API auth/me, lỗi ở đây

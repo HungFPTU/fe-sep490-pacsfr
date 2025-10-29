@@ -1,26 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Input, ToggleSwitch } from '@/shared/components/manager/ui';
+import React, { useState, useEffect } from 'react';
+import { ToggleSwitch } from '@/shared/components/manager/ui';
+import { InputField } from '@/shared/components/layout/manager/form/BaseForm';
 import { UploadCloud, CheckCircle, AlertCircle } from 'lucide-react';
 import { LegalDocumentService } from '../../../services/legal-document.service';
 import { useFileUpload } from '@/core/hooks/useFileUpload';
-import type { LegalDocumentFormData, DocumentTypeOption, DocumentStatusOption } from '../../../types';
+import { FormApiOf } from '@/types/types';
+import type { DocumentTypeOption, DocumentStatusOption } from '../../../types';
+
+type FormValues = {
+    documentNumber: string;
+    documentType: string;
+    name: string;
+    issueDate: string;
+    issueBody: string;
+    effectiveDate: string;
+    status: string;
+    isActive: boolean;
+    file?: File;
+    fileUrl: string;
+};
 
 interface Props {
-    formData: LegalDocumentFormData;
-    errors: Partial<Record<keyof LegalDocumentFormData, string>>;
-    updateField: (field: keyof LegalDocumentFormData, value: string | File | boolean) => void;
-    isEdit?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    form: any;
+    isLoading: boolean;
+    isEdit: boolean;
 }
 
-export const LegalDocumentForm: React.FC<Props> = ({
-    formData,
-    errors,
-    updateField,
-}) => {
+export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
     const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
     const [uploadedFileName, setUploadedFileName] = useState<string>('');
+
+    // Debug logging
+    console.log('[LegalDocumentForm] Form values:', {
+        fileUrl: form.state.values.fileUrl,
+        isActive: form.state.values.isActive,
+        documentNumber: form.state.values.documentNumber,
+        name: form.state.values.name,
+        formState: form.state
+    });
+
+    // Sync uploadedFileUrl with form fileUrl
+    const formFileUrl = form.state.values.fileUrl;
+    useEffect(() => {
+        if (formFileUrl && formFileUrl !== uploadedFileUrl) {
+            setUploadedFileUrl(formFileUrl);
+            console.log('[LegalDocumentForm] Synced fileUrl from form:', formFileUrl);
+        }
+    }, [formFileUrl, uploadedFileUrl]);
+
 
     const { uploadFile, isUploading, error: uploadError, validateFile, formatFileSize } = useFileUpload({
         maxSize: 10 * 1024 * 1024, // 10MB
@@ -35,26 +65,77 @@ export const LegalDocumentForm: React.FC<Props> = ({
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
-            // Validate file first
-            const validation = validateFile(file);
-            if (!validation.isValid) {
-                alert(validation.error);
-                return;
-            }
+        if (!file) return;
 
-            try {
-                // Upload file to backend
-                const result = await uploadFile(file);
-                setUploadedFileUrl(result.data.fileUrl);
-                setUploadedFileName(result.data.originalFileName);
+        // Prevent duplicate uploads
+        if (isUploading) {
+            console.log('[LegalDocumentForm] Already uploading, ignoring duplicate call');
+            return;
+        }
 
-                // Update form data with file
-                updateField('file', file);
-            } catch (err) {
-                console.error('File upload failed:', err);
-                alert('Upload file thất bại. Vui lòng thử lại.');
+        console.log('[LegalDocumentForm] File selected:', file.name);
+        console.log('[LegalDocumentForm] File details:', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified
+        });
+        console.log('[LegalDocumentForm] Current form values before upload:', form.state.values);
+
+        // Validate file first
+        console.log('[LegalDocumentForm] Validating file...');
+        const validation = validateFile(file);
+        console.log('[LegalDocumentForm] Validation result:', validation);
+
+        if (!validation.isValid) {
+            console.error('[LegalDocumentForm] Validation failed:', validation.error);
+            alert(validation.error);
+            return;
+        }
+
+        console.log('[LegalDocumentForm] File validation passed, starting upload...');
+        try {
+            // Upload file to backend
+            console.log('[LegalDocumentForm] Calling uploadFile...');
+            const result = await uploadFile(file);
+            console.log('[LegalDocumentForm] Upload result:', result);
+
+            if (result && result.data && result.data.fileUrl) {
+                const fileUrl = result.data.fileUrl;
+                const fileName = result.data.originalFileName;
+
+                console.log('[LegalDocumentForm] Setting fileUrl to:', fileUrl);
+
+                // Update local state
+                setUploadedFileUrl(fileUrl);
+                setUploadedFileName(fileName);
+
+                // Update form using setFieldValue with callback
+                form.setFieldValue('fileUrl', fileUrl, {
+                    shouldTouch: true,
+                    shouldDirty: true
+                });
+                // Clear file after successful upload since we now have fileUrl
+                form.setFieldValue('file', undefined, {
+                    shouldTouch: true,
+                    shouldDirty: true
+                });
+
+                // Force form to re-render
+                form.notify('fileUrl', 'change');
+                form.notify('file', 'change');
+
+                // Clear input to prevent duplicate uploads
+                if (event.target) {
+                    event.target.value = '';
+                }
+
+            } else {
+                console.error('[LegalDocumentForm] Upload failed - no fileUrl in result:', result);
             }
+        } catch (err) {
+            console.error('File upload failed:', err);
+            alert('Upload file thất bại. Vui lòng thử lại.');
         }
     };
 
@@ -65,142 +146,200 @@ export const LegalDocumentForm: React.FC<Props> = ({
         <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Document Number */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">
-                        Số văn bản <span className="text-red-500">*</span>
-                    </label>
-                    <Input
-                        value={formData.documentNumber}
-                        onChange={(e) => updateField('documentNumber', e.target.value)}
-                        placeholder="Nhập số văn bản"
-                        className={errors.documentNumber ? 'border-red-500' : ''}
-                    />
-                    {errors.documentNumber && (
-                        <p className="text-red-500 text-sm">{errors.documentNumber}</p>
+                <form.Field
+                    name="documentNumber"
+                    validators={{
+                        onChange: ({ value }: { value: string }) => {
+                            if (!value || !value.trim()) {
+                                return 'Số văn bản là bắt buộc';
+                            }
+                            return undefined;
+                        },
+                    }}
+                >
+                    {() => (
+                        <InputField<FormValues>
+                            form={form as FormApiOf<FormValues>}
+                            name="documentNumber"
+                            label="Số văn bản"
+                            required
+                            placeholder="Nhập số văn bản"
+                            disabled={isLoading || isEdit}
+                        />
                     )}
-                </div>
+                </form.Field>
 
                 {/* Document Type */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">
-                        Loại văn bản <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                        value={formData.documentType || ''}
-                        onChange={(e) => updateField('documentType', e.target.value)}
-                        className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.documentType
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                            : 'border-gray-300'
-                            }`}
-                    >
-                        <option value="">Chọn loại văn bản</option>
-                        {documentTypeOptions.map((option: DocumentTypeOption) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                    {errors.documentType && (
-                        <p className="text-red-500 text-sm">{errors.documentType}</p>
+                <form.Field
+                    name="documentType"
+                    validators={{
+                        onChange: ({ value }: { value: string }) => {
+                            if (!value || !value.trim()) {
+                                return 'Loại văn bản là bắt buộc';
+                            }
+                            return undefined;
+                        },
+                    }}
+                >
+                    {() => (
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900">
+                                Loại văn bản <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                value={form.state.values.documentType || ''}
+                                onChange={(e) => form.setFieldValue('documentType', e.target.value)}
+                                disabled={isLoading || isEdit}
+                                className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                            >
+                                <option value="">Chọn loại văn bản</option>
+                                {documentTypeOptions.map((option: DocumentTypeOption) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     )}
-                </div>
+                </form.Field>
             </div>
 
             {/* Document Name */}
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">
-                    Tên văn bản <span className="text-red-500">*</span>
-                </label>
-                <Input
-                    value={formData.name}
-                    onChange={(e) => updateField('name', e.target.value)}
-                    placeholder="Nhập tên văn bản"
-                    className={errors.name ? 'border-red-500' : ''}
-                />
-                {errors.name && (
-                    <p className="text-red-500 text-sm">{errors.name}</p>
+            <form.Field
+                name="name"
+                validators={{
+                    onChange: ({ value }: { value: string }) => {
+                        if (!value || !value.trim()) {
+                            return 'Tên văn bản là bắt buộc';
+                        }
+                        return undefined;
+                    },
+                }}
+            >
+                {() => (
+                    <InputField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="name"
+                        label="Tên văn bản"
+                        required
+                        placeholder="Nhập tên văn bản"
+                        disabled={isLoading}
+                    />
                 )}
-            </div>
+            </form.Field>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Issue Date */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">
-                        Ngày ban hành <span className="text-red-500">*</span>
-                    </label>
-                    <Input
-                        type="date"
-                        value={formData.issueDate}
-                        onChange={(e) => updateField('issueDate', e.target.value)}
-                        className={errors.issueDate ? 'border-red-500' : ''}
-                    />
-                    {errors.issueDate && (
-                        <p className="text-red-500 text-sm">{errors.issueDate}</p>
+                <form.Field
+                    name="issueDate"
+                    validators={{
+                        onChange: ({ value }: { value: string }) => {
+                            if (!value || !value.trim()) {
+                                return 'Ngày ban hành là bắt buộc';
+                            }
+                            return undefined;
+                        },
+                    }}
+                >
+                    {() => (
+                        <InputField<FormValues>
+                            form={form as FormApiOf<FormValues>}
+                            name="issueDate"
+                            label="Ngày ban hành"
+                            type="date"
+                            required
+                            disabled={isLoading}
+                        />
                     )}
-                </div>
+                </form.Field>
 
                 {/* Effective Date */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">
-                        Ngày có hiệu lực <span className="text-red-500">*</span>
-                    </label>
-                    <Input
-                        type="date"
-                        value={formData.effectiveDate}
-                        onChange={(e) => updateField('effectiveDate', e.target.value)}
-                        className={errors.effectiveDate ? 'border-red-500' : ''}
-                    />
-                    {errors.effectiveDate && (
-                        <p className="text-red-500 text-sm">{errors.effectiveDate}</p>
+                <form.Field
+                    name="effectiveDate"
+                    validators={{
+                        onChange: ({ value }: { value: string }) => {
+                            if (!value || !value.trim()) {
+                                return 'Ngày có hiệu lực là bắt buộc';
+                            }
+                            return undefined;
+                        },
+                    }}
+                >
+                    {() => (
+                        <InputField<FormValues>
+                            form={form as FormApiOf<FormValues>}
+                            name="effectiveDate"
+                            label="Ngày có hiệu lực"
+                            type="date"
+                            required
+                            disabled={isLoading}
+                        />
                     )}
-                </div>
+                </form.Field>
             </div>
 
             {/* Issue Body */}
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">
-                    Cơ quan ban hành <span className="text-red-500">*</span>
-                </label>
-                <Input
-                    value={formData.issueBody}
-                    onChange={(e) => updateField('issueBody', e.target.value)}
-                    placeholder="Nhập cơ quan ban hành"
-                    className={errors.issueBody ? 'border-red-500' : ''}
-                />
-                {errors.issueBody && (
-                    <p className="text-red-500 text-sm">{errors.issueBody}</p>
+            <form.Field
+                name="issueBody"
+                validators={{
+                    onChange: ({ value }: { value: string }) => {
+                        if (!value || !value.trim()) {
+                            return 'Cơ quan ban hành là bắt buộc';
+                        }
+                        return undefined;
+                    },
+                }}
+            >
+                {() => (
+                    <InputField<FormValues>
+                        form={form as FormApiOf<FormValues>}
+                        name="issueBody"
+                        label="Cơ quan ban hành"
+                        required
+                        placeholder="Nhập cơ quan ban hành"
+                        disabled={isLoading}
+                    />
                 )}
-            </div>
+            </form.Field>
 
             {/* Status */}
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-900">
-                    Trạng thái <span className="text-red-500">*</span>
-                </label>
-                <select
-                    value={formData.status || ''}
-                    onChange={(e) => updateField('status', e.target.value)}
-                    className={`w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 ${errors.status
-                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                        : 'border-gray-300'
-                        }`}
-                >
-                    <option value="">Chọn trạng thái</option>
-                    {documentStatusOptions.map((option: DocumentStatusOption) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
-                {errors.status && (
-                    <p className="text-red-500 text-sm">{errors.status}</p>
+            <form.Field
+                name="status"
+                validators={{
+                    onChange: ({ value }: { value: string }) => {
+                        if (!value || !value.trim()) {
+                            return 'Trạng thái là bắt buộc';
+                        }
+                        return undefined;
+                    },
+                }}
+            >
+                {() => (
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-900">
+                            Trạng thái <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                            value={form.state.values.status || ''}
+                            onChange={(e) => form.setFieldValue('status', e.target.value)}
+                            disabled={isLoading}
+                            className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        >
+                            <option value="">Chọn trạng thái</option>
+                            {documentStatusOptions.map((option: DocumentStatusOption) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 )}
-            </div>
+            </form.Field>
 
             {/* File Upload */}
             <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-900">
-                    File đính kèm
+                    File đính kèm {isEdit && <span className="text-gray-500">(Chỉ thay đổi khi cần thiết)</span>}
                 </label>
 
                 {/* File Upload Area */}
@@ -211,11 +350,11 @@ export const LegalDocumentForm: React.FC<Props> = ({
                         accept=".pdf,.doc,.docx,.txt"
                         className="hidden"
                         id="file-upload"
-                        disabled={isUploading}
+                        disabled={isUploading || isLoading}
                     />
                     <label
                         htmlFor="file-upload"
-                        className={`cursor-pointer flex flex-col items-center space-y-2 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`cursor-pointer flex flex-col items-center space-y-2 ${isUploading || isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         {isUploading ? (
                             <>
@@ -246,42 +385,66 @@ export const LegalDocumentForm: React.FC<Props> = ({
                     </div>
                 )}
 
-                {/* Upload Success */}
+                {/* Current File Preview */}
+                {form.state.values.fileUrl && !uploadedFileUrl && (
+                    <div className="p-3 bg-gray-50 border border-gray-200 rounded-md">
+                        <div className="flex items-center space-x-3">
+                            <UploadCloud className="w-8 h-8 text-gray-400" />
+                            <div>
+                                <p className="text-sm text-gray-700 font-medium">
+                                    File hiện tại
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    Click để thay đổi
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Uploaded File Preview */}
                 {uploadedFileUrl && (
-                    <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-md">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <div className="flex-1">
-                            <p className="text-sm text-green-800 font-medium">
-                                File đã upload thành công!
-                            </p>
-                            <p className="text-xs text-green-600">
-                                {uploadedFileName}
-                            </p>
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                        <div className="flex items-center space-x-3">
+                            <CheckCircle className="w-8 h-8 text-green-500" />
+                            <div>
+                                <p className="text-sm text-green-700 font-medium">
+                                    File đã upload
+                                </p>
+                                <p className="text-xs text-green-600">
+                                    {uploadedFileName}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 )}
 
                 {/* Current File Info */}
-                {formData.file && !uploadedFileUrl && (
+                {form.state.values.file && !uploadedFileUrl && (
                     <div className="p-3 bg-gray-50 border border-gray-200 rounded-md">
                         <p className="text-sm text-gray-700">
-                            <strong>File đã chọn:</strong> {formData.file.name}
+                            <strong>File đã chọn:</strong> {form.state.values.file.name}
                         </p>
                         <p className="text-xs text-gray-500">
-                            Kích thước: {formatFileSize(formData.file.size)}
+                            Kích thước: {formatFileSize(form.state.values.file.size)}
                         </p>
                     </div>
                 )}
             </div>
 
-            {/* Active Status - Toggle Switch */}
-            <ToggleSwitch
-                checked={formData.isActive}
-                onChange={(checked) => updateField('isActive', checked)}
-                label="Kích hoạt văn bản"
-                description={formData.isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
-                aria-label="Kích hoạt văn bản"
-            />
+            {/* Active Status - Toggle Switch (only for edit mode) */}
+            {isEdit && (
+                <div className="flex items-end pb-2">
+                    <ToggleSwitch
+                        checked={form.state.values.isActive || false}
+                        onChange={(value) => form.setFieldValue('isActive', value)}
+                        label="Kích hoạt văn bản"
+                        description={form.state.values.isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                        aria-label="Kích hoạt văn bản"
+                        disabled={isLoading}
+                    />
+                </div>
+            )}
         </div>
     );
 };

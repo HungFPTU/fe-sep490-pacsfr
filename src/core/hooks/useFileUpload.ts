@@ -50,7 +50,17 @@ export const useFileUpload = (options: UseFileUploadOptions = {}): UseFileUpload
       }
 
       // Upload file
+      console.log('[useFileUpload] Calling FileUploadService.uploadFile with:', { file: file.name, folder });
+      console.log('[useFileUpload] Folder parameter:', folder);
+      console.log('[useFileUpload] Folder type:', typeof folder);
       const result = await FileUploadService.uploadFile(file, folder);
+      console.log('[useFileUpload] Upload result:', result);
+      console.log('[useFileUpload] Result type:', typeof result);
+      console.log('[useFileUpload] Result structure:', JSON.stringify(result, null, 2));
+      console.log('[useFileUpload] fileUrl in result:', result?.data?.fileUrl);
+      console.log('[useFileUpload] data property in result:', result?.data);
+      console.log('[useFileUpload] result.data.fileUrl type:', typeof result?.data?.fileUrl);
+      console.log('[useFileUpload] result.data.fileUrl value:', result?.data?.fileUrl);
       return result;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Upload failed';

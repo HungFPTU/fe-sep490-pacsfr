@@ -97,6 +97,8 @@ export async function POST(request: NextRequest) {
         };
 
         console.log('[FileUpload API] Upload successful:', response);
+        console.log('[FileUpload API] Response structure:', JSON.stringify(response, null, 2));
+        console.log('[FileUpload API] fileUrl in response:', response.data.fileUrl);
 
         return NextResponse.json(response);
 

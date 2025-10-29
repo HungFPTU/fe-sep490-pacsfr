@@ -12,11 +12,11 @@ export const DOCUMENT_TYPES = {
 
 // Document Status
 export const DOCUMENT_STATUS = {
-    DRAFT: 'DRAFT',
-    PUBLISHED: 'PUBLISHED',
-    EFFECTIVE: 'EFFECTIVE',
-    EXPIRED: 'EXPIRED',
-    CANCELLED: 'CANCELLED',
+    DRAFT: 'Draft',
+    ACTIVE: 'Active',
+    EXPIRED: 'Expired',
+    REPLACED: 'Replaced',
+    CANCELLED: 'Cancelled',
 } as const;
 
 // Document Type Labels
@@ -34,10 +34,10 @@ export const DOCUMENT_TYPE_LABELS = {
 // Document Status Labels
 export const DOCUMENT_STATUS_LABELS = {
     [DOCUMENT_STATUS.DRAFT]: 'Nháp',
-    [DOCUMENT_STATUS.PUBLISHED]: 'Đã ban hành',
-    [DOCUMENT_STATUS.EFFECTIVE]: 'Có hiệu lực',
-    [DOCUMENT_STATUS.EXPIRED]: 'Hết hiệu lực',
-    [DOCUMENT_STATUS.CANCELLED]: 'Bị hủy bỏ',
+    [DOCUMENT_STATUS.ACTIVE]: 'Đã ban hành',
+    [DOCUMENT_STATUS.EXPIRED]: 'Có hiệu lực',
+    [DOCUMENT_STATUS.REPLACED]: 'Hết hiệu lực',
+    [DOCUMENT_STATUS.CANCELLED]: 'Hủy bỏ',
 } as const;
 
 // File Upload

@@ -67,14 +67,17 @@ export const useServiceGroupForm = ({
 
             try {
                 console.log('[useServiceGroupForm] Form values before submit:', value);
+                console.log('[useServiceGroupForm] Icon check:', {
+                    hasIconUrl: !!value.iconUrl,
+                    iconUrl: value.iconUrl,
+                });
 
                 const request: CreateServiceGroupRequest = {
                     groupCode: value.groupCode.trim(),
                     groupName: value.groupName.trim(),
                     description: value.description?.trim() || '',
-                    // iconUrl: value.iconUrl.trim(),
-                    // Only include iconFile if it's a new file (not already uploaded)
-                    iconUrl: value.iconFile && !value.iconUrl ? value.iconFile.toString() : undefined,
+                    iconUrl: value.iconUrl.trim(),
+                    // Only include iconFile if we don't have iconUrl yet (file not uploaded)
                     displayOrder: value.displayOrder,
                     isActive: value.isActive,
                 };

@@ -15,7 +15,7 @@ export type CreateServiceGroupRequest = {
     groupCode: string;
     groupName: string;
     description: string;
-    iconUrl?: string; // Made optional for backend integration
+    iconUrl?: string;
     displayOrder: number;
     isActive: boolean;
 }

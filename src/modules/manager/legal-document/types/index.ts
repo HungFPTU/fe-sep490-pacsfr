@@ -34,6 +34,7 @@ export interface LegalDocumentFormData {
     status: string;
     isActive: boolean;
     file?: File;
+    fileUrl?: string; // Added for backend integration
 }
 
 // API Request Types

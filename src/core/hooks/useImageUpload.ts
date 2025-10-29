@@ -43,9 +43,9 @@ export const useImageUpload = (options?: UseImageUploadOptions) => {
             console.log('[useImageUpload] Upload successful:', result);
             addToast({ message: "Tải hình ảnh lên thành công!", type: "success" });
             return result;
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('[useImageUpload] Upload failed:', err);
-            const errorMessage = err.message || "Lỗi khi tải hình ảnh lên.";
+            const errorMessage = err instanceof Error ? err.message : "Lỗi khi tải hình ảnh lên.";
             setError(errorMessage);
             addToast({ message: errorMessage, type: "error" });
             return null;
@@ -63,8 +63,8 @@ export const useImageUpload = (options?: UseImageUploadOptions) => {
                 addToast({ message: "Xóa hình ảnh thành công!", type: "success" });
             }
             return result;
-        } catch (err: any) {
-            const errorMessage = err.message || "Lỗi khi xóa hình ảnh.";
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : "Lỗi khi xóa hình ảnh.";
             setError(errorMessage);
             addToast({ message: errorMessage, type: "error" });
             return false;

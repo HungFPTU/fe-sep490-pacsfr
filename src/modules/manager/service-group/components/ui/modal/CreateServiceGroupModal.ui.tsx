@@ -49,7 +49,6 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
             keyboard={!isLoading}
             confirmLoading={isLoading}
             destroyOnClose={true}
-            forceRender={false}
         >
             <ServiceGroupForm
                 form={form}

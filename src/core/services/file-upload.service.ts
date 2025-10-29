@@ -27,23 +27,34 @@ export class FileUploadService {
      */
     static async uploadFile(file: File, folder: string = 'documents'): Promise<FileUploadResponse> {
         try {
+            console.log('[FileUploadService] Starting upload with params:', { file: file.name, folder });
+
             const formData = new FormData();
             formData.append('file', file);
             formData.append('folder', folder);
 
-            console.log('[FileUploadService] Uploading file:', {
+            console.log('[FileUploadService] FormData created:', {
                 fileName: file.name,
                 fileSize: file.size,
                 fileType: file.type,
                 folder
             });
 
-            const response = await http.post<FileUploadResponse>('/api/FileUpload', formData, {
+            // Debug FormData contents
+            console.log('[FileUploadService] FormData entries:');
+            for (const [key, value] of formData.entries()) {
+                console.log(`  ${key}:`, value);
+            }
+
+            const response = await http.post<FileUploadResponse>('/FileUpload', formData, {
                 // Don't set Content-Type manually for FormData
                 // Browser will set it automatically with boundary
             });
 
             console.log('[FileUploadService] Upload response:', response.data);
+            console.log('[FileUploadService] Response data type:', typeof response.data);
+            console.log('[FileUploadService] Response data structure:', JSON.stringify(response.data, null, 2));
+            console.log('[FileUploadService] fileUrl in response:', response.data?.data?.fileUrl);
             return response.data;
         } catch (error) {
             console.error('[FileUploadService] Upload error:', error);
@@ -58,7 +69,7 @@ export class FileUploadService {
      */
     static async deleteFile(publicId: string): Promise<boolean> {
         try {
-            const response = await http.delete(`/api/FileUpload/${publicId}`);
+            const response = await http.delete(`/FileUpload/${publicId}`);
             return (response.data as FileUploadResponse).success || false;
         } catch (error) {
             console.error('File delete error:', error);

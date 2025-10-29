@@ -36,12 +36,23 @@ export class LegalDocumentService {
             console.log('[LegalDocument Service] Creating document:', data);
 
             // Step 1: Upload file first if exists
-            let fileUrl = '';
+            let fileUrl = data.fileUrl || '';
+            console.log('[LegalDocument Service] File check:', {
+                hasFile: !!data.file,
+                hasFileUrl: !!data.fileUrl,
+                fileUrl: data.fileUrl
+            });
+
             if (data.file) {
-                console.log('[LegalDocument Service] Uploading file first...');
+                console.log('[LegalDocument Service] Uploading new file...');
                 const uploadResult = await FileUploadService.uploadFile(data.file, 'legal_documents');
                 fileUrl = uploadResult.data.fileUrl;
                 console.log('[LegalDocument Service] File uploaded, URL:', fileUrl);
+            } else if (data.fileUrl) {
+                console.log('[LegalDocument Service] Using existing fileUrl (no upload needed):', data.fileUrl);
+                fileUrl = data.fileUrl;
+            } else {
+                console.log('[LegalDocument Service] No file provided');
             }
 
             // Step 2: Create document with fileUrl
@@ -68,11 +79,22 @@ export class LegalDocumentService {
 
             // Step 1: Upload file first if exists
             let fileUrl = data.fileUrl || '';
+            console.log('[LegalDocument Service] File check:', {
+                hasFile: !!data.file,
+                hasFileUrl: !!data.fileUrl,
+                fileUrl: data.fileUrl
+            });
+
             if (data.file) {
                 console.log('[LegalDocument Service] Uploading new file...');
                 const uploadResult = await FileUploadService.uploadFile(data.file, 'legal_documents');
                 fileUrl = uploadResult.data.fileUrl;
                 console.log('[LegalDocument Service] File uploaded, URL:', fileUrl);
+            } else if (data.fileUrl) {
+                console.log('[LegalDocument Service] Using existing fileUrl (no upload needed):', data.fileUrl);
+                fileUrl = data.fileUrl;
+            } else {
+                console.log('[LegalDocument Service] No file provided');
             }
 
             // Step 2: Update document with fileUrl

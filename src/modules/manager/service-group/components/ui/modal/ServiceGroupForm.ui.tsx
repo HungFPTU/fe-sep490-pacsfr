@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ToggleSwitch } from '@/shared/components/manager/ui';
 import { InputField, TextareaField } from '@/shared/components/layout/manager/form/BaseForm';
-import { ImageIcon, CheckCircle, AlertCircle } from 'lucide-react';
+import { ImageIcon, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '@/core/hooks/useImageUpload';
 import { FormApiOf } from '@/types/types';
 import Image from 'next/image';
@@ -252,21 +252,6 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                         <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-md">
                             <AlertCircle className="w-4 h-4 text-red-500" />
                             <span className="text-sm text-red-600">{uploadError}</span>
-                        </div>
-                    )}
-
-                    {/* Upload Success */}
-                    {uploadedIconUrl && (
-                        <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-md">
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                            <div className="flex-1">
-                                <p className="text-sm text-green-800 font-medium">
-                                    Icon đã upload thành công!
-                                </p>
-                                <p className="text-xs text-green-600">
-                                    {uploadedIconName}
-                                </p>
-                            </div>
                         </div>
                     )}
 

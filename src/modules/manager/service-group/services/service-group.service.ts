@@ -25,6 +25,7 @@ export const serviceGroupService = {
         // Step 1: Upload icon if exists
         let iconUrl = request.iconUrl || '';
         console.log('[ServiceGroup Service] Icon check:', {
+            // hasIconFile: !!request.iconFile,
             hasIconUrl: !!request.iconUrl,
             iconUrl: request.iconUrl
         });
@@ -32,7 +33,7 @@ export const serviceGroupService = {
         if (request.iconUrl) {
             console.log('[ServiceGroup Service] Uploading new icon file...');
             try {
-                const uploadResult = await ImageUploadService.uploadImage(new File([], request.iconUrl), 'service_groups');
+                const uploadResult = await ImageUploadService.uploadImage(new File([], ''), 'service_groups');
                 iconUrl = uploadResult.data.fileUrl;
                 console.log('[ServiceGroup Service] Icon uploaded successfully, URL:', iconUrl);
             } catch (error) {
