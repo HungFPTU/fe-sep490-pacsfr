@@ -38,8 +38,8 @@ export const ServiceTableRow: React.FC<Props> = ({ service, onView, onEdit, onDe
             <td className="px-6 py-4">
                 <span
                     className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${service.isOnlineAvailable
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-800'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-gray-100 text-gray-800'
                         }`}
                 >
                     {service.isOnlineAvailable ? 'Có' : 'Không'}
@@ -50,8 +50,8 @@ export const ServiceTableRow: React.FC<Props> = ({ service, onView, onEdit, onDe
             <td className="px-6 py-4">
                 <span
                     className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${service.isActive
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
                         }`}
                 >
                     {service.isActive ? 'Hoạt động' : 'Ngừng'}
@@ -73,7 +73,7 @@ export const ServiceTableRow: React.FC<Props> = ({ service, onView, onEdit, onDe
                     </button>
                     <button
                         onClick={() => onEdit(service)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-indigo-600 hover:text-indigo-900"
                         title="Chỉnh sửa"
                     >
                         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

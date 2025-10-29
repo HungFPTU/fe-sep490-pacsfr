@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@heroui/react';
 import { Download } from 'lucide-react';
 import { LegalDocumentService } from '@modules/manager/legal-document/services/legal-document.service';
 import type { LegalDocument } from '@modules/manager/legal-document/types';
@@ -13,6 +12,19 @@ interface Props {
 export const LegalDocumentInfo: React.FC<Props> = ({ legalDocument }) => {
     const handleDownloadFile = async () => {
         try {
+            // If we have fileUrl, download directly from URL
+            if (legalDocument.fileUrl) {
+                const link = document.createElement('a');
+                link.href = legalDocument.fileUrl;
+                link.download = legalDocument.fileName || 'document.pdf';
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                return;
+            }
+
+            // Fallback to API download
             const response = await LegalDocumentService.downloadFile(legalDocument.id);
             const blob = new Blob([response.data as unknown as BlobPart]);
             const url = window.URL.createObjectURL(blob);
@@ -25,6 +37,7 @@ export const LegalDocumentInfo: React.FC<Props> = ({ legalDocument }) => {
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Error downloading file:', error);
+            alert('Không thể tải xuống file. Vui lòng thử lại.');
         }
     };
 
@@ -82,7 +95,9 @@ export const LegalDocumentInfo: React.FC<Props> = ({ legalDocument }) => {
 
                     <div>
                         <label className="text-sm font-medium text-slate-500">Ngày tạo</label>
-                        <p className="text-sm text-slate-900">{LegalDocumentService.formatDate(legalDocument.createdAt)}</p>
+                        <p className="text-sm text-slate-900">
+                            {legalDocument.createdAt ? LegalDocumentService.formatDate(legalDocument.createdAt) : 'N/A'}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -94,30 +109,68 @@ export const LegalDocumentInfo: React.FC<Props> = ({ legalDocument }) => {
             </div>
 
             {/* File Information */}
-            {legalDocument.fileName && (
+            {(legalDocument.fileUrl || legalDocument.fileName) && (
                 <div className="border-t border-slate-200 pt-6">
-                    <div className="flex items-center justify-between">
+                    <div className="space-y-4">
                         <div>
                             <label className="text-sm font-medium text-slate-500">File đính kèm</label>
-                            <div className="flex items-center space-x-2 mt-1">
-                                <Download className="h-4 w-4 text-slate-400" />
-                                <span className="text-sm text-slate-900">{legalDocument.fileName}</span>
-                                {legalDocument.fileSize && (
-                                    <span className="text-xs text-slate-500">
-                                        ({LegalDocumentService.formatFileSize(legalDocument.fileSize)})
-                                    </span>
-                                )}
-                            </div>
+
+                            {/* File URL */}
+                            {legalDocument.fileUrl && (
+                                <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center space-x-2">
+                                        <button
+                                            type="button"
+                                            onClick={handleDownloadFile}
+                                            className="flex-shrink-0 p-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
+                                            title="Tải xuống file"
+                                        >
+                                            <Download className="h-5 w-5 text-blue-600 hover:text-blue-800" />
+                                        </button>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm text-slate-900 font-medium">
+                                                {legalDocument.fileName || legalDocument.fileUrl.split('/').pop() || 'Tài liệu đính kèm'}
+                                            </p>
+                                            <p className="text-xs text-slate-500 truncate" title={legalDocument.fileUrl}>
+                                                URL: {legalDocument.fileUrl}
+                                            </p>
+                                            {legalDocument.fileSize && (
+                                                <p className="text-xs text-slate-500">
+                                                    Kích thước: {LegalDocumentService.formatFileSize(legalDocument.fileSize)}
+                                                </p>
+                                            )}
+                                            <p className="text-xs text-green-600 mt-1">
+                                                ✓ File đã được upload thành công
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Legacy file info */}
+                            {!legalDocument.fileUrl && legalDocument.fileName && (
+                                <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center space-x-2">
+                                        <button
+                                            type="button"
+                                            onClick={handleDownloadFile}
+                                            className="flex-shrink-0 p-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
+                                            title="Tải xuống file"
+                                        >
+                                            <Download className="h-5 w-5 text-blue-600 hover:text-blue-800" />
+                                        </button>
+                                        <div className="flex-1 min-w-0">
+                                            <span className="text-sm text-slate-900">{legalDocument.fileName}</span>
+                                            {legalDocument.fileSize && (
+                                                <span className="text-xs text-slate-500 ml-2">
+                                                    ({LegalDocumentService.formatFileSize(legalDocument.fileSize)})
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <Button
-                            size="sm"
-                            color="primary"
-                            variant="solid"
-                            onClick={handleDownloadFile}
-                            startContent={<Download className="h-4 w-4" />}
-                        >
-                            Tải xuống
-                        </Button>
                     </div>
                 </div>
             )}

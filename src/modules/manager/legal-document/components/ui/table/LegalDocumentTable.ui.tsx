@@ -126,10 +126,6 @@ export const LegalDocumentTable: React.FC<Props> = ({
             onDelete={onDelete}
             buttonOther={onDownload ? "Tải xuống" : null}
             onOther={onDownload}
-            viewIcon={<Eye className="h-4 w-4" />}
-            editIcon={<Edit className="h-4 w-4" />}
-            deleteIcon={<Trash2 className="h-4 w-4" />}
-            otherIcon={onDownload ? <Download className="h-4 w-4" /> : undefined}
         />
     );
 };
