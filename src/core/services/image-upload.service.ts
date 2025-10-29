@@ -39,7 +39,7 @@ export class ImageUploadService {
             formData.append('file', file);
             formData.append('folder', folder);
 
-            console.log('[ImageUploadService] FormData created, sending request to /api/FileUpload/image...');
+            console.log('[ImageUploadService] FormData created, sending request to /api/FileUpload...');
             console.log('[ImageUploadService] FormData entries:');
             for (const [key, value] of formData.entries()) {
                 console.log(`  ${key}:`, value);

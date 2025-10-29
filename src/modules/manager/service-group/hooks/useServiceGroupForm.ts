@@ -43,6 +43,14 @@ export const useServiceGroupForm = ({
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
+            console.log('[useServiceGroupForm] Form submit triggered');
+
+            // Prevent duplicate submission
+            if (createMutation.isPending || updateMutation.isPending) {
+                console.log('[useServiceGroupForm] Already submitting, ignoring duplicate call');
+                return;
+            }
+
             // Final validation before submit
             if (!value.groupCode?.trim()) {
                 addToast({ message: 'Vui lòng nhập mã nhóm', type: 'error' });
@@ -64,7 +72,9 @@ export const useServiceGroupForm = ({
                     groupCode: value.groupCode.trim(),
                     groupName: value.groupName.trim(),
                     description: value.description?.trim() || '',
-                    iconUrl: value.iconUrl.trim(),
+                    // iconUrl: value.iconUrl.trim(),
+                    // Only include iconFile if it's a new file (not already uploaded)
+                    iconUrl: value.iconFile && !value.iconUrl ? value.iconFile.toString() : undefined,
                     displayOrder: value.displayOrder,
                     isActive: value.isActive,
                 };
@@ -115,6 +125,9 @@ export const useServiceGroupForm = ({
         if (open) {
             // Always reset with current initData when modal opens
             form.reset(toFormValues(initData));
+        } else {
+            // Clear form when modal closes
+            form.reset(toFormValues(null));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, initData?.id]);

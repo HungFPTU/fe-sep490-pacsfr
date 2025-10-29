@@ -20,17 +20,44 @@ export const serviceGroupService = {
     },
 
     async createServiceGroup(request: CreateServiceGroupRequest): Promise<RestResponse<ServiceGroup>> {
+        console.log('[ServiceGroup Service] Creating service group with request:', request);
+
         // Step 1: Upload icon if exists
-        let iconUrl = '';
+        let iconUrl = request.iconUrl || '';
+        console.log('[ServiceGroup Service] Icon check:', {
+            hasIconUrl: !!request.iconUrl,
+            iconUrl: request.iconUrl
+        });
+
         if (request.iconUrl) {
-            console.log('[ServiceGroup Service] Uploading icon file...');
-            const uploadResult = await ImageUploadService.uploadImage(new File([], request.iconUrl), 'service_groups');
-            iconUrl = uploadResult.data.fileUrl;
+            console.log('[ServiceGroup Service] Uploading new icon file...');
+            try {
+                const uploadResult = await ImageUploadService.uploadImage(new File([], request.iconUrl), 'service_groups');
+                iconUrl = uploadResult.data.fileUrl;
+                console.log('[ServiceGroup Service] Icon uploaded successfully, URL:', iconUrl);
+            } catch (error) {
+                console.error('[ServiceGroup Service] Icon upload failed:', error);
+                throw new Error('Upload icon thất bại. Vui lòng thử lại.');
+            }
+        } else if (request.iconUrl) {
+            console.log('[ServiceGroup Service] Using existing iconUrl (no upload needed):', request.iconUrl);
+            iconUrl = request.iconUrl;
+        } else {
+            console.log('[ServiceGroup Service] No icon provided');
         }
-        const res = await serviceGroupAPI.createServiceGroup({
-            ...request,
+
+        // Step 2: Create service group with iconUrl
+        const serviceGroupData = {
+            groupCode: request.groupCode,
+            groupName: request.groupName,
+            description: request.description,
             iconUrl: iconUrl,
-        } as CreateServiceGroupRequest);
+            displayOrder: Number(request.displayOrder) || 0,
+            isActive: request.isActive,
+        };
+
+        console.log('[ServiceGroup Service] Creating service group with data:', serviceGroupData);
+        const res = await serviceGroupAPI.createServiceGroup(serviceGroupData);
         return res.data;
     },
 

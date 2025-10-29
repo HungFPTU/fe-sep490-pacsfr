@@ -53,65 +53,90 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
 
     const handleIconChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
-            console.log('[ServiceGroupForm] File selected:', file.name);
-            console.log('[ServiceGroupForm] File details:', {
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                lastModified: file.lastModified
-            });
-            console.log('[ServiceGroupForm] Current form values before upload:', form.state.values);
+        if (!file) return;
 
-            // Validate file first
-            console.log('[ServiceGroupForm] Validating file...');
-            const validation = validateImage(file);
-            console.log('[ServiceGroupForm] Validation result:', validation);
-
-            if (!validation.isValid) {
-                console.error('[ServiceGroupForm] Validation failed:', validation.message);
-                alert(validation.message);
-                return;
-            }
-
-            console.log('[ServiceGroupForm] File validation passed, starting upload...');
-            try {
-                // Upload file to backend
-                console.log('[ServiceGroupForm] Calling uploadImage...');
-                const result = await uploadImage(file);
-                console.log('[ServiceGroupForm] Upload result:', result);
-
-                if (result && result.data && result.data.fileUrl) {
-                    const fileUrl = result.data.fileUrl;
-                    const fileName = result.data.originalFileName;
-
-                    console.log('[ServiceGroupForm] Setting iconUrl to:', fileUrl);
-
-                    // Update local state
-                    setUploadedIconUrl(fileUrl);
-                    setUploadedIconName(fileName);
-
-                    // Update form using setFieldValue with callback
-                    form.setFieldValue('iconUrl', fileUrl, {
-                        shouldTouch: true,
-                        shouldDirty: true
-                    });
-
-                } else {
-                    console.error('[ServiceGroupForm] Upload failed - no fileUrl in result:', result);
-                }
-            } catch (err) {
-                console.error('Icon upload failed:', err);
-            }
+        // Prevent duplicate uploads
+        if (isUploading) {
+            console.log('[ServiceGroupForm] Already uploading, ignoring duplicate call');
+            return;
         }
-    };
+
+        console.log('[ServiceGroupForm] File selected:', file.name);
+        console.log('[ServiceGroupForm] File details:', {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            lastModified: file.lastModified
+        });
+        console.log('[ServiceGroupForm] Current form values before upload:', form.state.values);
+
+        // Validate file first
+        console.log('[ServiceGroupForm] Validating file...');
+        const validation = validateImage(file);
+        console.log('[ServiceGroupForm] Validation result:', validation);
+
+        if (!validation.isValid) {
+            console.error('[ServiceGroupForm] Validation failed:', validation.message);
+            alert(validation.message);
+            return;
+        }
+
+        console.log('[ServiceGroupForm] File validation passed, starting upload...');
+        try {
+            // Upload file to backend
+            console.log('[ServiceGroupForm] Calling uploadImage...');
+            const result = await uploadImage(file);
+            console.log('[ServiceGroupForm] Upload result:', result);
+
+            if (result && result.data && result.data.fileUrl) {
+                const fileUrl = result.data.fileUrl;
+                const fileName = result.data.originalFileName;
+
+                console.log('[ServiceGroupForm] Setting iconUrl to:', fileUrl);
+
+                // Update local state
+                setUploadedIconUrl(fileUrl);
+                setUploadedIconName(fileName);
+
+                // Update form using setFieldValue with callback
+                form.setFieldValue('iconUrl', fileUrl, {
+                    shouldTouch: true,
+                    shouldDirty: true
+                });
+                // Clear iconFile after successful upload since we now have iconUrl
+                form.setFieldValue('iconFile', undefined, {
+                    shouldTouch: true,
+                    shouldDirty: true
+                });
+
+                // Force form to re-render
+                form.notify('iconUrl', 'change');
+                form.notify('iconFile', 'change');
+
+                // Clear input to prevent duplicate uploads
+                if (event.target) {
+                    event.target.value = '';
+                }
+
+            } else {
+                console.error('[ServiceGroupForm] Upload failed - no fileUrl in result:', result);
+            }
+        } catch (err) {
+            console.error('Icon upload failed:', err);
+        }
+    }
+
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <form.Field
                 name="groupCode"
                 validators={{
-                    onChange: ({ value }: { value: string }) =>
-                        !value || !value.trim() ? 'Mã nhóm là bắt buộc' : undefined,
+                    onChange: ({ value }: { value: string }) => {
+                        if (!value || !value.trim()) {
+                            return 'Mã nhóm là bắt buộc';
+                        }
+                        return undefined;
+                    },
                 }}
             >
                 {() => (
@@ -129,8 +154,12 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
             <form.Field
                 name="groupName"
                 validators={{
-                    onChange: ({ value }: { value: string }) =>
-                        !value || !value.trim() ? 'Tên nhóm là bắt buộc' : undefined,
+                    onChange: ({ value }: { value: string }) => {
+                        if (!value || !value.trim()) {
+                            return 'Tên nhóm là bắt buộc';
+                        }
+                        return undefined;
+                    },
                 }}
             >
                 {() => (
@@ -156,8 +185,12 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                 <form.Field
                     name="description"
                     validators={{
-                        onChange: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Mô tả là bắt buộc' : undefined,
+                        onChange: ({ value }: { value: string }) => {
+                            if (!value || !value.trim()) {
+                                return 'Mô tả là bắt buộc';
+                            }
+                            return undefined;
+                        },
                     }}
                 >
                     {() => (
@@ -254,6 +287,29 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                                     </p>
                                     <p className="text-xs text-gray-500">
                                         Click để thay đổi
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Uploaded Icon Preview */}
+                    {uploadedIconUrl && (
+                        <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                            <div className="flex items-center space-x-3">
+                                <Image
+                                    src={uploadedIconUrl}
+                                    alt="Uploaded icon"
+                                    width={48}
+                                    height={48}
+                                    className="w-12 h-12 object-cover rounded"
+                                />
+                                <div>
+                                    <p className="text-sm text-green-700 font-medium">
+                                        Icon đã upload
+                                    </p>
+                                    <p className="text-xs text-green-600">
+                                        {uploadedIconName}
                                     </p>
                                 </div>
                             </div>
