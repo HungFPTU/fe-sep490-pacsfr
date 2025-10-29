@@ -30,7 +30,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
     return (
         <div className={`space-y-2 ${className}`}>
             <label className="text-sm font-medium text-gray-900">
-                Trạng thái hiển thị
+                {label}
             </label>
             <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
                 <div className="flex items-center gap-3">

@@ -77,13 +77,11 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    // TEMPORARILY DISABLED: Disable middleware completely to fix Vercel deployment
-    // TODO: Re-enable after fixing middleware issues
+    // Enable middleware for protected routes
     matcher: [
-        // Disable all routes temporarily
-        // '/manager/:path*',
-        // '/staff/:path*',
-        // '/login',
-        // '/register',
+        '/manager/:path*',
+        '/staff/:path*',
+        '/login',
+        '/register',
     ],
 };

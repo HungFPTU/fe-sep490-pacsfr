@@ -1,6 +1,5 @@
 import { legalDocumentApi } from '../api/legal-document.api';
 import { DOCUMENT_TYPE_LABELS, DOCUMENT_STATUS_LABELS } from '../constants';
-// Removed unused type imports
 import type {
     CreateLegalDocumentRequest,
     UpdateLegalDocumentRequest,
@@ -30,51 +29,54 @@ export class LegalDocumentService {
         }
     }
 
-    // Create new legal document (two-step process)
+    // Create new legal document
     static async createLegalDocument(data: CreateLegalDocumentRequest) {
         try {
             console.log('[LegalDocument Service] Creating document:', data);
 
-            // Step 1: Create document with JSON
-            const response = await legalDocumentApi.create(data);
-            const createdDocument = response.data;
+            // Use the provided fileUrl directly - no need to re-upload
+            // The file was already uploaded when user selected it in the form
+            const fileUrl = data.fileUrl || '';
+            console.log('[LegalDocument Service] Using provided fileUrl:', fileUrl);
 
-            console.log('[LegalDocument Service] Document created:', createdDocument);
+            // Create document with fileUrl
+            const documentData = {
+                ...data,
+                fileUrl,
+                file: undefined, // Remove file from data
+            };
 
-            // Step 2: Upload file if exists
-            if (data.file && createdDocument.data && '$id' in createdDocument.data && createdDocument.data.$id) {
-                const documentId = createdDocument.data.$id;
-                console.log('[LegalDocument Service] Uploading file for document:', documentId);
-                await legalDocumentApi.uploadFile(documentId, data.file);
-                console.log('[LegalDocument Service] File uploaded successfully');
-            }
+            const response = await legalDocumentApi.create(documentData);
+            console.log('[LegalDocument Service] Document created:', response.data);
 
-            return createdDocument;
+            return response.data;
         } catch (error) {
             console.error("Error creating legal document:", error);
             throw error;
         }
     }
 
-    // Update legal document (two-step process)
+    // Update legal document
     static async updateLegalDocument(id: string, data: UpdateLegalDocumentRequest) {
         try {
             console.log('[LegalDocument Service] Updating document:', { id, data });
 
-            // Step 1: Update document with JSON
-            const response = await legalDocumentApi.update(id, data);
-            const updatedDocument = response.data;
+            // Use the provided fileUrl directly - no need to re-upload
+            // The file was already uploaded when user selected it in the form
+            const fileUrl = data.fileUrl || '';
+            console.log('[LegalDocument Service] Using provided fileUrl for update:', fileUrl);
 
-            console.log('[LegalDocument Service] Document updated:', updatedDocument);
+            // Update document with fileUrl
+            const documentData = {
+                ...data,
+                fileUrl,
+                file: undefined, // Remove file from data
+            };
 
-            // Step 2: Upload file if exists
-            if (data.file) {
-                console.log('[LegalDocument Service] Uploading file for document:', id);
-                await legalDocumentApi.uploadFile(id, data.file);
-                console.log('[LegalDocument Service] File uploaded successfully');
-            }
+            const response = await legalDocumentApi.update(id, documentData);
+            console.log('[LegalDocument Service] Document updated:', response.data);
 
-            return updatedDocument;
+            return response.data;
         } catch (error) {
             console.error("Error updating legal document:", error);
             throw error;

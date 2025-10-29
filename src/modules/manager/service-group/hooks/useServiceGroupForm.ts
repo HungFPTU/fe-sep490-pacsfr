@@ -9,6 +9,7 @@ type FormValues = {
     groupName: string;
     description: string;
     iconUrl: string;
+    iconFile?: File; // Add iconFile field
     displayOrder: number;
     isActive: boolean;
 };
@@ -42,6 +43,14 @@ export const useServiceGroupForm = ({
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
+            console.log('[useServiceGroupForm] Form submit triggered');
+
+            // Prevent duplicate submission
+            if (createMutation.isPending || updateMutation.isPending) {
+                console.log('[useServiceGroupForm] Already submitting, ignoring duplicate call');
+                return;
+            }
+
             // Final validation before submit
             if (!value.groupCode?.trim()) {
                 addToast({ message: 'Vui lòng nhập mã nhóm', type: 'error' });
@@ -57,14 +66,23 @@ export const useServiceGroupForm = ({
             // }
 
             try {
+                console.log('[useServiceGroupForm] Form values before submit:', value);
+                console.log('[useServiceGroupForm] Icon check:', {
+                    hasIconUrl: !!value.iconUrl,
+                    iconUrl: value.iconUrl,
+                });
+
                 const request: CreateServiceGroupRequest = {
                     groupCode: value.groupCode.trim(),
                     groupName: value.groupName.trim(),
                     description: value.description?.trim() || '',
                     iconUrl: value.iconUrl.trim(),
+                    // Only include iconFile if we don't have iconUrl yet (file not uploaded)
                     displayOrder: value.displayOrder,
                     isActive: value.isActive,
                 };
+
+                console.log('[useServiceGroupForm] Request data:', request);
 
                 let res;
                 if (initData?.id) {
@@ -110,6 +128,9 @@ export const useServiceGroupForm = ({
         if (open) {
             // Always reset with current initData when modal opens
             form.reset(toFormValues(initData));
+        } else {
+            // Clear form when modal closes
+            form.reset(toFormValues(null));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open, initData?.id]);

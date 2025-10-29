@@ -32,8 +32,6 @@ export const legalDocumentApi = {
 
     // POST create - Always use JSON (no file in this step)
     create: (data: CreateLegalDocumentRequest) => {
-        console.log('[LegalDocument API] Creating JSON request:', data);
-
         // Always use JSON request for document creation
         return http.post<RestResponse<LegalDocument>>(
             API_PATH.MANAGER.LEGAL_DOCUMENT.POST,
@@ -46,20 +44,19 @@ export const legalDocumentApi = {
                 effectiveDate: data.effectiveDate,
                 status: data.status,
                 isActive: data.isActive,
-                // Note: file will be uploaded separately
+                fileUrl: data.fileUrl, // Include fileUrl if available
+                // Note: file will be uploaded separately if needed
             }
         );
     },
 
     // PUT update - Always use JSON (no file in this step)
     update: (id: string, data: UpdateLegalDocumentRequest) => {
-        console.log('[LegalDocument API] Updating JSON request:', { id, data });
-
         // Always use JSON request for document update
         return http.put<RestResponse<LegalDocument>>(
             API_PATH.MANAGER.LEGAL_DOCUMENT.PUT(id),
             {
-                id: data.id,
+                id: id, // Use the id parameter, not data.id
                 documentNumber: data.documentNumber,
                 documentType: data.documentType,
                 name: data.name,
@@ -68,7 +65,7 @@ export const legalDocumentApi = {
                 effectiveDate: data.effectiveDate,
                 status: data.status,
                 isActive: data.isActive,
-                // Note: file will be uploaded separately if needed
+                fileUrl: data.fileUrl,
             }
         );
     },

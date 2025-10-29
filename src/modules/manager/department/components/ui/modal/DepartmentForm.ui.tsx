@@ -135,14 +135,6 @@ export const DepartmentForm: React.FC<Props> = ({ form, isEdit }) => {
                 )}
             </form.Field>
 
-            <ToggleSwitch
-                checked={isActive}
-                onChange={handleActiveChange}
-                label="Kích hoạt phòng ban"
-                description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
-                aria-label="Kích hoạt phòng ban"
-            />
-
             <TextareaField<FormValues>
                 className="md:col-span-2"
                 form={form as FormApiOf<FormValues>}
@@ -150,6 +142,14 @@ export const DepartmentForm: React.FC<Props> = ({ form, isEdit }) => {
                 label="Mô tả"
                 placeholder="Nhập mô tả phòng ban"
                 rows={3}
+            />
+
+            <ToggleSwitch
+                checked={isActive}
+                onChange={handleActiveChange}
+                label="Kích hoạt phòng ban"
+                description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                aria-label="Kích hoạt phòng ban"
             />
         </div>
     );

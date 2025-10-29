@@ -15,7 +15,7 @@ export type CreateServiceGroupRequest = {
     groupCode: string;
     groupName: string;
     description: string;
-    iconUrl: string;
+    iconUrl?: string;
     displayOrder: number;
     isActive: boolean;
 }
@@ -25,7 +25,8 @@ export type UpdateServiceGroupRequest = {
     groupCode: string;
     groupName: string;
     description: string;
-    iconUrl: string;
+    iconUrl?: string; // Made optional for backend integration
+    iconFile?: File; // Added for file upload
     displayOrder: number;
     isActive: boolean;
 }
