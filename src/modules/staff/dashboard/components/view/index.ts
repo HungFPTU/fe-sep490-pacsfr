@@ -1,7 +1,3 @@
-export { CreateCasePageView } from './CreateCasePageView.view';
+// Dashboard views only - Case views moved to @modules/staff/case
 export { StaffDashboardView } from './StaffDashboardView.view';
-export { CaseDetailView } from './CaseDetailView.view';
-export { CaseListView } from './CaseListView.view';
-export { CaseLookupView } from './CaseLookupView.view';
-export { CaseSearchView } from './CaseSearchView.view';
 export { StaffDashboardTabsView } from './StaffDashboardTabsView.view';
