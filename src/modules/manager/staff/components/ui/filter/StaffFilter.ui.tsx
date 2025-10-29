@@ -4,6 +4,7 @@ import React from 'react';
 import { ROLE_TYPE_OPTIONS, BOOLEAN_OPTIONS } from '../../../constants';
 import { StaffFilters } from '../../../types';
 import { Search } from 'lucide-react';
+import { getFilterOptions } from '../../../utils';
 
 interface StaffFilterProps {
     filters: StaffFilters;
@@ -11,6 +12,8 @@ interface StaffFilterProps {
 }
 
 export function StaffFilter({ filters, onFilterChange }: StaffFilterProps) {
+    const filterOptions = getFilterOptions();
+
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onFilterChange({ ...filters, SearchTerm: e.target.value });
     };
@@ -48,7 +51,7 @@ export function StaffFilter({ filters, onFilterChange }: StaffFilterProps) {
                     onChange={handleStatusChange}
                     className="h-10 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                    {BOOLEAN_OPTIONS.map((option) => (
+                    {filterOptions.status.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
                         </option>
@@ -61,8 +64,7 @@ export function StaffFilter({ filters, onFilterChange }: StaffFilterProps) {
                     onChange={handleRoleTypeChange}
                     className="h-10 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                    <option value="">Tất cả vai trò</option>
-                    {ROLE_TYPE_OPTIONS.map((option) => (
+                    {filterOptions.roleType.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
                         </option>

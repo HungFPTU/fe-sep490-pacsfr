@@ -24,11 +24,6 @@ export const ServiceTableRow: React.FC<Props> = ({ service, onView, onEdit, onDe
                 {service.serviceName}
             </td>
 
-            {/* Service Group */}
-            <td className="px-6 py-4 text-sm text-slate-600">
-                {service.serviceGroupName || '-'}
-            </td>
-
             {/* Service Type */}
             <td className="px-6 py-4 text-sm text-slate-600">
                 {service.serviceType}

@@ -13,8 +13,17 @@ import {
 } from '@heroui/react';
 import { Trash2, Eye, UserPlus, Calendar } from 'lucide-react';
 import { Staff } from '../../../types';
-import { ROLE_TYPE_LABELS } from '../../../enums';
 import { formatDateVN } from '@core/utils/date';
+import {
+    getRoleTypeColor,
+    getStatusColor,
+    getStatusLabel,
+    getRoleTypeLabel,
+    getActionButtonColors,
+    formatOrgUnitName,
+    getTableConfig,
+    getTableColumns
+} from '../../../utils';
 
 interface StaffTableProps {
     data: Staff[]; // Changed from RestMany<Staff> to Staff[]
@@ -33,18 +42,8 @@ export function StaffTable({
     onAssignWorkShift,
     isLoading = false,
 }: StaffTableProps) {
-    const columns = [
-        { key: 'staffCode', label: 'MÃ NV' },
-        { key: 'fullName', label: 'HỌ TÊN' },
-        { key: 'orgUnitName', label: 'CƠ QUAN' },
-        { key: 'email', label: 'EMAIL' },
-        { key: 'phone', label: 'SỐ ĐIỆN THOẠI' },
-        { key: 'position', label: 'CHỨC VỤ' },
-        { key: 'roleType', label: 'VAI TRÒ' },
-        { key: 'status', label: 'TRẠNG THÁI' },
-        { key: 'createdAt', label: 'NGÀY TẠO' },
-        { key: 'actions', label: 'THAO TÁC' },
-    ];
+    const columns = getTableColumns();
+    const actionColors = getActionButtonColors();
 
     const renderCell = (staff: Staff, columnKey: React.Key) => {
         switch (columnKey) {
@@ -62,7 +61,7 @@ export function StaffTable({
             case 'orgUnitName':
                 return (
                     <span className="text-sm text-gray-700">
-                        {staff.orgUnitName || <span className="text-gray-400 italic">Chưa có</span>}
+                        {formatOrgUnitName(staff.orgUnitName)}
                     </span>
                 );
 
@@ -80,22 +79,16 @@ export function StaffTable({
                     <Chip
                         size="sm"
                         variant="flat"
-                        color={
-                            staff.roleType === 'ADMIN'
-                                ? 'danger'
-                                : staff.roleType === 'MANAGER'
-                                    ? 'warning'
-                                    : 'primary'
-                        }
+                        color={getRoleTypeColor(staff.roleType)}
                     >
-                        {ROLE_TYPE_LABELS[staff.roleType as keyof typeof ROLE_TYPE_LABELS] || staff.roleType}
+                        {getRoleTypeLabel(staff.roleType)}
                     </Chip>
                 );
 
             case 'status':
                 return (
-                    <Chip size="sm" variant="flat" color={staff.isActive ? 'success' : 'default'}>
-                        {staff.isActive ? 'Hoạt động' : 'Ngừng hoạt động'}
+                    <Chip size="sm" variant="flat" color={getStatusColor(staff.isActive)}>
+                        {getStatusLabel(staff.isActive)}
                     </Chip>
                 );
 
@@ -108,36 +101,36 @@ export function StaffTable({
                         <Tooltip content="Xem chi tiết">
                             <button
                                 onClick={() => onView(staff)}
-                                className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                className={`p-2 rounded-lg transition-colors ${actionColors.view}`}
                             >
-                                <Eye className="w-4 h-4 text-blue-600" />
+                                <Eye className="w-4 h-4" />
                             </button>
                         </Tooltip>
 
                         <Tooltip content="Gán phòng ban">
                             <button
                                 onClick={() => onAssignDepartment(staff)}
-                                className="p-2 hover:bg-purple-50 rounded-lg transition-colors"
+                                className={`p-2 rounded-lg transition-colors ${actionColors.assignDepartment}`}
                             >
-                                <UserPlus className="w-4 h-4 text-purple-600" />
+                                <UserPlus className="w-4 h-4" />
                             </button>
                         </Tooltip>
 
                         <Tooltip content="Gán ca làm việc">
                             <button
                                 onClick={() => onAssignWorkShift(staff)}
-                                className="p-2 hover:bg-green-50 rounded-lg transition-colors"
+                                className={`p-2 rounded-lg transition-colors ${actionColors.assignWorkShift}`}
                             >
-                                <Calendar className="w-4 h-4 text-green-600" />
+                                <Calendar className="w-4 h-4" />
                             </button>
                         </Tooltip>
 
                         <Tooltip content="Xóa">
                             <button
                                 onClick={() => onDelete(staff)}
-                                className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                className={`p-2 rounded-lg transition-colors ${actionColors.delete}`}
                             >
-                                <Trash2 className="w-4 h-4 text-red-600" />
+                                <Trash2 className="w-4 h-4" />
                             </button>
                         </Tooltip>
                     </div>
@@ -148,10 +141,12 @@ export function StaffTable({
         }
     };
 
+    const tableConfig = getTableConfig();
+
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             <Table
-                aria-label="Bảng quản lý nhân viên"
+                aria-label={tableConfig.ariaLabel}
                 classNames={{
                     wrapper: 'shadow-none',
                     th: 'bg-gray-50 text-gray-700 font-semibold text-xs',
@@ -164,7 +159,7 @@ export function StaffTable({
                 <TableBody
                     items={data}
                     isLoading={isLoading}
-                    emptyContent="Không có dữ liệu nhân viên"
+                    emptyContent={tableConfig.emptyContent}
                 >
                     {(item) => (
                         <TableRow key={item.id}>
