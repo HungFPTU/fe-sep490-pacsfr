@@ -3,27 +3,27 @@
  */
 
 export enum StaffStatus {
-    ACTIVE = 'ACTIVE',
-    INACTIVE = 'INACTIVE',
+    ACTIVE = 'Active',
+    INACTIVE = 'Inactive',
 }
 
 export enum RoleType {
-    STAFF = 'STAFF',
-    MANAGER = 'MANAGER',
-    ADMIN = 'ADMIN',
+    STAFF = 'Staff',
+    MANAGER = 'Manager',
+    ADMIN = 'Admin',
 }
 
 export enum StaffPosition {
-    RECEPTIONIST = 'RECEPTIONIST',
-    OFFICER = 'OFFICER',
-    SPECIALIST = 'SPECIALIST',
-    HEAD_OF_DEPARTMENT = 'HEAD_OF_DEPARTMENT',
-    DEPUTY_HEAD = 'DEPUTY_HEAD',
+    RECEPTIONIST = 'Receptionist',
+    OFFICER = 'Officer',
+    SPECIALIST = 'Specialist',
+    HEAD_OF_DEPARTMENT = 'Head of Department',
+    DEPUTY_HEAD = 'Deputy Head',
 }
 
 export const STAFF_STATUS_LABELS: Record<StaffStatus, string> = {
-    [StaffStatus.ACTIVE]: 'Hoạt động',
-    [StaffStatus.INACTIVE]: 'Ngừng hoạt động',
+    [StaffStatus.ACTIVE]: 'Active',
+    [StaffStatus.INACTIVE]: 'Inactive',
 };
 
 export const ROLE_TYPE_LABELS: Record<RoleType, string> = {

@@ -10,18 +10,18 @@ import {
     TableCell,
     Tooltip,
 } from '@heroui/react';
-import { Trash2, Eye, UserPlus, Calendar } from 'lucide-react';
+import { Trash2, Eye, UserPlus, Calendar, Clock } from 'lucide-react';
 import { Staff } from '../../../types';
 import { formatDateVN } from '@core/utils/date';
 import {
     getStatusLabel,
     getRoleTypeLabel,
     getActionButtonColors,
-    formatOrgUnitName,
     getTableConfig,
     getTableColumns
 } from '../../../utils';
 import { getBadgeStyle, getRoleTypeStyle, getStatusStyle } from '../../../utils';
+import { AssignWorkShiftModal, StaffWorkShiftAssignmentsModal } from '../modal';
 
 interface StaffTableProps {
     data: Staff[]; // Changed from RestMany<Staff> to Staff[]
@@ -29,6 +29,8 @@ interface StaffTableProps {
     onDelete: (staff: Staff) => void;
     onAssignDepartment: (staff: Staff) => void;
     onAssignWorkShift: (staff: Staff) => void;
+    onViewWorkShifts?: (staff: Staff) => void;
+    onRefresh?: () => void;
     isLoading?: boolean;
 }
 
@@ -37,11 +39,29 @@ export function StaffTable({
     onView,
     onDelete,
     onAssignDepartment,
-    onAssignWorkShift,
+    onRefresh,
     isLoading = false,
 }: StaffTableProps) {
+    const [assignWorkShiftModalOpen, setAssignWorkShiftModalOpen] = React.useState(false);
+    const [viewWorkShiftsModalOpen, setViewWorkShiftsModalOpen] = React.useState(false);
+    const [selectedStaff, setSelectedStaff] = React.useState<Staff | null>(null);
+
     const columns = getTableColumns();
     const actionColors = getActionButtonColors();
+
+    const handleAssignWorkShift = (staff: Staff) => {
+        setSelectedStaff(staff);
+        setAssignWorkShiftModalOpen(true);
+    };
+
+    const handleAssignWorkShiftSuccess = () => {
+        onRefresh?.();
+    };
+
+    const handleViewWorkShifts = (staff: Staff) => {
+        setSelectedStaff(staff);
+        setViewWorkShiftsModalOpen(true);
+    };
 
     const renderCell = (staff: Staff, columnKey: React.Key) => {
         switch (columnKey) {
@@ -112,10 +132,19 @@ export function StaffTable({
 
                         <Tooltip content="Gán ca làm việc">
                             <button
-                                onClick={() => onAssignWorkShift(staff)}
+                                onClick={() => handleAssignWorkShift(staff)}
                                 className={`p-2 rounded-lg transition-colors ${actionColors.assignWorkShift}`}
                             >
                                 <Calendar className="w-4 h-4" />
+                            </button>
+                        </Tooltip>
+
+                        <Tooltip content="Xem ca làm việc">
+                            <button
+                                onClick={() => handleViewWorkShifts(staff)}
+                                className={`p-2 rounded-lg transition-colors ${actionColors.view}`}
+                            >
+                                <Clock className="w-4 h-4" />
                             </button>
                         </Tooltip>
 
@@ -162,6 +191,21 @@ export function StaffTable({
                     )}
                 </TableBody>
             </Table>
+
+            {/* Assign Work Shift Modal */}
+            <AssignWorkShiftModal
+                open={assignWorkShiftModalOpen}
+                onClose={() => setAssignWorkShiftModalOpen(false)}
+                staff={selectedStaff}
+                onSuccess={handleAssignWorkShiftSuccess}
+            />
+
+            {/* View Work Shifts Modal */}
+            <StaffWorkShiftAssignmentsModal
+                open={viewWorkShiftsModalOpen}
+                onClose={() => setViewWorkShiftsModalOpen(false)}
+                staff={selectedStaff}
+            />
         </div>
     );
 }

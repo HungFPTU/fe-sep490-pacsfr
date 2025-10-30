@@ -137,6 +137,7 @@ export function StaffListPage() {
                 onDelete={handleDelete}
                 onAssignDepartment={handleAssignDepartment}
                 onAssignWorkShift={handleAssignWorkShift}
+                onRefresh={refetch}
                 isLoading={isLoading}
             />
             <StaffPagination

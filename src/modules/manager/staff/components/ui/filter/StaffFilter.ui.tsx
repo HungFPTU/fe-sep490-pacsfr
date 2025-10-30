@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { ROLE_TYPE_OPTIONS, BOOLEAN_OPTIONS } from '../../../constants';
 import { StaffFilters } from '../../../types';
 import { Search } from 'lucide-react';
 import { getFilterOptions } from '../../../utils';

@@ -11,7 +11,8 @@ export const workshiftApi = {
                 filters.keyword || '',
                 filters.isActive ?? true,
                 filters.page || 1,
-                filters.size || 10
+                filters.size || 10,
+                filters.staffId || ''
             )
         );
     },

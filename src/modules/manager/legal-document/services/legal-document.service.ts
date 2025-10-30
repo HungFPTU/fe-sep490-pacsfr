@@ -5,7 +5,6 @@ import type {
     UpdateLegalDocumentRequest,
     LegalDocumentFilters
 } from '../types';
-import { formatDateInput } from '@/core';
 
 export class LegalDocumentService {
     // Get legal documents list with filters
