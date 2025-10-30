@@ -13,9 +13,6 @@ export const ServiceTableHeader: React.FC = () => {
                     Tên dịch vụ
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Nhóm dịch vụ
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
                     Loại dịch vụ
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">

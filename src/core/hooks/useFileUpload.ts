@@ -1,67 +1,75 @@
-/**
- * useFileUpload Hook
- * Hook để upload files với progress tracking
- */
+import { useState } from 'react';
+import { FileUploadService, FileUploadResponse } from '../services/file-upload.service';
 
-import { useState, useCallback } from 'react';
-import { uploadImage, UploadResult, UploadOptions } from '@core/services/upload.service';
-
-export interface UseFileUploadResult {
-  upload: (file: File, options?: UploadOptions) => Promise<UploadResult>;
-  uploading: boolean;
-  progress: number;
-  error: string | null;
-  reset: () => void;
+export interface UseFileUploadOptions {
+  maxSize?: number;
+  allowedTypes?: string[];
+  folder?: string;
 }
 
-export function useFileUpload(): UseFileUploadResult {
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
+export interface UseFileUploadReturn {
+  uploadFile: (file: File) => Promise<FileUploadResponse>;
+  isUploading: boolean;
+  error: string | null;
+  validateFile: (file: File) => { isValid: boolean; error?: string };
+  formatFileSize: (bytes: number) => string;
+}
+
+export const useFileUpload = (options: UseFileUploadOptions = {}): UseFileUploadReturn => {
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const upload = useCallback(async (file: File, options?: UploadOptions): Promise<UploadResult> => {
-    setUploading(true);
-    setProgress(0);
+
+  const {
+    maxSize = 10 * 1024 * 1024, // 10MB
+    allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain',
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp'
+    ],
+    folder = 'general_files'
+  } = options;
+
+  const validateFile = (file: File): { isValid: boolean; error?: string } => {
+    return FileUploadService.validateFile(file, maxSize, allowedTypes);
+  };
+
+  const uploadFile = async (file: File): Promise<FileUploadResponse> => {
+    setIsUploading(true);
     setError(null);
-    
+
     try {
-      const result = await uploadImage(file, {
-        ...options,
-        onProgress: (p) => {
-          setProgress(p);
-          options?.onProgress?.(p);
-        },
-      });
-      
-      if (!result.success) {
-        setError(result.error || 'Upload failed');
+      // Validate file first
+      const validation = validateFile(file);
+      if (!validation.isValid) {
+        throw new Error(validation.error || 'Invalid file');
       }
-      
+
+      // Upload file
+      const result = await FileUploadService.uploadFile(file, folder);
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      const errorMessage = err instanceof Error ? err.message : 'Upload failed';
       setError(errorMessage);
-      return {
-        success: false,
-        error: errorMessage,
-      };
+      throw err;
     } finally {
-      setUploading(false);
+      setIsUploading(false);
     }
-  }, []);
-  
-  const reset = useCallback(() => {
-    setUploading(false);
-    setProgress(0);
-    setError(null);
-  }, []);
-  
-  return {
-    upload,
-    uploading,
-    progress,
-    error,
-    reset,
   };
-}
 
+  const formatFileSize = (bytes: number): string => {
+    return FileUploadService.formatFileSize(bytes);
+  };
+
+  return {
+    uploadFile,
+    isUploading,
+    error,
+    validateFile,
+    formatFileSize,
+  };
+};

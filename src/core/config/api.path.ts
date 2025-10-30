@@ -99,13 +99,16 @@ export const API_PATH = {
             ASSIGN_WORKSHIFT: (staffId: string) => `/Staff/${staffId}/assign-workshift`,
         },
         WORKSHIFT: {
-            GET_ALL: (keyword: string, isActive: boolean, Page: number, Size: number) => `/WorkShift?keyword=${keyword}&isActive=${isActive}&Page=${Page}&Size=${Size}`,
+            GET_ALL: (keyword: string, isActive: boolean, Page: number, Size: number, staffId?: string) => `/WorkShift?keyword=${keyword}&isActive=${isActive}&Page=${Page}&Size=${Size}${staffId ? `&staffId=${staffId}` : ''}`,
             GET_BY_ID: (id: string) => `/WorkShift/${id}`,
             POST: "/WorkShift",
             PUT: (id: string) => `/WorkShift/${id}`,
             DELETE: (id: string) => `/WorkShift/${id}`,
             MY_SHIFTS: "/WorkShift/my-shifts",
-        }
+        },
+        COUNTER: {
+            GET_BY_ID: (id: string) => `/Counter/${id}`,
+        },
     },
     STAFF: {
         DASHBOARD: {
