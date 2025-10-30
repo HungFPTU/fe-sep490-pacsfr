@@ -138,13 +138,6 @@ export class LegalDocumentService {
         return colorMap[status] || "default";
     }
 
-    // Format date for display
-    static formatDate(date: string | Date): string {
-        if (!date) return "";
-        const d = new Date(date);
-        return d.toLocaleDateString('vi-VN');
-    }
-
     // Format file size for display
     static formatFileSize(bytes?: number): string {
         if (!bytes) return "";
