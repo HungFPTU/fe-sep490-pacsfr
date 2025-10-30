@@ -25,7 +25,7 @@ export function StaffHeader({ onCreateClick }: StaffHeaderProps) {
                 color="primary"
                 startContent={<Plus className="w-4 h-4" />}
                 onPress={onCreateClick}
-                className="font-medium"
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
             >
                 Tạo nhân viên mới
             </Button>

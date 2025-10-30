@@ -44,6 +44,11 @@ export const ServiceGroupListPage: React.FC = () => {
         setModalOpen(true);
     };
 
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setSelectedGroup(null);
+    };
+
     const handleViewDetail = (group: ServiceGroup) => {
         setSelectedGroup(group);
         setDetailModalOpen(true);
@@ -122,10 +127,7 @@ export const ServiceGroupListPage: React.FC = () => {
             {/* Create/Edit Modal */}
             <CreateServiceGroupModal
                 open={modalOpen}
-                onClose={() => {
-                    setModalOpen(false);
-                    setSelectedGroup(null);
-                }}
+                onClose={handleCloseModal}
                 initData={selectedGroup}
                 onSuccess={handleModalSuccess}
             />

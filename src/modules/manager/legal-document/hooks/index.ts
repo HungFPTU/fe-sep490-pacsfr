@@ -1,11 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LegalDocumentService } from '../services/legal-document.service';
 import type {
     CreateLegalDocumentRequest,
     UpdateLegalDocumentRequest,
     LegalDocumentFilters,
-    LegalDocumentFormData
 } from '../types';
 
 // Hook for fetching legal documents list
@@ -85,111 +84,8 @@ export const useDownloadFile = () => {
     });
 };
 
-// Hook for legal document form management
-export const useLegalDocumentForm = (initialData?: Partial<LegalDocumentFormData>) => {
-    const [formData, setFormData] = useState<LegalDocumentFormData>({
-        documentNumber: '',
-        documentType: '',
-        name: '',
-        issueDate: '',
-        issueBody: '',
-        effectiveDate: '',
-        status: '',
-        isActive: true,
-        file: undefined,
-        ...initialData,
-    });
-
-    const [errors, setErrors] = useState<Partial<Record<keyof LegalDocumentFormData, string>>>({});
-
-    // Update form data when initialData changes (for edit mode)
-    React.useEffect(() => {
-        if (initialData) {
-            console.log('[useLegalDocumentForm] Updating form data with initialData:', initialData);
-            setFormData(prev => ({
-                ...prev,
-                ...initialData,
-            }));
-        }
-    }, [initialData]);
-
-    const updateField = useCallback((field: keyof LegalDocumentFormData, value: string | File | boolean) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
-        // Clear error when user starts typing
-        if (errors[field]) {
-            setErrors(prev => ({ ...prev, [field]: undefined }));
-        }
-    }, [errors]);
-
-    const validateForm = useCallback((): boolean => {
-        const newErrors: Partial<Record<keyof LegalDocumentFormData, string>> = {};
-
-        if (!formData.documentNumber.trim()) {
-            newErrors.documentNumber = 'Số văn bản là bắt buộc';
-        }
-
-        if (!formData.documentType) {
-            newErrors.documentType = 'Loại văn bản là bắt buộc';
-        }
-
-        if (!formData.name.trim()) {
-            newErrors.name = 'Tên văn bản là bắt buộc';
-        }
-
-        if (!formData.issueDate) {
-            newErrors.issueDate = 'Ngày ban hành là bắt buộc';
-        }
-
-        if (!formData.issueBody.trim()) {
-            newErrors.issueBody = 'Cơ quan ban hành là bắt buộc';
-        }
-
-        if (!formData.effectiveDate) {
-            newErrors.effectiveDate = 'Ngày có hiệu lực là bắt buộc';
-        }
-
-        if (!formData.status) {
-            newErrors.status = 'Trạng thái là bắt buộc';
-        }
-
-        // Validate date range
-        if (formData.issueDate && formData.effectiveDate) {
-            const issueDate = new Date(formData.issueDate);
-            const effectiveDate = new Date(formData.effectiveDate);
-            if (effectiveDate < issueDate) {
-                newErrors.effectiveDate = 'Ngày có hiệu lực không được trước ngày ban hành';
-            }
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }, [formData]);
-
-    const resetForm = useCallback(() => {
-        setFormData({
-            documentNumber: '',
-            documentType: '',
-            name: '',
-            issueDate: '',
-            issueBody: '',
-            effectiveDate: '',
-            status: '',
-            isActive: true,
-            file: undefined,
-        });
-        setErrors({});
-    }, []);
-
-    return {
-        formData,
-        errors,
-        updateField,
-        validateForm,
-        resetForm,
-        setFormData,
-        setErrors,
-    };
-};
+// Export the new form hook from useLegalDocumentForm.ts
+export { useLegalDocumentForm } from './useLegalDocumentForm';
 
 // Hook for legal document filters
 export const useLegalDocumentFilters = () => {

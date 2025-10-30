@@ -19,7 +19,25 @@ export const serviceGroupService = {
     },
 
     async createServiceGroup(request: CreateServiceGroupRequest): Promise<RestResponse<ServiceGroup>> {
-        const res = await serviceGroupAPI.createServiceGroup(request);
+        console.log('[ServiceGroup Service] Creating service group with request:', request);
+
+        // Use the provided iconUrl directly - no need to re-upload
+        // The image was already uploaded when user selected it in the form
+        const iconUrl = request.iconUrl || '';
+        console.log('[ServiceGroup Service] Using provided iconUrl:', iconUrl);
+
+        // Create service group with iconUrl
+        const serviceGroupData = {
+            groupCode: request.groupCode,
+            groupName: request.groupName,
+            description: request.description,
+            iconUrl: iconUrl,
+            displayOrder: Number(request.displayOrder) || 0,
+            isActive: request.isActive,
+        };
+
+        console.log('[ServiceGroup Service] Creating service group with data:', serviceGroupData);
+        const res = await serviceGroupAPI.createServiceGroup(serviceGroupData);
         return res.data;
     },
 
@@ -27,7 +45,16 @@ export const serviceGroupService = {
         id: string,
         request: UpdateServiceGroupRequest
     ): Promise<RestResponse<ServiceGroup>> {
-        const res = await serviceGroupAPI.updateServiceGroup(id, request);
+        // Use the provided iconUrl directly - no need to re-upload
+        // The image was already uploaded when user selected it in the form
+        const iconUrl = request.iconUrl || '';
+        console.log('[ServiceGroup Service] Using provided iconUrl for update:', iconUrl);
+
+        // Update service group with iconUrl
+        const res = await serviceGroupAPI.updateServiceGroup(request.id, {
+            ...request,
+            iconUrl: iconUrl,
+        } as UpdateServiceGroupRequest);
         return res.data;
     },
 
