@@ -137,6 +137,8 @@ export const API_PATH = {
             LIST: "/Case",
             DETAIL: "/Case",
             LOOKUP: (caseId: string) => `/Case/${caseId}`,
+            UPDATE: (caseId: string) => `/Case/${caseId}`,
+            UPDATE_STATUS: (caseId: string) => `/Case/${caseId}/status`,
             UPDATE_PAYMENT: (caseId: string) => `/Case/${caseId}/payment`,
         },
         WORKSHIFT: {
