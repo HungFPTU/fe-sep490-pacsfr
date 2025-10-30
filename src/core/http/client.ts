@@ -1,6 +1,7 @@
 // import { useGlobalLoading } from "@core/patterns/SingletonHook";
 import { ENV } from "@/core/config/env";
 import { useAuthStore } from "@/modules/auth/stores/useAuthStore";
+import { RestMany, RestOne, RestResponse } from "@/types/rest";
 
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -234,6 +235,11 @@ class HttpClient {
                 headers: fetchHeaders,
                 body: body !== undefined ? (isFormData ? body : JSON.stringify(body)) : undefined,
             };
+
+            // Remove Content-Type header for FormData to let browser set it with boundary
+            if (isFormData && (fetchHeaders as Record<string, string>)['Content-Type']) {
+                delete (fetchHeaders as Record<string, string>)['Content-Type'];
+            }
 
             // Chỗ này chưa có API auth/me, lỗi ở đây
             const response = await fetch(`${resolvedBase}${url}`, fetchInit);

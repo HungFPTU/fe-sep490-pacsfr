@@ -15,9 +15,9 @@ export enum DocumentTypeEnum {
 }
 
 export enum DocumentStatusEnum {
-    DRAFT = 'DRAFT',
-    PUBLISHED = 'PUBLISHED',
-    EFFECTIVE = 'EFFECTIVE',
-    EXPIRED = 'EXPIRED',
-    CANCELLED = 'CANCELLED',
+    DRAFT = 'Draft',
+    ACTIVE = 'Active',
+    EXPIRED = 'Expired',
+    REPLACED = 'Replaced',
+    CANCELLED = 'Cancelled',
 }

@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
-// DISABLE WATCHPACK completely
+// Use Next.js built-in hot reload instead of Webpack
 process.env.WEBPACK_DISABLE_WATCHPACK = 'true';
 process.env.WEBPACK_WATCH_OPTIONS = 'false';
+process.env.NEXT_WEBPACK_USEPOLLING = 'false';
 
 const nextConfig: NextConfig = {
   // Tối ưu hóa cho Bun runtime
@@ -50,15 +51,12 @@ const nextConfig: NextConfig = {
     serverActions: {
       allowedOrigins: ["localhost:3000"],
     },
-    // Bun-specific optimizations for better auto-reload
-    ...(process.env.BUN && {
-      // Enable faster refresh for Bun
-      fastRefresh: true,
-      // Optimize file watching for Bun
-      optimizeServerReact: true,
-    }),
-    // DISABLE WATCHPACK completely
-    webpackBuildWorker: false,
+    // Enable Next.js built-in hot reload
+    // fastRefresh: true,
+    // Optimize for auto-reload
+    optimizeServerReact: true,
+    // Use Next.js built-in file watching
+    webpackBuildWorker: true,
   },
 
   // Tối ưu hóa build performance
@@ -71,24 +69,21 @@ const nextConfig: NextConfig = {
 
   // Tối ưu hóa webpack cho Bun và SSR
   webpack: (config, { dev, isServer }) => {
-    // Tối ưu hóa cho development - DISABLE WATCHPACK completely
+    // Enable Next.js built-in file watching for auto-reload
     if (dev) {
-      // Disable Watchpack completely to avoid EINVAL errors
+      // Enable file watching for auto-reload
       config.watchOptions = {
-        // Disable polling completely
-        poll: false,
-        // Disable Watchpack by setting ignored to everything
-        ignored: /.*/,
-        // Use minimal timeout
-        aggregateTimeout: 100,
+        poll: 1000, // Poll every 1 second for changes
+        ignored: /node_modules/, // Only ignore node_modules
+        aggregateTimeout: 300, // Wait 300ms before rebuilding
       };
 
-      // Alternative: Disable file watching entirely
-      config.watch = false;
+      // Enable file watching
+      config.watch = true;
 
-      // Use Bun's native file watching instead
+      // Optimize logging
       config.infrastructureLogging = {
-        level: 'error', // Reduce logging
+        level: 'warn', // Show warnings
       };
     }
 

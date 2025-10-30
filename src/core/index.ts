@@ -13,9 +13,12 @@ export * from "./http/client";
 
 // Services
 export * from "./services/upload.service";
+export * from "./services/file-upload.service";
+export * from "./services/image-upload.service";
 
 // Hooks
 export * from "./hooks/useFileUpload";
+export * from "./hooks/useImageUpload";
 
 // Logger
 export * from "./logger";

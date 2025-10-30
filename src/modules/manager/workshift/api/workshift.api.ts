@@ -9,7 +9,19 @@ import type {
   Staff,
 } from '../types';
 
-// ==================== WorkShift API ====================
+export const workshiftApi = {
+    // GET list với filters
+    getList: (filters: WorkShiftFilters) => {
+        return http.get<RestMany<WorkShift>>(
+            API_PATH.MANAGER.WORKSHIFT.GET_ALL(
+                filters.keyword || '',
+                filters.isActive ?? true,
+                filters.page || 1,
+                filters.size || 10,
+                filters.staffId || ''
+            )
+        );
+    },
 
 /**
  * Lấy danh sách ca làm việc với bộ lọc

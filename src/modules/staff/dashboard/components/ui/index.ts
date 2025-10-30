@@ -8,6 +8,3 @@ export { StatsCards } from "./stats/StatsCards.ui";
 export { SearchFilters } from "./filters/SearchFilters.ui";
 export { WaitingList } from "./waiting-list/WaitingList.ui";
 
-// Create Case UI Components
-export * from "./create-case";
-

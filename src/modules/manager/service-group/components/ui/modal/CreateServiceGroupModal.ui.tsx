@@ -27,6 +27,10 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
     });
 
     const handleOk = async () => {
+        if (isLoading) {
+            console.log('[CreateServiceGroupModal] Already submitting, ignoring click');
+            return;
+        }
         await form.handleSubmit();
     };
 
