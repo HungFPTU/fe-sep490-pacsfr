@@ -8,15 +8,12 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Chip,
     Tooltip,
 } from '@heroui/react';
 import { Trash2, Eye, UserPlus, Calendar } from 'lucide-react';
 import { Staff } from '../../../types';
 import { formatDateVN } from '@core/utils/date';
 import {
-    getRoleTypeColor,
-    getStatusColor,
     getStatusLabel,
     getRoleTypeLabel,
     getActionButtonColors,
@@ -24,6 +21,7 @@ import {
     getTableConfig,
     getTableColumns
 } from '../../../utils';
+import { getBadgeStyle, getRoleTypeStyle, getStatusStyle } from '../../../utils';
 
 interface StaffTableProps {
     data: Staff[]; // Changed from RestMany<Staff> to Staff[]
@@ -58,12 +56,12 @@ export function StaffTable({
             case 'fullName':
                 return <span className="font-medium">{staff.fullName}</span>;
 
-            case 'orgUnitName':
-                return (
-                    <span className="text-sm text-gray-700">
-                        {formatOrgUnitName(staff.orgUnitName)}
-                    </span>
-                );
+            // case 'orgUnitName':
+            //     return (
+            //         <span className="text-sm text-gray-700">
+            //             {formatOrgUnitName(staff.orgUnitName)}
+            //         </span>
+            //     );
 
             case 'email':
                 return <span className="text-sm text-gray-600">{staff.email}</span>;
@@ -76,20 +74,16 @@ export function StaffTable({
 
             case 'roleType':
                 return (
-                    <Chip
-                        size="sm"
-                        variant="flat"
-                        color={getRoleTypeColor(staff.roleType)}
-                    >
+                    <span className={`${getBadgeStyle()} ${getRoleTypeStyle(staff.roleType)}`}>
                         {getRoleTypeLabel(staff.roleType)}
-                    </Chip>
+                    </span>
                 );
 
             case 'status':
                 return (
-                    <Chip size="sm" variant="flat" color={getStatusColor(staff.isActive)}>
+                    <span className={`${getBadgeStyle()} ${getStatusStyle(staff.isActive)}`}>
                         {getStatusLabel(staff.isActive)}
-                    </Chip>
+                    </span>
                 );
 
             case 'createdAt':

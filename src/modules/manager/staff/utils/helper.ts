@@ -153,7 +153,6 @@ export const getTableConfig = () => ({
 export const getTableColumns = () => [
     { key: 'staffCode', label: 'MÃ NV' },
     { key: 'fullName', label: 'HỌ TÊN' },
-    { key: 'orgUnitName', label: 'CƠ QUAN' },
     { key: 'email', label: 'EMAIL' },
     { key: 'phone', label: 'SỐ ĐIỆN THOẠI' },
     { key: 'position', label: 'CHỨC VỤ' },
