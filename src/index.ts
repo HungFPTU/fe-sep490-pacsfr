@@ -14,10 +14,5 @@ export { API_PATH } from "./core/config/api.path";
 
 // Legacy exports for backward compatibility
 export { useAuthStore } from "./modules/auth";
-export { useQueueStore } from "./modules/queue";
-export {
-    useQueue,
-    useStaffQueue,
-    useCitizenQueue
-} from "./modules/queue";
+
 export { useAuth } from "./modules/auth";
