@@ -39,6 +39,12 @@ export type UpdateWorkShiftRequest = {
 // Filter types
 export type WorkShiftFilters = {
     keyword?: string;
+    counterId?: string; // ← thêm
+    staffId?: string;
+    shiftType?: string;
+    shiftDate?: string; // ISO 'YYYY-MM-DD' hoặc ISODate
+    fromTime?: string; // 'HH:mm' hoặc 'HH:mm:ss'
+    toTime?: string;
     isActive?: boolean;
     page?: number;
     size?: number;
