@@ -55,21 +55,19 @@ export function AssignWorkShiftModal({
 
     // Extract work shifts from API response with robust shape handling
     const workShifts: WorkShift[] = (() => {
-        const data = workShiftsData?.data;
-        if (!data) return [];
+        type DotNetArray<T> = { $id?: string; $values?: T[] };
+        type RestManyLike<T> = { items?: T[] | DotNetArray<T>; $values?: T[] };
 
-        // Case 1: data is already an array
-        if (Array.isArray(data)) return data as WorkShift[];
+        const rawUnknown: unknown = workShiftsData?.data as unknown;
+        if (!rawUnknown) return [];
+        if (Array.isArray(rawUnknown)) return rawUnknown as WorkShift[];
 
-        // Case 2: RestMany shape → data.items (array)
-        if (Array.isArray(data.items)) return data.items as WorkShift[];
-
-        // Case 3: .NET $values shape → data.items.$values
-        if (data.items && Array.isArray(data.items.$values)) return data.items.$values as WorkShift[];
-
-        // Case 4: Flat $values on data
-        if (Array.isArray(data.$values)) return data.$values as WorkShift[];
-
+        const obj = rawUnknown as RestManyLike<WorkShift>;
+        if (Array.isArray(obj.items)) return obj.items as WorkShift[];
+        if (obj.items && Array.isArray((obj.items as DotNetArray<WorkShift>).$values)) {
+            return (obj.items as DotNetArray<WorkShift>).$values as WorkShift[];
+        }
+        if (Array.isArray(obj.$values)) return obj.$values as WorkShift[];
         return [];
     })();
 
@@ -214,7 +212,7 @@ export function AssignWorkShiftModal({
                                                     />
                                                     <div>
                                                         <h4 className="text-sm font-medium text-gray-900">
-                                                            {workShift.name}
+                                                            {workShift.shiftType}
                                                         </h4>
                                                         <p className="text-xs text-gray-500">
                                                             {formatTime(workShift.startTime)} - {formatTime(workShift.endTime)}
@@ -251,7 +249,7 @@ export function AssignWorkShiftModal({
                             const selectedWorkShift = workShifts.find((ws: WorkShift) => ws.id === selectedWorkShiftId);
                             return selectedWorkShift ? (
                                 <div className="text-sm text-green-700">
-                                    <p><strong>Tên ca:</strong> {selectedWorkShift.name}</p>
+                                    <p><strong>Tên ca:</strong> {selectedWorkShift.shiftType}</p>
                                     <p><strong>Thời gian:</strong> {formatTime(selectedWorkShift.startTime)} - {formatTime(selectedWorkShift.endTime)}</p>
                                     {selectedWorkShift.description && (
                                         <p><strong>Mô tả:</strong> {selectedWorkShift.description}</p>

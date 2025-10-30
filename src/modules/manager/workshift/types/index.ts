@@ -4,9 +4,9 @@ export type WorkShift = {
     counterId: string;
     staffId: string;
     shiftDate: string | Date;
-    startTime: string;  
+    startTime: string;
     endTime: string;
-    shiftType: string;    
+    shiftType: string;
     description?: string;
     isActive?: boolean;
     createdAt: string | Date;
@@ -61,7 +61,6 @@ export type WorkShiftFilters = {
     isActive?: boolean;
     page?: number;
     size?: number;
-    staffId?: string; // optional: filter assigned shifts by staff
 };
 
 // Counter types

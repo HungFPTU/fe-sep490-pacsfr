@@ -70,22 +70,3 @@ export const useDeleteWorkShift = () => {
   });
 };
 
-// GET active counters hook
-export const useActiveCounters = () => {
-  return useQuery({
-    queryKey: ['active-counters'],
-    queryFn: () => WorkShiftService.getActiveCounters(),
-    gcTime: CACHE_TIME,
-    staleTime: STALE_TIME,
-  });
-};
-
-// GET staff list hook
-export const useStaffList = () => {
-  return useQuery({
-    queryKey: ['staff-list'],
-    queryFn: () => WorkShiftService.getStaffList(),
-    gcTime: CACHE_TIME,
-    staleTime: STALE_TIME,
-  });
-};

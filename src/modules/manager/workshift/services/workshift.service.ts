@@ -1,5 +1,5 @@
 import * as workshiftApi from '../api/workshift.api';
-import type { WorkShift, CreateWorkShiftRequest, WorkShiftFilters, Counter, Staff } from '../types';
+import type { WorkShift, CreateWorkShiftRequest, WorkShiftFilters } from '../types';
 import type { RestResponse } from '@/types/rest';
 
 // ==================== WorkShift Service ====================
@@ -41,19 +41,5 @@ export class WorkShiftService {
    */
   static async deleteWorkShift(id: string): Promise<RestResponse<object>> {
     return workshiftApi.deleteWorkShift(id);
-  }
-
-  /**
-   * Lấy danh sách quầy đang hoạt động
-   */
-  static async getActiveCounters(): Promise<RestResponse<Counter>> {
-    return workshiftApi.getActiveCounters();
-  }
-
-  /**
-   * Lấy danh sách nhân viên
-   */
-  static async getStaffList(): Promise<RestResponse<Staff>> {
-    return workshiftApi.getStaffList();
   }
 }
