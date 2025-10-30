@@ -14,6 +14,7 @@ interface BreadcrumbItem {
 const pathLabels: Record<string, string> = {
     manager: 'Quản lý',
     'staff-management': 'Quản lý nhân viên',
+    'ca-lam-viec': 'Quản lý ca làm việc',
     'co-quan': 'Cơ quan',
     'phong-ban': 'Phòng ban',
     'nhom-dich-vu': 'Nhóm dịch vụ',

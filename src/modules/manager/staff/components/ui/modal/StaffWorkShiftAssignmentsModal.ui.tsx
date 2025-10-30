@@ -48,14 +48,22 @@ export function StaffWorkShiftAssignmentsModal({
         staffId,
     });
 
-    // Extract assignments from REST/.NET shapes
     const assignments: WorkShiftAssignment[] = (() => {
-        const raw = data?.data;
+        type DotNetArray<T> = { $id?: string; $values?: T[] };
+        type RestManyLike<T> = { items?: T[] | DotNetArray<T>; $values?: T[] };
+
+        const raw: unknown = data?.data;
         if (!raw) return [];
         if (Array.isArray(raw)) return raw as WorkShiftAssignment[];
-        if (Array.isArray(raw.items)) return raw.items as unknown as WorkShiftAssignment[];
-        if (raw.items && Array.isArray(raw.items.$values)) return raw.items.$values as unknown as WorkShiftAssignment[];
-        if (Array.isArray(raw.$values)) return raw.$values as unknown as WorkShiftAssignment[];
+
+        if (typeof raw === 'object' && raw !== null) {
+            const obj = raw as RestManyLike<WorkShiftAssignment>;
+            if (Array.isArray(obj.items)) return obj.items as WorkShiftAssignment[];
+            if (obj.items && Array.isArray((obj.items as DotNetArray<WorkShiftAssignment>).$values)) {
+                return (obj.items as DotNetArray<WorkShiftAssignment>).$values as WorkShiftAssignment[];
+            }
+            if (Array.isArray(obj.$values)) return obj.$values as WorkShiftAssignment[];
+        }
         return [];
     })();
 

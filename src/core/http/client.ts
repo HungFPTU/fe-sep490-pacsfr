@@ -1,7 +1,7 @@
 // import { useGlobalLoading } from "@core/patterns/SingletonHook";
 import { ENV } from "@/core/config/env";
 import { useAuthStore } from "@/modules/auth/stores/useAuthStore";
-import { RestMany, RestOne, RestResponse } from "@/types/rest";
+// import { RestMany, RestOne, RestResponse } from "@/types/rest";
 
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

@@ -65,6 +65,10 @@ const data = {
           url: "/manager/quan-ly-nhan-vien",
         },
         {
+          title: "Quản lý ca làm việc",
+          url: "/manager/ca-lam-viec",
+        },
+        {
           title: "Danh sách nhân sự",
           url: "/manager/account/list",
         },

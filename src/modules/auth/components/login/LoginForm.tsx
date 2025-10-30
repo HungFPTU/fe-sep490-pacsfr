@@ -52,10 +52,10 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
 
     if (onSubmit) {
       try {
-        // Transform payload to match API requirement (Username, Password with capital letters)
         const apiPayload = {
-          Username: form.username,
-          Password: form.password,
+          username: form.username,
+          password: form.password,
+          rememberMe: form.rememberMe,
         };
 
         await onSubmit(apiPayload as unknown as LoginPayload);
