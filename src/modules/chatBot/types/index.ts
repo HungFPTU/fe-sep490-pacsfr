@@ -48,7 +48,7 @@ export type BackendAssistantMessage = {
     };
 };
 
-export type ChatResponseData = {
+export type ChatResponse = {
     $id: string;
     conversationId: string;
     userMessage: BackendChatMessage;
@@ -59,18 +59,34 @@ export type ChatResponseData = {
     };
 };
 
-export type ChatResponse = {
-    $id: string;
-    isSuccess: boolean;
-    message: string;
-    data: ChatResponseData;
-};
-
 export type StreamChatResponse = ReadableStream<Uint8Array>;
 
 // Filter types
 export type ChatFilters = {
     sessionId?: string;
     keyword?: string;
+};
+
+// Conversation History types
+export type ConversationHistory = {
+    id: string;
+    conversationId: string;
+    title: string;
+    lastMessage?: string;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type ConversationDetail = {
+    $id: string;
+    id: string;
+    title: string;
+    userId: string;
+    messages: {
+        $id: string;
+        $values: BackendChatMessage[];
+    };
+    createdAt: string;
+    updatedAt: string;
 };
 

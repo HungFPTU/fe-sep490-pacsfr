@@ -1,7 +1,7 @@
 import { http } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
 import type { SendMessageRequest, ChatResponse } from '../types';
-import type { RestResponse } from '@/types/rest';
+import type {  RestResponse } from '@/types/rest';
 
 export const chatbotApi = {
     /**
@@ -11,6 +11,7 @@ export const chatbotApi = {
      * @param userId - User ID
      * @param userType - User type (e.g., "string")
      * @param signal - Optional AbortSignal for cancellation
+     * @returns ChatResponse with conversationId and messages
      */
     sendMessage: async (
         conversationId: string | null,
@@ -26,13 +27,22 @@ export const chatbotApi = {
             userType,
         };
 
-        const response = await http.post<ChatResponse>(
+        const response = await http.post<{
+            $id: string;
+            isSuccess: boolean;
+            message: string;
+            data: ChatResponse;
+        }>(
             API_PATH.CHATBOT.SEND_MESSAGE,
             requestData,
             { signal }
         );
 
-        return response.data;
+        if (!response.data.isSuccess || !response.data.data) {
+            throw new Error(response.data.message || 'Failed to send message');
+        }
+
+        return response.data.data;
     },
 
     /**
