@@ -16,3 +16,6 @@ export * from './background';
 // Footer components
 export * from './footer';
 
+// Scroll components
+export * from './scroll';
+

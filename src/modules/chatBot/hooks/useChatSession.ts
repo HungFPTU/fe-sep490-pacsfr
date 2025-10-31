@@ -22,6 +22,7 @@ export const useChatSession = ({ initialMessages }: UseChatSessionProps = {}) =>
         },
     ]);
     const [currentSessionId, setCurrentSessionId] = useState('1');
+    const [conversationId, setConversationId] = useState<string | null>(null);
     const viewportRef = useRef<HTMLDivElement>(null);
 
     // Get current session
@@ -157,6 +158,8 @@ export const useChatSession = ({ initialMessages }: UseChatSessionProps = {}) =>
         currentSession,
         currentSessionId,
         currentMessages,
+        conversationId,
+        setConversationId,
         viewportRef,
         createSession,
         switchSession,

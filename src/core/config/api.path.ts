@@ -288,4 +288,8 @@ export const API_PATH = {
       MY_SHIFTS: '/WorkShift/my-shifts',
     },
   },
+  CHATBOT: {
+    SEND_MESSAGE: '/Chatbox/message',
+    GET_CONVERSATION: (conversationId: string) => `/Chatbox/conversation/${conversationId}`
+  },
 };

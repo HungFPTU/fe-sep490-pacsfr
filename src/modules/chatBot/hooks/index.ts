@@ -1,61 +1,55 @@
 "use client";
 
 import { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { chatbotService } from '../services/chatbot.service';
 import { QUERY_KEYS } from '../constants';
-import type { ChatMessage } from '../types';
+import type { ChatResponse } from '../types';
 
 // Re-export custom hooks
 export { useChatForm } from './useChatForm';
 export { useChatSession } from './useChatSession';
 
 /**
- * Hook for health check
+ * Hook for sending messages to backend
  */
-export const useChatHealth = () => {
-    return useQuery({
-        queryKey: QUERY_KEYS.CHATBOT_BASE,
-        queryFn: () => chatbotService.checkHealth(),
-        staleTime: 60000, // 1 minute
-        retry: 3,
-    });
-};
-
-/**
- * Hook for sending messages with streaming
- */
-export const useSendMessageStream = () => {
-    const [isStreaming, setIsStreaming] = useState(false);
+export const useSendMessage = () => {
+    const [isSending, setIsSending] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const queryClient = useQueryClient();
 
     const sendMessage = useCallback(
         async (
-            history: ChatMessage[],
-            prompt: string,
-            onChunk: (text: string) => void,
+            conversationId: string | null,
+            message: string,
+            userId: string,
+            userType: string = 'string',
             signal?: AbortSignal
-        ): Promise<string> => {
-            setIsStreaming(true);
+        ): Promise<ChatResponse> => {
+            setIsSending(true);
             setError(null);
 
             try {
-                const stream = await chatbotService.sendMessageStream(history, prompt, signal);
-                const fullResponse = await chatbotService.processStream(stream, onChunk, signal);
+                const response = await chatbotService.sendMessage(
+                    conversationId,
+                    message,
+                    userId,
+                    userType,
+                    signal
+                );
                 
                 // Invalidate chat history
                 queryClient.invalidateQueries({
                     queryKey: QUERY_KEYS.CHAT_HISTORY,
                 });
 
-                return fullResponse;
+                return response;
             } catch (err) {
                 const error = err instanceof Error ? err : new Error('Unknown error');
                 setError(error);
                 throw error;
             } finally {
-                setIsStreaming(false);
+                setIsSending(false);
             }
         },
         [queryClient]
@@ -63,28 +57,38 @@ export const useSendMessageStream = () => {
 
     return {
         sendMessage,
-        isStreaming,
+        isSending,
         error,
     };
 };
 
 /**
- * Hook for sending messages (non-streaming)
+ * Hook for sending messages (React Query mutation)
  */
-export const useSendMessage = () => {
+export const useSendMessageMutation = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: async ({
-            history,
-            prompt,
+            conversationId,
+            message,
+            userId,
+            userType,
             signal,
         }: {
-            history: ChatMessage[];
-            prompt: string;
+            conversationId: string | null;
+            message: string;
+            userId: string;
+            userType?: string;
             signal?: AbortSignal;
         }) => {
-            return await chatbotService.sendMessage(history, prompt, signal);
+            return await chatbotService.sendMessage(
+                conversationId,
+                message,
+                userId,
+                userType || 'string',
+                signal
+            );
         },
         onSuccess: () => {
             queryClient.invalidateQueries({

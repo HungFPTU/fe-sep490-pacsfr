@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { SidebarProvider } from '@/shared/components/layout/manager/ui/sidebar';
-import { useSendMessageStream } from '../../hooks';
+import { useSendMessage } from '../../hooks';
 import { useChatSession } from '../../hooks/useChatSession';
 import { useChatForm } from '../../hooks/useChatForm';
+import { useGlobalToast } from '@core/patterns/SingletonHook';
 import {
     ChatMessageBubble,
     ChatInput,
@@ -19,21 +20,24 @@ export const ChatBotPage: React.FC = () => {
     // Chat session management
     const {
         currentMessages,
+        conversationId,
+        setConversationId,
         viewportRef,
         createSession,
         addMessage,
         updateLastMessage,
     } = useChatSession();
 
-    // Streaming message hook
-    const { sendMessage, isStreaming } = useSendMessageStream();
+    // Backend API hook
+    const { sendMessage, isSending } = useSendMessage();
+    const { addToast } = useGlobalToast();
 
     // Abort controller for cancelling requests
     const [controller, setController] = useState<AbortController | null>(null);
 
     // Handle message submission
     const handleSubmit = async (prompt: string) => {
-        if (isStreaming) return;
+        if (isSending) return;
 
         // Add user message
         const userMessage: ChatMessage = { role: 'user', content: prompt };
@@ -48,19 +52,34 @@ export const ChatBotPage: React.FC = () => {
         setController(aborter);
 
         try {
-            // Send message with streaming
-            await sendMessage(
-                currentMessages,
+            // Send message to backend API
+            // TODO: Get userId from auth store
+            const userId = '3fa85f64-5717-4562-b3fc-2c963f66afa6'; // Temporary - replace with real userId
+            
+            const response = await sendMessage(
+                conversationId,
                 prompt,
-                (chunk: string) => {
-                    // Update last message with accumulated text
-                    updateLastMessage(chunk);
-                },
+                userId,
+                'string',
                 aborter.signal
             );
+
+            // Update conversationId if this is first message
+            if (!conversationId && response.data.conversationId) {
+                setConversationId(response.data.conversationId);
+            }
+
+            // Update assistant message with response
+            updateLastMessage(response.data.assistantMessage.content);
+
         } catch (error) {
             if ((error as Error).name !== 'AbortError') {
-                updateLastMessage('Đã xảy ra lỗi hoặc yêu cầu đã bị hủy.');
+                const errorMessage = error instanceof Error ? error.message : 'Đã xảy ra lỗi';
+                updateLastMessage(`Lỗi: ${errorMessage}`);
+                addToast({ 
+                    message: 'Không thể gửi tin nhắn. Vui lòng thử lại.', 
+                    type: 'error' 
+                });
             }
         } finally {
             setController(null);
@@ -75,10 +94,10 @@ export const ChatBotPage: React.FC = () => {
         handleSubmit: handleFormSubmit,
     } = useChatForm({
         onSubmit: handleSubmit,
-        disabled: isStreaming,
+        disabled: isSending,
     });
 
-    // Stop streaming
+    // Stop request
     const handleStop = () => {
         controller?.abort();
     };
@@ -88,6 +107,7 @@ export const ChatBotPage: React.FC = () => {
         if (controller) {
             controller.abort();
         }
+        setConversationId(null); // Reset conversation ID for new chat
         createSession();
     };
 
@@ -129,8 +149,8 @@ export const ChatBotPage: React.FC = () => {
                                     value={input}
                                     onChange={handleInputChange}
                                     onSubmit={handleFormSubmit}
-                                    disabled={isStreaming}
-                                    loading={isStreaming}
+                                    disabled={isSending}
+                                    loading={isSending}
                                     onStop={handleStop}
                                     inputRef={inputRef}
                                 />

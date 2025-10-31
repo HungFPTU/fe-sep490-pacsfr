@@ -1,106 +1,56 @@
 import { chatbotApi } from '../api/chatbot.api';
-import type { SendMessageRequest, ChatMessage, ChatResponse } from '../types';
+import type { ChatMessage, ChatResponse } from '../types';
 import { CHAT_CONFIG } from '../constants';
 
 export const chatbotService = {
     /**
-     * Send a message and get streaming response
-     */
-    async sendMessageStream(
-        history: ChatMessage[],
-        prompt: string,
-        signal?: AbortSignal
-    ): Promise<ReadableStream<Uint8Array>> {
-        // Validate input
-        if (!prompt.trim()) {
-            throw new Error('Prompt cannot be empty');
-        }
-
-        if (prompt.length > CHAT_CONFIG.MAX_MESSAGE_LENGTH) {
-            throw new Error(`Message too long. Maximum ${CHAT_CONFIG.MAX_MESSAGE_LENGTH} characters`);
-        }
-
-        // Limit history length
-        const limitedHistory = history.slice(-CHAT_CONFIG.MAX_HISTORY_LENGTH);
-
-        const request: SendMessageRequest = {
-            history: limitedHistory,
-            prompt: prompt.trim(),
-        };
-
-        return await chatbotApi.sendMessageStream(request, signal);
-    },
-
-    /**
-     * Send a message and get complete response
+     * Send a message to backend API
+     * @param conversationId - Optional conversation ID (null for new conversation)
+     * @param message - User message
+     * @param userId - User ID
+     * @param userType - User type
+     * @param signal - Optional AbortSignal
      */
     async sendMessage(
-        history: ChatMessage[],
-        prompt: string,
+        conversationId: string | null,
+        message: string,
+        userId: string,
+        userType: string = 'string',
         signal?: AbortSignal
     ): Promise<ChatResponse> {
         // Validate input
-        if (!prompt.trim()) {
-            throw new Error('Prompt cannot be empty');
+        if (!message.trim()) {
+            throw new Error('Message cannot be empty');
         }
 
-        if (prompt.length > CHAT_CONFIG.MAX_MESSAGE_LENGTH) {
+        if (message.length > CHAT_CONFIG.MAX_MESSAGE_LENGTH) {
             throw new Error(`Message too long. Maximum ${CHAT_CONFIG.MAX_MESSAGE_LENGTH} characters`);
         }
 
-        // Limit history length
-        const limitedHistory = history.slice(-CHAT_CONFIG.MAX_HISTORY_LENGTH);
+        const response = await chatbotApi.sendMessage(
+            conversationId,
+            message.trim(),
+            userId,
+            userType,
+            signal
+        );
 
-        const request: SendMessageRequest = {
-            history: limitedHistory,
-            prompt: prompt.trim(),
-        };
-
-        return await chatbotApi.sendMessage(request, signal);
+        return response;
     },
 
     /**
-     * Process streaming response and extract text
+     * Get conversation by ID
      */
-    async processStream(
-        stream: ReadableStream<Uint8Array>,
-        onChunk: (text: string) => void,
-        signal?: AbortSignal
-    ): Promise<string> {
-        const reader = stream.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let accumulated = '';
-
-        try {
-            while (true) {
-                // Check if aborted
-                if (signal?.aborted) {
-                    reader.cancel();
-                    throw new Error('Request aborted');
-                }
-
-                const { value, done } = await reader.read();
-                
-                if (done) break;
-
-                const chunk = decoder.decode(value, { stream: true });
-                accumulated += chunk;
-                onChunk(chunk);
-            }
-
-            return accumulated;
-        } catch (error) {
-            reader.cancel();
-            throw error;
-        }
+    async getConversation(conversationId: string) {
+        return await chatbotApi.getConversation(conversationId);
     },
 
     /**
-     * Health check
+     * Get chat history
      */
-    async checkHealth(): Promise<boolean> {
-        return await chatbotApi.healthCheck();
-    },
+    // async getHistory() {
+    //     return await chatbotApi.getHistory();
+    // },
 
     /**
      * Generate session title from first message
@@ -123,6 +73,25 @@ export const chatbotService = {
         return {
             role: message.role,
             content: message.content.trim(),
+            id: message.id,
+            createdAt: message.createdAt,
+        };
+    },
+
+    /**
+     * Convert backend message to ChatMessage
+     */
+    convertBackendMessage(backendMessage: {
+        id: string;
+        role: string;
+        content: string;
+        createdAt: string;
+    }): ChatMessage {
+        return {
+            role: backendMessage.role as 'user' | 'assistant',
+            content: backendMessage.content,
+            id: backendMessage.id,
+            createdAt: backendMessage.createdAt,
         };
     },
 };
