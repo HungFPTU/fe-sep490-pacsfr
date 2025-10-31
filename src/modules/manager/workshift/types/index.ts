@@ -49,19 +49,6 @@ export type WorkShiftAssignment = {
     $id?: string;
 };
 
-// Work Shift Assignment type (for assigned shifts)
-export type WorkShiftAssignment = {
-    id: string;
-    counterId: string;
-    staffId: string;
-    shiftDate: string;
-    startTime: string;
-    endTime: string;
-    shiftType: string;
-    createdAt: string;
-    $id?: string;
-};
-
 // Filter types
 export type WorkShiftFilters = {
     keyword?: string;
@@ -74,7 +61,6 @@ export type WorkShiftFilters = {
     isActive?: boolean;
     page?: number;
     size?: number;
-    staffId?: string; // optional: filter assigned shifts by staff
 };
 
 // Counter types
