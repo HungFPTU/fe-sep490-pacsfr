@@ -9,6 +9,7 @@ import type { ChatResponse } from '../types';
 // Re-export custom hooks
 export { useChatForm } from './useChatForm';
 export { useChatSession } from './useChatSession';
+export { useChatSubmit } from './useChatSubmit';
 
 /**
  * Hook for sending messages to backend
