@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import type { ChatMessage } from '../types';
+// import type { ChatMessage } from '../types';
 import { CHAT_CONFIG } from '../constants';
 
 interface UseChatFormProps {
