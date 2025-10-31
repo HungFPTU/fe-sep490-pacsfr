@@ -215,3 +215,55 @@
     z-index: 99999 !important;
   }
 }
+
+/* Custom Scrollbar Styles for Chatbot */
+@layer utilities {
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #fef3c7; /* yellow-100 */
+    border-radius: 10px;
+    margin: 4px 0;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #fca5a5; /* red-300 */
+    border-radius: 10px;
+    border: 2px solid #fef3c7;
+    transition: background-color 0.2s ease;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #f87171; /* red-400 */
+    border-color: #fde68a;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:active {
+    background: #ef4444; /* red-500 */
+  }
+  
+  /* Firefox */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #fca5a5 #fef3c7;
+  }
+  
+  /* Force scrollbar to always be visible */
+  .scrollbar-thin {
+    overflow-y: scroll;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    min-height: 40px;
+  }
+  
+  /* Always show scrollbar track */
+  .scrollbar-thin::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(252, 165, 165, 0.1);
+    box-shadow: inset 0 0 6px rgba(252, 165, 165, 0.1);
+  }
+}
