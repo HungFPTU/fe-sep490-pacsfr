@@ -173,3 +173,22 @@ export const clearConversations = (): void => {
     }
 };
 
+/**
+ * Parse title to extract date and time
+ * Example: "Cuộc hội thoại 02/11/2025 08:01" -> { date: "02/11/2025", time: "08:01" }
+ */
+export const parseConversationTitle = (title: string): { date: string; time: string } => {
+    const match = title.match(/(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})/);
+    if (match) {
+        return {
+            date: match[1],
+            time: match[2],
+        };
+    }
+    
+    return {
+        date: title,
+        time: '',
+    };
+};
+
