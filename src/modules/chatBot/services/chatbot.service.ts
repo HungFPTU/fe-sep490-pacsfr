@@ -1,5 +1,5 @@
 import { chatbotApi } from '../api/chatbot.api';
-import type { ChatMessage, ChatResponse } from '../types';
+import type { ChatMessage, ChatResponse, ConversationDetail } from '../types';
 import { CHAT_CONFIG } from '../constants';
 
 export const chatbotService = {
@@ -41,8 +41,11 @@ export const chatbotService = {
     /**
      * Get conversation by ID
      */
-    async getConversation(conversationId: string) {
-        return await chatbotApi.getConversation(conversationId);
+    async getConversation(conversationId: string): Promise<ConversationDetail> {
+        console.log('Service: Getting conversation', conversationId);
+        const response = await chatbotApi.getConversation(conversationId);
+        console.log('Service: Conversation response', response);
+        return response.data;
     },
 
     /**

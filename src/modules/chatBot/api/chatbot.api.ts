@@ -1,7 +1,6 @@
 import { http } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
-import type { SendMessageRequest, ChatResponse } from '../types';
-import type {  RestResponse } from '@/types/rest';
+import type { SendMessageRequest, ChatResponse, ConversationDetail } from '../types';
 
 export const chatbotApi = {
     /**
@@ -49,9 +48,22 @@ export const chatbotApi = {
      * Get conversation by ID
      */
     getConversation: async (conversationId: string) => {
-        const response = await http.get<RestResponse<Record<string, unknown>>>(
-            API_PATH.CHATBOT.GET_CONVERSATION(conversationId)
-        );
+        console.log('API: Getting conversation', conversationId);
+        const url = API_PATH.CHATBOT.GET_CONVERSATION(conversationId);
+        console.log('API: URL', url);
+        
+        const response = await http.get<{
+            $id: string;
+            isSuccess: boolean;
+            message: string;
+            data: ConversationDetail;
+        }>(url);
+
+        console.log('API: Response', response);
+
+        if (!response.data.isSuccess || !response.data.data) {
+            throw new Error(response.data.message || 'Failed to get conversation');
+        }
 
         return response.data;
     },
