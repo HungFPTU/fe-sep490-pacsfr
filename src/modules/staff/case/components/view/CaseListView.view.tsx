@@ -37,7 +37,7 @@ export const CaseListView: React.FC<CaseListViewProps> = ({
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Kết quả tìm kiếm</h3>
               <p className="text-sm text-gray-600 mt-1">
-                Tìm thấy <span className="font-medium text-red-600">{pagination.total}</span> hồ sơ
+                Tìm thấy <span className="font-medium text-blue-600">{pagination.total}</span> hồ sơ
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -60,7 +60,7 @@ export const CaseListView: React.FC<CaseListViewProps> = ({
         {isLoading ? (
           <div className="px-6 py-12 text-center">
             <div className="flex flex-col items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mb-4"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
               <p className="text-sm text-gray-500">Đang tải dữ liệu...</p>
             </div>
           </div>

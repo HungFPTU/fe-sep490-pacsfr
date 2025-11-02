@@ -8,6 +8,7 @@ import { staffDashboardApi } from "@modules/staff/dashboard/api/staff-dashboard.
 import type { CreateGuestRequest, CreateCaseRequest, Guest, Service, PaginatedData } from "../../../dashboard/types";
 import { ArrowLeft, FileText } from "lucide-react";
 import { StaffDashboardTabsView } from "@modules/staff/dashboard/components/view/StaffDashboardTabsView.view";
+import { useGlobalToast } from "@core/patterns/SingletonHook";
 
 // UI Components
 import {
@@ -22,6 +23,7 @@ type PageMode = "select" | "create-guest" | "create-case";
 
 export function CreateCasePageView() {
     const router = useRouter();
+    const { addToast } = useGlobalToast();
     const [mode, setMode] = useState<PageMode>("select");
     const [guestId, setGuestId] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,7 +106,7 @@ export function CreateCasePageView() {
 
     const handleSearchGuests = async () => {
         if (!guestSearchKeyword.trim()) {
-            alert("Vui lòng nhập từ khóa tìm kiếm!");
+            addToast({ message: "Vui lòng nhập từ khóa tìm kiếm!", type: "warning" });
             return;
         }
 
@@ -122,11 +124,11 @@ export function CreateCasePageView() {
                 setShowGuestDropdown(true);
             } else {
                 setGuestSearchResults([]);
-                alert("Không tìm thấy khách hàng nào!");
+                addToast({ message: "Không tìm thấy khách hàng nào!", type: "info" });
             }
         } catch (error) {
             console.error("Error searching guests:", error);
-            alert("Lỗi khi tìm kiếm: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"));
+            addToast({ message: "Lỗi khi tìm kiếm: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
         } finally {
             setIsSearching(false);
         }
@@ -154,11 +156,11 @@ export function CreateCasePageView() {
                 setServicePage(page);
             } else {
                 setServiceData(null);
-                alert("Không tìm thấy dịch vụ nào!");
+                addToast({ message: "Không tìm thấy dịch vụ nào!", type: "info" });
             }
         } catch (error) {
             console.error("Error searching services:", error);
-            alert("Lỗi khi tìm kiếm dịch vụ: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"));
+            addToast({ message: "Lỗi khi tìm kiếm dịch vụ: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
         } finally {
             setIsSearchingService(false);
         }
@@ -177,7 +179,7 @@ export function CreateCasePageView() {
         e.preventDefault();
         
         if (!validateGuestForm()) {
-            alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
+            addToast({ message: "Vui lòng điền đầy đủ thông tin bắt buộc!", type: "warning" });
             return;
         }
 
@@ -188,13 +190,13 @@ export function CreateCasePageView() {
             if (response.success && response.data) {
                 setGuestId(response.data);
                 setGuestCreatedSuccess(true);
-                alert(response.message || "Tạo khách hàng thành công!");
+                addToast({ message: response.message || "Tạo khách hàng thành công!", type: "success" });
             } else {
-                alert("Lỗi: " + (response.message || "Không thể tạo khách hàng"));
+                addToast({ message: "Lỗi: " + (response.message || "Không thể tạo khách hàng"), type: "error" });
             }
         } catch (error) {
             console.error("Error creating guest:", error);
-            alert("Lỗi khi tạo khách hàng: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"));
+            addToast({ message: "Lỗi khi tạo khách hàng: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
         } finally {
             setIsSubmitting(false);
         }
@@ -204,12 +206,12 @@ export function CreateCasePageView() {
         e.preventDefault();
 
         if (!caseData.guestId.trim()) {
-            alert("Vui lòng chọn khách hàng!");
+            addToast({ message: "Vui lòng chọn khách hàng!", type: "warning" });
             return;
         }
 
         if (!caseData.serviceId.trim()) {
-            alert("Vui lòng chọn dịch vụ!");
+            addToast({ message: "Vui lòng chọn dịch vụ!", type: "warning" });
             return;
         }
 
@@ -218,14 +220,14 @@ export function CreateCasePageView() {
             const response = await staffDashboardApi.createCase(caseData);
             
             if (response.success && response.data) {
-                alert("Tạo hồ sơ thành công! ID: " + response.data);
+                addToast({ message: "Tạo hồ sơ thành công! ID: " + response.data, type: "success" });
                 router.push("/staff/dashboard");
             } else {
-                alert("Lỗi: " + (response.message || "Không thể tạo hồ sơ"));
+                addToast({ message: "Lỗi: " + (response.message || "Không thể tạo hồ sơ"), type: "error" });
             }
         } catch (error) {
             console.error("Error creating case:", error);
-            alert("Lỗi khi tạo hồ sơ: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"));
+            addToast({ message: "Lỗi khi tạo hồ sơ: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
         } finally {
             setIsSubmitting(false);
         }
@@ -336,7 +338,7 @@ export function CreateCasePageView() {
                     <Card className="p-6">
                         <div className="mb-6">
                             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                <FileText className="w-6 h-6 text-green-600" />
+                                <FileText className="w-6 h-6 text-blue-600" />
                                 Thông tin hồ sơ
                             </h2>
                             <p className="text-sm text-gray-600 mt-1">Vui lòng chọn khách hàng và điền thông tin hồ sơ</p>
@@ -389,7 +391,7 @@ export function CreateCasePageView() {
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting || !caseData.guestId || !caseData.serviceId}
-                                    className="bg-green-600 hover:bg-green-700"
+                                    className="bg-indigo-600 hover:bg-indigo-700"
                                 >
                                     {isSubmitting ? "Đang tạo hồ sơ..." : "Tạo hồ sơ"}
                                 </Button>

@@ -52,7 +52,7 @@ export function GuestSearchForm({
                     type="button"
                     onClick={onSearch}
                     disabled={isSearching}
-                    className="bg-blue-600 hover:bg-blue-700"
+                    className="bg-indigo-600 hover:bg-indigo-700"
                 >
                     <Search className="w-4 h-4 mr-2" />
                     {isSearching ? "Đang tìm..." : "Tìm kiếm"}
@@ -81,14 +81,14 @@ export function GuestSearchForm({
 
             {/* Selected Guest Display */}
             {selectedGuest && (
-                <div className="mt-3 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                     <div className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <Check className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                         <div>
-                            <p className="text-sm font-medium text-green-900">
+                            <p className="text-sm font-medium text-blue-900">
                                 Đã chọn: {selectedGuest.fullName}
                             </p>
-                            <p className="text-xs text-green-700 mt-1">
+                            <p className="text-xs text-blue-700 mt-1">
                                 CMND/CCCD: {selectedGuest.idNumber} • Guest ID: {selectedGuest.id}
                             </p>
                         </div>
