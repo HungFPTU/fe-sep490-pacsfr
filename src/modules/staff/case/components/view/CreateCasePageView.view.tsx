@@ -59,7 +59,7 @@ export function CreateCasePageView() {
         priorityLevel: 0,
         submissionMethod: "Trực tiếp",
         notes: "",
-        createdBy: "",
+        createdBy: "system",
     });
 
     // Guest Search
@@ -68,6 +68,7 @@ export function CreateCasePageView() {
     const [isSearching, setIsSearching] = useState(false);
     const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
     const [showGuestDropdown, setShowGuestDropdown] = useState(false);
+    const [showServiceList, setShowServiceList] = useState(false);
 
     // Service Search
     const [serviceSearchKeyword, setServiceSearchKeyword] = useState("");
@@ -105,10 +106,7 @@ export function CreateCasePageView() {
     };
 
     const handleSearchGuests = async () => {
-        if (!guestSearchKeyword.trim()) {
-            addToast({ message: "Vui lòng nhập từ khóa tìm kiếm!", type: "warning" });
-            return;
-        }
+        // Allow empty search to show all guests
 
         setIsSearching(true);
         try {
@@ -220,7 +218,7 @@ export function CreateCasePageView() {
             const response = await staffDashboardApi.createCase(caseData);
             
             if (response.success && response.data) {
-                addToast({ message: "Tạo hồ sơ thành công! ID: " + response.data, type: "success" });
+                addToast({ message: "Tạo hồ sơ thành công!", type: "success" });
                 router.push("/staff/dashboard");
             } else {
                 addToast({ message: "Lỗi: " + (response.message || "Không thể tạo hồ sơ"), type: "error" });
@@ -355,6 +353,7 @@ export function CreateCasePageView() {
                                 onSearchKeywordChange={setGuestSearchKeyword}
                                 onSearch={handleSearchGuests}
                                 onSelectGuest={handleSelectGuest}
+                                onToggleDropdown={() => setShowGuestDropdown(!showGuestDropdown)}
                             />
 
                             {/* Service Search */}

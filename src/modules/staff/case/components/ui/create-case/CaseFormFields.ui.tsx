@@ -56,18 +56,6 @@ export function CaseFormFields({
                 </select>
             </div>
 
-            {/* Created By */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Người tạo
-                </label>
-                <Input
-                    value={caseData.createdBy}
-                    onChange={(e) => onDataChange({ ...caseData, createdBy: e.target.value })}
-                    placeholder="Nhập ID người tạo"
-                />
-            </div>
-
             {/* Notes */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

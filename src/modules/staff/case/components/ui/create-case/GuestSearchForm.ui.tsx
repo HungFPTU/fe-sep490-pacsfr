@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/ui/input.ui";
-import { Search, User, Check } from "lucide-react";
+import { Search, User, Check, ChevronDown, ChevronUp } from "lucide-react";
 import type { Guest } from "../../../../dashboard/types";
 
 interface GuestSearchFormProps {
@@ -15,6 +15,7 @@ interface GuestSearchFormProps {
     onSearchKeywordChange: (keyword: string) => void;
     onSearch: () => void;
     onSelectGuest: (guest: Guest) => void;
+    onToggleDropdown?: () => void;
 }
 
 export function GuestSearchForm({
@@ -26,6 +27,7 @@ export function GuestSearchForm({
     onSearchKeywordChange,
     onSearch,
     onSelectGuest,
+    onToggleDropdown,
 }: GuestSearchFormProps) {
     return (
         <div>
@@ -38,7 +40,7 @@ export function GuestSearchForm({
                     <Input
                         value={searchKeyword}
                         onChange={(e) => onSearchKeywordChange(e.target.value)}
-                        placeholder="Nhập tên hoặc số CMND/CCCD..."
+                        placeholder="Nhập tên hoặc số CMND/CCCD (để trống để xem tất cả)..."
                         disabled={isSearching}
                         onKeyPress={(e) => {
                             if (e.key === 'Enter') {

@@ -13,7 +13,7 @@ import { useGlobalToast } from "@core/patterns/SingletonHook";
 
 // UI Components
 import {
-    // ServiceGroupStatus,
+    ServiceGroupStatus,
     ServiceGroupSetup,
     CurrentServingPanel,
     StatsCards,
@@ -337,12 +337,12 @@ export function StaffDashboardView() {
                 </div>
 
                 {/* Service Group Status */}
-                {/* <ServiceGroupStatus
+                <ServiceGroupStatus
                     serviceGroupId={serviceGroupId}
                     selectedServiceGroup={selectedServiceGroup}
                     queueStatus={queueStatus}
                     onOpenSetup={() => setShowQueueSetup(true)}
-                /> */}
+                />
 
                 {/* Service Group Setup Modal */}
                 <ServiceGroupSetup

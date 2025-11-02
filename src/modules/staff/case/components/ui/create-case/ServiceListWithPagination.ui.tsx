@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/ui/input.ui";
-import { Search, FileText, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { FileText, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Service, PaginatedData } from "../../../../dashboard/types";
 
 interface ServiceListWithPaginationProps {
@@ -95,7 +95,7 @@ export function ServiceListWithPagination({
                     disabled={isSearching}
                     className="bg-indigo-600 hover:bg-indigo-700"
                 >
-                    <Search className="w-4 h-4 mr-2" />
+                    <FileText className="w-4 h-4 mr-2" />
                     {isSearching ? "Đang tìm..." : "Tìm kiếm"}
                 </Button>
             </div>
