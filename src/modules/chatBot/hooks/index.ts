@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useCallback } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { chatbotService } from '../services/chatbot.service';
-import { QUERY_KEYS } from '../constants';
-import type { ChatResponse } from '../types';
+import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { getConversationId } from '../utils';
+import type { ChatResponse, ConversationDetail } from '../types';
 
 // Re-export custom hooks
 export { useChatForm } from './useChatForm';
@@ -106,5 +107,27 @@ export const useGenerateTitle = () => {
     return useCallback((firstMessage: string) => {
         return chatbotService.generateSessionTitle(firstMessage);
     }, []);
+};
+
+/**
+ * Hook for getting conversation by ID
+ * Uses conversationId from localStorage if not provided
+ */
+export const useGetConversation = (conversationId?: string | null) => {
+    const storedConversationId = getConversationId();
+    const targetConversationId = conversationId ?? storedConversationId;
+
+    return useQuery({
+        queryKey: [...QUERY_KEYS.CHATBOT_BASE, 'conversation', targetConversationId],
+        queryFn: async () => {
+            if (!targetConversationId) {
+                throw new Error('Conversation ID is required');
+            }
+            return await chatbotService.getConversation(targetConversationId);
+        },
+        enabled: !!targetConversationId,
+        gcTime: CACHE_TIME,
+        staleTime: STALE_TIME,
+    });
 };
 

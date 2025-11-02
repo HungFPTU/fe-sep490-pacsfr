@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SidebarProvider } from '@/shared/components/layout/manager/ui/sidebar';
 import { useChatSession, useChatForm, useChatSubmit } from '../../hooks';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
@@ -22,6 +22,7 @@ export const ChatBotPage: React.FC = () => {
         createSession,
         addMessage,
         updateLastMessage,
+        loadMessagesFromConversation,
     } = useChatSession();
 
     const { addToast } = useGlobalToast();
@@ -70,10 +71,49 @@ export const ChatBotPage: React.FC = () => {
         createSession();
     };
 
+    const handleSelectConversation = async (convId: string) => {
+        if (controller) {
+            controller.abort();
+            setController(null);
+        }
+        
+        try {
+            console.log('Loading conversation:', convId);
+            await loadMessagesFromConversation(convId);
+            console.log('Conversation loaded successfully');
+        } catch (error) {
+            console.error('Failed to load conversation:', error);
+            addToast({ 
+                message: 'Không thể tải cuộc trò chuyện. Vui lòng thử lại.', 
+                type: 'error' 
+            });
+        }
+    };
+
+    // Auto-load conversation on mount if conversationId exists
+    useEffect(() => {
+        const loadInitialConversation = async () => {
+            if (conversationId) {
+                try {
+                    console.log('Page mount: Auto-loading conversation:', conversationId);
+                    await loadMessagesFromConversation(conversationId);
+                } catch (error) {
+                    console.error('Failed to load initial conversation:', error);
+                }
+            }
+        };
+
+        loadInitialConversation();
+    }, []);
+
     return (
         <SidebarProvider>
             <div className="flex h-screen w-full overflow-hidden bg-gradient-to-b from-yellow-50 via-yellow-100 to-yellow-50">
-                <ChatbotSidebar onNewChat={handleNewChat} />
+                <ChatbotSidebar 
+                    onNewChat={handleNewChat} 
+                    onSelectConversation={handleSelectConversation}
+                    selectedConversationId={conversationId}
+                />
 
                 <div className="flex-1 flex flex-col h-screen">
                     <ChatHeader />

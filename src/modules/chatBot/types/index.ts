@@ -81,12 +81,16 @@ export type ConversationDetail = {
     $id: string;
     id: string;
     title: string;
-    userId: string;
     messages: {
         $id: string;
         $values: BackendChatMessage[];
     };
     createdAt: string;
-    updatedAt: string;
+};
+
+export type ConversationItem = {
+    conversationId: string;
+    title: string;
+    createdAt: string;
 };
 

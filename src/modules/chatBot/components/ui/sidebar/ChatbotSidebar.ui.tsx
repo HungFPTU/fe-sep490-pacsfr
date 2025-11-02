@@ -1,15 +1,19 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
 } from '@/shared/components/layout/manager/ui/sidebar';
+import { getConversations, formatChatDate } from '../../../utils';
+import type { ConversationItem } from '../../../types';
 
 interface ChatbotSidebarProps {
     onNewChat: () => void;
+    onSelectConversation: (conversationId: string) => void;
+    selectedConversationId?: string | null;
 }
 
 const PlusIcon = () => (
@@ -24,7 +28,41 @@ const MessageIcon = () => (
     </svg>
 );
 
-export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({ onNewChat }) => {
+export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({ 
+    onNewChat, 
+    onSelectConversation, 
+    selectedConversationId 
+}) => {
+    const [conversations, setConversations] = useState<ConversationItem[]>([]);
+
+    useEffect(() => {
+        const loadConversations = () => {
+            const loaded = getConversations();
+            setConversations(loaded);
+        };
+
+        loadConversations();
+
+        const handleStorageChange = () => {
+            loadConversations();
+        };
+
+        const handleConversationSaved = () => {
+            loadConversations();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('conversationSaved', handleConversationSaved);
+
+        const interval = setInterval(loadConversations, 500);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('conversationSaved', handleConversationSaved);
+        };
+    }, []);
+
     return (
         <Sidebar className="bg-yellow-50/80 backdrop-blur-xl border-red-200/60">
             <SidebarHeader className="p-4 bg-white/50 backdrop-blur-sm border-b border-red-200/60">
@@ -47,16 +85,41 @@ export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({ onNewChat }) => 
                     </button>
                 </div>
 
-                <div className="px-2 mt-4 flex-1">
-                    <div className="text-center py-8 px-4 h-full flex flex-col justify-center items-center bg-yellow-100/40 rounded-lg border border-dashed border-yellow-300/80">
-                        <div className="w-16 h-16 mb-4 rounded-full bg-yellow-200/70 flex items-center justify-center text-yellow-700">
-                            <MessageIcon />
+                <div className="px-2 mt-4 flex-1 overflow-y-auto">
+                    {conversations.length === 0 ? (
+                        <div className="text-center py-8 px-4 h-full flex flex-col justify-center items-center bg-yellow-100/40 rounded-lg border border-dashed border-yellow-300/80">
+                            <div className="w-16 h-16 mb-4 rounded-full bg-yellow-200/70 flex items-center justify-center text-yellow-700">
+                                <MessageIcon />
+                            </div>
+                            <p className="text-yellow-800/90 text-sm font-medium">Lịch sử trò chuyện</p>
+                            <p className="text-yellow-700/80 text-xs mt-1">
+                                Các cuộc hội thoại của bạn sẽ được hiển thị ở đây.
+                            </p>
                         </div>
-                        <p className="text-yellow-800/90 text-sm font-medium">Lịch sử trò chuyện</p>
-                        <p className="text-yellow-700/80 text-xs mt-1">
-                            Các cuộc hội thoại của bạn sẽ được hiển thị ở đây.
-                        </p>
-                    </div>
+                    ) : (
+                        <div className="space-y-1">
+                            {conversations.map((conversation) => (
+                                <button
+                                    key={conversation.conversationId}
+                                    onClick={() => onSelectConversation(conversation.conversationId)}
+                                    className={`w-full text-left px-3 py-2.5 rounded-lg transition-colors ${
+                                        selectedConversationId === conversation.conversationId
+                                            ? 'bg-red-100 text-red-900 font-medium'
+                                            : 'bg-white/50 hover:bg-yellow-100/60 text-slate-700'
+                                    }`}
+                                >
+                                    <div className="flex items-start gap-2">
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm truncate">{conversation.title}</p>
+                                            <p className="text-xs text-slate-500 mt-0.5">
+                                                {formatChatDate(new Date(conversation.createdAt))}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </SidebarContent>
 
