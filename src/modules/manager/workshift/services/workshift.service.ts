@@ -1,30 +1,45 @@
-import { workshiftApi } from '../api/workshift.api';
-import type { CreateWorkShiftRequest, UpdateWorkShiftRequest, WorkShiftFilters } from '../types';
+import * as workshiftApi from '../api/workshift.api';
+import type { WorkShift, CreateWorkShiftRequest, WorkShiftFilters } from '../types';
+import type { RestResponse } from '@/types/rest';
 
-export const workshiftService = {
-    async getWorkShiftList(filters: WorkShiftFilters) {
-        const response = await workshiftApi.getList(filters);
-        return response.data;
-    },
+// ==================== WorkShift Service ====================
 
-    async getWorkShiftById(id: string) {
-        const response = await workshiftApi.getById(id);
-        return response.data;
-    },
+export class WorkShiftService {
+  /**
+   * Lấy danh sách ca làm việc với bộ lọc
+   */
+  static async getWorkShifts(filters?: WorkShiftFilters): Promise<RestResponse<WorkShift>> {
+    return workshiftApi.getWorkShifts(filters);
+  }
 
-    async createWorkShift(data: CreateWorkShiftRequest) {
-        const response = await workshiftApi.create(data);
-        return response.data;
-    },
+  /**
+   * Lấy thông tin chi tiết ca làm việc
+   */
+  static async getWorkShiftDetail(id: string): Promise<RestResponse<WorkShift>> {
+    return workshiftApi.getWorkShiftDetail(id);
+  }
 
-    async updateWorkShift(id: string, data: UpdateWorkShiftRequest) {
-        const response = await workshiftApi.update(id, data);
-        return response.data;
-    },
+  /**
+   * Tạo ca làm việc mới
+   */
+  static async createWorkShift(data: CreateWorkShiftRequest): Promise<RestResponse<WorkShift>> {
+    return workshiftApi.createWorkShift(data);
+  }
 
-    async deleteWorkShift(id: string) {
-        const response = await workshiftApi.delete(id);
-        return response.data;
-    },
-};
+  /**
+   * Cập nhật ca làm việc
+   */
+  static async updateWorkShift(
+    id: string,
+    data: CreateWorkShiftRequest,
+  ): Promise<RestResponse<WorkShift>> {
+    return workshiftApi.updateWorkShift(id, data);
+  }
 
+  /**
+   * Xóa ca làm việc
+   */
+  static async deleteWorkShift(id: string): Promise<RestResponse<object>> {
+    return workshiftApi.deleteWorkShift(id);
+  }
+}

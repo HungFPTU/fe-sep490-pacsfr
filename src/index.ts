@@ -14,5 +14,4 @@ export { API_PATH } from "./core/config/api.path";
 
 // Legacy exports for backward compatibility
 export { useAuthStore } from "./modules/auth";
-
 export { useAuth } from "./modules/auth";
