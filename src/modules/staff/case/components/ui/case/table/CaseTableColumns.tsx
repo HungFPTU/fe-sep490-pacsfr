@@ -16,9 +16,9 @@ export const getCaseTableColumns = (
       return (
         <div className="flex items-center">
           <div className="flex-shrink-0 h-8 w-8">
-            <div className="h-8 w-8 rounded-lg bg-red-100 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-indigo-100 flex items-center justify-center">
               <svg
-                className="h-4 w-4 text-red-600"
+                className="h-4 w-4 text-indigo-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -48,13 +48,6 @@ export const getCaseTableColumns = (
       const caseItem = row.original;
       return (
         <div className="flex items-center">
-          <div className="flex-shrink-0 h-8 w-8">
-            <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-              <span className="text-sm font-medium text-blue-600">
-                {caseItem.guestName.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          </div>
           <div className="ml-3">
             <div className="text-sm font-medium text-gray-900">{caseItem.guestName}</div>
           </div>

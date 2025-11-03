@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Input } from "@/shared/components/ui/input.ui";
 import type { CreateCaseRequest } from "../../../../dashboard/types";
 
 interface PriorityLevel {
@@ -54,18 +53,6 @@ export function CaseFormFields({
                         <option key={method} value={method}>{method}</option>
                     ))}
                 </select>
-            </div>
-
-            {/* Created By */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Người tạo
-                </label>
-                <Input
-                    value={caseData.createdBy}
-                    onChange={(e) => onDataChange({ ...caseData, createdBy: e.target.value })}
-                    placeholder="Nhập ID người tạo"
-                />
             </div>
 
             {/* Notes */}

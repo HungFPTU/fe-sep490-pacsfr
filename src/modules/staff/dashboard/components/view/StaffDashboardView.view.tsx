@@ -9,6 +9,7 @@ import { getMockWaitingList, SERVICE_TYPES } from "../../consts";
 import type { CitizenProfile, ServiceGroup } from "../../types";
 import { Filter, Plus } from "lucide-react";
 import { useMinimumLoadingTime } from "@/shared/hooks";
+import { useGlobalToast } from "@core/patterns/SingletonHook";
 
 // UI Components
 import {
@@ -24,6 +25,7 @@ import { StaffDashboardTabsView } from "./StaffDashboardTabsView.view";
 export function StaffDashboardView() {
     const router = useRouter();
     const { withMinimumLoadingTime } = useMinimumLoadingTime(1500); // 1.5 seconds minimum
+    const { addToast } = useGlobalToast();
     
     const {
         waitingList,
@@ -86,11 +88,11 @@ export function StaffDashboardView() {
             });
         } catch (error) {
             console.error("Error loading service groups:", error);
-            alert("Lỗi khi tải danh sách nhóm dịch vụ. Vui lòng thử lại!");
+            addToast({ message: "Lỗi khi tải danh sách nhóm dịch vụ. Vui lòng thử lại!", type: "info" });
         } finally {
             setIsLoadingServiceGroups(false);
         }
-    }, [serviceGroupId, withMinimumLoadingTime]);
+    }, [serviceGroupId, withMinimumLoadingTime, addToast]);
 
     // Handle search button click
     const handleSearchServiceGroups = () => {
@@ -153,7 +155,7 @@ export function StaffDashboardView() {
     // Call next number - using real API
     const callNextNumber = async () => {
         if (!serviceGroupId) {
-            alert('Vui lòng cấu hình Service Group ID trước!');
+            addToast({ message: 'Vui lòng cấu hình Service Group ID trước!', type: 'info' });
             return;
         }
 
@@ -173,7 +175,11 @@ export function StaffDashboardView() {
                         status: 'serving'
                     });
 
-                    alert(`Đã gọi số ${response.data.ticketNumber}`);
+                    const citizenName = response.data.citizenName || 'Chưa có thông tin';
+                    addToast({ 
+                        message: `Mời số ${response.data.ticketNumber} - ${citizenName} vào phục vụ`, 
+                        type: 'info' 
+                    });
                     
                     // Reload queue status and dashboard data
                     await loadQueueStatus();
@@ -185,9 +191,9 @@ export function StaffDashboardView() {
         } catch (error) {
             console.error('Error calling next number:', error);
             if (error instanceof Error) {
-                alert(error.message);
+                addToast({ message: error.message, type: 'info' });
             } else {
-                alert('Có lỗi xảy ra khi gọi số tiếp theo');
+                addToast({ message: 'Có lỗi xảy ra khi gọi số tiếp theo', type: 'info' });
             }
         } finally {
             setCallingNext(false);
@@ -216,10 +222,10 @@ export function StaffDashboardView() {
                 setCurrentServing(null);
             }, 2000);
 
-            alert(`Đã hoàn thành phục vụ số ${currentServing.number}`);
+            addToast({ message: `Đã hoàn thành phục vụ số ${currentServing.number}`, type: 'info' });
         } catch (error) {
             console.error('Error completing current serving:', error);
-            alert('Có lỗi xảy ra khi hoàn thành phục vụ');
+            addToast({ message: 'Có lỗi xảy ra khi hoàn thành phục vụ', type: 'info' });
         }
     };
 
@@ -317,7 +323,7 @@ export function StaffDashboardView() {
                     <div className="flex items-center gap-3">
                         <Button 
                             onClick={() => router.push('/staff/create-case')}
-                            className="bg-green-600 hover:bg-green-700"
+                            className="bg-indigo-600 hover:bg-indigo-700"
                             size="sm"
                         >
                             <Plus className="w-4 h-4 mr-2" />

@@ -68,7 +68,7 @@ export const CaseDetailModal: React.FC<CaseDetailModalProps> = ({
       >
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mb-4"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
             <p className="text-sm text-gray-500">Đang tải dữ liệu...</p>
           </div>
         ) : error ? (
