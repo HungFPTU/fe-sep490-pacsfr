@@ -68,7 +68,6 @@ export function CreateCasePageView() {
     const [isSearching, setIsSearching] = useState(false);
     const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
     const [showGuestDropdown, setShowGuestDropdown] = useState(false);
-    const [showServiceList, setShowServiceList] = useState(false);
 
     // Service Search
     const [serviceSearchKeyword, setServiceSearchKeyword] = useState("");

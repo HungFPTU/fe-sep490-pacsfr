@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Input } from "@/shared/components/ui/input.ui";
 import type { CreateCaseRequest } from "../../../../dashboard/types";
 
 interface PriorityLevel {

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/ui/input.ui";
-import { Search, User, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, User, Check } from "lucide-react";
 import type { Guest } from "../../../../dashboard/types";
 
 interface GuestSearchFormProps {
@@ -27,7 +27,6 @@ export function GuestSearchForm({
     onSearchKeywordChange,
     onSearch,
     onSelectGuest,
-    onToggleDropdown,
 }: GuestSearchFormProps) {
     return (
         <div>
