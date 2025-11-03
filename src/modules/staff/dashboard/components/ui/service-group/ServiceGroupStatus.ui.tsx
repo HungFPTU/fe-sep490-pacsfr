@@ -20,13 +20,13 @@ export function ServiceGroupStatus({
     onOpenSetup,
 }: ServiceGroupStatusProps) {
     return (
-        <Card className={`p-4 ${!serviceGroupId ? 'bg-yellow-50 border-yellow-200' : 'bg-green-50 border-green-200'}`}>
+        <Card className={`p-4 ${!serviceGroupId ? 'bg-gray-50 border-gray-200' : 'bg-indigo-50 border-indigo-200'}`}>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     {!serviceGroupId ? (
-                        <AlertCircle className="w-5 h-5 text-yellow-600" />
+                        <AlertCircle className="w-5 h-5 text-gray-600" />
                     ) : (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <CheckCircle className="w-5 h-5 text-indigo-600" />
                     )}
                     <div>
                         {!serviceGroupId ? (
@@ -52,8 +52,8 @@ export function ServiceGroupStatus({
                     size="sm"
                     onClick={onOpenSetup}
                     className={!serviceGroupId 
-                        ? "border-yellow-600 text-yellow-700 hover:bg-yellow-100" 
-                        : "border-green-600 text-green-700 hover:bg-green-100"
+                        ? "border-gray-300 text-gray-700 hover:bg-gray-100" 
+                        : "border-indigo-300 text-indigo-700 hover:bg-indigo-100"
                     }
                 >
                     <Settings className="w-4 h-4 mr-2" />

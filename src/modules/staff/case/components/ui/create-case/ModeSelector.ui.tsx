@@ -30,12 +30,12 @@ export function ModeSelector({ onSelectCreateGuest, onSelectCreateCase }: ModeSe
 
             {/* Create Case Card */}
             <Card 
-                className="p-8 cursor-pointer hover:shadow-lg transition-all border-2 hover:border-green-500"
+                className="p-8 cursor-pointer hover:shadow-lg transition-all border-2 hover:border-blue-500"
                 onClick={onSelectCreateCase}
             >
                 <div className="text-center">
-                    <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                        <FileText className="w-10 h-10 text-green-600" />
+                    <div className="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-4">
+                        <FileText className="w-10 h-10 text-indigo-600" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Tạo hồ sơ mới</h2>
                     <p className="text-gray-600">

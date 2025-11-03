@@ -79,7 +79,7 @@ export function ServiceGroupSetup({
                     <Button
                         onClick={onSearch}
                         disabled={isLoadingServiceGroups}
-                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white"
+                        className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white"
                     >
                         <Search className="w-5 h-5 mr-2" />
                         Tìm kiếm
@@ -173,9 +173,9 @@ export function ServiceGroupSetup({
                 )}
             </div>
             {selectedServiceGroup && (
-                <div className="mt-4 p-4 bg-white rounded-lg border-2 border-green-200">
+                <div className="mt-4 p-4 bg-white rounded-lg border-2 border-indigo-200">
                     <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <CheckCircle className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
                         <div className="flex-1">
                             <p className="text-sm font-medium text-gray-900">
                                 ✓ Đã chọn: {selectedServiceGroup.groupName}

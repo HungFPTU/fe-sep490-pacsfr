@@ -10,15 +10,15 @@ interface PriorityBadgeProps {
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority, variant = 'default' }) => {
   const configs = {
     0: {
-      bg: 'bg-emerald-100',
-      text: 'text-emerald-800',
-      dot: 'bg-emerald-400',
+      bg: 'bg-gray-100',
+      text: 'text-gray-800',
+      dot: 'bg-gray-400',
       label: 'Bình thường',
     },
     1: {
-      bg: 'bg-amber-100',
-      text: 'text-amber-800',
-      dot: 'bg-amber-400',
+      bg: 'bg-blue-100',
+      text: 'text-blue-800',
+      dot: 'bg-blue-400',
       label: 'Ưu tiên',
     },
     2: {

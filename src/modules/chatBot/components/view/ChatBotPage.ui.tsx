@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SidebarProvider } from '@/shared/components/layout/manager/ui/sidebar';
-import { useSendMessage } from '../../hooks';
-import { useChatSession } from '../../hooks/useChatSession';
-import { useChatForm } from '../../hooks/useChatForm';
+import { useChatSession, useChatForm, useChatSubmit } from '../../hooks';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import {
     ChatMessageBubble,
@@ -14,10 +12,8 @@ import {
     ChatbotSidebar,
     ChatFooter,
 } from '../ui';
-import type { ChatMessage } from '../../types';
 
 export const ChatBotPage: React.FC = () => {
-    // Chat session management
     const {
         currentMessages,
         conversationId,
@@ -26,64 +22,29 @@ export const ChatBotPage: React.FC = () => {
         createSession,
         addMessage,
         updateLastMessage,
+        loadMessagesFromConversation,
     } = useChatSession();
 
-    // Backend API hook
-    const { sendMessage, isSending } = useSendMessage();
     const { addToast } = useGlobalToast();
 
-    // Abort controller for cancelling requests
+    const { submitMessage, isSending } = useChatSubmit({
+        conversationId,
+        onConversationIdChange: setConversationId,
+        onAddMessage: addMessage,
+        onUpdateLastMessage: updateLastMessage,
+        onError: (message) => addToast({ message, type: 'error' }),
+    });
+
     const [controller, setController] = useState<AbortController | null>(null);
 
-    // Handle message submission
     const handleSubmit = async (prompt: string) => {
-        if (isSending) return;
-
-        // Add user message
-        const userMessage: ChatMessage = { role: 'user', content: prompt };
-        addMessage(userMessage);
-
-        // Add placeholder for assistant response
-        const assistantPlaceholder: ChatMessage = { role: 'assistant', content: '' };
-        addMessage(assistantPlaceholder);
-
-        // Create abort controller
         const aborter = new AbortController();
         setController(aborter);
 
-        try {
-            // Send message to backend API
-            // TODO: Get userId from auth store
-            const userId = '3fa85f64-5717-4562-b3fc-2c963f66afa6'; // Temporary - replace with real userId
-            
-            const response = await sendMessage(
-                conversationId,
-                prompt,
-                userId,
-                'string',
-                aborter.signal
-            );
-
-            // Update conversationId if this is first message
-            if (!conversationId && response.data.conversationId) {
-                setConversationId(response.data.conversationId);
-            }
-
-            // Update assistant message with response
-            updateLastMessage(response.data.assistantMessage.content);
-
-        } catch (error) {
-            if ((error as Error).name !== 'AbortError') {
-                const errorMessage = error instanceof Error ? error.message : 'Đã xảy ra lỗi';
-                updateLastMessage(`Lỗi: ${errorMessage}`);
-                addToast({ 
-                    message: 'Không thể gửi tin nhắn. Vui lòng thử lại.', 
-                    type: 'error' 
-                });
-            }
-        } finally {
-            setController(null);
-        }
+        const userId = '3fa85f64-5717-4562-b3fc-2c963f66afa6';
+        await submitMessage(prompt, userId, aborter.signal);
+        
+        setController(null);
     };
 
     // Form management
@@ -102,19 +63,57 @@ export const ChatBotPage: React.FC = () => {
         controller?.abort();
     };
 
-    // Handle new chat
     const handleNewChat = () => {
         if (controller) {
             controller.abort();
         }
-        setConversationId(null); // Reset conversation ID for new chat
+        setConversationId(null);
         createSession();
     };
+
+    const handleSelectConversation = async (convId: string) => {
+        if (controller) {
+            controller.abort();
+            setController(null);
+        }
+        
+        try {
+            console.log('Loading conversation:', convId);
+            await loadMessagesFromConversation(convId);
+            console.log('Conversation loaded successfully');
+        } catch (error) {
+            console.error('Failed to load conversation:', error);
+            addToast({ 
+                message: 'Không thể tải cuộc trò chuyện. Vui lòng thử lại.', 
+                type: 'error' 
+            });
+        }
+    };
+
+    // Auto-load conversation on mount if conversationId exists
+    useEffect(() => {
+        const loadInitialConversation = async () => {
+            if (conversationId) {
+                try {
+                    console.log('Page mount: Auto-loading conversation:', conversationId);
+                    await loadMessagesFromConversation(conversationId);
+                } catch (error) {
+                    console.error('Failed to load initial conversation:', error);
+                }
+            }
+        };
+
+        loadInitialConversation();
+    }, []);
 
     return (
         <SidebarProvider>
             <div className="flex h-screen w-full overflow-hidden bg-gradient-to-b from-yellow-50 via-yellow-100 to-yellow-50">
-                <ChatbotSidebar onNewChat={handleNewChat} />
+                <ChatbotSidebar 
+                    onNewChat={handleNewChat} 
+                    onSelectConversation={handleSelectConversation}
+                    selectedConversationId={conversationId}
+                />
 
                 <div className="flex-1 flex flex-col h-screen">
                     <ChatHeader />
