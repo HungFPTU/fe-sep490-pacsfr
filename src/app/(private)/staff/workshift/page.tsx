@@ -26,7 +26,7 @@ export default function WorkShiftPage() {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <div className="text-red-500 text-lg mb-2">Không thể tải lịch làm việc</div>
+                    <div className="text-gray-900 text-lg mb-2">Không thể tải lịch làm việc</div>
                     <div className="text-gray-600">Vui lòng thử lại sau</div>
                 </div>
             </div>

@@ -23,7 +23,7 @@ export const SearchActions: React.FC<SearchActionsProps> = ({
         onClick={onSearch}
         disabled={isLoading}
         className={`px-6 py-2 text-white rounded-lg transition-colors ${
-          hasChanges ? 'bg-blue-600 hover:bg-blue-700' : 'bg-red-600 hover:bg-red-700'
+          hasChanges ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-indigo-600 hover:bg-indigo-700'
         } disabled:bg-gray-400 disabled:cursor-not-allowed`}
       >
         {isLoading ? 'Đang tìm...' : hasChanges ? 'Tìm kiếm lại' : 'Tìm kiếm'}
@@ -37,7 +37,7 @@ export const SearchActions: React.FC<SearchActionsProps> = ({
       </button>
 
       {searchEnabled && !hasChanges && (
-        <div className="flex items-center text-sm text-green-600">
+        <div className="flex items-center text-sm text-gray-600">
           <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"

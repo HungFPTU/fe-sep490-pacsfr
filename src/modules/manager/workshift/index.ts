@@ -8,7 +8,7 @@ export { WorkShiftListPage } from './components/view/WorkShiftListPage.ui';
 export * from './hooks';
 
 // Services
-export { workshiftService } from './services/workshift.service';
+export { WorkShiftService } from './services/workshift.service';
 
 // Constants
 export * from './constants';

@@ -199,6 +199,7 @@ export function getAccessibleRoutesFromStorage(): string[] {
         accessibleRoutes.push(
             '/manager',
             '/manager/quan-ly-nhan-vien',
+            '/manager/ca-lam-viec',
             '/manager/co-quan',
             '/manager/phong-ban',
             '/manager/dich-vu',

@@ -1,9 +1,7 @@
 'use client';
 
 import { FormApiOf } from '@/types/types';
-import {
-  Updater,
-} from '@tanstack/react-form';
+import { Updater } from '@tanstack/react-form';
 import * as React from 'react';
 import { useId } from 'react';
 
@@ -67,7 +65,11 @@ export function FormItem({
 }
 
 type FieldMetaErrors = Array<string | undefined> | undefined;
-function getFirstError(field: { state: { meta: { touchedErrors?: FieldMetaErrors; errors?: FieldMetaErrors; isTouched?: boolean } } }) {
+function getFirstError(field: {
+  state: {
+    meta: { touchedErrors?: FieldMetaErrors; errors?: FieldMetaErrors; isTouched?: boolean };
+  };
+}) {
   // Show errors immediately if field has been touched at least once
   const te = field.state.meta.touchedErrors;
   const e = field.state.meta.errors;
@@ -75,15 +77,20 @@ function getFirstError(field: { state: { meta: { touchedErrors?: FieldMetaErrors
 
   // If touched, always show current errors (not just touchedErrors)
   const arr = isTouched
-    ? (Array.isArray(e) && e.length ? e : [])
-    : (Array.isArray(te) && te.length ? te : []);
+    ? Array.isArray(e) && e.length
+      ? e
+      : []
+    : Array.isArray(te) && te.length
+    ? te
+    : [];
 
-  const first = (arr as Array<string | undefined>).find((m): m is string => typeof m === 'string' && m.length > 0);
+  const first = (arr as Array<string | undefined>).find(
+    (m): m is string => typeof m === 'string' && m.length > 0,
+  );
   return first ?? null;
 }
 
-const toStr = (v: unknown): string =>
-  v === undefined || v === null ? '' : String(v);
+const toStr = (v: unknown): string => (v === undefined || v === null ? '' : String(v));
 
 /** Input */
 export function InputField<TFormData>({
@@ -110,21 +117,32 @@ export function InputField<TFormData>({
       {(field) => {
         const error = getFirstError(field);
         return (
-          <FormItem label={label} required={required} help={help} error={error} inputId={id} className={className}>
+          <FormItem
+            label={label}
+            required={required}
+            help={help}
+            error={error}
+            inputId={id}
+            className={className}
+          >
             <input
               id={id}
               type={type}
               disabled={disabled || inputProps?.disabled}
               value={(field.state.value as string | number | readonly string[] | undefined) ?? ''}
               onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.currentTarget.value as unknown as Updater<typeof field.state.value>)}
+              onChange={(e) =>
+                field.handleChange(
+                  e.currentTarget.value as unknown as Updater<typeof field.state.value>,
+                )
+              }
               placeholder={placeholder}
               className={cx(
                 'w-full rounded-xl border bg-white outline-none transition',
                 'border-slate-300 focus:border-slate-500',
                 !!error && 'border-red-400 focus:border-red-500',
                 disabled && 'bg-slate-100 cursor-not-allowed',
-                sizeClass(size)
+                sizeClass(size),
               )}
               {...inputProps}
             />
@@ -158,13 +176,24 @@ export function TextareaField<TFormData>({
       {(field) => {
         const error = getFirstError(field);
         return (
-          <FormItem label={label} required={required} help={help} error={error} inputId={id} className={className}>
+          <FormItem
+            label={label}
+            required={required}
+            help={help}
+            error={error}
+            inputId={id}
+            className={className}
+          >
             <textarea
               id={id}
               disabled={disabled}
               value={(field.state.value as string | undefined) ?? ''}
               onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.currentTarget.value as unknown as Updater<typeof field.state.value>)}
+              onChange={(e) =>
+                field.handleChange(
+                  e.currentTarget.value as unknown as Updater<typeof field.state.value>,
+                )
+              }
               placeholder={placeholder}
               rows={rows}
               className={cx(
@@ -172,7 +201,7 @@ export function TextareaField<TFormData>({
                 'border-slate-300 focus:border-slate-500',
                 !!error && 'border-red-400 focus:border-red-500',
                 disabled && 'bg-slate-100 cursor-not-allowed',
-                size === 'sm' ? 'p-2 text-sm' : size === 'lg' ? 'p-4 text-base' : 'p-3 text-sm'
+                size === 'sm' ? 'p-2 text-sm' : size === 'lg' ? 'p-4 text-base' : 'p-3 text-sm',
               )}
             />
           </FormItem>
@@ -183,30 +212,36 @@ export function TextareaField<TFormData>({
 }
 
 /** Select (native) */
-export function SelectField<TFormData,
-  TValue extends string | number | boolean = string>({
-    form,
-    name,
-    label,
-    required,
-    help,
-    size = 'md',
-    disabled,
-    className,
-    placeholder = '— Chọn —',
-    options,
-  }: CommonProps<TFormData> & {
-    form: FormApiOf<TFormData>;
-    options: Array<{ label: React.ReactNode; value: TValue; disabled?: boolean }>;
-    placeholder?: string;
-  }) {
+export function SelectField<TFormData, TValue extends string | number | boolean = string>({
+  form,
+  name,
+  label,
+  required,
+  help,
+  size = 'md',
+  disabled,
+  className,
+  placeholder = '— Chọn —',
+  options,
+}: CommonProps<TFormData> & {
+  form: FormApiOf<TFormData>;
+  options: Array<{ label: React.ReactNode; value: TValue; disabled?: boolean }>;
+  placeholder?: string;
+}) {
   const id = useId();
   return (
     <form.Field name={name}>
       {(field) => {
         const error = getFirstError(field);
         return (
-          <FormItem label={label} required={required} help={help} error={error} inputId={id} className={className}>
+          <FormItem
+            label={label}
+            required={required}
+            help={help}
+            error={error}
+            inputId={id}
+            className={className}
+          >
             <select
               id={id}
               disabled={disabled}
@@ -232,7 +267,7 @@ export function SelectField<TFormData,
                 'border-slate-300 focus:border-slate-500',
                 !!error && 'border-red-400 focus:border-red-500',
                 disabled && 'bg-slate-100 cursor-not-allowed',
-                sizeClass(size)
+                sizeClass(size),
               )}
             >
               <option value="" disabled>
@@ -271,19 +306,21 @@ export function SwitchField<TFormData>({
               type="button"
               aria-pressed={checked}
               onBlur={field.handleBlur}
-              onClick={() => field.handleChange((checked as unknown as Updater<typeof field.state.value>))}
+              onClick={() =>
+                field.handleChange(checked as unknown as Updater<typeof field.state.value>)
+              }
               disabled={disabled}
               className={cx(
                 'relative inline-flex w-12 items-center rounded-full transition',
                 checked ? 'bg-slate-900' : 'bg-slate-300',
                 disabled && 'opacity-60 cursor-not-allowed',
-                'h-6'
+                'h-6',
               )}
             >
               <span
                 className={cx(
                   'inline-block h-5 w-5 transform rounded-full bg-white shadow transition',
-                  checked ? 'translate-x-6' : 'translate-x-1'
+                  checked ? 'translate-x-6' : 'translate-x-1',
                 )}
               />
             </button>
@@ -301,7 +338,7 @@ export function CheckboxField<TFormData>({
   label,
   help,
   disabled,
-  className
+  className,
 }: CommonProps<TFormData> & { form: FormApiOf<TFormData> }) {
   const id = useId();
   return (
@@ -311,19 +348,138 @@ export function CheckboxField<TFormData>({
         const checked = !!field.state.value;
         return (
           <FormItem help={help} error={error} inputId={id} className={className}>
-            <label htmlFor={id} className={cx('inline-flex items-center gap-2', disabled && 'opacity-60')}>
+            <label
+              htmlFor={id}
+              className={cx('inline-flex items-center gap-2', disabled && 'opacity-60')}
+            >
               <input
                 id={id}
                 type="checkbox"
                 checked={checked}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.currentTarget.checked as unknown as Updater<typeof field.state.value>)}
+                onChange={(e) =>
+                  field.handleChange(
+                    e.currentTarget.checked as unknown as Updater<typeof field.state.value>,
+                  )
+                }
                 disabled={disabled}
                 className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-2 focus:ring-slate-500"
               />
               <span className="text-sm text-slate-700">{label}</span>
             </label>
             {help && <div className="mt-1 text-xs text-slate-500">{help}</div>}
+          </FormItem>
+        );
+      }}
+    </form.Field>
+  );
+}
+
+/** Date (native) */
+export function DateField<TFormData>({
+  form,
+  name,
+  label,
+  required,
+  help,
+  size = 'md',
+  disabled,
+  className,
+  placeholder,
+}: CommonProps<TFormData> & {
+  form: FormApiOf<TFormData>;
+  placeholder?: string;
+}) {
+  const id = useId();
+  return (
+    <form.Field name={name}>
+      {(field) => {
+        const error = getFirstError(field);
+        return (
+          <FormItem
+            label={label}
+            required={required}
+            help={help}
+            error={error}
+            inputId={id}
+            className={className}
+          >
+            <input
+              id={id}
+              type="date"
+              disabled={disabled}
+              value={(field.state.value as string) ?? ''}
+              onBlur={field.handleBlur}
+              onChange={(e) =>
+                field.handleChange(
+                  e.currentTarget.value as unknown as Updater<typeof field.state.value>,
+                )
+              }
+              placeholder={placeholder}
+              className={cx(
+                'w-full rounded-xl border bg-white outline-none transition',
+                'border-slate-300 focus:border-slate-500',
+                !!error && 'border-red-400 focus:border-red-500',
+                disabled && 'bg-slate-100 cursor-not-allowed',
+                sizeClass(size),
+              )}
+            />
+          </FormItem>
+        );
+      }}
+    </form.Field>
+  );
+}
+
+/** Time (native) */
+export function TimeField<TFormData>({
+  form,
+  name,
+  label,
+  required,
+  help,
+  size = 'md',
+  disabled,
+  className,
+  placeholder,
+}: CommonProps<TFormData> & {
+  form: FormApiOf<TFormData>;
+  placeholder?: string;
+}) {
+  const id = useId();
+  return (
+    <form.Field name={name}>
+      {(field) => {
+        const error = getFirstError(field);
+        return (
+          <FormItem
+            label={label}
+            required={required}
+            help={help}
+            error={error}
+            inputId={id}
+            className={className}
+          >
+            <input
+              id={id}
+              type="time"
+              disabled={disabled}
+              value={(field.state.value as string) ?? ''}
+              onBlur={field.handleBlur}
+              onChange={(e) =>
+                field.handleChange(
+                  e.currentTarget.value as unknown as Updater<typeof field.state.value>,
+                )
+              }
+              placeholder={placeholder}
+              className={cx(
+                'w-full rounded-xl border bg-white outline-none transition',
+                'border-slate-300 focus:border-slate-500',
+                !!error && 'border-red-400 focus:border-red-500',
+                disabled && 'bg-slate-100 cursor-not-allowed',
+                sizeClass(size),
+              )}
+            />
           </FormItem>
         );
       }}

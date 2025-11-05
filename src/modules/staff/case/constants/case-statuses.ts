@@ -22,7 +22,7 @@ export const CASE_STATUSES: CaseStatus[] = [
     color: 'blue',
   },
   {
-    id: '286d299a-0651-43cb-b18f-4edc1329eed0',
+    id: '2864299a-0651-43cb-b18f-46dc1329eed0',
     name: 'Hoàn thành',
     description: 'Hồ sơ đã hoàn thành xử lý',
     color: 'green',

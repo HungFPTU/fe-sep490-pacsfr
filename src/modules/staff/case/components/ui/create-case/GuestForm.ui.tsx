@@ -42,20 +42,20 @@ export function GuestForm({
         <div className="space-y-6">
             {/* Success State */}
             {isSuccess && guestId && onContinueToCase && onFinish && (
-                <Card className="p-6 bg-green-50 border-green-200">
+                <Card className="p-6 bg-blue-50 border-blue-200">
                     <div className="flex items-start gap-4">
-                        <Check className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
+                        <Check className="w-8 h-8 text-blue-600 flex-shrink-0 mt-1" />
                         <div className="flex-1">
-                            <h3 className="text-lg font-bold text-green-900 mb-2">
+                            <h3 className="text-lg font-bold text-blue-900 mb-2">
                                 Tạo khách hàng thành công!
                             </h3>
-                            <p className="text-sm text-green-700 mb-4">
+                            <p className="text-sm text-blue-700 mb-4">
                                 Guest ID: <span className="font-mono font-semibold">{guestId}</span>
                             </p>
                             <div className="flex gap-3">
                                 <Button
                                     onClick={onContinueToCase}
-                                    className="bg-blue-600 hover:bg-blue-700"
+                                    className="bg-indigo-600 hover:bg-indigo-700"
                                 >
                                     <FileText className="w-4 h-4 mr-2" />
                                     Tiếp tục tạo hồ sơ
@@ -63,7 +63,7 @@ export function GuestForm({
                                 <Button
                                     onClick={onFinish}
                                     variant="outline"
-                                    className="border-green-600 text-green-600 hover:bg-green-50"
+                                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
                                 >
                                     <Check className="w-4 h-4 mr-2" />
                                     Hoàn thành
@@ -376,7 +376,7 @@ export function GuestForm({
                             <Button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="bg-blue-600 hover:bg-blue-700"
+                                className="bg-indigo-600 hover:bg-indigo-700"
                             >
                                 {isSubmitting ? "Đang xử lý..." : "Tạo khách hàng"}
                             </Button>

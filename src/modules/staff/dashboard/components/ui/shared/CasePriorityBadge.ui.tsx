@@ -18,16 +18,16 @@ export const CasePriorityBadge: React.FC<CasePriorityBadgeProps> = ({
       case 0:
         return {
           label: 'Bình thường',
-          bgColor: isCompact ? 'bg-green-100' : 'bg-emerald-100',
-          textColor: isCompact ? 'text-green-800' : 'text-emerald-800',
-          dotColor: 'bg-emerald-400',
+          bgColor: isCompact ? 'bg-gray-100' : 'bg-gray-100',
+          textColor: isCompact ? 'text-gray-800' : 'text-gray-800',
+          dotColor: 'bg-gray-400',
         };
       case 1:
         return {
           label: 'Ưu tiên',
-          bgColor: isCompact ? 'bg-yellow-100' : 'bg-amber-100',
-          textColor: isCompact ? 'text-yellow-800' : 'text-amber-800',
-          dotColor: 'bg-amber-400',
+          bgColor: isCompact ? 'bg-blue-100' : 'bg-blue-100',
+          textColor: isCompact ? 'text-blue-800' : 'text-blue-800',
+          dotColor: 'bg-blue-400',
         };
       case 2:
         return {

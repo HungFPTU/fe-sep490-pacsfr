@@ -119,14 +119,13 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
               }}
             >
               {CASE_STATUSES.map((status) => {
-                const colorEmoji = status.color === 'amber' ? '🟡' : status.color === 'blue' ? '🔵' : '🟢';
                 return (
                   <option 
                     key={status.id} 
                     value={status.id}
                     className="py-2"
                   >
-                    {colorEmoji} {status.name} - {status.description}
+                    {status.name} - {status.description}
                   </option>
                 );
               })}
