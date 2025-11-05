@@ -54,6 +54,7 @@ export const CreateServiceGroupModal: React.FC<Props> = ({
                 form={form}
                 isLoading={isLoading}
                 isEdit={!!initData?.id}
+                initData={initData}
             />
         </BaseModal>
     );

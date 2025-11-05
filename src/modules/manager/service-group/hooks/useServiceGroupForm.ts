@@ -1,15 +1,20 @@
+/**
+ * Custom Form Hook for Service Group
+ * Handles form state, validation, and submission
+ */
+
 import { useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { useCreateServiceGroup, useUpdateServiceGroup } from './index';
-import type { ServiceGroup, CreateServiceGroupRequest } from '../types';
+import type { ServiceGroup } from '../types/response';
+import type { CreateServiceGroupRequest, UpdateServiceGroupRequest } from '../types/request';
 
 type FormValues = {
     groupCode: string;
     groupName: string;
     description: string;
     iconUrl: string;
-    iconFile?: File; // Add iconFile field
     displayOrder: number;
     isActive: boolean;
 };
@@ -43,11 +48,8 @@ export const useServiceGroupForm = ({
     const form = useForm({
         defaultValues: toFormValues(initData),
         onSubmit: async ({ value }) => {
-            console.log('[useServiceGroupForm] Form submit triggered');
-
             // Prevent duplicate submission
             if (createMutation.isPending || updateMutation.isPending) {
-                console.log('[useServiceGroupForm] Already submitting, ignoring duplicate call');
                 return;
             }
 
@@ -60,76 +62,63 @@ export const useServiceGroupForm = ({
                 addToast({ message: 'Vui lòng nhập tên nhóm', type: 'error' });
                 return;
             }
-            // if (!value.iconUrl?.trim()) {
-            //     addToast({ message: 'Vui lòng tải lên icon nhóm dịch vụ', type: 'error' });
-            //     return;
-            // }
 
             try {
-                console.log('[useServiceGroupForm] Form values before submit:', value);
-                console.log('[useServiceGroupForm] Icon check:', {
-                    hasIconUrl: !!value.iconUrl,
-                    iconUrl: value.iconUrl,
-                });
-
                 const request: CreateServiceGroupRequest = {
                     groupCode: value.groupCode.trim(),
                     groupName: value.groupName.trim(),
                     description: value.description?.trim() || '',
                     iconUrl: value.iconUrl.trim(),
-                    // Only include iconFile if we don't have iconUrl yet (file not uploaded)
                     displayOrder: value.displayOrder,
                     isActive: value.isActive,
                 };
 
-                console.log('[useServiceGroupForm] Request data:', request);
-
-                let res;
                 if (initData?.id) {
                     // Update existing service group
-                    res = await updateMutation.mutateAsync({
-                        id: initData?.id ?? '',
-                        request: {
-                            ...request,
-                            id: initData?.id ?? '',
-                        },
+                    const updateRequest: UpdateServiceGroupRequest = {
+                        ...request,
+                        id: initData.id,
+                    };
+                    await updateMutation.mutateAsync({
+                        id: initData.id,
+                        data: updateRequest,
+                    });
+                    addToast({
+                        message: 'Cập nhật nhóm dịch vụ thành công',
+                        type: 'success',
                     });
                 } else {
                     // Create new service group
-                    res = await createMutation.mutateAsync(request);
+                    await createMutation.mutateAsync(request);
+                    addToast({
+                        message: 'Tạo nhóm dịch vụ thành công',
+                        type: 'success',
+                    });
                 }
 
-                // Always close and reset on success
-                if (res?.success) {
-                    addToast({
-                        message: initData?.id ? 'Cập nhật nhóm dịch vụ thành công' : 'Tạo nhóm dịch vụ thành công',
-                        type: 'success'
-                    });
-                    onSuccess?.();
-                    onClose();
-                    // Reset form after successful submit
-                    setTimeout(() => {
-                        form.reset(toFormValues(null));
-                    }, 100);
-                } else {
-                    addToast({
-                        message: initData?.id ? 'Cập nhật nhóm dịch vụ thất bại' : 'Tạo nhóm dịch vụ thất bại',
-                        type: 'error'
-                    });
-                }
+                onSuccess?.();
+                onClose();
+
+                // Reset form after successful submit
+                setTimeout(() => {
+                    form.reset(toFormValues(null));
+                }, 100);
             } catch (error) {
                 console.error('Error saving service group:', error);
-                addToast({ message: 'Đã xảy ra lỗi khi lưu nhóm dịch vụ', type: 'error' });
+                addToast({
+                    message: initData?.id
+                        ? 'Cập nhật nhóm dịch vụ thất bại'
+                        : 'Tạo nhóm dịch vụ thất bại',
+                    type: 'error',
+                });
             }
         },
     });
 
     useEffect(() => {
         if (open) {
-            // Always reset with current initData when modal opens
             form.reset(toFormValues(initData));
         } else {
-            // Clear form when modal closes
             form.reset(toFormValues(null));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -143,4 +132,3 @@ export const useServiceGroupForm = ({
         handleSubmit: () => form.handleSubmit(),
     };
 };
-
