@@ -2,6 +2,7 @@
 
 import React from 'react';
 import type { Service } from '../../../types';
+import { getServiceTypeLabel } from '../../../utils';
 
 interface Props {
     service: Service;
@@ -26,7 +27,9 @@ export const ServiceTableRow: React.FC<Props> = ({ service, onView, onEdit, onDe
 
             {/* Service Type */}
             <td className="px-6 py-4 text-sm text-slate-600">
-                {service.serviceType}
+                <span className="inline-flex rounded-full px-2.5 py-1 text-xs font-medium bg-indigo-100 text-indigo-800">
+                    {getServiceTypeLabel(service.serviceType)}
+                </span>
             </td>
 
             {/* Online Available */}

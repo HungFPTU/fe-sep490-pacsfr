@@ -1,51 +1,55 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { InputField } from '@/shared/components/layout/manager/form/BaseForm';
 import { UploadCloud, CheckCircle, AlertCircle } from 'lucide-react';
 import { LegalDocumentService } from '../../../services/legal-document.service';
 import { useFileUpload } from '@/core/hooks/useFileUpload';
-import { FormApiOf } from '@/types/types';
-import type { DocumentTypeOption, DocumentStatusOption } from '../../../types';
+import type { DocumentTypeOption, DocumentStatusOption, LegalDocument } from '../../../types';
 import { ToggleSwitch } from '@/shared/components/manager/ui';
-
-type FormValues = {
-    documentNumber: string;
-    documentType: string;
-    name: string;
-    issueDate: string;
-    issueBody: string;
-    effectiveDate: string;
-    status: string;
-    isActive: boolean;
-    file?: File;
-    fileUrl: string;
-};
+import {
+    validateDocumentNumber,
+    validateDocumentType,
+    validateName,
+    validateIssueDate,
+    validateEffectiveDate,
+    validateIssueBody,
+    validateStatus,
+} from '../../../utils';
 
 interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     form: any;
     isLoading: boolean;
     isEdit: boolean;
+    initData?: LegalDocument | null;
 }
 
-export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
+export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, initData }) => {
     const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
     const [uploadedFileName, setUploadedFileName] = useState<string>('');
-    const [isActive, setIsActive] = useState<boolean>(false);
 
-    // Sync uploadedFileUrl with form fileUrl
+    // Sync uploadedFileUrl with initData fileUrl (for edit mode) or form fileUrl (for new uploads)
     const formFileUrl = form.state.values.fileUrl;
+    const initFileUrl = initData?.fileUrl;
+
     useEffect(() => {
+        // Priority: newly uploaded file > initData fileUrl
         if (formFileUrl && formFileUrl !== uploadedFileUrl) {
+            // This handles both new uploads and form reset
             setUploadedFileUrl(formFileUrl);
-            // Extract filename from URL for display
             const fileName = formFileUrl.split('/').pop() || 'Unknown file';
             setUploadedFileName(fileName);
-            console.log('[LegalDocumentForm] Synced fileUrl from form:', formFileUrl);
+        } else if (isEdit && initFileUrl && !formFileUrl) {
+            // Fallback: sync from initData if form doesn't have fileUrl yet
+            setUploadedFileUrl(initFileUrl);
+            const fileName = initFileUrl.split('/').pop() || 'Unknown file';
+            setUploadedFileName(fileName);
+        } else if (!isEdit && !formFileUrl) {
+            // Reset when not in edit mode and no file
+            setUploadedFileUrl('');
+            setUploadedFileName('');
         }
-    }, [formFileUrl, uploadedFileUrl]);
-
+    }, [formFileUrl, initFileUrl, isEdit, uploadedFileUrl]);
 
     const { uploadFile, isUploading, error: uploadError, validateFile, formatFileSize } = useFileUpload({
         maxSize: 10 * 1024 * 1024, // 10MB
@@ -64,7 +68,6 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
 
         // Prevent duplicate uploads
         if (isUploading) {
-            console.log('[LegalDocumentForm] Already uploading, ignoring duplicate call');
             return;
         }
 
@@ -72,7 +75,6 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
         const validation = validateFile(file);
 
         if (!validation.isValid) {
-            console.error('[LegalDocumentForm] Validation failed:', validation.error);
             alert(validation.error);
             return;
         }
@@ -88,7 +90,6 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                 // Update local state
                 setUploadedFileUrl(fileUrl);
                 setUploadedFileName(fileName);
-                setIsActive(true);
 
                 // Update form using setFieldValue with callback
                 form.setFieldValue('fileUrl', fileUrl, {
@@ -112,11 +113,6 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
         } catch (err) {
             console.error('File upload failed:', err);
             const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-            console.error('File upload error details:', {
-                error: err,
-                message: errorMessage,
-                stack: err instanceof Error ? err.stack : undefined
-            });
             alert(`Upload file thất bại: ${errorMessage}`);
         }
     };
@@ -131,58 +127,69 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                 <form.Field
                     name="documentNumber"
                     validators={{
-                        onChange: ({ value }: { value: string }) => {
-                            if (!value || !value.trim()) {
-                                return 'Số văn bản là bắt buộc';
-                            }
-                            return undefined;
-                        },
+                        onBlur: ({ value }: { value: string }) => validateDocumentNumber(value),
                     }}
                 >
-                    {() => (
-                        <InputField<FormValues>
-                            form={form as FormApiOf<FormValues>}
-                            name="documentNumber"
-                            label="Số văn bản"
-                            required
-                            placeholder="Nhập số văn bản"
-                            disabled={isLoading || isEdit}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="documentNumber" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Số văn bản
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="documentNumber"
+                                    type="text"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading || isEdit ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    placeholder="Nhập số văn bản"
+                                    disabled={isLoading || isEdit}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
 
                 {/* Document Type */}
                 <form.Field
                     name="documentType"
                     validators={{
-                        onChange: ({ value }: { value: string }) => {
-                            if (!value || !value.trim()) {
-                                return 'Loại văn bản là bắt buộc';
-                            }
-                            return undefined;
-                        },
+                        onBlur: ({ value }: { value: string }) => validateDocumentType(value),
                     }}
                 >
-                    {() => (
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-900">
-                                Loại văn bản <span className="text-red-500">*</span>
-                            </label>
-                            <select
-                                value={form.state.values.documentType || ''}
-                                onChange={(e) => form.setFieldValue('documentType', e.target.value)}
-                                disabled={isLoading || isEdit}
-                                className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                            >
-                                <option value="">Chọn loại văn bản</option>
-                                {documentTypeOptions.map((option: DocumentTypeOption) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="documentType" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Loại văn bản
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <select
+                                    id="documentType"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading || isEdit ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    disabled={isLoading || isEdit}
+                                >
+                                    <option value="">Chọn loại văn bản</option>
+                                    {documentTypeOptions.map((option: DocumentTypeOption) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
             </div>
 
@@ -190,24 +197,32 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
             <form.Field
                 name="name"
                 validators={{
-                    onChange: ({ value }: { value: string }) => {
-                        if (!value || !value.trim()) {
-                            return 'Tên văn bản là bắt buộc';
-                        }
-                        return undefined;
-                    },
+                    onBlur: ({ value }: { value: string }) => validateName(value),
                 }}
             >
-                {() => (
-                    <InputField<FormValues>
-                        form={form as FormApiOf<FormValues>}
-                        name="name"
-                        label="Tên văn bản"
-                        required
-                        placeholder="Nhập tên văn bản"
-                        disabled={isLoading}
-                    />
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="name" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Tên văn bản
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <input
+                                id="name"
+                                type="text"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={(field.state.value as string) || ''}
+                                onChange={(e) => field.handleChange(e.target.value as never)}
+                                onBlur={field.handleBlur}
+                                placeholder="Nhập tên văn bản"
+                                disabled={isLoading}
+                            />
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,48 +230,62 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                 <form.Field
                     name="issueDate"
                     validators={{
-                        onChange: ({ value }: { value: string }) => {
-                            if (!value || !value.trim()) {
-                                return 'Ngày ban hành là bắt buộc';
-                            }
-                            return undefined;
-                        },
+                        onBlur: ({ value }: { value: string }) => validateIssueDate(value),
                     }}
                 >
-                    {() => (
-                        <InputField<FormValues>
-                            form={form as FormApiOf<FormValues>}
-                            name="issueDate"
-                            label="Ngày ban hành"
-                            type="date"
-                            required
-                            disabled={isLoading}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="issueDate" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Ngày ban hành
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="issueDate"
+                                    type="date"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    disabled={isLoading}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
 
                 {/* Effective Date */}
                 <form.Field
                     name="effectiveDate"
                     validators={{
-                        onChange: ({ value }: { value: string }) => {
-                            if (!value || !value.trim()) {
-                                return 'Ngày có hiệu lực là bắt buộc';
-                            }
-                            return undefined;
-                        },
+                        onBlur: ({ value }: { value: string }) => validateEffectiveDate(value),
                     }}
                 >
-                    {() => (
-                        <InputField<FormValues>
-                            form={form as FormApiOf<FormValues>}
-                            name="effectiveDate"
-                            label="Ngày có hiệu lực"
-                            type="date"
-                            required
-                            disabled={isLoading}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="effectiveDate" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Ngày có hiệu lực
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="effectiveDate"
+                                    type="date"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    disabled={isLoading}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
             </div>
 
@@ -264,58 +293,69 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
             <form.Field
                 name="issueBody"
                 validators={{
-                    onChange: ({ value }: { value: string }) => {
-                        if (!value || !value.trim()) {
-                            return 'Cơ quan ban hành là bắt buộc';
-                        }
-                        return undefined;
-                    },
+                    onBlur: ({ value }: { value: string }) => validateIssueBody(value),
                 }}
             >
-                {() => (
-                    <InputField<FormValues>
-                        form={form as FormApiOf<FormValues>}
-                        name="issueBody"
-                        label="Cơ quan ban hành"
-                        required
-                        placeholder="Nhập cơ quan ban hành"
-                        disabled={isLoading}
-                    />
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="issueBody" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Cơ quan ban hành
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <input
+                                id="issueBody"
+                                type="text"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={(field.state.value as string) || ''}
+                                onChange={(e) => field.handleChange(e.target.value as never)}
+                                onBlur={field.handleBlur}
+                                placeholder="Nhập cơ quan ban hành"
+                                disabled={isLoading}
+                            />
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
             {/* Status */}
             <form.Field
                 name="status"
                 validators={{
-                    onChange: ({ value }: { value: string }) => {
-                        if (!value || !value.trim()) {
-                            return 'Trạng thái là bắt buộc';
-                        }
-                        return undefined;
-                    },
+                    onBlur: ({ value }: { value: string }) => validateStatus(value),
                 }}
             >
-                {() => (
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-900">
-                            Trạng thái <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                            value={form.state.values.status || ''}
-                            onChange={(e) => form.setFieldValue('status', e.target.value)}
-                            disabled={isLoading}
-                            className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 border-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        >
-                            <option value="">Chọn trạng thái</option>
-                            {documentStatusOptions.map((option: DocumentStatusOption) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="status" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Trạng thái
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <select
+                                id="status"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={(field.state.value as string) || ''}
+                                onChange={(e) => field.handleChange(e.target.value as never)}
+                                onBlur={field.handleBlur}
+                                disabled={isLoading}
+                            >
+                                <option value="">Chọn trạng thái</option>
+                                {documentStatusOptions.map((option: DocumentStatusOption) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
             {/* File Upload */}
@@ -367,38 +407,23 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                     </div>
                 )}
 
-                {/* Current File Preview (for edit mode with existing file) */}
-                {form.state.values.fileUrl && !uploadedFileUrl && isEdit && (
-                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                        <div className="flex items-center space-x-3">
-                            <UploadCloud className="w-8 h-8 text-blue-500" />
-                            <div>
-                                <p className="text-sm text-blue-700 font-medium">
-                                    File hiện tại
-                                </p>
-                                <p className="text-xs text-blue-600">
-                                    {form.state.values.fileUrl.split('/').pop() || 'Unknown file'}
-                                </p>
-                                <p className="text-xs text-blue-500">
-                                    Click để thay đổi
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Uploaded File Preview */}
-                {uploadedFileUrl && (
+                {/* File Preview - Show existing file in edit mode or newly uploaded file */}
+                {(uploadedFileUrl || (isEdit && (formFileUrl || initFileUrl))) && (
                     <div className="p-3 bg-green-50 border border-green-200 rounded-md">
                         <div className="flex items-center space-x-3">
                             <CheckCircle className="w-8 h-8 text-green-500" />
                             <div>
                                 <p className="text-sm text-green-700 font-medium">
-                                    File đã upload
+                                    {isEdit ? 'File hiện tại' : 'File đã upload'}
                                 </p>
                                 <p className="text-xs text-green-600">
-                                    {uploadedFileName}
+                                    {uploadedFileName || (initFileUrl || formFileUrl || '').split('/').pop() || 'Unknown file'}
                                 </p>
+                                {isEdit && (
+                                    <p className="text-xs text-green-500 mt-1">
+                                        Click để thay đổi file
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -417,21 +442,22 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit }) 
                 )}
             </div>
 
-            {/* Active Status - Toggle Switch (always show, but different behavior for create vs edit) */}
-            <div className="flex items-end pb-2">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                        <ToggleSwitch
-                            checked={isActive}
-                            onChange={(value: boolean) => setIsActive(value)}
-                            label="Kích hoạt văn bản"
-                            description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
-                            aria-label="Kích hoạt văn bản"
-                            disabled={isLoading}
-                        />
-                    </div>
-                </div>
-            </div>
+            {/* Active Status - Toggle Switch */}
+            <form.Field name="isActive">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => (
+                    <ToggleSwitch
+                        checked={field.state.value ?? false}
+                        onChange={(value: boolean) => {
+                            field.handleChange(value);
+                        }}
+                        label="Kích hoạt văn bản"
+                        description={field.state.value ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                        disabled={isLoading}
+                        aria-label="Kích hoạt văn bản"
+                    />
+                )}
+            </form.Field>
         </div>
     );
 };
