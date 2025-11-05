@@ -4,6 +4,7 @@ import React from 'react';
 import { formatDate } from '@/shared/lib/utils';
 import { ServiceGroupDetail } from './ServiceGroupDetail.ui';
 import type { Service } from '../../../types';
+import { getServiceTypeLabel, getExecutionLevelLabel, getServiceFieldLabel } from '../../../utils';
 
 interface Props {
     service: Service;
@@ -45,7 +46,9 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <label className="block text-sm font-medium text-slate-700">
                     Loại dịch vụ
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{service.serviceType}</p>
+                <span className="mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold bg-indigo-100 text-indigo-800">
+                    {getServiceTypeLabel(service.serviceType)}
+                </span>
             </div>
 
             {/* Execution Level */}
@@ -53,7 +56,9 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <label className="block text-sm font-medium text-slate-700">
                     Cấp thực hiện
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{service.executionLevel}</p>
+                <span className="mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold bg-purple-100 text-purple-800">
+                    {getExecutionLevelLabel(service.executionLevel)}
+                </span>
             </div>
 
             {/* Field */}
@@ -61,7 +66,9 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <label className="block text-sm font-medium text-slate-700">
                     Lĩnh vực
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{service.field}</p>
+                <span className="mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800">
+                    {getServiceFieldLabel(service.field)}
+                </span>
             </div>
 
             {/* Decision Number */}
