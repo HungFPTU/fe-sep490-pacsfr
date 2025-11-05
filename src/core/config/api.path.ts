@@ -76,7 +76,7 @@ export const API_PATH = {
         LEGAL_DOCUMENT: {
             GET_ALL: (Keyword: string, DocumentType: string, Status: string, isActive: boolean, Page: number, Size: number) => `/LegislationDocument?keyword=${Keyword}&documentType=${DocumentType}&status=${Status}&isActive=${isActive}&Page=${Page}&Size=${Size}`,
             GET_BY_ID: (id: string) => `/LegislationDocument/${id}`,
-            POST: "/LegislationDocument",
+            POST: "/LegislationDocument/with-services",
             PUT: (id: string) => `/LegislationDocument/${id}`,
             DELETE: (id: string) => `/LegislationDocument/${id}`,
             UPLOAD_FILE: (id: string) => `/LegislationDocument/${id}/upload`,
