@@ -110,7 +110,7 @@ export type CreateCaseRequest = {
     guestId: string;
     serviceId: string;
     priorityLevel: number;
-    submissionMethod: string;
+    submissionMethodId: string;
     notes?: string;
     estimatedCompletionDate: string; // ISO date string format
     resultDescription?: string;

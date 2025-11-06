@@ -64,10 +64,10 @@ export function CreateCasePageView() {
                 if (response.success && response.data.items.$values) {
                     setSubmissionMethods(response.data.items.$values);
                     // Set default submission method if available
-                    if (response.data.items.$values.length > 0 && !caseData.submissionMethod) {
+                    if (response.data.items.$values.length > 0 && !caseData.submissionMethodId) {
                         setCaseData(prev => ({
                             ...prev,
-                            submissionMethod: response.data.items.$values[0].id
+                            submissionMethodId: response.data.items.$values[0].id
                         }));
                     }
                 } else {
@@ -118,7 +118,7 @@ export function CreateCasePageView() {
         guestId: "",
         serviceId: "",
         priorityLevel: 0,
-        submissionMethod: "Trực tiếp",
+        submissionMethodId: "",
         notes: "",
         estimatedCompletionDate: "",
         resultDescription: "",

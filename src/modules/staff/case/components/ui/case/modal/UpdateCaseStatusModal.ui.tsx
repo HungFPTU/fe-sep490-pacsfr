@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { useUpdateCaseStatus } from '../../../../hooks/useUpdateCaseStatus';
-import { CASE_STATUSES } from '../../../../constants/case-statuses';
+import { useCaseStatuses } from '../../../../hooks/useCaseStatuses';
 
 interface UpdateCaseStatusModalProps {
   open: boolean;
@@ -21,9 +21,11 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
   currentStatus,
   onSuccess,
 }) => {
+  const { data: caseStatuses = [], isLoading: isLoadingStatuses } = useCaseStatuses();
+  
   // Find current status ID from status name
   const getCurrentStatusId = () => {
-    const status = CASE_STATUSES.find(s => s.name === currentStatus);
+    const status = caseStatuses.find(s => s.name === currentStatus);
     return status?.id || '';
   };
 
@@ -80,11 +82,11 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
 
   // Update newStatusId when currentStatus changes or modal opens
   useEffect(() => {
-    if (open) {
+    if (open && caseStatuses.length > 0) {
       setNewStatusId(getCurrentStatusId());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, currentStatus]);
+  }, [open, currentStatus, caseStatuses]);
 
   return (
     <BaseModal
@@ -109,7 +111,7 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
             <select
               value={newStatusId}
               onChange={(e) => setNewStatusId(e.target.value)}
-              disabled={updateStatusMutation.isPending}
+              disabled={updateStatusMutation.isPending || isLoadingStatuses}
               className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed appearance-none bg-white pr-10"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
@@ -118,17 +120,23 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
                 backgroundSize: '1.5em 1.5em',
               }}
             >
-              {CASE_STATUSES.map((status) => {
-                return (
-                  <option 
-                    key={status.id} 
-                    value={status.id}
-                    className="py-2"
-                  >
-                    {status.name} - {status.description}
-                  </option>
-                );
-              })}
+              {isLoadingStatuses ? (
+                <option value="">Đang tải...</option>
+              ) : caseStatuses.length === 0 ? (
+                <option value="">Không có trạng thái</option>
+              ) : (
+                caseStatuses.map((status) => {
+                  return (
+                    <option 
+                      key={status.id} 
+                      value={status.id}
+                      className="py-2"
+                    >
+                      {status.name}
+                    </option>
+                  );
+                })
+              )}
             </select>
           </div>
           <p className="text-xs text-gray-500 mt-1">

@@ -78,8 +78,8 @@ export function CaseFormFields({
                     Phương thức nộp <span className="text-red-500">*</span>
                 </label>
                 <select
-                    value={caseData.submissionMethod}
-                    onChange={(e) => onDataChange({ ...caseData, submissionMethod: e.target.value })}
+                    value={caseData.submissionMethodId}
+                    onChange={(e) => onDataChange({ ...caseData, submissionMethodId: e.target.value })}
                     disabled={isLoadingSubmissionMethods}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
@@ -95,9 +95,9 @@ export function CaseFormFields({
                         ))
                     )}
                 </select>
-                {submissionMethods.length > 0 && caseData.submissionMethod && (
+                {submissionMethods.length > 0 && caseData.submissionMethodId && (
                     <p className="text-xs text-gray-500 mt-1">
-                        {submissionMethods.find(m => m.id === caseData.submissionMethod)?.description}
+                        {submissionMethods.find(m => m.id === caseData.submissionMethodId)?.description}
                     </p>
                 )}
             </div>

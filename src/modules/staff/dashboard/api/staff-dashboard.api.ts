@@ -137,7 +137,7 @@ export const staffDashboardApi = {
             guestId: request.guestId,
             serviceId: request.serviceId,
             priorityLevel: request.priorityLevel,
-            submissionMethod: request.submissionMethod,
+            submissionMethodId: request.submissionMethodId,
             notes: request.notes,
             estimatedCompletionDate: request.estimatedCompletionDate,
             resultDescription: request.resultDescription

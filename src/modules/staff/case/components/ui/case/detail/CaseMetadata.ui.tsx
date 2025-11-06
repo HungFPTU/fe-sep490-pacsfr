@@ -9,8 +9,7 @@ interface CaseMetadataProps {
   caseId: string;
   submissionMethod: string;
   isPayment: boolean;
-  guestId: string;
-  serviceId: string;
+  serviceName: string;
   currentStatus: string;
   onStatusClick?: () => void;
 }
@@ -19,8 +18,7 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
   caseId,
   submissionMethod,
   isPayment,
-  guestId,
-  serviceId,
+  serviceName,
   currentStatus,
   onStatusClick,
 }) => {
@@ -98,13 +96,8 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
       </div>
 
       <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-        <label className="block text-xs font-medium text-gray-500 mb-2">ID Công dân</label>
-        <p className="text-xs font-mono text-gray-700 break-all">{guestId}</p>
-      </div>
-
-      <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-        <label className="block text-xs font-medium text-gray-500 mb-2">ID Dịch vụ</label>
-        <p className="text-xs font-mono text-gray-700 break-all">{serviceId}</p>
+        <label className="block text-xs font-medium text-gray-500 mb-2">Dịch vụ</label>
+        <p className="text-sm font-medium text-gray-900">{serviceName}</p>
       </div>
     </div>
   );

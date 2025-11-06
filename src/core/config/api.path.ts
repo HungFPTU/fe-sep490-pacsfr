@@ -302,4 +302,8 @@ export const API_PATH = {
     GET_ALL: '/SubmissionMethod',
   },
 
+  CASE_STATUS: {
+    GET_ALL: '/CaseStatus',
+  },
+
 };
