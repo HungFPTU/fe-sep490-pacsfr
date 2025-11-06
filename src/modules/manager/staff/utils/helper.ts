@@ -173,7 +173,6 @@ export const getFilterOptions = () => ({
         { label: 'Tất cả', value: '' },
         { label: 'Nhân viên', value: RoleType.STAFF },
         { label: 'Quản lý', value: RoleType.MANAGER },
-        { label: 'Quản trị viên', value: RoleType.ADMIN },
     ],
     position: [
         { label: 'Tất cả', value: '' },

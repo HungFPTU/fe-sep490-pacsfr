@@ -31,6 +31,7 @@ export type CreateServiceRequest = {
     decisionNumber: string;
     executionLevel: string;
     field: string;
+    legislationDocumentIds?: string[];
 };
 
 export type UpdateServiceRequest = {
@@ -46,6 +47,7 @@ export type UpdateServiceRequest = {
     decisionNumber: string;
     executionLevel: string;
     field: string;
+    legislationDocumentIds?: string[];
 };
 
 export type ServiceFilters = {

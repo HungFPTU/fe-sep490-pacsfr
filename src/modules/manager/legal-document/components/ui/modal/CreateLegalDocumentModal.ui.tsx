@@ -56,6 +56,7 @@ export const CreateLegalDocumentModal: React.FC<Props> = ({
                 form={form}
                 isLoading={isLoading}
                 isEdit={isEdit}
+                initData={initData}
             />
         </BaseModal>
     );
