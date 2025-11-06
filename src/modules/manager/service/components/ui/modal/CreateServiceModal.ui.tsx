@@ -50,8 +50,12 @@ export const CreateServiceModal: React.FC<Props> = ({
             }
             onClose();
         } catch (error) {
-            toast.error('Có lỗi xảy ra khi lưu dịch vụ');
             console.error('Submit error:', error);
+            // Extract error message from exception
+            const errorMessage = error instanceof Error 
+                ? error.message 
+                : 'Có lỗi xảy ra khi lưu dịch vụ';
+            toast.error(errorMessage);
         }
     };
 

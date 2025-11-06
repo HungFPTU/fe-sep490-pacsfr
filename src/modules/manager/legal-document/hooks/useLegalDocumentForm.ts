@@ -159,7 +159,12 @@ export const useLegalDocumentForm = ({
                 }
             } catch (error) {
                 console.error('Error saving legal document:', error);
-                addToast({ message: 'Đã xảy ra lỗi khi lưu văn bản pháp luật', type: 'error' });
+                // Extract error message from exception
+                const errorMessage = error instanceof Error 
+                    ? error.message 
+                    : 'Đã xảy ra lỗi khi lưu văn bản pháp luật';
+                
+                addToast({ message: errorMessage, type: 'error' });
             }
         },
     });

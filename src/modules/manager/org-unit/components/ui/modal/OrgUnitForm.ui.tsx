@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { ToggleSwitch } from '@/shared/components/manager/ui';
-import { FormApiOf } from '@/types/types';
 import { ORG_UNIT_TYPES } from '../../../enums';
 import { useDepartments } from '@/modules/manager/department/hooks';
 import { getValuesPage } from '@/types/rest';
@@ -15,17 +14,6 @@ import {
     validateEmail,
     validateAddress,
 } from '../../../utils';
-
-type FormValues = {
-    departmentId: string;
-    unitCode: string;
-    unitName: string;
-    unitType: string;
-    address: string;
-    phone: string;
-    email: string;
-    isActive: boolean;
-};
 
 interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

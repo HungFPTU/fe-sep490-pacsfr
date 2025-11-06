@@ -123,7 +123,12 @@ export const useOrgUnitForm = ({
                 }
             } catch (error) {
                 console.error('Error saving org unit:', error);
-                addToast({ message: 'Đã xảy ra lỗi khi lưu cơ quan', type: 'error' });
+                // Extract error message from exception
+                const errorMessage = error instanceof Error 
+                    ? error.message 
+                    : 'Đã xảy ra lỗi khi lưu cơ quan';
+                
+                addToast({ message: errorMessage, type: 'error' });
             }
         },
     });

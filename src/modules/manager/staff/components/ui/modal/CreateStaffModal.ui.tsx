@@ -32,8 +32,13 @@ export function CreateStaffModal({ open, onClose, initData, onSuccess }: CreateS
       }
       onClose();
     } catch (error) {
-      addToast({ message: 'Có lỗi xảy ra khi lưu nhân viên', type: 'error' });
       console.error('Submit error:', error);
+      // Extract error message from exception
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Có lỗi xảy ra khi lưu nhân viên';
+
+      addToast({ message: errorMessage, type: 'error' });
     }
   };
 

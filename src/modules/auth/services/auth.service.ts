@@ -115,15 +115,23 @@ export const authService = {
         } catch (error) {
             // Business logic: handle different error types
             if (error instanceof Error) {
-                if (error.message.includes("401")) {
+                // Extract message from error (already extracted by http client from API response)
+                const errorMessage = error.message;
+
+                // Map common HTTP status codes to user-friendly messages
+                if (errorMessage.includes("401") || errorMessage.includes("Unauthorized")) {
                     throw new Error("Tên đăng nhập hoặc mật khẩu không đúng");
                 }
-                if (error.message.includes("429")) {
+                if (errorMessage.includes("429")) {
                     throw new Error("Quá nhiều lần thử. Vui lòng thử lại sau");
                 }
-                if (error.message.includes("500")) {
+                if (errorMessage.includes("500")) {
                     throw new Error("Lỗi hệ thống. Vui lòng thử lại sau");
                 }
+
+                // If error message is already user-friendly (from API), use it directly
+                // Otherwise throw with the original message
+                throw error;
             }
             throw error;
         }
@@ -148,7 +156,10 @@ export const authService = {
 
             // Business logic: validate response structure
             if (!response.data.isSuccess || !response.data.data) {
-                throw new Error(response.data.message || "Invalid register response");
+                // Extract message from API response if available
+                const apiResponse = response.data as { message?: string; isSuccess: boolean };
+                const errorMessage = apiResponse?.message || "Invalid register response";
+                throw new Error(errorMessage);
             }
 
             // Transform API response to internal format
@@ -163,15 +174,22 @@ export const authService = {
         } catch (error) {
             // Business logic: handle different error types
             if (error instanceof Error) {
-                if (error.message.includes("409")) {
+                // Extract message from error (already extracted by http client from API response)
+                const errorMessage = error.message;
+
+                // Map common HTTP status codes to user-friendly messages
+                if (errorMessage.includes("409") || errorMessage.includes("đã tồn tại")) {
                     throw new Error("Tên đăng nhập hoặc email đã tồn tại");
                 }
-                if (error.message.includes("422")) {
+                if (errorMessage.includes("422")) {
                     throw new Error("Thông tin đăng ký không hợp lệ");
                 }
-                if (error.message.includes("500")) {
+                if (errorMessage.includes("500")) {
                     throw new Error("Lỗi hệ thống. Vui lòng thử lại sau");
                 }
+
+                // If error message is already user-friendly (from API), use it directly
+                throw error;
             }
             throw error;
         }
