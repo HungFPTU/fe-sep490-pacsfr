@@ -8,4 +8,5 @@ export { useCaseSearch } from './useCaseSearch';
 export { useUpdateCase } from './useUpdateCase';
 export { useUpdateCaseStatus } from './useUpdateCaseStatus';
 export { useConfirmPayment } from './useConfirmPayment';
-
+export { useCreateBill } from './useCreateBill';
+export { useCaseStatuses } from './useCaseStatuses';

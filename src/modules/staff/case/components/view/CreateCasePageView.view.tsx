@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/shared/components/ui/card.ui";
 import { Button } from "@/shared/components/ui/button.ui";
 import { staffDashboardApi } from "@modules/staff/dashboard/api/staff-dashboard.api";
-import type { CreateGuestRequest, CreateCaseRequest, Guest, Service, PaginatedData } from "../../../dashboard/types";
+import type { CreateGuestRequest, CreateCaseRequest, Guest, Service, PaginatedData, SubmissionMethod } from "../../../dashboard/types";
 import { ArrowLeft, FileText } from "lucide-react";
 import { StaffDashboardTabsView } from "@modules/staff/dashboard/components/view/StaffDashboardTabsView.view";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
+import { useAuth } from "@/modules/auth/hooks";
 
 // UI Components
 import {
@@ -24,11 +25,70 @@ type PageMode = "select" | "create-guest" | "create-case";
 export function CreateCasePageView() {
     const router = useRouter();
     const { addToast } = useGlobalToast();
+    const { user, token, isAuthenticated } = useAuth();
     const [mode, setMode] = useState<PageMode>("select");
     const [guestId, setGuestId] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [guestCreatedSuccess, setGuestCreatedSuccess] = useState(false);
+
+    // Check auth status on mount
+    useEffect(() => {
+        console.log("[CreateCase] Auth Status:", {
+            isAuthenticated,
+            hasToken: !!token,
+            tokenLength: token?.length,
+            user: user?.fullName || user?.name,
+            role: user?.role
+        });
+
+        if (!isAuthenticated || !token) {
+            console.warn("[CreateCase] No authentication token found!");
+            addToast({ 
+                message: "Bạn cần đăng nhập để tạo hồ sơ mới", 
+                type: "warning" 
+            });
+        }
+    }, [isAuthenticated, token, user, addToast]);
+
+    // Fetch submission methods on mount
+    useEffect(() => {
+        const fetchSubmissionMethods = async () => {
+            setIsLoadingSubmissionMethods(true);
+            try {
+                const response = await staffDashboardApi.getSubmissionMethods({
+                    page: 1,
+                    size: 100
+                });
+
+                if (response.success && response.data.items.$values) {
+                    setSubmissionMethods(response.data.items.$values);
+                    // Set default submission method if available
+                    if (response.data.items.$values.length > 0 && !caseData.submissionMethodId) {
+                        setCaseData(prev => ({
+                            ...prev,
+                            submissionMethodId: response.data.items.$values[0].id
+                        }));
+                    }
+                } else {
+                    addToast({
+                        message: "Không thể tải danh sách phương thức nộp hồ sơ",
+                        type: "warning"
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching submission methods:", error);
+                addToast({
+                    message: "Lỗi khi tải phương thức nộp hồ sơ",
+                    type: "error"
+                });
+            } finally {
+                setIsLoadingSubmissionMethods(false);
+            }
+        };
+
+        fetchSubmissionMethods();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Guest Form Data
     const [guestData, setGuestData] = useState<CreateGuestRequest>({
@@ -54,12 +114,14 @@ export function CreateCasePageView() {
 
     // Case Form Data
     const [caseData, setCaseData] = useState<CreateCaseRequest>({
+        createdBy: null,
         guestId: "",
         serviceId: "",
         priorityLevel: 0,
-        submissionMethod: "Trực tiếp",
+        submissionMethodId: "",
         notes: "",
-        createdBy: "system",
+        estimatedCompletionDate: "",
+        resultDescription: "",
     });
 
     // Guest Search
@@ -76,10 +138,13 @@ export function CreateCasePageView() {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
     const [servicePage, setServicePage] = useState(1);
 
+    // Submission Methods
+    const [submissionMethods, setSubmissionMethods] = useState<SubmissionMethod[]>([]);
+    const [isLoadingSubmissionMethods, setIsLoadingSubmissionMethods] = useState(false);
+
     const idTypes = ["CCCD", "CMND", "Hộ chiếu"];
     const genders = ["Nam", "Nữ", "Khác"];
     const guestTypes = ["Cá nhân", "Tổ chức"];
-    const submissionMethods = ["Trực tiếp", "Online", "Qua điện thoại", "Qua email"];
     const priorityLevels = [
         { value: 0, label: "Bình thường" },
         { value: 2, label: "Ưu tiên thấp" },
@@ -212,9 +277,22 @@ export function CreateCasePageView() {
             return;
         }
 
+        if (!caseData.estimatedCompletionDate) {
+            addToast({ message: "Vui lòng chọn ngày dự kiến hoàn thành!", type: "warning" });
+            return;
+        }
+
         setIsSubmitting(true);
         try {
+            // Log data before sending to API
+            console.log("[CreateCase] Sending request with data:", {
+                ...caseData,
+                estimatedCompletionDate: caseData.estimatedCompletionDate
+            });
+
             const response = await staffDashboardApi.createCase(caseData);
+            
+            console.log("[CreateCase] API response:", response);
             
             if (response.success && response.data) {
                 addToast({ message: "Tạo hồ sơ thành công!", type: "success" });
@@ -223,7 +301,7 @@ export function CreateCasePageView() {
                 addToast({ message: "Lỗi: " + (response.message || "Không thể tạo hồ sơ"), type: "error" });
             }
         } catch (error) {
-            console.error("Error creating case:", error);
+            console.error("[CreateCase] Error creating case:", error);
             addToast({ message: "Lỗi khi tạo hồ sơ: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
         } finally {
             setIsSubmitting(false);
@@ -373,6 +451,7 @@ export function CreateCasePageView() {
                                 caseData={caseData}
                                 priorityLevels={priorityLevels}
                                 submissionMethods={submissionMethods}
+                                isLoadingSubmissionMethods={isLoadingSubmissionMethods}
                                 onDataChange={setCaseData}
                             />
 

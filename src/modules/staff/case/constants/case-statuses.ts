@@ -3,39 +3,42 @@
 export interface CaseStatus {
   id: string;
   name: string;
-  description: string;
-  color: string;
+  code: string;
+  isActive: boolean;
 }
 
-// Danh sách trạng thái hồ sơ
-export const CASE_STATUSES: CaseStatus[] = [
-  {
-    id: '0bf01fb9-433f-466e-95bb-78cac85a607e',
-    name: 'Đang xử lý',
-    description: 'Hồ sơ đang được xử lý',
-    color: 'amber',
-  },
-  {
-    id: 'd05ab54e-ac46-4c77-80fd-bdd1bf042e8d',
-    name: 'Mới tiếp nhận',
-    description: 'Hồ sơ vừa được tiếp nhận',
-    color: 'blue',
-  },
-  {
-    id: '2864299a-0651-43cb-b18f-46dc1329eed0',
-    name: 'Hoàn thành',
-    description: 'Hồ sơ đã hoàn thành xử lý',
-    color: 'green',
-  },
-];
+export interface CaseStatusResponse {
+  $id?: string;
+  success: boolean;
+  message: string;
+  data: {
+    $id?: string;
+    $values: CaseStatus[];
+  };
+  timestamp: string;
+}
+
+// Color mapping based on status code
+export const getStatusColor = (code: string): string => {
+  const colorMap: Record<string, string> = {
+    'CHO_TIEP_NHAN': 'blue',
+    'DANG_XU_LY': 'amber',
+    'COMPLETED': 'green',
+  };
+  return colorMap[code] || 'gray';
+};
 
 // Helper function to get status by ID
-export const getStatusById = (id: string): CaseStatus | undefined => {
-  return CASE_STATUSES.find(status => status.id === id);
+export const getStatusById = (statuses: CaseStatus[], id: string): CaseStatus | undefined => {
+  return statuses.find(status => status.id === id);
 };
 
 // Helper function to get status by name
-export const getStatusByName = (name: string): CaseStatus | undefined => {
-  return CASE_STATUSES.find(status => status.name === name);
+export const getStatusByName = (statuses: CaseStatus[], name: string): CaseStatus | undefined => {
+  return statuses.find(status => status.name === name);
 };
 
+// Helper function to get status by code
+export const getStatusByCode = (statuses: CaseStatus[], code: string): CaseStatus | undefined => {
+  return statuses.find(status => status.code === code);
+};

@@ -20,7 +20,9 @@ import type {
     CreateGuestRequest,
     CreateGuestResponse,
     GetGuestsResponse,
-    GuestSearchFilters
+    GuestSearchFilters,
+    SubmissionMethodListResponse,
+    SubmissionMethodFilters
 } from "../types";
 
 export const staffDashboardApi = {
@@ -131,7 +133,15 @@ export const staffDashboardApi = {
 
     // Create new case
     async createCase(request: CreateCaseRequest): Promise<CreateCaseApiResponse> {
-        const response = await http.post<CreateCaseApiResponse>(API_PATH.STAFF.DASHBOARD.CREATE_CASE, request);
+        const response = await http.post<CreateCaseApiResponse>(API_PATH.STAFF.DASHBOARD.CREATE_CASE, {
+            guestId: request.guestId,
+            serviceId: request.serviceId,
+            priorityLevel: request.priorityLevel,
+            submissionMethodId: request.submissionMethodId,
+            notes: request.notes,
+            estimatedCompletionDate: request.estimatedCompletionDate,
+            resultDescription: request.resultDescription
+        });
         return response.data;
     },
 
@@ -191,6 +201,20 @@ export const staffDashboardApi = {
         const url = `${API_PATH.STAFF.DASHBOARD.GET_GUESTS}${query ? '?' + query : ''}`;
 
         const response = await http.get<GetGuestsResponse>(url);
+        return response.data;
+    },
+
+    // Get submission methods
+    async getSubmissionMethods(filters?: SubmissionMethodFilters): Promise<SubmissionMethodListResponse> {
+        const params = new URLSearchParams();
+        if (filters?.keyword) params.append('keyword', filters.keyword);
+        if (filters?.page) params.append('page', filters.page.toString());
+        if (filters?.size) params.append('size', filters.size.toString());
+
+        const query = params.toString();
+        const url = `${API_PATH.SUBMISSION_METHOD.GET_ALL}${query ? '?' + query : ''}`;
+
+        const response = await http.get<SubmissionMethodListResponse>(url);
         return response.data;
     },
 };

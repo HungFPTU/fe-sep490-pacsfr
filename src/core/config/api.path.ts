@@ -318,4 +318,16 @@ export const API_PATH = {
         GET_CONVERSATION: (conversationId: string) => `/Chatbox/conversation/${conversationId}`
     },
 
+  FILE: {
+    UPLOAD_IMAGE: '/FileUpload/image',
+  },
+
+  SUBMISSION_METHOD: {
+    GET_ALL: '/SubmissionMethod',
+  },
+
+  CASE_STATUS: {
+    GET_ALL: '/CaseStatus',
+  },
+
 };
