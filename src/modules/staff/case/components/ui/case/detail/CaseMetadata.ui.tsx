@@ -3,6 +3,7 @@
 import React from 'react';
 import { PaymentBadge, StatusBadge } from '../badges';
 import { PaymentConfirmButton } from './PaymentConfirmButton.ui';
+import { CreateBillButton } from './CreateBillButton.ui';
 
 interface CaseMetadataProps {
   caseId: string;
@@ -89,7 +90,8 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
         </div>
         
         {!isPayment && (
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            <CreateBillButton caseId={caseId} isPayment={isPayment} />
             <PaymentConfirmButton caseId={caseId} isPayment={isPayment} />
           </div>
         )}

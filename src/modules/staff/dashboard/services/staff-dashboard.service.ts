@@ -273,9 +273,10 @@ export const staffDashboardService = {
             if (!request.submissionMethod || !request.submissionMethod.trim()) {
                 throw new Error('Phương thức nộp là bắt buộc');
             }
-            if (!request.createdBy || !request.createdBy.trim()) {
-                throw new Error('Người tạo là bắt buộc');
-            }
+            // createdBy is optional (unknown type) - skip validation or handle differently
+            // if (!request.createdBy) {
+            //     throw new Error('Người tạo là bắt buộc');
+            // }
 
             // Validate priority level
             if (request.priorityLevel < 0 || request.priorityLevel > 10) {

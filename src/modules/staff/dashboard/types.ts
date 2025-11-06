@@ -106,12 +106,14 @@ export type CallNextResponse = {
 
 // Case management types
 export type CreateCaseRequest = {
+    createdBy: unknown;
     guestId: string;
     serviceId: string;
     priorityLevel: number;
     submissionMethod: string;
     notes?: string;
-    createdBy: string;
+    estimatedCompletionDate: string; // ISO date string format
+    resultDescription?: string;
 };
 
 export type CaseResponse = {
@@ -122,9 +124,10 @@ export type CaseResponse = {
     priorityLevel: number;
     submissionMethod: string;
     notes?: string;
-    createdBy: string;
-    createdAt: string;
+    estimatedCompletionDate: string;
+    resultDescription?: string;
     status: string;
+    createdAt: string;
 };
 
 export type CreateCaseApiResponse = {

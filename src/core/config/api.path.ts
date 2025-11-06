@@ -294,4 +294,8 @@ export const API_PATH = {
     GET_CONVERSATION: (conversationId: string) => `/Chatbox/conversation/${conversationId}`
   },
 
+  FILE: {
+    UPLOAD_IMAGE: '/FileUpload/image',
+  },
+
 };

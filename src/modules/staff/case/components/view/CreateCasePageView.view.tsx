@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/shared/components/ui/card.ui";
 import { Button } from "@/shared/components/ui/button.ui";
@@ -9,6 +9,7 @@ import type { CreateGuestRequest, CreateCaseRequest, Guest, Service, PaginatedDa
 import { ArrowLeft, FileText } from "lucide-react";
 import { StaffDashboardTabsView } from "@modules/staff/dashboard/components/view/StaffDashboardTabsView.view";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
+import { useAuth } from "@/modules/auth/hooks";
 
 // UI Components
 import {
@@ -24,11 +25,31 @@ type PageMode = "select" | "create-guest" | "create-case";
 export function CreateCasePageView() {
     const router = useRouter();
     const { addToast } = useGlobalToast();
+    const { user, token, isAuthenticated } = useAuth();
     const [mode, setMode] = useState<PageMode>("select");
     const [guestId, setGuestId] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [guestCreatedSuccess, setGuestCreatedSuccess] = useState(false);
+
+    // Check auth status on mount
+    useEffect(() => {
+        console.log("[CreateCase] Auth Status:", {
+            isAuthenticated,
+            hasToken: !!token,
+            tokenLength: token?.length,
+            user: user?.fullName || user?.name,
+            role: user?.role
+        });
+
+        if (!isAuthenticated || !token) {
+            console.warn("[CreateCase] No authentication token found!");
+            addToast({ 
+                message: "Bạn cần đăng nhập để tạo hồ sơ mới", 
+                type: "warning" 
+            });
+        }
+    }, [isAuthenticated, token, user, addToast]);
 
     // Guest Form Data
     const [guestData, setGuestData] = useState<CreateGuestRequest>({
@@ -54,12 +75,14 @@ export function CreateCasePageView() {
 
     // Case Form Data
     const [caseData, setCaseData] = useState<CreateCaseRequest>({
+        createdBy: null,
         guestId: "",
         serviceId: "",
         priorityLevel: 0,
         submissionMethod: "Trực tiếp",
         notes: "",
-        createdBy: "system",
+        estimatedCompletionDate: "",
+        resultDescription: "",
     });
 
     // Guest Search
@@ -212,9 +235,22 @@ export function CreateCasePageView() {
             return;
         }
 
+        if (!caseData.estimatedCompletionDate) {
+            addToast({ message: "Vui lòng chọn ngày dự kiến hoàn thành!", type: "warning" });
+            return;
+        }
+
         setIsSubmitting(true);
         try {
+            // Log data before sending to API
+            console.log("[CreateCase] Sending request with data:", {
+                ...caseData,
+                estimatedCompletionDate: caseData.estimatedCompletionDate
+            });
+
             const response = await staffDashboardApi.createCase(caseData);
+            
+            console.log("[CreateCase] API response:", response);
             
             if (response.success && response.data) {
                 addToast({ message: "Tạo hồ sơ thành công!", type: "success" });
@@ -223,7 +259,7 @@ export function CreateCasePageView() {
                 addToast({ message: "Lỗi: " + (response.message || "Không thể tạo hồ sơ"), type: "error" });
             }
         } catch (error) {
-            console.error("Error creating case:", error);
+            console.error("[CreateCase] Error creating case:", error);
             addToast({ message: "Lỗi khi tạo hồ sơ: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
         } finally {
             setIsSubmitting(false);
