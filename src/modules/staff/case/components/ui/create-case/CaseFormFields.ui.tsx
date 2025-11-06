@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Calendar } from "lucide-react";
-import type { CreateCaseRequest } from "../../../../dashboard/types";
+import type { CreateCaseRequest, SubmissionMethod } from "../../../../dashboard/types";
 
 interface PriorityLevel {
     value: number;
@@ -12,7 +12,8 @@ interface PriorityLevel {
 interface CaseFormFieldsProps {
     caseData: CreateCaseRequest;
     priorityLevels: PriorityLevel[];
-    submissionMethods: string[];
+    submissionMethods: SubmissionMethod[];
+    isLoadingSubmissionMethods?: boolean;
     onDataChange: (data: CreateCaseRequest) => void;
 }
 
@@ -20,6 +21,7 @@ export function CaseFormFields({
     caseData,
     priorityLevels,
     submissionMethods,
+    isLoadingSubmissionMethods,
     onDataChange,
 }: CaseFormFieldsProps) {
     // Handler to format date to ISO string when user selects a date
@@ -73,17 +75,31 @@ export function CaseFormFields({
             {/* Submission Method */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phương thức nộp
+                    Phương thức nộp <span className="text-red-500">*</span>
                 </label>
                 <select
-                    value={caseData.submissionMethod}
-                    onChange={(e) => onDataChange({ ...caseData, submissionMethod: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={caseData.submissionMethodId}
+                    onChange={(e) => onDataChange({ ...caseData, submissionMethodId: e.target.value })}
+                    disabled={isLoadingSubmissionMethods}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
-                    {submissionMethods.map(method => (
-                        <option key={method} value={method}>{method}</option>
-                    ))}
+                    {isLoadingSubmissionMethods ? (
+                        <option value="">Đang tải...</option>
+                    ) : submissionMethods.length === 0 ? (
+                        <option value="">Không có phương thức nộp</option>
+                    ) : (
+                        submissionMethods.map(method => (
+                            <option key={method.id} value={method.id}>
+                                {method.submissionMethodName} {method.fee > 0 ? `(${method.fee.toLocaleString('vi-VN')} đ)` : '(Miễn phí)'}
+                            </option>
+                        ))
+                    )}
                 </select>
+                {submissionMethods.length > 0 && caseData.submissionMethodId && (
+                    <p className="text-xs text-gray-500 mt-1">
+                        {submissionMethods.find(m => m.id === caseData.submissionMethodId)?.description}
+                    </p>
+                )}
             </div>
 
             {/* Notes */}

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/shared/components/ui/card.ui";
 import { Button } from "@/shared/components/ui/button.ui";
 import { staffDashboardApi } from "@modules/staff/dashboard/api/staff-dashboard.api";
-import type { CreateGuestRequest, CreateCaseRequest, Guest, Service, PaginatedData } from "../../../dashboard/types";
+import type { CreateGuestRequest, CreateCaseRequest, Guest, Service, PaginatedData, SubmissionMethod } from "../../../dashboard/types";
 import { ArrowLeft, FileText } from "lucide-react";
 import { StaffDashboardTabsView } from "@modules/staff/dashboard/components/view/StaffDashboardTabsView.view";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
@@ -51,6 +51,45 @@ export function CreateCasePageView() {
         }
     }, [isAuthenticated, token, user, addToast]);
 
+    // Fetch submission methods on mount
+    useEffect(() => {
+        const fetchSubmissionMethods = async () => {
+            setIsLoadingSubmissionMethods(true);
+            try {
+                const response = await staffDashboardApi.getSubmissionMethods({
+                    page: 1,
+                    size: 100
+                });
+
+                if (response.success && response.data.items.$values) {
+                    setSubmissionMethods(response.data.items.$values);
+                    // Set default submission method if available
+                    if (response.data.items.$values.length > 0 && !caseData.submissionMethodId) {
+                        setCaseData(prev => ({
+                            ...prev,
+                            submissionMethodId: response.data.items.$values[0].id
+                        }));
+                    }
+                } else {
+                    addToast({
+                        message: "Không thể tải danh sách phương thức nộp hồ sơ",
+                        type: "warning"
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching submission methods:", error);
+                addToast({
+                    message: "Lỗi khi tải phương thức nộp hồ sơ",
+                    type: "error"
+                });
+            } finally {
+                setIsLoadingSubmissionMethods(false);
+            }
+        };
+
+        fetchSubmissionMethods();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     // Guest Form Data
     const [guestData, setGuestData] = useState<CreateGuestRequest>({
         guestCode: "",
@@ -79,7 +118,7 @@ export function CreateCasePageView() {
         guestId: "",
         serviceId: "",
         priorityLevel: 0,
-        submissionMethod: "Trực tiếp",
+        submissionMethodId: "",
         notes: "",
         estimatedCompletionDate: "",
         resultDescription: "",
@@ -99,10 +138,13 @@ export function CreateCasePageView() {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
     const [servicePage, setServicePage] = useState(1);
 
+    // Submission Methods
+    const [submissionMethods, setSubmissionMethods] = useState<SubmissionMethod[]>([]);
+    const [isLoadingSubmissionMethods, setIsLoadingSubmissionMethods] = useState(false);
+
     const idTypes = ["CCCD", "CMND", "Hộ chiếu"];
     const genders = ["Nam", "Nữ", "Khác"];
     const guestTypes = ["Cá nhân", "Tổ chức"];
-    const submissionMethods = ["Trực tiếp", "Online", "Qua điện thoại", "Qua email"];
     const priorityLevels = [
         { value: 0, label: "Bình thường" },
         { value: 2, label: "Ưu tiên thấp" },
@@ -409,6 +451,7 @@ export function CreateCasePageView() {
                                 caseData={caseData}
                                 priorityLevels={priorityLevels}
                                 submissionMethods={submissionMethods}
+                                isLoadingSubmissionMethods={isLoadingSubmissionMethods}
                                 onDataChange={setCaseData}
                             />
 
