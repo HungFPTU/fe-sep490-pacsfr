@@ -105,10 +105,15 @@ export const useServiceGroupForm = ({
                 }, 100);
             } catch (error) {
                 console.error('Error saving service group:', error);
-                addToast({
-                    message: initData?.id
+                // Extract error message from exception
+                const errorMessage = error instanceof Error 
+                    ? error.message 
+                    : (initData?.id
                         ? 'Cập nhật nhóm dịch vụ thất bại'
-                        : 'Tạo nhóm dịch vụ thất bại',
+                        : 'Tạo nhóm dịch vụ thất bại');
+                
+                addToast({
+                    message: errorMessage,
                     type: 'error',
                 });
             }

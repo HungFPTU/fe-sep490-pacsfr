@@ -7,7 +7,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { serviceGroupService } from '../services/service-group.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
 import type { CreateServiceGroupRequest, UpdateServiceGroupRequest, ServiceGroupFilters } from '../types/request';
-import type { ServiceGroup } from '../types/response';
 
 // Re-export custom form hook
 export { useServiceGroupForm } from './useServiceGroupForm';
