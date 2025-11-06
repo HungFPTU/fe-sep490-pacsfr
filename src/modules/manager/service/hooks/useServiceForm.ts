@@ -1,7 +1,12 @@
-import { useForm } from '@tanstack/react-form';
+/**
+ * Custom Form Hook for Service
+ * Handles form state, validation, and submission
+ */
+
 import { useEffect } from 'react';
-import type { Service, CreateServiceRequest, UpdateServiceRequest } from '../types';
+import { useForm } from '@tanstack/react-form';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
+import type { Service, CreateServiceRequest, UpdateServiceRequest } from '../types';
 
 type FormValues = {
     serviceGroupId: string;
@@ -15,6 +20,7 @@ type FormValues = {
     decisionNumber: string;
     executionLevel: string;
     field: string;
+    legislationDocumentIds: string[];
 };
 
 interface UseServiceFormProps {
@@ -35,6 +41,7 @@ const toFormValues = (data?: Service | null): FormValues => ({
     decisionNumber: data?.decisionNumber ?? '',
     executionLevel: data?.executionLevel ?? '',
     field: data?.field ?? '',
+    legislationDocumentIds: [], // Will be populated from API if needed
 });
 
 export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps) => {
@@ -43,6 +50,58 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
 
     const form = useForm({
         defaultValues: toFormValues(initData),
+        validators: {
+            onChange: ({ value }) => {
+                const errors: Partial<Record<keyof FormValues, string>> = {};
+
+                // Required field validations
+                if (!value.serviceGroupId?.trim()) {
+                    errors.serviceGroupId = 'Nhóm dịch vụ là bắt buộc';
+                }
+
+                if (!value.serviceCode?.trim()) {
+                    errors.serviceCode = 'Mã dịch vụ là bắt buộc';
+                } else {
+                    // Service code format validation: alphanumeric, no spaces, max 50 chars
+                    const codeRegex = /^[A-Za-z0-9_-]+$/;
+                    if (!codeRegex.test(value.serviceCode.trim())) {
+                        errors.serviceCode = 'Mã dịch vụ chỉ được chứa chữ cái, số, dấu gạch dưới và dấu gạch ngang';
+                    } else if (value.serviceCode.trim().length > 50) {
+                        errors.serviceCode = 'Mã dịch vụ không được vượt quá 50 ký tự';
+                    }
+                }
+
+                if (!value.serviceName?.trim()) {
+                    errors.serviceName = 'Tên dịch vụ là bắt buộc';
+                } else {
+                    // Service name length validation: min 3, max 255
+                    if (value.serviceName.trim().length < 3) {
+                        errors.serviceName = 'Tên dịch vụ phải có ít nhất 3 ký tự';
+                    } else if (value.serviceName.trim().length > 255) {
+                        errors.serviceName = 'Tên dịch vụ không được vượt quá 255 ký tự';
+                    }
+                }
+
+                if (!value.serviceType?.trim()) {
+                    errors.serviceType = 'Loại dịch vụ là bắt buộc';
+                }
+
+                if (!value.executionLevel?.trim()) {
+                    errors.executionLevel = 'Cấp thực hiện là bắt buộc';
+                }
+
+                if (!value.field?.trim()) {
+                    errors.field = 'Lĩnh vực là bắt buộc';
+                }
+
+                // Description length validation (optional but has max length)
+                if (value.description && value.description.trim().length > 1000) {
+                    errors.description = 'Mô tả không được vượt quá 1000 ký tự';
+                }
+
+                return Object.keys(errors).length > 0 ? errors : undefined;
+            },
+        },
         onSubmit: async ({ value }) => {
             // Final validation before submit
             if (!value.serviceGroupId?.trim()) {
@@ -84,6 +143,9 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
                     decisionNumber: value.decisionNumber?.trim() || '',
                     executionLevel: value.executionLevel.trim(),
                     field: value.field.trim(),
+                    legislationDocumentIds: value.legislationDocumentIds && value.legislationDocumentIds.length > 0
+                        ? value.legislationDocumentIds
+                        : undefined,
                 } as UpdateServiceRequest
                 : {
                     serviceGroupId: value.serviceGroupId.trim(),
@@ -97,6 +159,9 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
                     decisionNumber: value.decisionNumber?.trim() || '',
                     executionLevel: value.executionLevel.trim(),
                     field: value.field.trim(),
+                    legislationDocumentIds: value.legislationDocumentIds && value.legislationDocumentIds.length > 0
+                        ? value.legislationDocumentIds
+                        : undefined,
                 } as CreateServiceRequest;
 
             await onSubmit(request);
@@ -110,7 +175,6 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
 
     useEffect(() => {
         if (open) {
-            // Always reset with current initData when modal opens
             form.reset(toFormValues(initData));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,4 +182,3 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
 
     return { form, isEdit };
 };
-

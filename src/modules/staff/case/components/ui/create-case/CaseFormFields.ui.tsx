@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Calendar } from "lucide-react";
 import type { CreateCaseRequest } from "../../../../dashboard/types";
 
 interface PriorityLevel {
@@ -21,6 +22,36 @@ export function CaseFormFields({
     submissionMethods,
     onDataChange,
 }: CaseFormFieldsProps) {
+    // Handler to format date to ISO string when user selects a date
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const dateValue = e.target.value; // yyyy-MM-dd format from input
+        if (dateValue) {
+            // Convert to ISO string format for API
+            const date = new Date(dateValue);
+            date.setHours(8, 0, 0, 0); // Set to 8:00 AM to avoid timezone issues
+            onDataChange({ 
+                ...caseData, 
+                estimatedCompletionDate: date.toISOString() 
+            });
+        } else {
+            onDataChange({ 
+                ...caseData, 
+                estimatedCompletionDate: "" 
+            });
+        }
+    };
+
+    // Get date value in yyyy-MM-dd format for input
+    const getDateInputValue = () => {
+        if (!caseData.estimatedCompletionDate) return "";
+        try {
+            const date = new Date(caseData.estimatedCompletionDate);
+            return date.toISOString().split('T')[0];
+        } catch {
+            return "";
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Priority Level */}
@@ -66,6 +97,38 @@ export function CaseFormFields({
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Thêm ghi chú cho hồ sơ..."
+                />
+            </div>
+
+            {/* Estimated Completion Date */}
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Calendar className="w-4 h-4 inline mr-1" />
+                    Ngày dự kiến hoàn thành <span className="text-red-500">*</span>
+                </label>
+                <input
+                    type="date"
+                    value={getDateInputValue()}
+                    onChange={handleDateChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Chọn ngày hoàn thành"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                    Chọn ngày dự kiến hoàn thành hồ sơ
+                </p>
+            </div>
+
+            {/* Result Description */}
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mô tả kết quả
+                </label>
+                <textarea
+                    value={caseData.resultDescription}
+                    onChange={(e) => onDataChange({ ...caseData, resultDescription: e.target.value })}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Mô tả kết quả dự kiến của hồ sơ..."
                 />
             </div>
         </div>

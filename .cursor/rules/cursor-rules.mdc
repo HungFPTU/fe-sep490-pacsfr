@@ -134,127 +134,172 @@ modules/<feature>/
 └── index.ts                     # Barrel export
 ```
 
-### 2. **API Layer** (`api/`)
+### 2. **Types Layer** (`types/`)
+
+**MUST**: Separate request and response types into different files
 
 ```typescript
-// modules/<feature>/api/<feature>.api.ts
-import { http } from '@core/http/client';
-import { API_PATH } from '@core/config/api.path';
-import type { RestResponse, RestMany } from '@/types/rest';
-import type { CreateRequest, UpdateRequest, Filters } from '../types';
-
-export const featureApi = {
-  // GET list với filters
-  getList: (filters: Filters) => {
-    return http.get<RestMany<FeatureType>>(
-      API_PATH.FEATURE.LIST,
-      { params: filters }
-    );
-  },
-
-  // GET detail by ID
-  getById: (id: string) => {
-    return http.get<RestResponse<FeatureType>>(
-      `${API_PATH.FEATURE.DETAIL}/${id}`
-    );
-  },
-
-  // POST create
-  create: (data: CreateRequest) => {
-    return http.post<RestResponse<FeatureType>>(
-      API_PATH.FEATURE.CREATE,
-      data
-    );
-  },
-
-  // PUT update
-  update: (id: string, data: UpdateRequest) => {
-    return http.put<RestResponse<FeatureType>>(
-      `${API_PATH.FEATURE.UPDATE}/${id}`,
-      data
-    );
-  },
-
-  // DELETE
-  delete: (id: string) => {
-    return http.delete<RestResponse<void>>(
-      `${API_PATH.FEATURE.DELETE}/${id}`
-    );
-  },
+// modules/<feature>/types/request.ts
+export type CreateFeatureRequest = {
+  name: string;
+  description: string;
+  isActive: boolean;
 };
-```
 
-### 3. **Service Layer** (`services/`)
+export type UpdateFeatureRequest = {
+  id: string;
+} & CreateFeatureRequest;
 
-```typescript
-// modules/<feature>/services/<feature>.service.ts
-import { featureApi } from '../api/<feature>.api';
-import type { CreateRequest, UpdateRequest, Filters } from '../types';
-
-export const featureService = {
-  // Wrapper methods với business logic
-  async getFeatureList(filters: Filters) {
-    const response = await featureApi.getList(filters);
-    // Add transformation, validation, etc.
-    return response.data;
-  },
-
-  async getFeatureById(id: string) {
-    const response = await featureApi.getById(id);
-    return response.data;
-  },
-
-  async createFeature(data: CreateRequest) {
-    // Add validation, preprocessing
-    const response = await featureApi.create(data);
-    return response.data;
-  },
-
-  async updateFeature(id: string, data: UpdateRequest) {
-    const response = await featureApi.update(id, data);
-    return response.data;
-  },
-
-  async deleteFeature(id: string) {
-    const response = await featureApi.delete(id);
-    return response.data;
-  },
+export type FeatureFilters = {
+  keyword?: string;
+  isActive?: boolean;
+  page: number;
+  size: number;
 };
-```
 
-### 4. **Types** (`types/`)
-
-```typescript
-// modules/<feature>/types/index.ts
-
-// Main entity type
-export type FeatureType = {
+// modules/<feature>/types/response.ts
+export type Feature = {
   id: string;
   name: string;
   description: string;
   isActive: boolean;
   createdAt: string | Date;
   modifiedAt?: string | Date;
-  // ... other fields
 };
 
-// Request types
-export type CreateFeatureRequest = Omit<FeatureType, 'id' | 'createdAt' | 'modifiedAt'>;
+// modules/<feature>/types/index.ts
+export * from './request';
+export * from './response';
+```
 
-export type UpdateFeatureRequest = {
-  id: string;
-} & CreateFeatureRequest;
+### 3. **API Layer** (`api/`)
 
-// Filter types
-export type FeatureFilters = {
-  keyword?: string;
-  isActive?: boolean;
-  page?: number;
-  size?: number;
+**Flow**: API → Service → Hooks → Components → Page
+
+```typescript
+// modules/<feature>/api/<feature>.api.ts
+import { http } from '@core/http/client';
+import { API_PATH } from '@core/config/api.path';
+import type { RestResponse, RestPaged } from '@/types/rest';
+import type { Feature } from '../types/response';
+import type { CreateFeatureRequest, UpdateFeatureRequest, FeatureFilters } from '../types/request';
+
+export const featureApi = {
+  /**
+   * Get all features with filters and pagination
+   */
+  getList: (filters: FeatureFilters) => {
+    return http.get<RestPaged<Feature>>(
+      API_PATH.MANAGER.FEATURE.GET_ALL(
+        filters.keyword || '',
+        filters.isActive ?? true,
+        filters.page,
+        filters.size
+      )
+    );
+  },
+
+  /**
+   * Get feature by ID
+   */
+  getById: (id: string) => {
+    return http.get<RestResponse<Feature>>(
+      API_PATH.MANAGER.FEATURE.GET_BY_ID(id)
+    );
+  },
+
+  /**
+   * Create new feature
+   */
+  create: (data: CreateFeatureRequest) => {
+    return http.post<RestResponse<Feature>>(
+      API_PATH.MANAGER.FEATURE.POST,
+      data
+    );
+  },
+
+  /**
+   * Update existing feature
+   */
+  update: (id: string, data: UpdateFeatureRequest) => {
+    return http.put<RestResponse<Feature>>(
+      API_PATH.MANAGER.FEATURE.PUT(id),
+      data
+    );
+  },
+
+  /**
+   * Delete feature
+   */
+  delete: (id: string) => {
+    return http.delete<RestResponse<{ success: boolean }>>(
+      API_PATH.MANAGER.FEATURE.DELETE(id)
+    );
+  },
 };
 ```
 
-### 5. **React Query Hooks** (`hooks/index.ts`)
+### 4. **Service Layer** (`services/`)
+
+```typescript
+// modules/<feature>/services/<feature>.service.ts
+import type { RestResponse, RestPaged } from '@/types/rest';
+import { featureApi } from '../api/feature.api';
+import type { Feature } from '../types/response';
+import type { CreateFeatureRequest, UpdateFeatureRequest, FeatureFilters } from '../types/request';
+
+export const featureService = {
+  /**
+   * Get features list with filters
+   */
+  async getFeatures(filters: FeatureFilters): Promise<RestPaged<Feature>> {
+    const response = await featureApi.getList(filters);
+    return response.data;
+  },
+
+  /**
+   * Get feature by ID
+   */
+  async getFeatureById(id: string): Promise<Feature | null> {
+    const response = await featureApi.getById(id);
+    if (!response.data?.success || !response.data?.data) {
+      return null;
+    }
+    return response.data.data as Feature;
+  },
+
+  /**
+   * Create new feature
+   */
+  async createFeature(data: CreateFeatureRequest): Promise<Feature> {
+    const response = await featureApi.create(data);
+    if (!response.data?.success || !response.data?.data) {
+      throw new Error('Failed to create feature');
+    }
+    return response.data.data as Feature;
+  },
+
+  /**
+   * Update existing feature
+   */
+  async updateFeature(id: string, data: UpdateFeatureRequest): Promise<Feature> {
+    const response = await featureApi.update(id, data);
+    if (!response.data?.success || !response.data?.data) {
+      throw new Error('Failed to update feature');
+    }
+    return response.data.data as Feature;
+  },
+
+  /**
+   * Delete feature
+   */
+  async deleteFeature(id: string): Promise<void> {
+    await featureApi.delete(id);
+  },
+};
+```
+
+### 5. **Hooks Layer** (`hooks/`)
 
 ```typescript
 // modules/<feature>/hooks/index.ts

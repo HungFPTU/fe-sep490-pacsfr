@@ -35,6 +35,8 @@ export const STORAGE_KEYS = {
     USER_DATA: "user_data",
     THEME: "theme",
     LANGUAGE: "language",
+    PAYMENT_QR_URL: "payment_qr_url",
+    PAYMENT_QR_DATA: "payment_qr_data",
 } as const;
 
 export const HTTP_STATUS = {

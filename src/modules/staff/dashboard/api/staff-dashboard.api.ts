@@ -131,7 +131,15 @@ export const staffDashboardApi = {
 
     // Create new case
     async createCase(request: CreateCaseRequest): Promise<CreateCaseApiResponse> {
-        const response = await http.post<CreateCaseApiResponse>(API_PATH.STAFF.DASHBOARD.CREATE_CASE, request);
+        const response = await http.post<CreateCaseApiResponse>(API_PATH.STAFF.DASHBOARD.CREATE_CASE, {
+            guestId: request.guestId,
+            serviceId: request.serviceId,
+            priorityLevel: request.priorityLevel,
+            submissionMethod: request.submissionMethod,
+            notes: request.notes,
+            estimatedCompletionDate: request.estimatedCompletionDate,
+            resultDescription: request.resultDescription
+        });
         return response.data;
     },
 

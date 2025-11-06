@@ -2,282 +2,538 @@
 
 **Public Administrative Service Consultation System** - A modern, scalable web application for streamlining administrative processes at commune and ward administrative offices.
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Install dependencies
-pnpm add react-markdown
-pnpm add @google/generative-ai@latest
-pnpm install
+bun install
 
 # Start development server
-pnpm dev
+bun dev
 
 # Build for production
-pnpm build
+bun build
 
 # Run production server
-pnpm start
+bun start
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to see the application.
 
-## 🏗️ Architecture Highlights
-
-### Centralized Layout System
-- **Single Layout Import**: MainLayout imported once at route group level
-- **Route-based Organization**: Next.js route groups separate public and app routes
-- **Zero Layout Duplication**: Individual pages focus only on content
-
-```typescript
-// app/(app)/layout.tsx - Layout applied once
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return <MainLayout>{children}</MainLayout>;
-}
-
-// app/(app)/page.tsx - No layout import needed!
-export default function HomePage() {
-  return (
-    <>
-      <HeroSection />
-      <FeaturesSection />
-      <StatsSection />
-    </>
-  );
-}
-```
-
-### Module-based Architecture
-```
-src/modules/<feature>/
-├── api/              # HTTP API calls
-├── components/       # Feature-specific components  
-├── services/         # Business logic
-├── stores/           # State management
-├── hooks.ts          # Combined feature hooks
-├── types.ts          # TypeScript definitions
-└── index.ts          # Barrel exports
-```
-
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Framework**: Next.js 15 (App Router) + React 19
 - **Language**: TypeScript (strict mode)
+- **Package Manager**: Bun 1.1.0
 - **Styling**: Tailwind CSS v4 + HeroUI components
 - **State Management**: Zustand + TanStack Query
-- **HTTP Client**: Custom client with interceptors
-- **Development**: ESLint, Prettier, TypeScript
+- **Form Management**: TanStack Form
+- **HTTP Client**: Custom Axios client with interceptors
+- **File Upload**: AWS S3 integration
+- **Development**: ESLint, TypeScript, Bun
 
-## 📁 Project Structure
+## Architecture
+
+### Layered Architecture Pattern
+
+The application follows a strict layered architecture ensuring clean separation of concerns:
+
+```
+API Layer → Service Layer → Hooks Layer → Components → Pages
+```
+
+Each module follows this flow:
+1. **API Layer** (`api/`): Raw HTTP calls to backend
+2. **Service Layer** (`services/`): Business logic and data transformation
+3. **Hooks Layer** (`hooks/`): React Query hooks for data fetching
+4. **Components** (`components/`): UI components and views
+5. **Pages** (`view/`): Page components that compose everything
+
+### Module Structure
+
+Each feature module is self-contained and follows a consistent structure:
+
+```
+modules/<feature>/
+├── api/                    # HTTP API calls
+│   └── <feature>.api.ts
+├── services/               # Business logic
+│   └── <feature>.service.ts
+├── hooks/                  # React Query hooks
+│   ├── index.ts           # Data fetching hooks
+│   └── use<Feature>Form.ts # Form management hooks
+├── types/                  # TypeScript definitions
+│   ├── request.ts         # Request types (Create, Update, Filters)
+│   ├── response.ts        # Response types (Entity types)
+│   └── index.ts           # Barrel export
+├── components/             # UI Components
+│   ├── view/              # Page components
+│   │   └── <Feature>ListPage.ui.tsx
+│   └── ui/                # Reusable UI components
+│       ├── header/        # Header components
+│       ├── filter/        # Filter components
+│       ├── table/         # Table components
+│       ├── modal/         # Modal components
+│       ├── detail/        # Detail view components
+│       ├── pagination/    # Pagination components
+│       └── index.ts       # Barrel export
+├── constants/             # Feature constants
+│   └── index.ts
+├── enums/                 # Feature enums
+│   └── index.ts
+├── utils/                 # Feature utilities (optional)
+│   └── index.ts
+└── index.ts               # Module barrel export
+```
+
+## Project Structure
 
 ```
 src/
-├── app/                      # Next.js App Router
-│   ├── (app)/               # Main app routes with layout
-│   │   ├── layout.tsx       # MainLayout wrapper
-│   │   ├── page.tsx         # Homepage
-│   │   ├── about/           # About page
-│   │   ├── queue/           # Queue management
-│   │   └── staff/           # Staff dashboard
-│   ├── (public)/            # Public routes (no main layout)
-│   │   └── login/           # Authentication
-│   └── layout.tsx           # Root layout with providers
+├── app/                          # Next.js App Router
+│   ├── (client)/                 # Public client routes
+│   │   ├── layout.tsx            # Client layout
+│   │   ├── page.tsx              # Homepage
+│   │   ├── about/                # About page
+│   │   ├── contact/              # Contact page
+│   │   ├── faq/                  # FAQ page
+│   │   ├── guide/                # Guide page
+│   │   ├── lookup/                # Lookup service
+│   │   ├── news/                 # News page
+│   │   ├── search/               # Search page
+│   │   ├── search-questions/     # Question search
+│   │   ├── survey/               # Survey page
+│   │   └── thu-tuc-hanh-chinh/   # Administrative procedures
+│   ├── (auth)/                   # Authentication routes
+│   │   └── login/                # Login page
+│   ├── (private)/                # Protected routes
+│   │   ├── manager/              # Manager dashboard
+│   │   │   ├── layout.tsx         # Manager layout
+│   │   │   ├── page.tsx           # Manager dashboard
+│   │   │   ├── ca-lam-viec/      # Work shift management
+│   │   │   ├── co-quan/          # Organization unit management
+│   │   │   ├── dich-vu/          # Service management
+│   │   │   ├── nhom-dich-vu/     # Service group management
+│   │   │   ├── phong-ban/        # Department management
+│   │   │   ├── quan-ly-nhan-vien/# Staff management
+│   │   │   ├── queue/            # Queue management
+│   │   │   └── van-ban-phap-luat/# Legal document management
+│   │   └── staff/                 # Staff dashboard
+│   │       ├── layout.tsx         # Staff layout
+│   │       ├── dashboard/         # Staff dashboard
+│   │       ├── create-case/      # Case creation
+│   │       ├── queue/             # Staff queue
+│   │       └── workshift/        # Work shift
+│   ├── (chatbot)/                # Chatbot routes
+│   │   ├── layout.tsx            # Chatbot layout
+│   │   └── chatBot/              # Chatbot interface
+│   ├── api/                      # Next.js API routes
+│   │   ├── chat/                 # Chat API
+│   │   ├── FileUpload/           # File upload API
+│   │   └── upload/               # Upload API
+│   ├── layout.tsx                # Root layout with providers
+│   └── globals.css               # Global styles
 │
-├── core/                    # Core infrastructure
-│   ├── http/client.ts       # HTTP client with interceptors
-│   ├── patterns/            # Global state patterns
-│   └── stores/              # Global stores
+├── core/                         # Core infrastructure
+│   ├── config/                   # Configuration
+│   │   ├── api.path.ts          # Centralized API endpoints
+│   │   ├── aws.config.ts        # AWS S3 configuration
+│   │   ├── constants.ts         # Global constants
+│   │   ├── env.ts               # Environment variables
+│   │   └── public.path.ts       # Public API paths
+│   ├── http/                     # HTTP client
+│   │   └── client.ts            # Axios instance with interceptors
+│   ├── hooks/                    # Core hooks
+│   │   ├── useFileUpload.ts     # File upload hook
+│   │   └── useImageUpload.ts    # Image upload hook
+│   ├── patterns/                  # Design patterns
+│   │   └── SingletonHook.ts     # Singleton pattern (Toast, etc.)
+│   ├── services/                 # Core services
+│   │   ├── file-upload.service.ts
+│   │   ├── image-upload.service.ts
+│   │   └── upload.service.ts
+│   ├── utils/                    # Core utilities
+│   │   ├── date.ts              # Date utilities
+│   │   ├── route-classifier.ts  # Route classification
+│   │   ├── storage.ts           # Storage utilities
+│   │   └── validation.ts        # Validation utilities
+│   └── logger.ts                 # Logging utility
 │
-├── modules/                 # Feature modules
-│   ├── auth/                # Authentication
-│   └── queue/               # Queue management
+├── modules/                      # Feature modules
+│   ├── auth/                     # Authentication module
+│   │   ├── api/                  # Auth API calls
+│   │   ├── components/           # Auth components
+│   │   ├── hooks/                # Auth hooks
+│   │   ├── services/             # Auth business logic
+│   │   ├── stores/               # Auth state management
+│   │   └── utils/                # Auth utilities
+│   ├── client/                   # Client-facing modules
+│   │   ├── legal-basis/          # Legal basis lookup
+│   │   ├── services/             # Service browsing
+│   │   └── services-group/       # Service group browsing
+│   ├── manager/                  # Manager modules
+│   │   ├── counter/              # Counter management
+│   │   ├── dashboard/            # Manager dashboard
+│   │   ├── department/           # Department management
+│   │   ├── legal-document/       # Legal document management
+│   │   ├── org-unit/             # Organization unit management
+│   │   ├── queue/                # Queue management
+│   │   ├── service/              # Service management
+│   │   ├── service-group/        # Service group management
+│   │   ├── staff/                # Staff management
+│   │   └── workshift/            # Work shift management
+│   ├── queue/                    # Queue module
+│   │   ├── api/                  # Queue API
+│   │   ├── components/           # Queue components
+│   │   ├── hooks.ts              # Queue hooks
+│   │   ├── services/             # Queue service
+│   │   └── stores/               # Queue state
+│   └── staff/                    # Staff modules
+│       ├── case/                 # Case management
+│       ├── dashboard/             # Staff dashboard
+│       └── workshift/            # Staff work shift
 │
-└── shared/                  # Shared resources
-    ├── components/          # Reusable components
-    │   ├── layout/          # Layout components
-    │   ├── home/            # Homepage components
-    │   └── ui/              # UI primitives
-    ├── hooks/               # Shared hooks
-    ├── lib/                 # Utilities
-    ├── const/               # Constants
-    └── providers/           # React providers
+└── shared/                       # Shared resources
+    ├── components/               # Shared components
+    │   ├── common/               # Common UI components
+    │   ├── forms/               # Form components
+    │   ├── home/                # Homepage components
+    │   ├── layout/               # Layout components
+    │   │   ├── admin/            # Admin layout
+    │   │   ├── citizen/          # Citizen layout
+    │   │   ├── main/             # Main layout
+    │   │   └── manager/          # Manager layout
+    │   ├── manager/              # Manager-specific components
+    │   │   ├── core/             # Core manager components
+    │   │   ├── features/         # Feature components
+    │   │   └── ui/               # Manager UI primitives
+    │   ├── search/               # Search components
+    │   └── ui/                   # Base UI primitives
+    ├── hooks/                    # Shared hooks
+    ├── lib/                      # Utilities & helpers
+    ├── providers/                # React context providers
+    │   ├── AppProviders.tsx     # Main app providers
+    │   ├── AuthProvider.tsx      # Auth provider
+    │   ├── HeroUIProvider.tsx    # HeroUI provider
+    │   ├── QueryProvider.tsx    # React Query provider
+    │   └── ThemeProvider.tsx     # Theme provider
+    └── types/                    # Shared TypeScript types
 ```
 
-## 🎨 Key Features
+## Key Features
 
-### Professional UI/UX Design
-- **Modern Design System**: Gradient backgrounds, glass morphism effects
-- **Responsive Layout**: Mobile-first approach with smooth animations
-- **Professional Components**: Enterprise-grade header, footer, and navigation
-- **Accessibility**: WCAG compliant with proper color contrast and keyboard navigation
+### Manager Dashboard
+- **Service Group Management**: CRUD operations for service groups
+- **Service Management**: Administrative service management
+- **Department Management**: Organizational structure management
+- **Staff Management**: Employee management with work shift assignment
+- **Legal Document Management**: Legal document CRUD with file upload
+- **Organization Unit Management**: Organizational unit hierarchy
+- **Work Shift Management**: Shift scheduling and assignment
+- **Queue Management**: Queue system administration
+- **Counter Management**: Service counter configuration
 
-### Smart Queue Management
-- **Real-time Updates**: 5-second polling for live queue status
-- **Multi-counter Support**: Independent management per service counter
-- **Auto-management**: 120-second auto-skip for staff efficiency
-- **Performance Analytics**: KPI tracking and comprehensive reporting
+### Staff Dashboard
+- **Case Management**: Create and manage administrative cases
+- **Queue Management**: Handle citizen queue at counters
+- **Work Shift View**: View assigned work shifts
+- **Dashboard Analytics**: Performance metrics and KPIs
 
-### Advanced State Management
-- **Layered Architecture**: Clean separation between UI, business logic, and data
-- **Optimistic Updates**: Immediate UI feedback with background synchronization
-- **Error Boundaries**: Graceful error handling with fallback strategies
-- **Caching Strategy**: Intelligent data caching with TanStack Query
+### Client Portal
+- **Service Browsing**: Browse available administrative services
+- **Service Search**: Advanced search with filters
+- **Legal Basis Lookup**: Search legal documents
+- **Administrative Procedures**: View procedure details
+- **Queue Lookup**: Check queue status
+- **News & Updates**: System announcements
 
-## 🚦 Development Patterns
+### Authentication & Authorization
+- **Role-based Access Control**: Manager, Staff, Citizen roles
+- **Permission-based Guards**: Route and component protection
+- **Session Management**: Token-based authentication
+- **Auto-redirect**: Smart redirect after login
 
-### API Integration Pattern
+## Development Patterns
+
+### API Integration Flow
+
+The application follows a strict flow from API to UI:
+
 ```typescript
-// 1. Define API paths in constants
-export const API_PATH = {
-  QUEUE: {
-    OVERVIEW: "/queue/overview",
-    COUNTERS: "/queue/counters",
+// 1. Types - Define request and response types
+// types/request.ts
+export type CreateServiceGroupRequest = {
+  groupCode: string;
+  groupName: string;
+  description: string;
+  iconUrl: string;
+  displayOrder: number;
+  isActive: boolean;
+};
+
+// types/response.ts
+export type ServiceGroup = {
+  id: string;
+  groupCode: string;
+  groupName: string;
+  description: string;
+  iconUrl: string;
+  displayOrder: number;
+  isActive: boolean;
+  createdAt: string | Date;
+  modifiedAt?: string | Date;
+};
+
+// 2. API Layer - Raw HTTP calls
+// api/service-group.api.ts
+import { http } from '@core/http/client';
+import { API_PATH } from '@core/config/api.path';
+import type { RestResponse, RestPaged } from '@/types/rest';
+import type { ServiceGroup } from '../types/response';
+import type { CreateServiceGroupRequest, ServiceGroupFilters } from '../types/request';
+
+export const serviceGroupApi = {
+  getList: (filters: ServiceGroupFilters) => {
+    return http.get<RestPaged<ServiceGroup>>(
+      API_PATH.MANAGER.SERVICE_GROUP.GET_ALL(
+        filters.keyword || '',
+        filters.isActive ?? true,
+        filters.page,
+        filters.size
+      )
+    );
+  },
+  create: (data: CreateServiceGroupRequest) => {
+    return http.post<RestResponse<ServiceGroup>>(
+      API_PATH.MANAGER.SERVICE_GROUP.POST,
+      data
+    );
   },
 };
 
-// 2. Create typed API functions
-export const queueApi = {
-  async getOverview() {
-    return http.get<QueueOverview>(API_PATH.QUEUE.OVERVIEW);
-  },
-};
+// 3. Service Layer - Business logic
+// services/service-group.service.ts
+import { serviceGroupApi } from '../api/service-group.api';
+import type { ServiceGroup } from '../types/response';
+import type { CreateServiceGroupRequest, ServiceGroupFilters } from '../types/request';
 
-// 3. Business logic in services
-export const queueService = {
-  async getOverviewWithFallback() {
-    try {
-      const response = await queueApi.getOverview();
-      return response.data;
-    } catch {
-      return getMockData(); // Development fallback
+export const serviceGroupService = {
+  async getServiceGroups(filters: ServiceGroupFilters): Promise<RestPaged<ServiceGroup>> {
+    const response = await serviceGroupApi.getList(filters);
+    return response.data;
+  },
+  async createServiceGroup(data: CreateServiceGroupRequest): Promise<ServiceGroup> {
+    const response = await serviceGroupApi.create(data);
+    if (!response.data?.success || !response.data?.data) {
+      throw new Error('Failed to create service group');
     }
+    return response.data.data as ServiceGroup;
   },
 };
 
-// 4. React hooks for components
-export function useQueueOverview() {
+// 4. Hooks Layer - React Query integration
+// hooks/index.ts
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { serviceGroupService } from '../services/service-group.service';
+import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import type { CreateServiceGroupRequest, ServiceGroupFilters } from '../types/request';
+
+export const useServiceGroups = (filters: ServiceGroupFilters) => {
   return useQuery({
-    queryKey: ["queue", "overview"],
-    queryFn: () => queueService.getOverviewWithFallback(),
-    refetchInterval: 5000,
+    queryKey: QUERY_KEYS.SERVICE_GROUP_LIST(filters),
+    queryFn: () => serviceGroupService.getServiceGroups(filters),
+    gcTime: CACHE_TIME.LONG,
+    staleTime: STALE_TIME.MEDIUM,
   });
-}
-```
+};
 
-### Component Development
-```typescript
-// Reusable UI components with variants
-interface ButtonProps {
-  variant?: "primary" | "secondary" | "outline";
-  size?: "sm" | "md" | "lg";
-  children: React.ReactNode;
-}
+export const useCreateServiceGroup = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateServiceGroupRequest) =>
+      serviceGroupService.createServiceGroup(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.SERVICE_GROUP_ALL(),
+      });
+    },
+  });
+};
 
-export function Button({ variant = "primary", size = "md", ...props }: ButtonProps) {
-  const classes = cn(
-    "font-medium rounded-lg transition-all duration-200",
-    variants[variant],
-    sizes[size]
+// 5. Components - UI implementation
+// components/view/ServiceGroupListPage.ui.tsx
+'use client';
+
+import { useState } from 'react';
+import { useServiceGroups, useDeleteServiceGroup } from '../../hooks';
+import { ServiceGroupTable, ServiceGroupFilter } from '../ui';
+import { getValuesPage } from '@/types/rest';
+
+export const ServiceGroupListPage: React.FC = () => {
+  const [page, setPage] = useState(1);
+  const [keyword, setKeyword] = useState('');
+  const { data, isLoading } = useServiceGroups({
+    keyword,
+    isActive: true,
+    page,
+    size: 10,
+  });
+
+  const pageResult = data ? getValuesPage(data) : null;
+  const items = pageResult?.items || [];
+
+  return (
+    <div className="p-6">
+      <ServiceGroupFilter
+        keyword={keyword}
+        onKeywordChange={setKeyword}
+      />
+      <ServiceGroupTable
+        items={items}
+        isLoading={isLoading}
+      />
+    </div>
   );
-  
-  return <button className={classes} {...props} />;
-}
+};
 ```
 
-## 🔧 Development Guidelines
+## Development Guidelines
 
-### Layout System Rules
-- ✅ **DO**: Use route groups for layout organization
-- ✅ **DO**: Import layouts once at the route group level
-- ❌ **DON'T**: Import MainLayout in individual page components
-- ❌ **DON'T**: Duplicate layout code across pages
+### Code Organization Rules
 
-### Module Organization Rules
-- ✅ **DO**: Group related functionality in feature modules
-- ✅ **DO**: Use barrel exports for clean imports
-- ✅ **DO**: Separate API calls, business logic, and UI components
-- ❌ **DON'T**: Mix different concerns in the same file
-- ❌ **DON'T**: Create circular dependencies between modules
+**Types Separation**
+- Separate request types (`request.ts`) and response types (`response.ts`)
+- Use barrel exports in `types/index.ts`
 
-### State Management Rules
-- ✅ **DO**: Use local state for simple UI interactions
-- ✅ **DO**: Use Zustand for feature-specific client state
-- ✅ **DO**: Use TanStack Query for server state management
-- ❌ **DON'T**: Put server data in Zustand stores
-- ❌ **DON'T**: Use global state for component-specific data
+**API Layer**
+- Only raw HTTP calls, no business logic
+- Use centralized `API_PATH` configuration
+- Proper TypeScript typing with `RestResponse` and `RestPaged`
 
-## 📖 Documentation
+**Service Layer**
+- Business logic and data transformation
+- Error handling and validation
+- Return clean data types, not raw API responses
+
+**Hooks Layer**
+- React Query hooks for data fetching
+- Custom form hooks for complex forms
+- Query invalidation on mutations
+
+**Components**
+- UI components in `components/ui/`
+- Page components in `components/view/`
+- Use `.ui.tsx` suffix for component files
+
+### Naming Conventions
+
+- **Files**: kebab-case (`service-group.api.ts`)
+- **Components**: PascalCase (`ServiceGroupTable.ui.tsx`)
+- **Functions**: camelCase (`getServiceGroups`)
+- **Constants**: SCREAMING_SNAKE_CASE (`QUERY_KEYS`)
+- **Types**: PascalCase (`ServiceGroup`, `CreateServiceGroupRequest`)
+
+### Import Organization
+
+```typescript
+// 1. External dependencies
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+// 2. Core infrastructure
+import { http } from '@core/http/client';
+import { API_PATH } from '@core/config/api.path';
+
+// 3. Shared resources
+import { BaseModal } from '@/shared/components/manager/modal/BaseModal';
+
+// 4. Module types
+import type { ServiceGroup } from '../types/response';
+import type { CreateServiceGroupRequest } from '../types/request';
+
+// 5. Module services/hooks
+import { serviceGroupService } from '../services/service-group.service';
+import { useServiceGroups } from '../hooks';
+```
+
+## Environment Setup
+
+Create `.env.local`:
+
+```bash
+# API Configuration
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api
+
+# AWS S3 Configuration
+NEXT_PUBLIC_AWS_REGION=ap-southeast-1
+NEXT_PUBLIC_AWS_S3_BUCKET=your-bucket-name
+NEXT_PUBLIC_AWS_ACCESS_KEY_ID=your-access-key
+NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY=your-secret-key
+
+# Application Configuration
+NEXT_PUBLIC_APP_NAME=PASCS
+NEXT_PUBLIC_APP_VERSION=1.0.0
+```
+
+## Development Commands
+
+```bash
+# Development
+bun dev                    # Start dev server
+bun dev:turbo              # Start with Turbo mode
+bun dev:restart            # Restart dev server
+
+# Build & Production
+bun build                  # Build for production
+bun build:vercel           # Build for Vercel
+bun start                  # Start production server
+bun preview                # Build and start preview
+
+# Code Quality
+bun lint                   # Run ESLint
+bun type-check             # TypeScript type checking
+
+# Utilities
+bun clean                  # Clean build artifacts
+bun analyze                # Analyze bundle size
+```
+
+## Documentation
 
 - **[Architecture Guide](docs/ARCHITECTURE.md)** - Detailed system architecture
-- **[Development Rules](.cursor/rules.md)** - Coding standards and conventions
-- **[Component Library](docs/COMPONENTS.md)** - UI component documentation
-- **[API Patterns](docs/API_PATTERNS.md)** - Backend integration guidelines
+- **[Development Rules](.cursor/rules/cursor-rules.mdc)** - Coding standards and conventions
+- **[AWS S3 Setup](docs/AWS_S3_SETUP.md)** - File upload configuration
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+ and pnpm
-- Git for version control
-
-### Environment Setup
-Create `.env.local`:
-```bash
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api
-```
-
-### Development Commands
-```bash
-# Start development server
-pnpm dev
-
-# Type checking
-pnpm type-check
-
-# Linting and formatting
-pnpm lint
-pnpm lint:fix
-
-# Build and test
-pnpm build
-pnpm start
-```
-
-## 📊 Project Stats
-
-- **Components**: 25+ reusable UI components
-- **Modules**: Auth and Queue management systems
-- **Routes**: 6 main application routes
-- **Type Safety**: 100% TypeScript coverage
-- **Performance**: 95+ Lighthouse score
-- **Bundle Size**: < 200KB gzipped
-
-## 🎯 Key Routes
-
-- **`/`** - Homepage with hero section and features
-- **`/login`** - Professional authentication interface
-- **`/queue`** - Real-time citizen queue display
-- **`/staff/queue`** - Staff queue management dashboard
-- **`/about`** - System information and capabilities
-
-## 🔒 Security & Performance
+## Security & Performance
 
 ### Security Features
 - Environment variable separation (client vs server)
 - HTTP interceptors for request/response handling
 - Token-based authentication with automatic refresh
+- Role-based access control (RBAC)
+- Permission-based route guards
 - Input validation and sanitization
 
 ### Performance Optimizations
 - Automatic code splitting with Next.js App Router
 - Intelligent data caching with TanStack Query
 - Image optimization with Next.js Image component
+- Lazy loading for heavy components
 - Bundle analysis and optimization
+
+## Project Statistics
+
+- **Framework**: Next.js 15 with App Router
+- **Components**: 100+ reusable UI components
+- **Modules**: 15+ feature modules
+- **Routes**: 30+ application routes
+- **Type Safety**: 100% TypeScript coverage
+- **Package Manager**: Bun for fast installs and execution
+
+## License
+
+Private project - All rights reserved
 
 ---
 
 **PASCS Frontend** - Building the future of public administrative services with modern web technologies.
-
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-blue?logo=tailwind-css)](https://tailwindcss.com/)
