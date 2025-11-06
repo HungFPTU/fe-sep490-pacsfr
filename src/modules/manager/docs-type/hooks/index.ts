@@ -7,7 +7,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { docsTypeService } from '../services/docs-type.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
 import type { CreateDocsTypeRequest, UpdateDocsTypeRequest, DocsTypeFilters } from '../types/request';
-import type { DocsType } from '../types/response';
 
 // Re-export custom form hook
 export { useDocsTypeForm } from './useDocsTypeForm';

@@ -39,9 +39,9 @@ export class StaffService {
    */
   static async createStaff(data: CreateStaffRequest): Promise<RestResponse<Staff>> {
     const response = await staffApi.createStaff(data);
-    if (!response.data?.success || !response.data?.data) {
+    if (!response.success || !response.data) {
       // Extract message from API response if available (message is at root level)
-      const apiResponse = response.data as { message?: string; success: boolean };
+      const apiResponse = response as { message?: string; success: boolean };
       const errorMessage = apiResponse?.message || 'Failed to create staff';
       throw new Error(errorMessage);
     }

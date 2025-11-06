@@ -136,7 +136,7 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
                         return (
                             <div className="w-full">
                                 <label htmlFor="documentNumber" className="mb-1 inline-block text-sm font-medium text-slate-700">
-                                    Số văn bản
+                                    Số quyết định
                                     <span className="ml-0.5 text-red-500">*</span>
                                 </label>
                                 <input
@@ -144,12 +144,27 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
                                     type="text"
                                     className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading || isEdit ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                                     value={(field.state.value as string) || ''}
-                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onChange={(e) => {
+                                        // Auto-uppercase for code part and allow only valid characters
+                                        let inputValue = e.target.value;
+                                        // Allow forward slash, numbers, uppercase letters, and hyphens
+                                        inputValue = inputValue.replace(/[^0-9\/A-Za-z-]/gi, '');
+                                        // Convert letters to uppercase only for the code part (after second slash)
+                                        const parts = inputValue.split('/');
+                                        if (parts.length >= 3) {
+                                            // Only uppercase the code part (third segment)
+                                            parts[2] = parts[2].toUpperCase();
+                                        }
+                                        field.handleChange(parts.join('/') as never);
+                                    }}
                                     onBlur={field.handleBlur}
-                                    placeholder="Nhập số văn bản"
+                                    placeholder="VD: 15/2025/TT-BCA"
                                     disabled={isLoading || isEdit}
                                 />
                                 {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                                <p className="mt-1 text-xs text-gray-500">
+                                    Định dạng: SỐ/NĂM/MÃ (ví dụ: 15/2025/TT-BCA)
+                                </p>
                             </div>
                         );
                     }}
@@ -230,7 +245,20 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
                 <form.Field
                     name="issueDate"
                     validators={{
-                        onBlur: ({ value }: { value: string }) => validateIssueDate(value),
+                        onBlur: ({ value }: { value: string }) => {
+                            const effectiveDate = form.state.values.effectiveDate as string | undefined;
+                            return validateIssueDate(value, effectiveDate);
+                        },
+                        onChange: ({ value }: { value: string }) => {
+                            const effectiveDate = form.state.values.effectiveDate as string | undefined;
+                            // Re-validate effective date when issue date changes
+                            if (effectiveDate && effectiveDate.trim()) {
+                                setTimeout(() => {
+                                    form.validateField('effectiveDate', 'change');
+                                }, 0);
+                            }
+                            return validateIssueDate(value, effectiveDate);
+                        },
                     }}
                 >
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -245,13 +273,21 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
                                 <input
                                     id="issueDate"
                                     type="date"
+                                    max={new Date().toISOString().split('T')[0]}
                                     className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                                     value={(field.state.value as string) || ''}
-                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onChange={(e) => {
+                                        field.handleChange(e.target.value as never);
+                                        // Trigger validation on change
+                                        setTimeout(() => {
+                                            field.handleBlur();
+                                        }, 0);
+                                    }}
                                     onBlur={field.handleBlur}
                                     disabled={isLoading}
                                 />
                                 {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                                <p className="mt-1 text-xs text-gray-500">Không được là tương lai</p>
                             </div>
                         );
                     }}
@@ -261,12 +297,28 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
                 <form.Field
                     name="effectiveDate"
                     validators={{
-                        onBlur: ({ value }: { value: string }) => validateEffectiveDate(value),
+                        onBlur: ({ value }: { value: string }) => {
+                            const issueDate = form.state.values.issueDate as string | undefined;
+                            return validateEffectiveDate(value, issueDate);
+                        },
+                        onChange: ({ value }: { value: string }) => {
+                            const issueDate = form.state.values.issueDate as string | undefined;
+                            // Re-validate issue date when effective date changes
+                            if (issueDate && issueDate.trim()) {
+                                setTimeout(() => {
+                                    form.validateField('issueDate', 'change');
+                                }, 0);
+                            }
+                            return validateEffectiveDate(value, issueDate);
+                        },
                     }}
                 >
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {(field: any) => {
                         const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        const issueDate = form.state.values.issueDate as string | undefined;
+                        const minDate = issueDate || undefined;
+
                         return (
                             <div className="w-full">
                                 <label htmlFor="effectiveDate" className="mb-1 inline-block text-sm font-medium text-slate-700">
@@ -276,13 +328,23 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
                                 <input
                                     id="effectiveDate"
                                     type="date"
+                                    min={minDate}
                                     className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                                     value={(field.state.value as string) || ''}
-                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onChange={(e) => {
+                                        field.handleChange(e.target.value as never);
+                                        // Trigger validation on change
+                                        setTimeout(() => {
+                                            field.handleBlur();
+                                        }, 0);
+                                    }}
                                     onBlur={field.handleBlur}
                                     disabled={isLoading}
                                 />
                                 {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                                <p className="mt-1 text-xs text-gray-500">
+                                    Phải sau hoặc bằng ngày ban hành
+                                </p>
                             </div>
                         );
                     }}
