@@ -141,7 +141,7 @@ export function GuestForm({
                             <Input
                                 value={guestData.idNumber}
                                 onChange={(e) => onDataChange({ ...guestData, idNumber: e.target.value })}
-                                placeholder="VD: 03603636363636"
+                                placeholder="VD: 023..."
                                 className={errors.idNumber ? "border-red-500" : ""}
                                 disabled={isSuccess}
                             />
@@ -228,7 +228,7 @@ export function GuestForm({
                             <Input
                                 value={guestData.phone}
                                 onChange={(e) => onDataChange({ ...guestData, phone: e.target.value })}
-                                placeholder="VD: 036633663"
+                                placeholder="VD: 0905123456"
                                 className={errors.phone ? "border-red-500" : ""}
                                 disabled={isSuccess}
                             />
@@ -243,7 +243,7 @@ export function GuestForm({
                                 type="email"
                                 value={guestData.email}
                                 onChange={(e) => onDataChange({ ...guestData, email: e.target.value })}
-                                placeholder="VD: example@thanhhoa.com"
+                                placeholder="VD: example@mail.com"
                                 className={errors.email ? "border-red-500" : ""}
                                 disabled={isSuccess}
                             />
@@ -272,7 +272,7 @@ export function GuestForm({
                             <Input
                                 value={guestData.organization}
                                 onChange={(e) => onDataChange({ ...guestData, organization: e.target.value })}
-                                placeholder="VD: Trường XYZ"
+                                placeholder="VD: Cơ quan..."
                                 disabled={isSuccess}
                             />
                         </div>

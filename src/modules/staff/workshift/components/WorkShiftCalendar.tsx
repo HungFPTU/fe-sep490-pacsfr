@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import type { WorkShift } from "../types";
 import { workshiftService } from "../services/workshift.service";
+import { toLocalDateString, getTodayLocal } from "@/core/utils/date";
 
 interface WorkShiftCalendarProps {
     shifts: WorkShift[];
@@ -34,16 +35,18 @@ export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkSh
         // Adjust to start from Sunday
         startDate.setDate(startDate.getDate() - startDate.getDay());
 
+        const todayString = getTodayLocal();
+
         for (let week = 0; week < 6; week++) {
             const weekDays = [];
             for (let day = 0; day < 7; day++) {
                 const date = new Date(startDate);
                 date.setDate(startDate.getDate() + (week * 7) + day);
 
-                const dateString = date.toISOString().split('T')[0];
+                const dateString = toLocalDateString(date);
                 const hasShift = datesWithShifts.has(dateString);
                 const isCurrentMonth = date.getMonth() === currentMonth;
-                const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
+                const isToday = dateString === todayString;
 
                 weekDays.push({
                     date,
