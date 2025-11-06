@@ -298,4 +298,8 @@ export const API_PATH = {
     UPLOAD_IMAGE: '/FileUpload/image',
   },
 
+  SUBMISSION_METHOD: {
+    GET_ALL: '/SubmissionMethod',
+  },
+
 };

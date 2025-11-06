@@ -301,3 +301,27 @@ export type GuestSearchFilters = {
     page?: number;
     size?: number;
 };
+
+// Submission Method Types
+export type SubmissionMethod = {
+    $id?: string;
+    id: string;
+    submissionMethodName: string;
+    processingTime: string;
+    fee: number;
+    description: string;
+};
+
+export type SubmissionMethodListResponse = {
+    $id?: string;
+    success: boolean;
+    message: string;
+    data: PaginatedData<SubmissionMethod>;
+    timestamp: string;
+};
+
+export type SubmissionMethodFilters = {
+    keyword?: string;
+    page?: number;
+    size?: number;
+};
