@@ -268,6 +268,14 @@ export const API_PATH = {
             PUT: (id: string) => `/DocsType/${id}`,
             DELETE: (id: string) => `/DocsType/${id}`,
         },
+        TEMPLATE: {
+            GET_ALL: (Keyword: string, DocsTypeId: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/Template?keyword=${Keyword}&docsTypeId=${DocsTypeId}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/Template/${id}`,
+            POST: '/Template',
+            PUT: (id: string) => `/Template/${id}`,
+            DELETE: (id: string) => `/Template/${id}`,
+        },
     },
     STAFF: {
         DASHBOARD: {

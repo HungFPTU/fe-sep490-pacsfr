@@ -3,9 +3,10 @@
  * React Query hooks for data fetching and mutations
  */
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { docsTypeService } from '../services/docs-type.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { getValuesPage } from '@/types/rest';
 import type { CreateDocsTypeRequest, UpdateDocsTypeRequest, DocsTypeFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -18,6 +19,33 @@ export const useDocsTypes = (filters: DocsTypeFilters) => {
     return useQuery({
         queryKey: QUERY_KEYS.DOCS_TYPE_LIST(filters),
         queryFn: () => docsTypeService.getDocsTypes(filters),
+        gcTime: CACHE_TIME.LONG,
+        staleTime: STALE_TIME.MEDIUM,
+    });
+};
+
+/**
+ * Hook for infinite scroll docs types list with search
+ */
+export const useInfiniteDocsTypes = (keyword: string = '', groupId: string = '', isActive: boolean = true, pageSize: number = 20) => {
+    return useInfiniteQuery({
+        queryKey: ['docs-types-infinite', keyword, groupId, isActive, pageSize],
+        queryFn: ({ pageParam = 1 }) => {
+            return docsTypeService.getDocsTypes({
+                keyword,
+                groupId,
+                isActive,
+                page: pageParam as number,
+                size: pageSize,
+            });
+        },
+        getNextPageParam: (lastPage) => {
+            const pageResult = getValuesPage(lastPage);
+            if (!pageResult) return undefined;
+            const { page, totalPages } = pageResult;
+            return page < totalPages ? page + 1 : undefined;
+        },
+        initialPageParam: 1,
         gcTime: CACHE_TIME.LONG,
         staleTime: STALE_TIME.MEDIUM,
     });
