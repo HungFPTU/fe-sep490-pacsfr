@@ -166,6 +166,10 @@ const data = {
           url: "/manager/van-ban-phap-luat",
         },
         {
+          title: "Nhóm hồ sơ",
+          url: "/manager/nhom-ho-so",
+        },
+        {
           title: "Phân loại văn bản",
           url: "/manager/van-ban-phap-luat/phan-loai",
         },

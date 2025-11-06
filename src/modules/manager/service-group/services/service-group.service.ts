@@ -3,7 +3,7 @@
  * Business logic and data transformation
  */
 
-import type { RestResponse, RestPaged } from '@/types/rest';
+import type { RestPaged } from '@/types/rest';
 import { serviceGroupApi } from '../api/service-group.api';
 import type { ServiceGroup } from '../types/response';
 import type { CreateServiceGroupRequest, UpdateServiceGroupRequest, ServiceGroupFilters } from '../types/request';

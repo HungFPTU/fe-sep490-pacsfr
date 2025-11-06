@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { ToggleSwitch } from '@/shared/components/manager/ui';
-import { FormApiOf } from '@/types/types';
 import { DEPARTMENT_LEVELS } from '../../../enums';
 import { useServiceGroups } from '@/modules/manager/service-group/hooks';
 import { getValuesPage, RestPaged } from '@/types/rest';
@@ -14,15 +13,6 @@ import {
     validateDescription,
     validateLevelOrder,
 } from '../../../utils';
-
-type FormValues = {
-    serviceGroupId: string;
-    code: string;
-    name: string;
-    description: string;
-    levelOrder: number;
-    isActive: boolean;
-};
 
 interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
