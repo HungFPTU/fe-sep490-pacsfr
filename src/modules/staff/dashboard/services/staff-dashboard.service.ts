@@ -270,7 +270,7 @@ export const staffDashboardService = {
             if (!request.serviceId || !request.serviceId.trim()) {
                 throw new Error('Service ID là bắt buộc');
             }
-            if (!request.submissionMethod || !request.submissionMethod.trim()) {
+            if (!request.submissionMethodId || !request.submissionMethodId.trim()) {
                 throw new Error('Phương thức nộp là bắt buộc');
             }
             // createdBy is optional (unknown type) - skip validation or handle differently

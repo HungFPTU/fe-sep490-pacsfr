@@ -110,7 +110,7 @@ export type CreateCaseRequest = {
     guestId: string;
     serviceId: string;
     priorityLevel: number;
-    submissionMethod: string;
+    submissionMethodId: string;
     notes?: string;
     estimatedCompletionDate: string; // ISO date string format
     resultDescription?: string;
@@ -298,6 +298,30 @@ export type GetGuestsResponse = {
 export type GuestSearchFilters = {
     keyword?: string;
     isActive?: boolean;
+    page?: number;
+    size?: number;
+};
+
+// Submission Method Types
+export type SubmissionMethod = {
+    $id?: string;
+    id: string;
+    submissionMethodName: string;
+    processingTime: string;
+    fee: number;
+    description: string;
+};
+
+export type SubmissionMethodListResponse = {
+    $id?: string;
+    success: boolean;
+    message: string;
+    data: PaginatedData<SubmissionMethod>;
+    timestamp: string;
+};
+
+export type SubmissionMethodFilters = {
+    keyword?: string;
     page?: number;
     size?: number;
 };
