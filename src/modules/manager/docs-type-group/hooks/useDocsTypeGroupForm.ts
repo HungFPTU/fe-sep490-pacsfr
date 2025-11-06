@@ -99,10 +99,15 @@ export const useDocsTypeGroupForm = ({
                 }, 100);
             } catch (error) {
                 console.error('Error saving docs type group:', error);
-                addToast({
-                    message: initData?.id
+                // Extract error message from exception
+                const errorMessage = error instanceof Error 
+                    ? error.message 
+                    : (initData?.id
                         ? 'Cập nhật nhóm hồ sơ thất bại'
-                        : 'Tạo nhóm hồ sơ thất bại',
+                        : 'Tạo nhóm hồ sơ thất bại');
+                
+                addToast({
+                    message: errorMessage,
                     type: 'error',
                 });
             }

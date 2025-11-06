@@ -1,48 +1,52 @@
 /**
- * Custom Form Hook for Service Group
+ * Custom Form Hook for Docs Type
  * Handles form state, validation, and submission
  */
 
 import { useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
-import { useCreateServiceGroup, useUpdateServiceGroup } from './index';
-import type { ServiceGroup } from '../types/response';
-import type { CreateServiceGroupRequest, UpdateServiceGroupRequest } from '../types/request';
+import { useCreateDocsType, useUpdateDocsType } from './index';
+import type { DocsType } from '../types/response';
+import type { CreateDocsTypeRequest, UpdateDocsTypeRequest } from '../types/request';
 
 type FormValues = {
-    groupCode: string;
-    groupName: string;
+    docTypeCode: string;
+    docTypeName: string;
     description: string;
-    iconUrl: string;
-    displayOrder: number;
+    groupId: string;
     isActive: boolean;
+    fileFormat: string;
+    maxFileSize: number;
+    isRequired: boolean;
 };
 
-interface UseServiceGroupFormProps {
-    initData?: ServiceGroup | null;
+interface UseDocsTypeFormProps {
+    initData?: DocsType | null;
     open: boolean;
     onSuccess?: () => void;
     onClose: () => void;
 }
 
-export const useServiceGroupForm = ({
+export const useDocsTypeForm = ({
     initData,
     open,
     onSuccess,
     onClose,
-}: UseServiceGroupFormProps) => {
-    const createMutation = useCreateServiceGroup();
-    const updateMutation = useUpdateServiceGroup();
+}: UseDocsTypeFormProps) => {
+    const createMutation = useCreateDocsType();
+    const updateMutation = useUpdateDocsType();
     const { addToast } = useGlobalToast();
 
-    const toFormValues = (data?: Partial<ServiceGroup> | null): FormValues => ({
-        groupCode: data?.groupCode ?? '',
-        groupName: data?.groupName ?? '',
+    const toFormValues = (data?: Partial<DocsType> | null): FormValues => ({
+        docTypeCode: data?.docTypeCode ?? '',
+        docTypeName: data?.docTypeName ?? '',
         description: data?.description ?? '',
-        iconUrl: data?.iconUrl ?? '',
-        displayOrder: data?.displayOrder ?? 0,
+        groupId: data?.groupId ?? '',
         isActive: data?.isActive ?? true,
+        fileFormat: data?.fileFormat ?? '',
+        maxFileSize: data?.maxFileSize ?? 10,
+        isRequired: data?.isRequired ?? false,
     });
 
     const form = useForm({
@@ -54,28 +58,38 @@ export const useServiceGroupForm = ({
             }
 
             // Final validation before submit
-            if (!value.groupCode?.trim()) {
-                addToast({ message: 'Vui lòng nhập mã nhóm', type: 'error' });
+            if (!value.docTypeCode?.trim()) {
+                addToast({ message: 'Vui lòng nhập mã loại văn bản', type: 'error' });
                 return;
             }
-            if (!value.groupName?.trim()) {
-                addToast({ message: 'Vui lòng nhập tên nhóm', type: 'error' });
+            if (!value.docTypeName?.trim()) {
+                addToast({ message: 'Vui lòng nhập tên loại văn bản', type: 'error' });
+                return;
+            }
+            if (!value.groupId?.trim()) {
+                addToast({ message: 'Vui lòng chọn nhóm hồ sơ', type: 'error' });
+                return;
+            }
+            if (!value.fileFormat?.trim()) {
+                addToast({ message: 'Vui lòng chọn định dạng file', type: 'error' });
                 return;
             }
 
             try {
-                const request: CreateServiceGroupRequest = {
-                    groupCode: value.groupCode.trim(),
-                    groupName: value.groupName.trim(),
+                const request: CreateDocsTypeRequest = {
+                    docTypeCode: value.docTypeCode.trim(),
+                    docTypeName: value.docTypeName.trim(),
                     description: value.description?.trim() || '',
-                    iconUrl: value.iconUrl.trim(),
-                    displayOrder: value.displayOrder,
+                    groupId: value.groupId.trim(),
                     isActive: value.isActive,
+                    fileFormat: value.fileFormat.trim(),
+                    maxFileSize: value.maxFileSize,
+                    isRequired: value.isRequired,
                 };
 
                 if (initData?.id) {
-                    // Update existing service group
-                    const updateRequest: UpdateServiceGroupRequest = {
+                    // Update existing docs type
+                    const updateRequest: UpdateDocsTypeRequest = {
                         ...request,
                         id: initData.id,
                     };
@@ -84,14 +98,14 @@ export const useServiceGroupForm = ({
                         data: updateRequest,
                     });
                     addToast({
-                        message: 'Cập nhật nhóm dịch vụ thành công',
+                        message: 'Cập nhật loại văn bản thành công',
                         type: 'success',
                     });
                 } else {
-                    // Create new service group
+                    // Create new docs type
                     await createMutation.mutateAsync(request);
                     addToast({
-                        message: 'Tạo nhóm dịch vụ thành công',
+                        message: 'Tạo loại văn bản thành công',
                         type: 'success',
                     });
                 }
@@ -104,14 +118,14 @@ export const useServiceGroupForm = ({
                     form.reset(toFormValues(null));
                 }, 100);
             } catch (error) {
-                console.error('Error saving service group:', error);
+                console.error('Error saving docs type:', error);
                 // Extract error message from exception
-                const errorMessage = error instanceof Error 
-                    ? error.message 
+                const errorMessage = error instanceof Error
+                    ? error.message
                     : (initData?.id
-                        ? 'Cập nhật nhóm dịch vụ thất bại'
-                        : 'Tạo nhóm dịch vụ thất bại');
-                
+                        ? 'Cập nhật loại văn bản thất bại'
+                        : 'Tạo loại văn bản thất bại');
+
                 addToast({
                     message: errorMessage,
                     type: 'error',
@@ -137,3 +151,4 @@ export const useServiceGroupForm = ({
         handleSubmit: () => form.handleSubmit(),
     };
 };
+

@@ -14,11 +14,23 @@ export const serviceService = {
 
     createService: async (data: CreateServiceRequest) => {
         const response = await serviceApi.create(data);
+        if (!response.data?.success || !response.data?.data) {
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to create service';
+            throw new Error(errorMessage);
+        }
         return response.data;
     },
 
     updateService: async (id: string, data: UpdateServiceRequest) => {
         const response = await serviceApi.update(id, data);
+        if (!response.data?.success || !response.data?.data) {
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to update service';
+            throw new Error(errorMessage);
+        }
         return response.data;
     },
 

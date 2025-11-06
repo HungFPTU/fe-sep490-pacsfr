@@ -101,7 +101,12 @@ export const useDepartmentForm = ({
                 }
             } catch (error) {
                 console.error('Error saving department:', error);
-                addToast({ message: 'Đã xảy ra lỗi khi lưu phòng ban', type: 'error' });
+                // Extract error message from exception
+                const errorMessage = error instanceof Error 
+                    ? error.message 
+                    : 'Đã xảy ra lỗi khi lưu phòng ban';
+                
+                addToast({ message: errorMessage, type: 'error' });
             }
         },
     });

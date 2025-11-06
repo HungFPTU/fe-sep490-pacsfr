@@ -130,8 +130,13 @@ export function useStaffForm({ open, initData, onSubmit, onSuccess }: UseStaffFo
                 onSuccess?.();
             } catch (error) {
                 console.error('Form submission error:', error);
+                // Extract error message from exception
+                const errorMessage = error instanceof Error
+                    ? error.message
+                    : 'Có lỗi xảy ra khi lưu thông tin nhân viên';
+
                 addToast({
-                    message: 'Có lỗi xảy ra khi lưu thông tin nhân viên',
+                    message: errorMessage,
                     type: 'error',
                 });
             }

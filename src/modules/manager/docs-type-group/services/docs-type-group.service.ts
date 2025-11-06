@@ -34,7 +34,10 @@ export const docsTypeGroupService = {
     async createDocsTypeGroup(data: CreateDocsTypeGroupRequest): Promise<DocsTypeGroup> {
         const response = await docsTypeGroupApi.create(data);
         if (!response.data?.success || !response.data?.data) {
-            throw new Error('Failed to create docs type group');
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to create docs type group';
+            throw new Error(errorMessage);
         }
         return response.data.data as DocsTypeGroup;
     },
@@ -45,7 +48,10 @@ export const docsTypeGroupService = {
     async updateDocsTypeGroup(id: string, data: UpdateDocsTypeGroupRequest): Promise<DocsTypeGroup> {
         const response = await docsTypeGroupApi.update(id, data);
         if (!response.data?.success || !response.data?.data) {
-            throw new Error('Failed to update docs type group');
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to update docs type group';
+            throw new Error(errorMessage);
         }
         return response.data.data as DocsTypeGroup;
     },

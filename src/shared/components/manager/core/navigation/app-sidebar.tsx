@@ -170,6 +170,10 @@ const data = {
           url: "/manager/nhom-ho-so",
         },
         {
+          title: "Loại văn bản",
+          url: "/manager/loai-van-ban",
+        },
+        {
           title: "Phân loại văn bản",
           url: "/manager/van-ban-phap-luat/phan-loai",
         },

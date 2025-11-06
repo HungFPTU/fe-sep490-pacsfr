@@ -34,7 +34,10 @@ export const serviceGroupService = {
     async createServiceGroup(data: CreateServiceGroupRequest): Promise<ServiceGroup> {
         const response = await serviceGroupApi.create(data);
         if (!response.data?.success || !response.data?.data) {
-            throw new Error('Failed to create service group');
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to create service group';
+            throw new Error(errorMessage);
         }
         return response.data.data as ServiceGroup;
     },
@@ -45,7 +48,10 @@ export const serviceGroupService = {
     async updateServiceGroup(id: string, data: UpdateServiceGroupRequest): Promise<ServiceGroup> {
         const response = await serviceGroupApi.update(id, data);
         if (!response.data?.success || !response.data?.data) {
-            throw new Error('Failed to update service group');
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to update service group';
+            throw new Error(errorMessage);
         }
         return response.data.data as ServiceGroup;
     },

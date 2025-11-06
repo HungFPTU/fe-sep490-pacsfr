@@ -260,6 +260,14 @@ export const API_PATH = {
             PUT: (id: string) => `/DocsTypeGroup/${id}`,
             DELETE: (id: string) => `/DocsTypeGroup/${id}`,
         },
+        DOCS_TYPE: {
+            GET_ALL: (Keyword: string, GroupId: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/DocsType?keyword=${Keyword}&groupId=${GroupId}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/DocsType/${id}`,
+            POST: '/DocsType',
+            PUT: (id: string) => `/DocsType/${id}`,
+            DELETE: (id: string) => `/DocsType/${id}`,
+        },
     },
     STAFF: {
         DASHBOARD: {

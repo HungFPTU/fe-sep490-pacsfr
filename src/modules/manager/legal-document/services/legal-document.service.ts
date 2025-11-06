@@ -49,6 +49,13 @@ export class LegalDocumentService {
             const response = await legalDocumentApi.create(documentData);
             console.log('[LegalDocument Service] Document created:', response.data);
 
+            if (!response.data?.success || !response.data?.data) {
+                // Extract message from API response if available (message is at root level)
+                const apiResponse = response.data as { message?: string; success: boolean };
+                const errorMessage = apiResponse?.message || 'Failed to create legal document';
+                throw new Error(errorMessage);
+            }
+
             return response.data;
         } catch (error) {
             console.error("Error creating legal document:", error);
@@ -75,6 +82,13 @@ export class LegalDocumentService {
 
             const response = await legalDocumentApi.update(id, documentData);
             console.log('[LegalDocument Service] Document updated:', response.data);
+
+            if (!response.data?.success || !response.data?.data) {
+                // Extract message from API response if available (message is at root level)
+                const apiResponse = response.data as { message?: string; success: boolean };
+                const errorMessage = apiResponse?.message || 'Failed to update legal document';
+                throw new Error(errorMessage);
+            }
 
             return response.data;
         } catch (error) {
