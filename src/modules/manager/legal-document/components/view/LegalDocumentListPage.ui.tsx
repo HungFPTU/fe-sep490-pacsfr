@@ -20,7 +20,7 @@ export const LegalDocumentListPage: React.FC = () => {
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [documentToDelete, setDocumentToDelete] = useState<LegalDocument | null>(null);
 
-    const { data: legalDocumentsData, isLoading } = useLegalDocuments(filters);
+    const { data: legalDocumentsData, isLoading, refetch } = useLegalDocuments(filters);
     const deleteMutation = useDeleteLegalDocument();
 
     const legalDocuments = legalDocumentsData?.data?.items?.$values || [];
@@ -105,6 +105,7 @@ export const LegalDocumentListPage: React.FC = () => {
             <LegalDocumentFilter
                 filters={filters}
                 onFilterChange={setFilters}
+                onRefresh={refetch}
             />
 
             {/* Table */}

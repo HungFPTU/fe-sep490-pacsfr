@@ -106,6 +106,7 @@ export const DocsTypeListPage: React.FC = () => {
                 onGroupIdChange={setGroupId}
                 isActive={isActive}
                 onStatusChange={setIsActive}
+                onRefresh={refetch}
             />
 
             <DocsTypeTable

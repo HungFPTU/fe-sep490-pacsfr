@@ -13,6 +13,7 @@ interface Props {
     onServiceGroupIdChange: (value: string) => void;
     onIsActiveChange: (value: boolean) => void;
     onReset: () => void;
+    onRefresh?: () => void;
 }
 
 export const ServiceFilter: React.FC<Props> = ({
@@ -23,6 +24,7 @@ export const ServiceFilter: React.FC<Props> = ({
     onServiceGroupIdChange,
     onIsActiveChange,
     onReset,
+    onRefresh,
 }) => {
     // Fetch service groups for dropdown
     const { data: serviceGroupsData } = useServiceGroups({
@@ -51,6 +53,10 @@ export const ServiceFilter: React.FC<Props> = ({
         onKeywordChange(localKeyword);
         onServiceGroupIdChange(localServiceGroupId);
         onIsActiveChange(localIsActive);
+        // Refresh data sau khi apply filters
+        if (onRefresh) {
+            onRefresh();
+        }
     };
 
     const handleResetLocal = () => {

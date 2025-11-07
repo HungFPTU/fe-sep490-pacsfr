@@ -37,7 +37,7 @@ export const ServiceListPage: React.FC = () => {
     const [deletingService, setDeletingService] = useState<Service | null>(null);
 
     // Fetch data
-    const { data } = useServices({
+    const { data, refetch } = useServices({
         keyword,
         serviceGroupId,
         legalBasisId,
@@ -119,6 +119,7 @@ export const ServiceListPage: React.FC = () => {
                 onServiceGroupIdChange={setServiceGroupId}
                 onIsActiveChange={setIsActive}
                 onReset={handleReset}
+                onRefresh={refetch}
             />
 
             <ServiceTable
