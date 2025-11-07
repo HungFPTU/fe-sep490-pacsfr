@@ -2,7 +2,10 @@
 
 import React from 'react';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
-import { formatDate } from '@/shared/lib/utils';
+import { formatDate, formatCurrency } from '@/shared/lib/utils';
+import { TableRow, TableCell } from '@/shared/components/manager/ui/table';
+import { Button } from '@/shared/components/ui/button.ui';
+import { Badge } from '@/shared/components/ui/badge.ui';
 import type { SubmissionMethod } from '../../../types';
 
 interface Props {
@@ -20,13 +23,6 @@ export const SubmissionMethodTableRow: React.FC<Props> = ({
     onDelete,
     isDeleting = false,
 }) => {
-    const formatFee = (fee: number): string => {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND',
-        }).format(fee);
-    };
-
     const formatProcessingTime = (time: string | Date): string => {
         if (!time) return '-';
         const date = time instanceof Date ? time : new Date(time);
@@ -35,75 +31,73 @@ export const SubmissionMethodTableRow: React.FC<Props> = ({
     };
 
     return (
-        <tr key={submissionMethod.id} className="hover:bg-slate-50">
+        <TableRow>
             {/* Name */}
-            <td className="px-6 py-4 text-sm font-medium text-slate-900">
+            <TableCell className="font-medium">
                 {submissionMethod.submissionMethodName || '-'}
-            </td>
+            </TableCell>
 
             {/* Processing Time */}
-            <td className="px-6 py-4 text-sm text-slate-500">
+            <TableCell className="text-muted-foreground">
                 {formatProcessingTime(submissionMethod.processingTime)}
-            </td>
+            </TableCell>
 
             {/* Fee */}
-            <td className="px-6 py-4 text-sm text-slate-500">
-                {formatFee(submissionMethod.fee)}
-            </td>
+            <TableCell className="text-muted-foreground">
+                {formatCurrency(submissionMethod.fee)}
+            </TableCell>
 
             {/* Description */}
-            <td className="px-6 py-4 text-sm text-slate-500">
+            <TableCell className="text-muted-foreground">
                 <div className="max-w-xs truncate" title={submissionMethod.description || ''}>
                     {submissionMethod.description || '-'}
                 </div>
-            </td>
+            </TableCell>
 
             {/* Status */}
-            <td className="px-6 py-4 text-sm">
-                {submissionMethod.isActive ? (
-                    <span className="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-green-100 text-green-800">
-                        Đang kích hoạt
-                    </span>
-                ) : (
-                    <span className="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-red-100 text-red-800">
-                        Ngừng kích hoạt
-                    </span>
-                )}
-            </td>
+            <TableCell>
+                <Badge variant={submissionMethod.isActive ? 'outline' : 'secondary'}>
+                    {submissionMethod.isActive ? 'Đang kích hoạt' : 'Ngừng kích hoạt'}
+                </Badge>
+            </TableCell>
 
             {/* Created At */}
-            <td className="px-6 py-4 text-sm text-slate-500">
+            {/* <TableCell className="text-muted-foreground">
                 {submissionMethod.createdAt ? formatDate(submissionMethod.createdAt) : '-'}
-            </td>
+            </TableCell> */}
 
             {/* Actions */}
-            <td className="px-6 py-4 text-sm text-right">
+            <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
-                    <button
+                    <Button
+                        variant="outline"
+                        size="icon"
                         onClick={() => onView(submissionMethod)}
-                        className="p-1.5 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded transition-colors"
                         title="Xem chi tiết"
                     >
-                        <Eye className="w-4 h-4" />
-                    </button>
-                    <button
+                        <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="icon"
                         onClick={() => onEdit(submissionMethod)}
-                        className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
                         title="Chỉnh sửa"
                     >
-                        <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
+                        <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="icon"
                         onClick={() => onDelete(submissionMethod.id)}
                         disabled={isDeleting}
-                        className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Xóa"
+                        className="text-destructive hover:text-destructive"
                     >
-                        <Trash2 className="w-4 h-4" />
-                    </button>
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
                 </div>
-            </td>
-        </tr>
+            </TableCell>
+        </TableRow>
     );
 };
 

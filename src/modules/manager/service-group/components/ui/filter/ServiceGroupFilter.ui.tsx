@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { Search, X } from 'lucide-react';
+import { Button } from '@/shared/components/ui/button.ui';
+import { Input } from '@/shared/components/ui/input.ui';
+import { cn } from '@/shared/lib/utils';
 
 interface Props {
     keyword: string;
@@ -18,24 +21,19 @@ export const ServiceGroupFilter: React.FC<Props> = ({
     onStatusChange,
     onRefresh,
 }) => {
-    // Local state để tránh gọi API liên tục khi gõ
+    // Tách thành từng filter item cho UI rõ ràng hơn
     const [localKeyword, setLocalKeyword] = useState<string>(keyword || '');
     const [localIsActive, setLocalIsActive] = useState<boolean>(isActive);
 
-    // Đồng bộ khi props thay đổi từ phía ngoài
     useEffect(() => {
         setLocalKeyword(keyword || '');
         setLocalIsActive(isActive);
     }, [keyword, isActive]);
 
     const handleApply = () => {
-        // Gọi các setter của parent trong cùng một tick → React sẽ batch lại
         onKeywordChange(localKeyword);
         onStatusChange(localIsActive);
-        // Refresh data sau khi apply filters
-        if (onRefresh) {
-            onRefresh();
-        }
+        if (onRefresh) onRefresh();
     };
 
     const handleReset = () => {
@@ -43,53 +41,67 @@ export const ServiceGroupFilter: React.FC<Props> = ({
         setLocalIsActive(true);
         onKeywordChange('');
         onStatusChange(true);
+        if (onRefresh) onRefresh();
     };
 
     return (
-        <div className="mb-4">
-            <div className="flex flex-wrap items-center gap-3">
+        <div className="mb-4 w-full">
+            <div className="flex flex-col lg:flex-row items-stretch gap-2 lg:gap-3">
                 {/* Search */}
-                <div className="relative flex-1 min-w-[220px]">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Tìm kiếm theo tên hoặc mã..."
-                        value={localKeyword}
-                        onChange={(e) => setLocalKeyword(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleApply();
-                        }}
-                        className="w-full h-10 pl-10 pr-4 rounded-lg border border-slate-300 text-sm focus:border-indigo-500 focus:outline-none"
-                    />
+                <div className="flex flex-1 min-w-[200px]">
+                    <div className="relative w-full">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                        <Input
+                            type="text"
+                            placeholder="Tìm kiếm theo tên hoặc mã..."
+                            value={localKeyword}
+                            onChange={(e) => setLocalKeyword(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleApply();
+                            }}
+                            className="pl-10 h-9"
+                        />
+                    </div>
                 </div>
 
                 {/* Status */}
-                <select
-                    value={String(localIsActive)}
-                    onChange={(e) => setLocalIsActive(e.target.value === 'true')}
-                    className="h-10 rounded-lg border border-slate-300 px-4 text-sm focus:border-indigo-500 focus:outline-none min-w-[160px]"
-                >
-                    <option value="true">Đang kích hoạt</option>
-                    <option value="false">Ngừng kích hoạt</option>
-                </select>
+                <div className="flex items-center min-w-[170px]">
+                    <select
+                        value={String(localIsActive)}
+                        onChange={(e) => setLocalIsActive(e.target.value === 'true')}
+                        className={cn(
+                            "flex h-9 w-full min-w-[160px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
+                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:cursor-not-allowed disabled:opacity-50"
+                        )}
+                    >
+                        <option value="true">Đang kích hoạt</option>
+                        <option value="false">Ngừng kích hoạt</option>
+                    </select>
+                </div>
 
                 {/* Actions */}
-                <button
-                    onClick={handleApply}
-                    className="px-4 h-10 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
-                >
-                    <Search className="w-4 h-4" />
-                    Tìm kiếm
-                </button>
-                <button
-                    onClick={handleReset}
-                    className="px-4 h-10 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
-                >
-                    <X className="w-4 h-4" />
-                    Đặt lại
-                </button>
+                <div className="flex items-center gap-2">
+                    <Button
+                        onClick={handleApply}
+                        size="default"
+                        className="whitespace-nowrap flex items-center gap-1"
+                    >
+                        <Search className="h-4 w-4" />
+                        <span>Tìm kiếm</span>
+                    </Button>
+                    <Button
+                        onClick={handleReset}
+                        variant="outline"
+                        size="default"
+                        className="whitespace-nowrap flex items-center gap-1"
+                    >
+                        <X className="h-4 w-4" />
+                        <span>Đặt lại</span>
+                    </Button>
+                </div>
             </div>
         </div>
     );
 };
-

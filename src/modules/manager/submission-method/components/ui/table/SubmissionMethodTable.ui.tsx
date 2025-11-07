@@ -3,6 +3,7 @@
 import React from 'react';
 import { SubmissionMethodTableHeader } from './SubmissionMethodTableHeader.ui';
 import { SubmissionMethodTableRow } from './SubmissionMethodTableRow.ui';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { SubmissionMethod } from '../../../types';
 
 interface Props {
@@ -23,22 +24,24 @@ export const SubmissionMethodTable: React.FC<Props> = ({
     isDeleting = false,
 }) => {
     return (
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow">
-            <table className="w-full">
-                <SubmissionMethodTableHeader />
-                <tbody className="divide-y divide-slate-200 bg-white">
+        <div className="rounded-md border">
+            <Table>
+                <TableHeader>
+                    <SubmissionMethodTableHeader />
+                </TableHeader>
+                <TableBody>
                     {isLoading ? (
-                        <tr>
-                            <td colSpan={7} className="px-6 py-4 text-center text-sm text-slate-500">
+                        <TableRow>
+                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                                 Đang tải...
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ) : submissionMethods.length === 0 ? (
-                        <tr>
-                            <td colSpan={7} className="px-6 py-4 text-center text-sm text-slate-500">
+                        <TableRow>
+                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                                 Không có dữ liệu
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ) : (
                         submissionMethods.map((submissionMethod) => (
                             <SubmissionMethodTableRow
@@ -51,8 +54,8 @@ export const SubmissionMethodTable: React.FC<Props> = ({
                             />
                         ))
                     )}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
         </div>
     );
 };
