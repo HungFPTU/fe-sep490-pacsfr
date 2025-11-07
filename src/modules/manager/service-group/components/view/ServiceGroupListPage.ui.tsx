@@ -102,6 +102,7 @@ export const ServiceGroupListPage: React.FC = () => {
                 onKeywordChange={setKeyword}
                 isActive={isActive}
                 onStatusChange={setIsActive}
+                onRefresh={refetch}
             />
 
             <ServiceGroupTable

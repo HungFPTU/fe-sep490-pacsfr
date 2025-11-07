@@ -11,7 +11,7 @@ interface Props {
     onRefresh?: () => void;
 }
 
-export const ServiceGroupFilter: React.FC<Props> = ({
+export const SubmissionMethodFilter: React.FC<Props> = ({
     keyword,
     onKeywordChange,
     isActive,
@@ -53,7 +53,7 @@ export const ServiceGroupFilter: React.FC<Props> = ({
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Tìm kiếm theo tên hoặc mã..."
+                        placeholder="Tìm kiếm theo tên phương thức..."
                         value={localKeyword}
                         onChange={(e) => setLocalKeyword(e.target.value)}
                         onKeyDown={(e) => {

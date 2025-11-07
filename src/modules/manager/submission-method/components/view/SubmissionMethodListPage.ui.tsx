@@ -1,52 +1,56 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useDepartments, useDeleteDepartment } from '../../hooks';
-import { CreateDepartmentModal } from '../ui/modal/CreateDepartmentModal.ui';
-import { DepartmentDetailModal } from '../ui/detail/DepartmentDetailModal.ui';
-import { DepartmentHeader } from '../ui/header/DepartmentHeader.ui';
-import { DepartmentFilter } from '../ui/filter/DepartmentFilter.ui';
-import { DepartmentTable } from '../ui/table/DepartmentTable.ui';
-import { DepartmentPagination } from '../ui/pagination/DepartmentPagination.ui';
+import { useSubmissionMethods, useDeleteSubmissionMethod } from '../../hooks';
+import { CreateSubmissionMethodModal } from '../ui/modal/CreateSubmissionMethodModal.ui';
+import { SubmissionMethodHeader } from '../ui/header/SubmissionMethodHeader.ui';
+import { SubmissionMethodFilter } from '../ui/filter/SubmissionMethodFilter.ui';
+import { SubmissionMethodTable } from '../ui/table/SubmissionMethodTable.ui';
+import { SubmissionMethodPagination } from '../ui/pagination/SubmissionMethodPagination.ui';
 import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
-import type { Department } from '../../types';
+import type { SubmissionMethod } from '../../types';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
-import { getValuesPage, RestPaged } from '@/types/rest';
+import { getValuesPage } from '@/types/rest';
 
-export const DepartmentListPage: React.FC = () => {
+export const SubmissionMethodListPage: React.FC = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [keyword, setKeyword] = useState('');
     const [isActive, setIsActive] = useState<boolean>(true);
     const [modalOpen, setModalOpen] = useState(false);
-    const [detailModalOpen, setDetailModalOpen] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-    const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
+    const [selectedSubmissionMethod, setSelectedSubmissionMethod] = useState<SubmissionMethod | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
-    const { data, refetch } = useDepartments({
-        keyword,
+    const { data, isLoading, refetch } = useSubmissionMethods({
+        keyword: keyword || undefined,
         isActive,
         page,
         size: pageSize,
     });
 
-    const deleteMutation = useDeleteDepartment();
+    const deleteMutation = useDeleteSubmissionMethod();
     const { addToast } = useGlobalToast();
 
     const handleCreate = () => {
-        setSelectedDepartment(null);
+        setSelectedSubmissionMethod(null);
         setModalOpen(true);
     };
 
-    const handleEdit = (department: Department) => {
-        setSelectedDepartment(department);
+    const handleEdit = (submissionMethod: SubmissionMethod) => {
+        setSelectedSubmissionMethod(submissionMethod);
         setModalOpen(true);
     };
 
-    const handleViewDetail = (department: Department) => {
-        setSelectedDepartment(department);
-        setDetailModalOpen(true);
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setSelectedSubmissionMethod(null);
+    };
+
+    const handleViewDetail = (submissionMethod: SubmissionMethod) => {
+        setSelectedSubmissionMethod(submissionMethod);
+        // For now, just open edit modal. Can create detail modal later if needed
+        setModalOpen(true);
     };
 
     const handleDelete = (id: string) => {
@@ -59,11 +63,11 @@ export const DepartmentListPage: React.FC = () => {
 
         try {
             await deleteMutation.mutateAsync(deletingId);
-            addToast({ message: 'Xóa phòng ban thành công', type: 'success' });
+            addToast({ message: 'Xóa phương thức nộp hồ sơ thành công', type: 'success' });
             refetch();
         } catch (error) {
-            console.error('Error deleting department:', error);
-            addToast({ message: 'Xóa phòng ban thất bại', type: 'error' });
+            console.error('Error deleting submission method:', error);
+            addToast({ message: 'Xóa phương thức nộp hồ sơ thất bại', type: 'error' });
         } finally {
             setConfirmDeleteOpen(false);
             setDeletingId(null);
@@ -74,8 +78,8 @@ export const DepartmentListPage: React.FC = () => {
         refetch();
     };
 
-    const pageResult = data ? getValuesPage(data as RestPaged<Department>) : null;
-    const departments = pageResult?.items || [];
+    const pageResult = data ? getValuesPage(data) : null;
+    const submissionMethods = pageResult?.items || [];
     const total = pageResult?.total || 0;
     const totalPages = pageResult?.totalPages || 1;
 
@@ -96,9 +100,9 @@ export const DepartmentListPage: React.FC = () => {
 
     return (
         <div className="p-6">
-            <DepartmentHeader onCreateClick={handleCreate} />
+            <SubmissionMethodHeader onCreateClick={handleCreate} totalCount={total} />
 
-            <DepartmentFilter
+            <SubmissionMethodFilter
                 keyword={keyword}
                 onKeywordChange={(kw) => handleFilterChange({ keyword: kw, isActive })}
                 isActive={isActive}
@@ -106,9 +110,9 @@ export const DepartmentListPage: React.FC = () => {
                 onRefresh={refetch}
             />
 
-            <DepartmentTable
-                departments={departments}
-                isLoading={false}
+            <SubmissionMethodTable
+                submissionMethods={submissionMethods}
+                isLoading={isLoading}
                 onView={handleViewDetail}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
@@ -116,7 +120,7 @@ export const DepartmentListPage: React.FC = () => {
             />
 
             {total > 0 && (
-                <DepartmentPagination
+                <SubmissionMethodPagination
                     page={page}
                     pageSize={pageSize}
                     total={total}
@@ -127,36 +131,26 @@ export const DepartmentListPage: React.FC = () => {
             )}
 
             {/* Create/Edit Modal */}
-            <CreateDepartmentModal
+            <CreateSubmissionMethodModal
                 open={modalOpen}
-                onClose={() => {
-                    setModalOpen(false);
-                    setSelectedDepartment(null);
-                }}
-                initData={selectedDepartment}
+                onClose={handleCloseModal}
+                initData={selectedSubmissionMethod}
                 onSuccess={handleModalSuccess}
-            />
-
-            {/* Detail Modal */}
-            <DepartmentDetailModal
-                open={detailModalOpen}
-                onClose={() => setDetailModalOpen(false)}
-                department={selectedDepartment}
             />
 
             {/* Delete Confirmation Dialog */}
             <ConfirmDialog
                 open={confirmDeleteOpen}
-                title="Xác nhận xóa"
-                message={`Bạn có chắc chắn muốn xóa phòng ban này?\nHành động này không thể hoàn tác.`}
-                confirmText="Xóa"
-                cancelText="Hủy"
-                type="danger"
-                onConfirm={handleConfirmDelete}
                 onCancel={() => {
                     setConfirmDeleteOpen(false);
                     setDeletingId(null);
                 }}
+                onConfirm={handleConfirmDelete}
+                title="Xác nhận xóa"
+                message="Bạn có chắc chắn muốn xóa phương thức nộp hồ sơ này? Hành động này không thể hoàn tác."
+                confirmText="Xóa"
+                cancelText="Hủy"
+                type="danger"
                 loading={deleteMutation.isPending}
             />
         </div>

@@ -1,4 +1,4 @@
-import { http } from "@/core/http/client";
+import { httpNoLoading } from "@/core/http/client";
 import type {
     ServiceListResponse,
     ServiceDetailResponse,
@@ -22,28 +22,28 @@ export const serviceApi = {
         const queryString = searchParams.toString();
         const url = `/Service${queryString ? `?${queryString}` : ""}`;
 
-        const response = await http.get<ServiceListResponse>(url);
+        const response = await httpNoLoading.get<ServiceListResponse>(url);
         return response.data;
     },
 
     // Get service by ID
     getServiceById: async (id: string): Promise<ServiceDetailResponse> => {
         const url = `/Service/${id}`;
-        const response = await http.get<ServiceDetailResponse>(url);
+        const response = await httpNoLoading.get<ServiceDetailResponse>(url);
         return response.data;
     },
 
     // Get service groups (for filter dropdown)
     getServiceGroups: async (): Promise<ServiceGroupListResponse> => {
         const url = `/ServiceGroup`;
-        const response = await http.get<ServiceGroupListResponse>(url);
+        const response = await httpNoLoading.get<ServiceGroupListResponse>(url);
         return response.data;
     },
 
     // Get legal basis (for filter dropdown)
     getLegalBasis: async (): Promise<LegalBasisListResponse> => {
         const url = `/LegalBasis`;
-        const response = await http.get<LegalBasisListResponse>(url);
+        const response = await httpNoLoading.get<LegalBasisListResponse>(url);
         return response.data;
     },
 };

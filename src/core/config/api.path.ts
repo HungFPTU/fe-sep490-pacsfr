@@ -276,6 +276,14 @@ export const API_PATH = {
             PUT: (id: string) => `/Template/${id}`,
             DELETE: (id: string) => `/Template/${id}`,
         },
+        SUBMISSION_METHOD: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/SubmissionMethod?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/SubmissionMethod/${id}`,
+            POST: '/SubmissionMethod',
+            PUT: (id: string) => `/SubmissionMethod/${id}`,
+            DELETE: (id: string) => `/SubmissionMethod/${id}`,
+        },
     },
     STAFF: {
         DASHBOARD: {
