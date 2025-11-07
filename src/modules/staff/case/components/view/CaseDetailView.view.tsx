@@ -32,7 +32,8 @@ export const CaseDetailView: React.FC<CaseDetailViewProps> = ({ caseData, onStat
             caseId={caseData.id}
             submissionMethod={caseData.submissionMethod}
             isPayment={caseData.isPayment}
-            serviceName={caseData.serviceName}
+            guestId={caseData.guestId}
+            serviceId={caseData.serviceId}
             currentStatus={caseData.currentStatus}
             onStatusClick={onStatusClick}
           />

@@ -8,9 +8,10 @@ import { getFilterOptions } from '../../../utils';
 interface StaffFilterProps {
     filters: StaffFilters;
     onFilterChange: (filters: StaffFilters) => void;
+    onRefresh?: () => void;
 }
 
-export function StaffFilter({ filters, onFilterChange }: StaffFilterProps) {
+export function StaffFilter({ filters, onFilterChange, onRefresh }: StaffFilterProps) {
     const filterOptions = getFilterOptions();
 
     // Local state for filter inputs (not triggering API)
@@ -48,6 +49,10 @@ export function StaffFilter({ filters, onFilterChange }: StaffFilterProps) {
     const handleApplyFilters = () => {
         // Apply filters - trigger API call
         onFilterChange(localFilters);
+        // Refresh data sau khi apply filters
+        if (onRefresh) {
+            onRefresh();
+        }
     };
 
     const handleResetFilters = () => {

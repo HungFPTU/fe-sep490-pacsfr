@@ -88,6 +88,10 @@ const data = {
           title: "Quy tắc xếp hàng",
           url: "/manager/service/queue",
         },
+        {
+          title: "Phương thức nộp hồ sơ",
+          url: "/manager/phuong-thuc-nop-ho-so",
+        },
       ],
     },
     {

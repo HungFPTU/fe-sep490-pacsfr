@@ -130,7 +130,7 @@ export function StaffListPage() {
     return (
         <div className="p-6 space-y-6">
             <StaffHeader onCreateClick={handleCreate} />
-            <StaffFilter filters={filters} onFilterChange={handleFilterChange} />
+            <StaffFilter filters={filters} onFilterChange={handleFilterChange} onRefresh={refetch} />
             <StaffTable
                 data={paginatedData}
                 onView={handleView}
