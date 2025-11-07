@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSubmissionMethods, useDeleteSubmissionMethod } from '../../hooks';
 import { CreateSubmissionMethodModal } from '../ui/modal/CreateSubmissionMethodModal.ui';
+import { SubmissionMethodDetailModal } from '../ui/detail/SubmissionMethodDetailModal.ui';
 import { SubmissionMethodHeader } from '../ui/header/SubmissionMethodHeader.ui';
 import { SubmissionMethodFilter } from '../ui/filter/SubmissionMethodFilter.ui';
 import { SubmissionMethodTable } from '../ui/table/SubmissionMethodTable.ui';
@@ -18,6 +19,7 @@ export const SubmissionMethodListPage: React.FC = () => {
     const [keyword, setKeyword] = useState('');
     const [isActive, setIsActive] = useState<boolean>(true);
     const [modalOpen, setModalOpen] = useState(false);
+    const [detailModalOpen, setDetailModalOpen] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [selectedSubmissionMethod, setSelectedSubmissionMethod] = useState<SubmissionMethod | null>(null);
     const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -49,8 +51,12 @@ export const SubmissionMethodListPage: React.FC = () => {
 
     const handleViewDetail = (submissionMethod: SubmissionMethod) => {
         setSelectedSubmissionMethod(submissionMethod);
-        // For now, just open edit modal. Can create detail modal later if needed
-        setModalOpen(true);
+        setDetailModalOpen(true);
+    };
+
+    const handleCloseDetailModal = () => {
+        setDetailModalOpen(false);
+        setSelectedSubmissionMethod(null);
     };
 
     const handleDelete = (id: string) => {
@@ -136,6 +142,13 @@ export const SubmissionMethodListPage: React.FC = () => {
                 onClose={handleCloseModal}
                 initData={selectedSubmissionMethod}
                 onSuccess={handleModalSuccess}
+            />
+
+            {/* Detail Modal */}
+            <SubmissionMethodDetailModal
+                open={detailModalOpen}
+                onClose={handleCloseDetailModal}
+                submissionMethod={selectedSubmissionMethod}
             />
 
             {/* Delete Confirmation Dialog */}

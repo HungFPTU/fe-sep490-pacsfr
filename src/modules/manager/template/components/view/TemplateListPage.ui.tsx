@@ -111,6 +111,7 @@ export const TemplateListPage: React.FC = () => {
                 onDocsTypeIdChange={setDocsTypeId}
                 isActive={isActive}
                 onStatusChange={setIsActive}
+                onRefresh={refetch}
             />
 
             <TemplateTable

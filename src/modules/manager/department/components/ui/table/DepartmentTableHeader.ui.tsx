@@ -1,34 +1,19 @@
 'use client';
 
 import React from 'react';
+import { TableRow, TableHead } from '@/shared/components/manager/ui/table';
 
 export const DepartmentTableHeader: React.FC = () => {
     return (
-        <thead className="bg-slate-50">
-            <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Mã phòng ban
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Tên phòng ban
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Cấp độ
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Mô tả
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Trạng thái
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Cập nhật
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">
-                    Hành động
-                </th>
-            </tr>
-        </thead>
+        <TableRow>
+            <TableHead className="w-[120px]">Mã phòng ban</TableHead>
+            <TableHead>Tên phòng ban</TableHead>
+            <TableHead className="w-[100px]">Cấp độ</TableHead>
+            <TableHead className="w-[200px]">Mô tả</TableHead>
+            <TableHead className="w-[120px]">Trạng thái</TableHead>
+            <TableHead className="w-[150px]">Cập nhật</TableHead>
+            <TableHead className="w-[120px] text-right">Hành động</TableHead>
+        </TableRow>
     );
 };
 

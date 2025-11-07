@@ -2,15 +2,24 @@
 
 import React from 'react';
 import { Download } from 'lucide-react';
+import { Button } from '@/shared/components/ui/button.ui';
+import { Badge } from '@/shared/components/ui/badge.ui';
 import { LegalDocumentService } from '@modules/manager/legal-document/services/legal-document.service';
 import type { LegalDocument } from '@modules/manager/legal-document/types';
-import { formatDateVN } from '@/core';
+import { formatDate } from '@/shared/lib/utils';
 
 interface Props {
     legalDocument: LegalDocument;
 }
 
 export const LegalDocumentInfo: React.FC<Props> = ({ legalDocument }) => {
+    const formatDateVN = (date: string | Date): string => {
+        if (!date) return '-';
+        const dateObj = date instanceof Date ? date : new Date(date);
+        if (isNaN(dateObj.getTime())) return '-';
+        return formatDate(dateObj);
+    };
+
     const handleDownloadFile = async () => {
         try {
             // If we have fileUrl, download directly from URL
@@ -42,137 +51,179 @@ export const LegalDocumentInfo: React.FC<Props> = ({ legalDocument }) => {
         }
     };
 
+    const getStatusVariant = (status: string): 'default' | 'secondary' | 'outline' | 'destructive' => {
+        if (status === 'Active') return 'default';
+        if (status === 'Draft') return 'secondary';
+        if (status === 'Expired' || status === 'Replaced' || status === 'Cancelled') return 'destructive';
+        return 'outline';
+    };
+
+    const getDocumentTypeVariant = (type: string): 'default' | 'secondary' | 'outline' => {
+        if (type === 'LAW' || type === 'RESOLUTION') return 'default';
+        if (type === 'DECREE' || type === 'CIRCULAR') return 'secondary';
+        return 'outline';
+    };
+
     return (
-        <div className="space-y-6">
-            {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                    <div>
-                        <label className="text-sm font-medium text-slate-500">Số văn bản</label>
-                        <p className="text-sm text-slate-900 font-medium">{legalDocument.documentNumber}</p>
-                    </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {/* Document Number */}
+            <div>
+                <label className="block text-sm font-medium text-foreground">
+                    Số văn bản
+                </label>
+                <p className="mt-1 text-sm text-muted-foreground font-medium">
+                    {legalDocument.documentNumber}
+                </p>
+            </div>
 
-                    <div>
-                        <label className="text-sm font-medium text-slate-500">Loại văn bản</label>
-                        <p className="text-sm text-slate-900">{LegalDocumentService.formatDocumentType(legalDocument.documentType)}</p>
-                    </div>
-
-                    <div>
-                        <label className="text-sm font-medium text-slate-500">Ngày ban hành</label>
-                        <p className="text-sm text-slate-900">{legalDocument.issueDate ? formatDateVN(legalDocument.issueDate) : 'N/A'}</p>
-                    </div>
-
-                    <div>
-                        <label className="text-sm font-medium text-slate-500">Ngày có hiệu lực</label>
-                        <p className="text-sm text-slate-900">{legalDocument.effectiveDate ? formatDateVN(legalDocument.effectiveDate) : 'N/A'}</p>
-                    </div>
-                </div>
-
-                <div className="space-y-4">
-                    <div>
-                        <label className="text-sm font-medium text-slate-500">Cơ quan ban hành</label>
-                        <p className="text-sm text-slate-900">{legalDocument.issueBody}</p>
-                    </div>
-
-                    <div>
-                        <label className="text-sm font-medium text-slate-500">Trạng thái</label>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${LegalDocumentService.getStatusColor(legalDocument.status) === 'success' ? 'bg-green-100 text-green-800' :
-                            LegalDocumentService.getStatusColor(legalDocument.status) === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                                LegalDocumentService.getStatusColor(legalDocument.status) === 'danger' ? 'bg-red-100 text-red-800' :
-                                    LegalDocumentService.getStatusColor(legalDocument.status) === 'primary' ? 'bg-blue-100 text-blue-800' :
-                                        'bg-gray-100 text-gray-800'
-                            }`}>
-                            {LegalDocumentService.formatDocumentStatus(legalDocument.status)}
-                        </span>
-                    </div>
-
-                    <div>
-                        <label className="text-sm font-medium text-slate-500">Trạng thái hoạt động</label>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${legalDocument.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                            }`}>
-                            {legalDocument.isActive ? 'Hoạt động' : 'Không hoạt động'}
-                        </span>
-                    </div>
-
-                    <div>
-                        <label className="text-sm font-medium text-slate-500">Ngày tạo</label>
-                        <p className="text-sm text-slate-900">
-                            {legalDocument.createdAt ? formatDateVN(legalDocument.createdAt) : 'N/A'}
-                        </p>
-                    </div>
+            {/* Document Type */}
+            <div>
+                <label className="block text-sm font-medium text-foreground">
+                    Loại văn bản
+                </label>
+                <div className="mt-1">
+                    <Badge variant={getDocumentTypeVariant(legalDocument.documentType)}>
+                        {LegalDocumentService.formatDocumentType(legalDocument.documentType)}
+                    </Badge>
                 </div>
             </div>
 
-            {/* Document Name */}
+            {/* Issue Date */}
             <div>
-                <label className="text-sm font-medium text-slate-500">Tên văn bản</label>
-                <p className="text-sm text-slate-900 mt-1">{legalDocument.name}</p>
+                <label className="block text-sm font-medium text-foreground">
+                    Ngày ban hành
+                </label>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {formatDateVN(legalDocument.issueDate)}
+                </p>
+            </div>
+
+            {/* Effective Date */}
+            <div>
+                <label className="block text-sm font-medium text-foreground">
+                    Ngày có hiệu lực
+                </label>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {formatDateVN(legalDocument.effectiveDate)}
+                </p>
+            </div>
+
+            {/* Issue Body */}
+            <div>
+                <label className="block text-sm font-medium text-foreground">
+                    Cơ quan ban hành
+                </label>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {legalDocument.issueBody}
+                </p>
+            </div>
+
+            {/* Status */}
+            <div>
+                <label className="block text-sm font-medium text-foreground">
+                    Trạng thái
+                </label>
+                <div className="mt-1">
+                    <Badge variant={getStatusVariant(legalDocument.status)}>
+                        {LegalDocumentService.formatDocumentStatus(legalDocument.status)}
+                    </Badge>
+                </div>
+            </div>
+
+            {/* Is Active */}
+            <div>
+                <label className="block text-sm font-medium text-foreground">
+                    Trạng thái hoạt động
+                </label>
+                <div className="mt-1">
+                    <Badge variant={legalDocument.isActive ? 'outline' : 'secondary'}>
+                        {legalDocument.isActive ? 'Hoạt động' : 'Không hoạt động'}
+                    </Badge>
+                </div>
+            </div>
+
+            {/* Created At */}
+            <div>
+                <label className="block text-sm font-medium text-foreground">
+                    Ngày tạo
+                </label>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {formatDateVN(legalDocument.createdAt)}
+                </p>
+            </div>
+
+            {/* Document Name */}
+            <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-foreground">
+                    Tên văn bản
+                </label>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {legalDocument.name}
+                </p>
             </div>
 
             {/* File Information */}
             {(legalDocument.fileUrl || legalDocument.fileName) && (
-                <div className="border-t border-slate-200 pt-6">
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-sm font-medium text-slate-500">File đính kèm</label>
-
-                            {/* File URL */}
-                            {legalDocument.fileUrl && (
-                                <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                                    <div className="flex items-center space-x-2">
-                                        <button
-                                            type="button"
-                                            onClick={handleDownloadFile}
-                                            className="flex-shrink-0 p-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
-                                            title="Tải xuống file"
-                                        >
-                                            <Download className="h-5 w-5 text-blue-600 hover:text-blue-800" />
-                                        </button>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm text-slate-900 font-medium">
-                                                {legalDocument.fileName || legalDocument.fileUrl.split('/').pop() || 'Tài liệu đính kèm'}
-                                            </p>
-                                            <p className="text-xs text-slate-500 truncate" title={legalDocument.fileUrl}>
-                                                URL: {legalDocument.fileUrl}
-                                            </p>
-                                            {legalDocument.fileSize && (
-                                                <p className="text-xs text-slate-500">
-                                                    Kích thước: {LegalDocumentService.formatFileSize(legalDocument.fileSize)}
-                                                </p>
-                                            )}
-                                            <p className="text-xs text-green-600 mt-1">
-                                                ✓ File đã được upload thành công
-                                            </p>
-                                        </div>
-                                    </div>
+                <div className="md:col-span-2 border-t border-border pt-4">
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                        File đính kèm
+                    </label>
+                    {legalDocument.fileUrl && (
+                        <div className="mt-2 p-3 bg-muted/50 rounded-lg border border-border">
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={handleDownloadFile}
+                                    title="Tải xuống file"
+                                >
+                                    <Download className="h-4 w-4" />
+                                </Button>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-foreground">
+                                        {legalDocument.fileName || legalDocument.fileUrl.split('/').pop() || 'Tài liệu đính kèm'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground truncate mt-1" title={legalDocument.fileUrl}>
+                                        URL: {legalDocument.fileUrl}
+                                    </p>
+                                    {legalDocument.fileSize && (
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            Kích thước: {LegalDocumentService.formatFileSize(legalDocument.fileSize)}
+                                        </p>
+                                    )}
+                                    <p className="text-xs text-green-600 mt-1">
+                                        ✓ File đã được upload thành công
+                                    </p>
                                 </div>
-                            )}
-
-                            {/* Legacy file info */}
-                            {!legalDocument.fileUrl && legalDocument.fileName && (
-                                <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                                    <div className="flex items-center space-x-2">
-                                        <button
-                                            type="button"
-                                            onClick={handleDownloadFile}
-                                            className="flex-shrink-0 p-1 rounded hover:bg-gray-200 transition-colors cursor-pointer"
-                                            title="Tải xuống file"
-                                        >
-                                            <Download className="h-5 w-5 text-blue-600 hover:text-blue-800" />
-                                        </button>
-                                        <div className="flex-1 min-w-0">
-                                            <span className="text-sm text-slate-900">{legalDocument.fileName}</span>
-                                            {legalDocument.fileSize && (
-                                                <span className="text-xs text-slate-500 ml-2">
-                                                    ({LegalDocumentService.formatFileSize(legalDocument.fileSize)})
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                            </div>
                         </div>
-                    </div>
+                    )}
+                    {!legalDocument.fileUrl && legalDocument.fileName && (
+                        <div className="mt-2 p-3 bg-muted/50 rounded-lg border border-border">
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={handleDownloadFile}
+                                    title="Tải xuống file"
+                                >
+                                    <Download className="h-4 w-4" />
+                                </Button>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm text-foreground">
+                                        {legalDocument.fileName}
+                                    </p>
+                                    {legalDocument.fileSize && (
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            ({LegalDocumentService.formatFileSize(legalDocument.fileSize)})
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
