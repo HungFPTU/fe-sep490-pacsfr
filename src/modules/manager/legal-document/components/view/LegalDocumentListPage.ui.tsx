@@ -116,6 +116,7 @@ export const LegalDocumentListPage: React.FC = () => {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onDownload={handleDownload}
+                isDeleting={deleteMutation.isPending}
             />
 
             {/* Pagination - Updated with new props */}

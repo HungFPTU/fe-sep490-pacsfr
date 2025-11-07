@@ -1,52 +1,52 @@
 'use client';
 
 import React from 'react';
-import { formatDate } from '@/shared/lib/utils';
-import { ServiceGroupDetail } from './ServiceGroupDetail.ui';
-import type { Department } from '../../../types';
+import { formatDate, formatCurrency } from '@/shared/lib/utils';
 import { Badge } from '@/shared/components/ui/badge.ui';
+import type { SubmissionMethod } from '../../../types';
 
 interface Props {
-    department: Department;
+    submissionMethod: SubmissionMethod;
 }
 
-export const DepartmentInfo: React.FC<Props> = ({ department }) => {
+export const SubmissionMethodInfo: React.FC<Props> = ({ submissionMethod }) => {
+    const formatProcessingTime = (time: string | Date): string => {
+        if (!time) return '-';
+        const date = time instanceof Date ? time : new Date(time);
+        if (isNaN(date.getTime())) return '-';
+        return formatDate(date);
+    };
+
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {/* Code */}
+            {/* Submission Method Name */}
             <div>
                 <label className="block text-sm font-medium text-foreground">
-                    Mã phòng ban
+                    Tên phương thức nộp hồ sơ
                 </label>
-                <p className="mt-1 text-sm text-muted-foreground">{department.code}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {submissionMethod.submissionMethodName || '-'}
+                </p>
             </div>
 
-            {/* Name */}
+            {/* Processing Time */}
             <div>
                 <label className="block text-sm font-medium text-foreground">
-                    Tên phòng ban
+                    Thời gian xử lý
                 </label>
-                <p className="mt-1 text-sm text-muted-foreground">{department.name}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {formatProcessingTime(submissionMethod.processingTime)}
+                </p>
             </div>
 
-            {/* Service Group - Fetch full details */}
-            <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-foreground mb-2">
-                    Nhóm dịch vụ
-                </label>
-                {department.serviceGroupName ? (
-                    <ServiceGroupDetail serviceGroupId={department.serviceGroupId} />
-                ) : (
-                    <p className="text-sm text-muted-foreground">-</p>
-                )}
-            </div>
-
-            {/* Level */}
+            {/* Fee */}
             <div>
                 <label className="block text-sm font-medium text-foreground">
-                    Cấp độ
+                    Phí
                 </label>
-                <p className="mt-1 text-sm text-muted-foreground">Cấp {department.levelOrder}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {formatCurrency(submissionMethod.fee)}
+                </p>
             </div>
 
             {/* Status */}
@@ -55,8 +55,8 @@ export const DepartmentInfo: React.FC<Props> = ({ department }) => {
                     Trạng thái
                 </label>
                 <div className="mt-1">
-                    <Badge variant={department.isActive ? 'outline' : 'secondary'}>
-                        {department.isActive ? 'Hoạt động' : 'Ngừng'}
+                    <Badge variant={submissionMethod.isActive ? 'outline' : 'secondary'}>
+                        {submissionMethod.isActive ? 'Đang kích hoạt' : 'Ngừng kích hoạt'}
                     </Badge>
                 </div>
             </div>
@@ -67,18 +67,18 @@ export const DepartmentInfo: React.FC<Props> = ({ department }) => {
                     Ngày tạo
                 </label>
                 <p className="mt-1 text-sm text-muted-foreground">
-                    {formatDate(department.createdAt)}
+                    {submissionMethod.createdAt ? formatDate(submissionMethod.createdAt) : '-'}
                 </p>
             </div>
 
             {/* Modified At */}
-            {department.modifiedAt && (
+            {submissionMethod.modifiedAt && (
                 <div>
                     <label className="block text-sm font-medium text-foreground">
                         Cập nhật lần cuối
                     </label>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        {formatDate(department.modifiedAt)}
+                        {formatDate(submissionMethod.modifiedAt)}
                     </p>
                 </div>
             )}
@@ -88,7 +88,9 @@ export const DepartmentInfo: React.FC<Props> = ({ department }) => {
                 <label className="block text-sm font-medium text-foreground">
                     Mô tả
                 </label>
-                <p className="mt-1 text-sm text-muted-foreground">{department.description || '-'}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {submissionMethod.description || '-'}
+                </p>
             </div>
         </div>
     );

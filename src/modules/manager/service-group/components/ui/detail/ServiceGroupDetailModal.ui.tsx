@@ -1,8 +1,10 @@
 'use client';
 
 import React from 'react';
+import { Briefcase } from 'lucide-react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
-import { ServiceGroupIcon } from './ServiceGroupIcon.ui';
+import { Button } from '@/shared/components/ui/button.ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar.ui';
 import { ServiceGroupInfo } from './ServiceGroupInfo.ui';
 import type { ServiceGroup } from '../../../types';
 
@@ -19,6 +21,10 @@ export const ServiceGroupDetailModal: React.FC<Props> = ({
 }) => {
     if (!serviceGroup) return null;
 
+    const getAvatarFallback = (name: string, code?: string) =>
+        (name?.trim()?.[0]?.toUpperCase() ?? code?.[0]?.toUpperCase() ?? '?') +
+        (name?.trim()?.split(' ')[1]?.[0]?.toUpperCase() ?? code?.[1]?.toUpperCase() ?? '');
+
     return (
         <BaseModal
             open={open}
@@ -29,21 +35,39 @@ export const ServiceGroupDetailModal: React.FC<Props> = ({
             centered
             size="large"
             footer={
-                <button
+                <Button
                     type="button"
                     onClick={onClose}
-                    className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+                    variant="default"
                 >
                     Đóng
-                </button>
+                </Button>
             }
         >
             <div className="space-y-6">
-                <ServiceGroupIcon
-                    iconUrl={serviceGroup.iconUrl}
-                    groupName={serviceGroup.groupName}
-                    groupCode={serviceGroup.groupCode}
-                />
+                <div className="flex items-center gap-4 border-b border-border pb-4">
+                    <Avatar className="h-16 w-16 rounded-lg">
+                        {serviceGroup.iconUrl && (
+                            <AvatarImage src={serviceGroup.iconUrl} alt={serviceGroup.groupName} />
+                        )}
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                            {serviceGroup.iconUrl ? null : (
+                                <>
+                                    <Briefcase className="h-8 w-8" />
+                                    <span className="sr-only">
+                                        {getAvatarFallback(serviceGroup.groupName, serviceGroup.groupCode)}
+                                    </span>
+                                </>
+                            )}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <h3 className="text-lg font-semibold text-foreground">
+                            {serviceGroup.groupName}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">Mã: {serviceGroup.groupCode}</p>
+                    </div>
+                </div>
                 <ServiceGroupInfo serviceGroup={serviceGroup} />
             </div>
         </BaseModal>

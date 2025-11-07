@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/shared/components/manager/ui/button';
-import { PlusIcon } from 'lucide-react';
+import { Button } from '@/shared/components/ui/button.ui';
+import { Plus } from 'lucide-react';
 
 interface Props {
     onCreateNew: () => void;
@@ -14,19 +14,20 @@ export const LegalDocumentHeader: React.FC<Props> = ({
     totalCount,
 }) => {
     return (
-        <div className="flex items-center justify-between py-4">
+        <div className="mb-6 flex items-center justify-between">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900">Quản lý văn bản pháp luật</h1>
-                <p className="text-sm text-slate-500 mt-1">
+                <h1 className="text-2xl font-bold text-foreground">Quản lý văn bản pháp luật</h1>
+                <p className="mt-1 text-sm text-muted-foreground">
                     Tổng cộng {totalCount} văn bản pháp luật
                 </p>
             </div>
 
             <Button
                 onClick={onCreateNew}
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
+                size="default"
+                className="whitespace-nowrap"
             >
-                <PlusIcon className="h-4 w-4" />
+                <Plus className="h-4 w-4" />
                 Tạo văn bản mới
             </Button>
         </div>

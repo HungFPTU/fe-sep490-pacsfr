@@ -22,15 +22,28 @@ export function formatCurrency(amount: number): string {
 /**
  * Format date for Vietnamese locale
  */
-export function formatDate(date: Date | string): string {
+export function formatDate(
+    date: Date | string,
+    options: Intl.DateTimeFormatOptions = {}
+): string {
     const dateObj = typeof date === "string" ? new Date(date) : date;
-    return new Intl.DateTimeFormat("vi-VN", {
+
+    if (Number.isNaN(dateObj.getTime())) {
+        return "-";
+    }
+
+    const formatter = new Intl.DateTimeFormat("vi-VN", {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
         hour: "2-digit",
         minute: "2-digit",
-    }).format(dateObj);
+        hour12: false,
+        timeZone: "Asia/Ho_Chi_Minh",
+        ...options,
+    });
+
+    return formatter.format(dateObj);
 }
 
 /**

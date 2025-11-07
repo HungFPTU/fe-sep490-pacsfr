@@ -2,97 +2,90 @@
 
 import React from 'react';
 import { formatDate } from '@/shared/lib/utils';
+import { Badge } from '@/shared/components/ui/badge.ui';
 import type { DocsType } from '../../../types';
 
 interface Props {
     docsType: DocsType;
 }
 
-export const DocsTypeInfo: React.FC<Props> = ({ docsType }) => {
-    const formatFileSize = (mb: number): string => {
-        return `${mb} MB`;
-    };
+const formatFileSize = (mb: number): string => `${mb} MB`;
 
+export const DocsTypeInfo: React.FC<Props> = ({ docsType }) => {
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* Doc Type Code */}
             <div>
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Mã loại văn bản
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{docsType.docTypeCode}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{docsType.docTypeCode}</p>
             </div>
 
             {/* Doc Type Name */}
             <div>
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Tên loại văn bản
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{docsType.docTypeName}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{docsType.docTypeName}</p>
             </div>
 
             {/* Group Name */}
             <div>
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Nhóm hồ sơ
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{docsType.groupName || '-'}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{docsType.groupName || '-'}</p>
             </div>
 
             {/* File Format */}
             <div>
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Định dạng file
                 </label>
-                <span className="mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800">
-                    {docsType.fileFormat}
-                </span>
+                <div className="mt-1">
+                    <Badge variant="outline">{docsType.fileFormat}</Badge>
+                </div>
             </div>
 
             {/* Max File Size */}
             <div>
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Kích thước file tối đa
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{formatFileSize(docsType.maxFileSize)}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{formatFileSize(docsType.maxFileSize)}</p>
             </div>
 
             {/* Is Required */}
             <div>
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Bắt buộc
                 </label>
-                <span
-                    className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${docsType.isRequired
-                            ? 'bg-orange-100 text-orange-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                >
-                    {docsType.isRequired ? 'Bắt buộc' : 'Không bắt buộc'}
-                </span>
+                <div className="mt-1">
+                    <Badge variant={docsType.isRequired ? 'outline' : 'secondary'}>
+                        {docsType.isRequired ? 'Bắt buộc' : 'Không bắt buộc'}
+                    </Badge>
+                </div>
             </div>
 
             {/* Status */}
             <div>
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Trạng thái
                 </label>
-                <span
-                    className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${docsType.isActive
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                >
-                    {docsType.isActive ? 'Hoạt động' : 'Ngừng hoạt động'}
-                </span>
+                <div className="mt-1">
+                    <Badge variant={docsType.isActive ? 'outline' : 'secondary'}>
+                        {docsType.isActive ? 'Hoạt động' : 'Ngừng'}
+                    </Badge>
+                </div>
             </div>
 
             {/* Created At */}
             <div>
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Ngày tạo
                 </label>
-                <p className="mt-1 text-sm text-slate-900">
+                <p className="mt-1 text-sm text-muted-foreground">
                     {formatDate(docsType.createdAt)}
                 </p>
             </div>
@@ -100,10 +93,10 @@ export const DocsTypeInfo: React.FC<Props> = ({ docsType }) => {
             {/* Modified At */}
             {docsType.modifiedAt && (
                 <div>
-                    <label className="block text-sm font-medium text-slate-700">
+                    <label className="block text-sm font-medium text-foreground">
                         Cập nhật lần cuối
                     </label>
-                    <p className="mt-1 text-sm text-slate-900">
+                    <p className="mt-1 text-sm text-muted-foreground">
                         {formatDate(docsType.modifiedAt)}
                     </p>
                 </div>
@@ -111,12 +104,11 @@ export const DocsTypeInfo: React.FC<Props> = ({ docsType }) => {
 
             {/* Description */}
             <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Mô tả
                 </label>
-                <p className="mt-1 text-sm text-slate-900">{docsType.description || '-'}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{docsType.description || '-'}</p>
             </div>
         </div>
     );
 };
-

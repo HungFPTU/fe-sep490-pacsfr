@@ -2,15 +2,13 @@
 
 import React from 'react';
 import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
     Tooltip,
 } from '@heroui/react';
+import { Button } from '@/shared/components/ui/button.ui';
+import { TableRow, TableCell } from '@/shared/components/manager/ui/table';
+import { cn } from '@/shared/lib/utils';
 import { Trash2, Eye, UserPlus, Calendar, Clock } from 'lucide-react';
+import { Badge } from '@/shared/components/ui/badge.ui';
 import { Staff } from '../../../types';
 import { formatDateVN } from '@core/utils/date';
 import {
@@ -18,7 +16,8 @@ import {
     getRoleTypeLabel,
     getActionButtonColors,
     getTableConfig,
-    getTableColumns
+    getTableColumns,
+    getRoleTypeColor
 } from '../../../utils';
 import { getBadgeStyle, getRoleTypeStyle, getStatusStyle } from '../../../utils';
 import { AssignWorkShiftModal, StaffWorkShiftAssignmentsModal } from '../modal';
@@ -76,13 +75,6 @@ export function StaffTable({
             case 'fullName':
                 return <span className="font-medium">{staff.fullName}</span>;
 
-            // case 'orgUnitName':
-            //     return (
-            //         <span className="text-sm text-gray-700">
-            //             {formatOrgUnitName(staff.orgUnitName)}
-            //         </span>
-            //     );
-
             case 'email':
                 return <span className="text-sm text-gray-600">{staff.email}</span>;
 
@@ -94,16 +86,16 @@ export function StaffTable({
 
             case 'roleType':
                 return (
-                    <span className={`${getBadgeStyle()} ${getRoleTypeStyle(staff.roleType)}`}>
+                    <Badge variant="outline" className={getRoleTypeStyle(staff.roleType)}>
                         {getRoleTypeLabel(staff.roleType)}
-                    </span>
+                    </Badge>
                 );
 
             case 'status':
                 return (
-                    <span className={`${getBadgeStyle()} ${getStatusStyle(staff.isActive)}`}>
+                    <Badge variant="outline" className={getStatusStyle(staff.isActive)}>
                         {getStatusLabel(staff.isActive)}
-                    </span>
+                    </Badge>
                 );
 
             case 'createdAt':
@@ -113,48 +105,57 @@ export function StaffTable({
                 return (
                     <div className="flex items-center gap-1">
                         <Tooltip content="Xem chi tiết">
-                            <button
+                            <Button
+                                variant="outline"
+                                size="icon"
                                 onClick={() => onView(staff)}
-                                className={`p-2 rounded-lg transition-colors ${actionColors.view}`}
+                            // className={`p-2 rounded-lg transition-colors ${actionColors.view}`}
                             >
-                                <Eye className="w-4 h-4" />
-                            </button>
+                                <Eye className="h-4 w-4" />
+                            </Button>
                         </Tooltip>
 
                         <Tooltip content="Gán phòng ban">
-                            <button
+                            <Button
+                                variant="outline"
+                                size="icon"
                                 onClick={() => onAssignDepartment(staff)}
-                                className={`p-2 rounded-lg transition-colors ${actionColors.assignDepartment}`}
                             >
                                 <UserPlus className="w-4 h-4" />
-                            </button>
+                            </Button>
                         </Tooltip>
 
                         <Tooltip content="Gán ca làm việc">
-                            <button
+                            <Button
+                                variant="outline"
+                                size="icon"
                                 onClick={() => handleAssignWorkShift(staff)}
-                                className={`p-2 rounded-lg transition-colors ${actionColors.assignWorkShift}`}
+                            // className={`p-2 rounded-lg transition-colors ${actionColors.assignWorkShift}`}
                             >
                                 <Calendar className="w-4 h-4" />
-                            </button>
+                            </Button>
                         </Tooltip>
 
                         <Tooltip content="Xem ca làm việc">
-                            <button
+                            <Button
+                                variant="outline"
+                                size="icon"
                                 onClick={() => handleViewWorkShifts(staff)}
-                                className={`p-2 rounded-lg transition-colors ${actionColors.view}`}
+                            //className={`p-2 rounded-lg transition-colors ${actionColors.view}`}
                             >
                                 <Clock className="w-4 h-4" />
-                            </button>
+                            </Button>
                         </Tooltip>
 
                         <Tooltip content="Xóa">
-                            <button
+                            <Button
+                                variant="outline"
+                                size="icon"
                                 onClick={() => onDelete(staff)}
-                                className={`p-2 rounded-lg transition-colors ${actionColors.delete}`}
+                                className="text-destructive hover:text-destructive"
                             >
                                 <Trash2 className="w-4 h-4" />
-                            </button>
+                            </Button>
                         </Tooltip>
                     </div>
                 );
@@ -168,29 +169,45 @@ export function StaffTable({
 
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <Table
-                aria-label={tableConfig.ariaLabel}
-                classNames={{
-                    wrapper: 'shadow-none',
-                    th: 'bg-gray-50 text-gray-700 font-semibold text-xs',
-                    td: 'text-sm',
-                }}
-            >
-                <TableHeader columns={columns}>
-                    {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-                </TableHeader>
-                <TableBody
-                    items={data}
-                    isLoading={isLoading}
-                    emptyContent={tableConfig.emptyContent}
-                >
-                    {(item) => (
-                        <TableRow key={item.id}>
-                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                        </TableRow>
+            <table className="w-full">
+                <thead>
+                    <tr>
+                        {columns.map((column) => (
+                            <th
+                                key={column.key}
+                                className="bg-gray-50 text-gray-700 font-semibold text-xs py-3 px-4 text-left"
+                            >
+                                {column.label}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {isLoading ? (
+                        <tr>
+                            <td colSpan={columns.length} className="text-center py-6">
+                                Đang tải dữ liệu...
+                            </td>
+                        </tr>
+                    ) : data.length === 0 ? (
+                        <tr>
+                            <td colSpan={columns.length} className="text-center py-6">
+                                {tableConfig.emptyContent}
+                            </td>
+                        </tr>
+                    ) : (
+                        data.map((item) => (
+                            <TableRow key={item.id}>
+                                {columns.map((column) => (
+                                    <TableCell key={column.key as string} className="text-sm py-2 px-4">
+                                        {renderCell(item, column.key)}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                        ))
                     )}
-                </TableBody>
-            </Table>
+                </tbody>
+            </table>
 
             {/* Assign Work Shift Modal */}
             <AssignWorkShiftModal
