@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useComprehensiveReport } from '../../hooks';
+import { convertToISOString } from '@core/utils/date';
 import {
     DashboardHeader,
     DashboardFilter,
@@ -23,8 +24,8 @@ export const DashboardPage: React.FC = () => {
 
     const handleFilter = () => {
         setAppliedFilters({
-            fromDate: fromDate || undefined,
-            toDate: toDate || undefined,
+            fromDate: fromDate ? convertToISOString(fromDate, false) : undefined,
+            toDate: toDate ? convertToISOString(toDate, true) : undefined,
         });
     };
 
