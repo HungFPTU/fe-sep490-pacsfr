@@ -29,6 +29,7 @@ const pathLabels: Record<string, string> = {
     list: 'Phân loại dịch vụ',
     config: 'Cấu hình quy trình phục vụ',
     'phuong-thuc-nop-ho-so': 'Phương thức nộp hồ sơ',
+    'quy-trinh-dich-vu': 'Quy trình dịch vụ',
 
     // Quản lý phòng ban
     'phong-ban': 'Quản lý phòng ban',

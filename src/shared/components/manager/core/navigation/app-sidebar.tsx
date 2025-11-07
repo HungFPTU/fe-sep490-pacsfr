@@ -92,6 +92,10 @@ const data = {
           title: "Phương thức nộp hồ sơ",
           url: "/manager/phuong-thuc-nop-ho-so",
         },
+        {
+          title: "Quy trình dịch vụ",
+          url: "/manager/quy-trinh-dich-vu",
+        },
       ],
     },
     {

@@ -276,6 +276,14 @@ export const API_PATH = {
             PUT: (id: string) => `/Template/${id}`,
             DELETE: (id: string) => `/Template/${id}`,
         },
+        SERVICE_PROCEDURE: {
+            GET_ALL: (keyword: string, serviceId: string, isActive: boolean, page: number, size: number) =>
+                `/ServiceProcedure?keyword=${keyword}&serviceId=${serviceId}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            GET_BY_ID: (id: string) => `/ServiceProcedure/${id}`,
+            POST: '/ServiceProcedure',
+            PUT: (id: string) => `/ServiceProcedure/${id}`,
+            DELETE: (id: string) => `/ServiceProcedure/${id}`,
+        },
         SUBMISSION_METHOD: {
             GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
                 `/SubmissionMethod?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
