@@ -1,9 +1,7 @@
-'use client'
+'use client';
 
-import dynamic from 'next/dynamic';
-
-const DashboardPage = dynamic(() => import('@/modules/manager/dashboard/components/ui/page'), { ssr: false });
+import { DashboardPage } from '@/modules/manager/dashboard';
 
 export default function Page() {
-  return <DashboardPage />;
+    return <DashboardPage />;
 }
