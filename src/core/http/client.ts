@@ -131,12 +131,12 @@ class HttpClient {
         }
     }
 
-    private getBaseUrl(): string {
+    protected getBaseUrl(): string {
         const baseUrl = ENV.API_BASE_URL || "/api";
         return baseUrl;
     }
 
-    private resolveAuthHeader(
+    protected resolveAuthHeader(
         headers: HeadersInit | undefined,
         auth: AuthOptions | undefined
     ): Record<string, string> {
@@ -161,7 +161,7 @@ class HttpClient {
         return { [headerName]: value };
     }
 
-    private async executeRequestInterceptors(config: HttpRequestOptions): Promise<HttpRequestOptions> {
+    protected async executeRequestInterceptors(config: HttpRequestOptions): Promise<HttpRequestOptions> {
         let finalConfig = config;
         for (const interceptor of this.requestInterceptors) {
             finalConfig = await interceptor(finalConfig);
@@ -169,7 +169,7 @@ class HttpClient {
         return finalConfig;
     }
 
-    private async executeResponseInterceptors<T>(response: HttpResponse<T>): Promise<HttpResponse<T>> {
+    protected async executeResponseInterceptors<T>(response: HttpResponse<T>): Promise<HttpResponse<T>> {
         let finalResponse = response;
         for (const interceptor of this.responseInterceptors) {
             finalResponse = await interceptor(finalResponse);
@@ -177,7 +177,7 @@ class HttpClient {
         return finalResponse;
     }
 
-    private async executeErrorInterceptors(error: HttpError): Promise<HttpError> {
+    protected async executeErrorInterceptors(error: HttpError): Promise<HttpError> {
         let finalError = error;
         for (const interceptor of this.errorInterceptors) {
             finalError = await interceptor(finalError);
@@ -340,6 +340,176 @@ class HttpClient {
 
 // Create singleton instance
 export const http = new HttpClient();
+
+// Create HTTP client without loading functionality
+class HttpClientNoLoading extends HttpClient {
+    override async request<TResponse, TBody = unknown>(
+        url: string,
+        method: HttpMethod,
+        options: HttpRequestOptions<TBody> = {}
+    ): Promise<HttpResponse<TResponse>> {
+        // Execute request interceptors
+        const processedOptions = await this.executeRequestInterceptors(options);
+
+        const { body, headers, baseUrl, auth, ...rest } = processedOptions;
+        const resolvedBase = baseUrl ?? this.getBaseUrl();
+
+        try {
+            const authHeader = this.resolveAuthHeader(headers, auth);
+
+            // Handle FormData vs JSON body
+            const isFormData = body instanceof FormData;
+            const fetchHeaders: HeadersInit = {
+                ...(headers || {}),
+                ...authHeader,
+            };
+
+            // Only set Content-Type for non-FormData requests
+            if (!isFormData) {
+                (fetchHeaders as Record<string, string>)["Content-Type"] = "application/json";
+            }
+
+            // Debug logging for FormData
+            if (isFormData) {
+                console.log('[HTTP Client] Sending FormData request to:', `${resolvedBase}${url}`);
+                console.log('[HTTP Client] FormData entries:');
+                for (const [key, value] of (body as FormData).entries()) {
+                    console.log(`  ${key}:`, value);
+                }
+                console.log('[HTTP Client] Headers:', fetchHeaders);
+            }
+
+            const fetchInit: RequestInit = {
+                ...rest,
+                method,
+                headers: fetchHeaders,
+                body: body !== undefined ? (isFormData ? body : JSON.stringify(body)) : undefined,
+            };
+
+            // Remove Content-Type header for FormData to let browser set it with boundary
+            if (isFormData && (fetchHeaders as Record<string, string>)['Content-Type']) {
+                delete (fetchHeaders as Record<string, string>)['Content-Type'];
+            }
+
+            const response = await fetch(`${resolvedBase}${url}`, fetchInit);
+
+            const contentType = response.headers.get("content-type");
+            const isJson = contentType && contentType.includes("application/json");
+
+            let data: TResponse;
+            if (isJson) {
+                const text = await response.text();
+                if (text.trim() === "") {
+                    data = {} as TResponse; // Handle empty JSON responses
+                } else {
+                    try {
+                        data = JSON.parse(text);
+                    } catch {
+                        console.warn("Failed to parse JSON response:", text);
+                        data = text as TResponse;
+                    }
+                }
+            } else {
+                data = (await response.text()) as TResponse;
+            }
+
+            if (!response.ok) {
+                const error: HttpError = {
+                    message: typeof data === "string" ? data : (JSON.stringify(data) || `HTTP ${response.status}`),
+                    status: response.status,
+                    data,
+                };
+
+                const processedError = await this.executeErrorInterceptors(error);
+                throw new Error(processedError.message);
+            }
+
+            const httpResponse: HttpResponse<TResponse> = {
+                data,
+                status: response.status,
+                headers: response.headers,
+            };
+
+            // Execute response interceptors
+            const finalResponse = await this.executeResponseInterceptors(httpResponse);
+            return finalResponse;
+
+        } catch (error) {
+            const httpError: HttpError = {
+                message: error instanceof Error ? error.message : "Unknown error",
+                status: error instanceof Error && 'status' in error ? (error as { status: number }).status : undefined,
+                data: error instanceof Error && 'data' in error ? (error as { data: unknown }).data : undefined,
+            };
+
+            const processedError = await this.executeErrorInterceptors(httpError);
+            throw new Error(processedError.message);
+        }
+    }
+}
+
+// Create singleton instance without loading
+export const httpNoLoading = new HttpClientNoLoading();
+
+// Setup default interceptors for httpNoLoading (same as http)
+httpNoLoading.addRequestInterceptor(async (config) => {
+    // Add request ID for tracking
+    const requestId = Math.random().toString(36).substr(2, 9);
+    console.log(`[HTTP Request ${requestId}]`, config);
+    return {
+        ...config,
+        headers: {
+            ...config.headers,
+            'X-Request-ID': requestId,
+        },
+    };
+});
+
+httpNoLoading.addResponseInterceptor(async (response) => {
+    const requestId = response.headers.get('X-Request-ID');
+    console.log(`[HTTP Response ${requestId}]`, response);
+    return response;
+});
+
+httpNoLoading.addErrorInterceptor(async (error) => {
+    // Only log meaningful error information, skip network errors for mock app
+    const errorInfo = {
+        message: error.message || 'Unknown error',
+        status: error.status || 404,
+        data: error.data || null,
+    };
+
+    // Only log if it's not a network connection error (common in mock apps)
+    if (error.status !== undefined || !error.message.includes('fetch')) {
+        console.error('[HTTP Error]', errorInfo);
+    }
+
+    // Handle common error scenarios
+    if (error.status === 401) {
+        // Unauthorized - logout user and redirect to login
+        console.warn('[HTTP Client] 401 Unauthorized:', error.message);
+
+        if (typeof window !== "undefined") {
+            // Use http client's logout method
+            httpNoLoading.handleLogout('unauthorized');
+        }
+    }
+
+    if (error.status === 403) {
+        // Forbidden - show access denied message
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("access-denied", { detail: error }));
+        }
+    }
+
+    if (error.status && error.status >= 500) {
+        // Server error - show generic error message
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("server-error", { detail: error }));
+        }
+    }
+
+    return error;
+});
 
 // Setup default interceptors
 http.addRequestInterceptor(async (config) => {

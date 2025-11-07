@@ -12,7 +12,7 @@ import { useLegalDocuments, useDeleteLegalDocument, useLegalDocumentFilters } fr
 import type { LegalDocument } from '@modules/manager/legal-document/types';
 
 export const LegalDocumentListPage: React.FC = () => {
-    const { filters, updateFilter, resetFilters } = useLegalDocumentFilters();
+    const { filters, setFilters } = useLegalDocumentFilters();
     const [selectedDocument, setSelectedDocument] = useState<LegalDocument | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -20,7 +20,7 @@ export const LegalDocumentListPage: React.FC = () => {
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [documentToDelete, setDocumentToDelete] = useState<LegalDocument | null>(null);
 
-    const { data: legalDocumentsData, isLoading } = useLegalDocuments(filters);
+    const { data: legalDocumentsData, isLoading, refetch } = useLegalDocuments(filters);
     const deleteMutation = useDeleteLegalDocument();
 
     const legalDocuments = legalDocumentsData?.data?.items?.$values || [];
@@ -85,13 +85,12 @@ export const LegalDocumentListPage: React.FC = () => {
     };
 
     const handlePageChange = (page: number) => {
-        updateFilter('page', page as unknown as string | boolean);
+        setFilters({ ...filters, page });
     };
 
     const handlePageSizeChange = (size: number) => {
-        updateFilter('size', size as unknown as string | boolean);
         // Reset to page 1 when changing page size
-        updateFilter('page', 1 as unknown as string | boolean);
+        setFilters({ ...filters, size, page: 1 });
     };
 
     return (
@@ -105,8 +104,8 @@ export const LegalDocumentListPage: React.FC = () => {
             {/* Filter */}
             <LegalDocumentFilter
                 filters={filters}
-                onFilterChange={updateFilter}
-                onReset={resetFilters}
+                onFilterChange={setFilters}
+                onRefresh={refetch}
             />
 
             {/* Table */}

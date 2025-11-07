@@ -1,134 +1,168 @@
 'use client';
 
-import React from 'react';
-// Removed Input import - using native HTML input
-// Removed unused imports - using native HTML elements
+import React, { useState, useEffect } from 'react';
+import { Search, X } from 'lucide-react';
 import { LegalDocumentService } from '../../../services/legal-document.service';
 import type { LegalDocumentFilters } from '../../../types';
 
 interface Props {
     filters: LegalDocumentFilters;
-    onFilterChange: (field: keyof LegalDocumentFilters, value: string | boolean) => void;
-    onReset: () => void;
+    onFilterChange: (filters: LegalDocumentFilters) => void;
+    onRefresh?: () => void;
 }
 
 export const LegalDocumentFilter: React.FC<Props> = ({
     filters,
     onFilterChange,
-    // onReset,
+    onRefresh,
 }) => {
     const documentTypeOptions = LegalDocumentService.getDocumentTypeOptions();
     const documentStatusOptions = LegalDocumentService.getDocumentStatusOptions();
 
-    const handleKeywordChange = (value: string) => {
-        onFilterChange('keyword', value);
-        onFilterChange('page', 1 as unknown as string | boolean);
+    // Local state for filter inputs (not triggering API)
+    const [localFilters, setLocalFilters] = useState<LegalDocumentFilters>({
+        keyword: filters.keyword || '',
+        documentType: filters.documentType || '',
+        status: filters.status || '',
+        isActive: filters.isActive !== undefined ? filters.isActive : undefined,
+    });
+
+    // Sync local filters when props change (e.g., reset from parent)
+    useEffect(() => {
+        setLocalFilters({
+            keyword: filters.keyword || '',
+            documentType: filters.documentType || '',
+            status: filters.status || '',
+            isActive: filters.isActive !== undefined ? filters.isActive : undefined,
+        });
+    }, [filters]);
+
+    const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setLocalFilters({ ...localFilters, keyword: e.target.value });
     };
 
-    const handleDocumentTypeChange = (value: string) => {
-        onFilterChange('documentType', value);
-        onFilterChange('page', 1 as unknown as string | boolean);
+    const handleDocumentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setLocalFilters({ ...localFilters, documentType: e.target.value });
     };
 
-    const handleStatusChange = (value: string) => {
-        onFilterChange('status', value);
-        onFilterChange('page', 1 as unknown as string | boolean);
+    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setLocalFilters({ ...localFilters, status: e.target.value });
     };
 
-    const handleActiveChange = (value: string) => {
-        const isActive = value === 'true' ? true : value === 'false' ? false : undefined;
-        onFilterChange('isActive', isActive as unknown as string | boolean);
-        onFilterChange('page', 1 as unknown as string | boolean);
+    const handleActiveChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setLocalFilters({
+            ...localFilters,
+            isActive: value === '' ? undefined : value === 'true',
+        });
     };
 
-    // Removed hasActiveFilters - not needed with simple reset button
+    const handleApplyFilters = () => {
+        // Apply filters - trigger API call with page reset to 1
+        onFilterChange({
+            ...localFilters,
+            page: 1,
+            size: filters.size || 10,
+        });
+        // Refresh data sau khi apply filters
+        if (onRefresh) {
+            onRefresh();
+        }
+    };
+
+    const handleResetFilters = () => {
+        const resetFilters: LegalDocumentFilters = {
+            keyword: '',
+            documentType: '',
+            status: '',
+            isActive: undefined,
+            page: 1,
+            size: filters.size || 10,
+        };
+        setLocalFilters({
+            keyword: '',
+            documentType: '',
+            status: '',
+            isActive: undefined,
+        });
+        onFilterChange(resetFilters);
+    };
 
     return (
-        <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
+            <div className="flex flex-wrap items-center gap-3">
                 {/* Keyword Search */}
-                <div>
-                    <label className="block text-sm font-medium text-slate-700">
-                        Tìm kiếm
-                    </label>
+                <div className="relative flex-1 min-w-[200px]">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                         type="text"
-                        value={filters.keyword || ''}
-                        onChange={(e) => handleKeywordChange(e.target.value)}
                         placeholder="Tìm theo số văn bản, tên..."
-                        className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        value={localFilters.keyword || ''}
+                        onChange={handleKeywordChange}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleApplyFilters();
+                            }
+                        }}
+                        className="w-full h-10 pl-10 pr-4 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                 </div>
 
                 {/* Document Type Filter */}
-                <div>
-                    <label className="block text-sm font-medium text-slate-700">
-                        Loại văn bản
-                    </label>
-                    <select
-                        value={filters.documentType || ''}
-                        onChange={(e) => handleDocumentTypeChange(e.target.value)}
-                        className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    >
-                        <option value="">Tất cả loại văn bản</option>
-                        {documentTypeOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <select
+                    value={localFilters.documentType || ''}
+                    onChange={handleDocumentTypeChange}
+                    className="h-10 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[150px]"
+                >
+                    <option value="">Tất cả loại văn bản</option>
+                    {documentTypeOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
 
                 {/* Status Filter */}
-                <div>
-                    <label className="block text-sm font-medium text-slate-700">
-                        Trạng thái
-                    </label>
-                    <select
-                        value={filters.status || ''}
-                        onChange={(e) => handleStatusChange(e.target.value)}
-                        className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    >
-                        <option value="">Tất cả trạng thái</option>
-                        {documentStatusOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <select
+                    value={localFilters.status || ''}
+                    onChange={handleStatusChange}
+                    className="h-10 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[150px]"
+                >
+                    <option value="">Tất cả trạng thái</option>
+                    {documentStatusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
 
                 {/* Active Status Filter */}
-                <div>
-                    <label className="block text-sm font-medium text-slate-700">
-                        Trạng thái hoạt động
-                    </label>
-                    <select
-                        value={filters.isActive !== undefined ? filters.isActive.toString() : ''}
-                        onChange={(e) => handleActiveChange(e.target.value)}
-                        className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    >
-                        <option value="">Tất cả</option>
-                        <option value="true">Hoạt động</option>
-                        <option value="false">Không hoạt động</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Reset Button */}
-            {/* <div className="flex items-end">
-                <button
-                    onClick={onReset}
-                    className="w-full rounded-lg border border-red-200 bg-gradient-to-r from-red-50 to-red-100 px-4 py-2.5 text-sm font-semibold text-red-700 shadow-sm hover:from-red-100 hover:to-red-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 ease-in-out"
+                <select
+                    value={localFilters.isActive === undefined ? '' : String(localFilters.isActive)}
+                    onChange={handleActiveChange}
+                    className="h-10 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[150px]"
                 >
-                    <span className="flex items-center justify-center gap-2">
-                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Đặt lại bộ lọc
-                    </span>
+                    <option value="">Tất cả</option>
+                    <option value="true">Hoạt động</option>
+                    <option value="false">Không hoạt động</option>
+                </select>
+
+                {/* Action Buttons */}
+                <button
+                    onClick={handleApplyFilters}
+                    className="px-4 py-2 h-10 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
+                >
+                    <Search className="w-4 h-4" />
+                    Tìm kiếm
                 </button>
-            </div> */}
+                <button
+                    onClick={handleResetFilters}
+                    className="px-4 py-2 h-10 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
+                >
+                    <X className="w-4 h-4" />
+                    Đặt lại
+                </button>
+            </div>
         </div>
     );
 };

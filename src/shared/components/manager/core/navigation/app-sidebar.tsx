@@ -88,6 +88,10 @@ const data = {
           title: "Quy tắc xếp hàng",
           url: "/manager/service/queue",
         },
+        {
+          title: "Phương thức nộp hồ sơ",
+          url: "/manager/phuong-thuc-nop-ho-so",
+        },
       ],
     },
     {
@@ -164,6 +168,18 @@ const data = {
         {
           title: "Danh sách văn bản",
           url: "/manager/van-ban-phap-luat",
+        },
+        {
+          title: "Nhóm văn bản",
+          url: "/manager/van-ban-phap-luat/nhom-van-ban",
+        },
+        {
+          title: "Loại văn bản",
+          url: "/manager/van-ban-phap-luat/loai-van-ban",
+        },
+        {
+          title: "Mẫu văn bản",
+          url: "/manager/van-ban-phap-luat/mau-van-ban",
         },
         {
           title: "Phân loại văn bản",

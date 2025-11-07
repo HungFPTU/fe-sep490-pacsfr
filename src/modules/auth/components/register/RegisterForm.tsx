@@ -134,15 +134,21 @@ export function RegisterForm({ onSubmit, isLoading = false }: RegisterFormProps)
             } catch (error) {
                 console.error("[RegisterForm] Registration error:", error);
                 if (error instanceof Error) {
+                    // Extract error message from exception (already extracted by service/http client)
+                    const errorMessage = error.message;
+
                     // Handle specific registration errors
-                    if (error.message.includes("409") || error.message.includes("đã tồn tại")) {
+                    if (errorMessage.includes("409") || errorMessage.includes("đã tồn tại")) {
                         setErrors({
                             username: "Tên đăng nhập hoặc email đã được sử dụng",
                             email: "Email đã được sử dụng"
                         });
                     } else {
-                        setErrors({ general: error.message });
+                        // Display the exact error message from API
+                        setErrors({ general: errorMessage });
                     }
+                } else {
+                    setErrors({ general: "Đã xảy ra lỗi khi đăng ký" });
                 }
             }
         }

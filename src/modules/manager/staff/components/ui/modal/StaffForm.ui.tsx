@@ -1,20 +1,23 @@
 'use client';
 
 import React from 'react';
-import { ObjectValue } from '@tanstack/react-form';
-import { InputField, SelectField, CheckboxField } from '@/shared/components/layout/manager/form/BaseForm';
 import { StaffFormValues } from '../../../hooks/useStaffForm';
 import { ROLE_TYPE_OPTIONS, STAFF_POSITION_OPTIONS } from '../../../constants';
 import { useOrgUnits } from '@/modules/manager/org-unit/hooks';
 import { getValuesPage, RestPaged } from '@/types/rest';
 import { FormApiOf } from '@/types/types';
 import { OrgUnit } from '@/modules/manager/org-unit';
+import { validateOrgUnit, validateStaffCode, validateFullName, validateUsername, validatePassword, validateEmail, validatePhone, validatePosition, validateRoleType, validateSpecialization } from '../../../utils';
 
 interface StaffFormProps {
     form: FormApiOf<StaffFormValues>;
     isLoading: boolean;
     isEdit: boolean;
 }
+
+
+
+// ==================== Component ====================
 
 export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
     // Fetch org units for dropdown
@@ -32,23 +35,37 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
             <form.Field
                 name="orgUnitId"
                 validators={{
-                    onChange: ({ value }: { value: string }) =>
-                        !value || !value.trim() ? 'Cơ quan là bắt buộc' : undefined,
-                    onBlur: ({ value }: { value: string }) =>
-                        !value || !value.trim() ? 'Cơ quan là bắt buộc' : undefined,
+                    onBlur: ({ value }: { value: string }) => validateOrgUnit(value),
                 }}
             >
-                {() => (
-                    <SelectField<StaffFormValues>
-                        form={form}
-                        name="orgUnitId"
-                        label="Cơ quan"
-                        required
-                        options={orgUnitOptions}
-                        placeholder="Vui lòng chọn cơ quan"
-                        disabled={isLoading}
-                    />
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="orgUnitId" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Cơ quan
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <select
+                                id="orgUnitId"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={(field.state.value as string) || ''}
+                                onChange={(e) => field.handleChange(e.target.value as never)}
+                                onBlur={field.handleBlur}
+                                disabled={isLoading}
+                            >
+                                <option value="">Vui lòng chọn cơ quan</option>
+                                {orgUnitOptions.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
             {/* Staff Code & Full Name */}
@@ -56,43 +73,63 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="staffCode"
                     validators={{
-                        onChange: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Mã nhân viên là bắt buộc' : undefined,
-                        onBlur: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Mã nhân viên là bắt buộc' : undefined,
+                        onBlur: ({ value }: { value: string }) => validateStaffCode(value),
                     }}
                 >
-                    {() => (
-                        <InputField<StaffFormValues>
-                            form={form}
-                            name="staffCode"
-                            label="Mã nhân viên"
-                            required
-                            placeholder="Vui lòng nhập mã nhân viên"
-                            disabled={isLoading || isEdit}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="staffCode" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Mã nhân viên
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="staffCode"
+                                    type="text"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isEdit || isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    placeholder="Vui lòng nhập mã nhân viên"
+                                    disabled={isEdit || isLoading}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
 
                 <form.Field
                     name="fullName"
                     validators={{
-                        onChange: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Họ tên là bắt buộc' : undefined,
-                        onBlur: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Họ tên là bắt buộc' : undefined,
+                        onBlur: ({ value }: { value: string }) => validateFullName(value),
                     }}
                 >
-                    {() => (
-                        <InputField<StaffFormValues>
-                            form={form}
-                            name="fullName"
-                            label="Họ và tên"
-                            required
-                            placeholder="Vui lòng nhập họ và tên"
-                            disabled={isLoading}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="fullName" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Họ và tên
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="fullName"
+                                    type="text"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    placeholder="Vui lòng nhập họ và tên"
+                                    disabled={isLoading}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
             </div>
 
@@ -102,44 +139,63 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                     <form.Field
                         name="username"
                         validators={{
-                            onChange: ({ value }: { value: string }) =>
-                                !value || !value.trim() ? 'Tên đăng nhập là bắt buộc' : undefined,
-                            onBlur: ({ value }: { value: string }) =>
-                                !value || !value.trim() ? 'Tên đăng nhập là bắt buộc' : undefined,
+                            onBlur: ({ value }: { value: string }) => validateUsername(value),
                         }}
                     >
-                        {() => (
-                            <InputField<StaffFormValues>
-                                form={form}
-                                name="username"
-                                label="Tên đăng nhập"
-                                required
-                                placeholder="Vui lòng nhập tên đăng nhập"
-                                disabled={isLoading}
-                            />
-                        )}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {(field: any) => {
+                            const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                            return (
+                                <div className="w-full">
+                                    <label htmlFor="username" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                        Tên đăng nhập
+                                        <span className="ml-0.5 text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        id="username"
+                                        type="text"
+                                        className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                        value={(field.state.value as string) || ''}
+                                        onChange={(e) => field.handleChange(e.target.value as never)}
+                                        onBlur={field.handleBlur}
+                                        placeholder="Vui lòng nhập tên đăng nhập"
+                                        disabled={isLoading}
+                                    />
+                                    {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                                </div>
+                            );
+                        }}
                     </form.Field>
 
                     <form.Field
                         name="password"
                         validators={{
-                            onChange: ({ value }: { value: ObjectValue<never, StaffFormValues, "password"> }) =>
-                                !value || !value.trim() ? 'Mật khẩu là bắt buộc' : undefined,
-                            onBlur: ({ value }: { value: ObjectValue<never, StaffFormValues, "password"> }) =>
-                                !value || !value.trim() ? 'Mật khẩu là bắt buộc' : undefined,
+                            onBlur: ({ value }: { value: string | undefined }) => validatePassword(value),
                         }}
                     >
-                        {() => (
-                            <InputField<StaffFormValues>
-                                form={form}
-                                name="password"
-                                label="Mật khẩu"
-                                required
-                                type="password"
-                                placeholder="Vui lòng nhập mật khẩu"
-                                disabled={isLoading}
-                            />
-                        )}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {(field: any) => {
+                            const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                            return (
+                                <div className="w-full">
+                                    <label htmlFor="password" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                        Mật khẩu
+                                        <span className="ml-0.5 text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                        value={(field.state.value as string) || ''}
+                                        onChange={(e) => field.handleChange(e.target.value as never)}
+                                        onBlur={field.handleBlur}
+                                        placeholder="Vui lòng nhập mật khẩu"
+                                        disabled={isLoading}
+                                    />
+                                    {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                                </div>
+                            );
+                        }}
                     </form.Field>
                 </div>
             )}
@@ -149,56 +205,68 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="email"
                     validators={{
-                        onChange: ({ value }: { value: string }) => {
-                            if (!value || !value.trim()) return 'Email là bắt buộc';
-                            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Email không hợp lệ';
-                            return undefined;
-                        },
-                        onBlur: ({ value }: { value: string }) => {
-                            if (!value || !value.trim()) return 'Email là bắt buộc';
-                            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Email không hợp lệ';
-                            return undefined;
-                        },
+                        onBlur: ({ value }: { value: string }) => validateEmail(value),
                     }}
                 >
-                    {() => (
-                        <InputField<StaffFormValues>
-                            form={form}
-                            name="email"
-                            label="Email"
-                            required
-                            type="email"
-                            placeholder="Vui lòng nhập email"
-                            disabled={isLoading}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="email" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Email
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    placeholder="Vui lòng nhập email"
+                                    disabled={isLoading}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
 
                 <form.Field
                     name="phone"
                     validators={{
-                        onChange: ({ value }: { value: string }) => {
-                            if (!value || !value.trim()) return 'Số điện thoại là bắt buộc';
-                            if (!/^[0-9]{10,11}$/.test(value)) return 'Số điện thoại không hợp lệ';
-                            return undefined;
-                        },
-                        onBlur: ({ value }: { value: string }) => {
-                            if (!value || !value.trim()) return 'Số điện thoại là bắt buộc';
-                            if (!/^[0-9]{10,11}$/.test(value)) return 'Số điện thoại không hợp lệ';
-                            return undefined;
-                        },
+                        onBlur: ({ value }: { value: string }) => validatePhone(value),
                     }}
                 >
-                    {() => (
-                        <InputField<StaffFormValues>
-                            form={form}
-                            name="phone"
-                            label="Số điện thoại"
-                            required
-                            placeholder="Vui lòng nhập số điện thoại (10-11 số)"
-                            disabled={isLoading}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="phone" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Số điện thoại
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="phone"
+                                    type="tel"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => {
+                                        // Only allow numbers
+                                        const value = e.target.value.replace(/[^0-9]/g, '');
+                                        field.handleChange(value as never);
+                                    }}
+                                    onBlur={field.handleBlur}
+                                    placeholder="Vui lòng nhập số điện thoại (10-11 số)"
+                                    maxLength={11}
+                                    disabled={isLoading}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
             </div>
 
@@ -207,75 +275,128 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                 <form.Field
                     name="position"
                     validators={{
-                        onChange: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Chức vụ là bắt buộc' : undefined,
-                        onBlur: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Chức vụ là bắt buộc' : undefined,
+                        onBlur: ({ value }: { value: string }) => validatePosition(value),
                     }}
                 >
-                    {() => (
-                        <SelectField<StaffFormValues>
-                            form={form}
-                            name="position"
-                            label="Chức vụ"
-                            required
-                            options={STAFF_POSITION_OPTIONS}
-                            placeholder="Vui lòng chọn chức vụ"
-                            disabled={isLoading}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="position" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Chức vụ
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <select
+                                    id="position"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    disabled={isLoading}
+                                >
+                                    <option value="">Vui lòng chọn chức vụ</option>
+                                    {STAFF_POSITION_OPTIONS.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
 
                 <form.Field
                     name="roleType"
                     validators={{
-                        onChange: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Vai trò là bắt buộc' : undefined,
-                        onBlur: ({ value }: { value: string }) =>
-                            !value || !value.trim() ? 'Vai trò là bắt buộc' : undefined,
+                        onBlur: ({ value }: { value: string }) => validateRoleType(value),
                     }}
                 >
-                    {() => (
-                        <SelectField<StaffFormValues>
-                            form={form}
-                            name="roleType"
-                            label="Vai trò"
-                            required
-                            options={ROLE_TYPE_OPTIONS}
-                            placeholder="Vui lòng chọn vai trò"
-                            disabled={isLoading}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="roleType" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Vai trò
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <select
+                                    id="roleType"
+                                    className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    disabled={isLoading}
+                                >
+                                    <option value="">Vui lòng chọn vai trò</option>
+                                    {ROLE_TYPE_OPTIONS.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
             </div>
 
             {/* Specialization */}
-            <form.Field name="specialization">
-                {() => (
-                    <InputField<StaffFormValues>
-                        form={form}
-                        name="specialization"
-                        label="Chuyên môn"
-                        placeholder="Vui lòng nhập chuyên môn"
-                        disabled={isLoading}
-                    />
-                )}
+            <form.Field
+                name="specialization"
+                validators={{
+                    onBlur: ({ value }: { value: string | undefined }) => validateSpecialization(value),
+                }}
+            >
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="specialization" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Chuyên môn
+                            </label>
+                            <input
+                                id="specialization"
+                                type="text"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={(field.state.value as string) || ''}
+                                onChange={(e) => field.handleChange(e.target.value as never)}
+                                onBlur={field.handleBlur}
+                                placeholder="Vui lòng nhập chuyên môn"
+                                disabled={isLoading}
+                            />
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
             {/* Is Active (only for edit) */}
             {isEdit && (
                 <form.Field name="isActive">
-                    {() => (
-                        <CheckboxField<StaffFormValues>
-                            form={form}
-                            name="isActive"
-                            label="Trạng thái hoạt động"
-                            disabled={isLoading}
-                        />
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => (
+                        <div className="flex items-center space-x-2">
+                            <input
+                                id="isActive"
+                                type="checkbox"
+                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                checked={field.state.value ?? false}
+                                onChange={(e) => field.handleChange(e.target.checked as never)}
+                                disabled={isLoading}
+                            />
+                            <label htmlFor="isActive" className="text-sm font-medium text-slate-700">
+                                Trạng thái hoạt động
+                            </label>
+                        </div>
                     )}
                 </form.Field>
             )}
         </div>
     );
 }
-

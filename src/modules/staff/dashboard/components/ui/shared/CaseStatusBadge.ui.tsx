@@ -20,8 +20,8 @@ const statusConfigs: Record<string, StatusConfig> = {
     icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
   },
   'Đang xử lý': {
-    bg: 'bg-yellow-100',
-    text: 'text-yellow-800',
+    bg: 'bg-indigo-100',
+    text: 'text-indigo-800',
     icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z',
   },
   'Hoàn thành': {
@@ -30,8 +30,8 @@ const statusConfigs: Record<string, StatusConfig> = {
     icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
   },
   'Từ chối': {
-    bg: 'bg-red-100',
-    text: 'text-red-800',
+    bg: 'bg-gray-100',
+    text: 'text-gray-800',
     icon: 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z',
   },
   'Tạm dừng': {

@@ -1,22 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { InputField, TextareaField, SelectField } from '@/shared/components/layout/manager/form/BaseForm';
+import React from 'react';
 import { ToggleSwitch } from '@/shared/components/manager/ui';
-import { FormApiOf } from '@/types/types';
 import { DEPARTMENT_LEVELS } from '../../../enums';
 import { useServiceGroups } from '@/modules/manager/service-group/hooks';
 import { getValuesPage, RestPaged } from '@/types/rest';
 import { ServiceGroup } from '@/modules/manager/service-group/types';
-
-type FormValues = {
-    serviceGroupId: string;
-    code: string;
-    name: string;
-    description: string;
-    levelOrder: number;
-    isActive: boolean;
-};
+import {
+    validateServiceGroupId,
+    validateCode,
+    validateName,
+    validateDescription,
+    validateLevelOrder,
+} from '../../../utils';
 
 interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,20 +21,7 @@ interface Props {
     isEdit: boolean;
 }
 
-export const DepartmentForm: React.FC<Props> = ({ form, isEdit }) => {
-    // Local state for toggle switch to ensure reactivity
-    const [isActive, setIsActive] = useState(form.getFieldValue('isActive') || false);
-
-    // Sync local state with form values
-    useEffect(() => {
-        setIsActive(form.getFieldValue('isActive') || false);
-    }, [form]);
-
-    // Handle toggle change
-    const handleActiveChange = (checked: boolean) => {
-        setIsActive(checked);
-        form.setFieldValue('isActive', checked);
-    };
+export const DepartmentForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
     // Fetch service groups for dropdown
     const { data: serviceGroupsData } = useServiceGroups({
         keyword: '',
@@ -57,101 +40,193 @@ export const DepartmentForm: React.FC<Props> = ({ form, isEdit }) => {
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {/* Service Group */}
             <form.Field
                 name="serviceGroupId"
                 validators={{
-                    onChange: ({ value }: { value: string }) =>
-                        !value || !value.trim() ? 'Nhóm dịch vụ là bắt buộc' : undefined,
+                    onBlur: ({ value }: { value: string }) => validateServiceGroupId(value),
                 }}
             >
-                {() => (
-                    <SelectField<FormValues>
-                        form={form as FormApiOf<FormValues>}
-                        name="serviceGroupId"
-                        label="Nhóm dịch vụ"
-                        required
-                        options={serviceGroupOptions}
-                        placeholder="Chọn nhóm dịch vụ"
-                    />
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="serviceGroupId" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Nhóm dịch vụ
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <select
+                                id="serviceGroupId"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={(field.state.value as string) || ''}
+                                onChange={(e) => field.handleChange(e.target.value as never)}
+                                onBlur={field.handleBlur}
+                                disabled={isLoading}
+                            >
+                                <option value="">Chọn nhóm dịch vụ</option>
+                                {serviceGroupOptions.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
+            {/* Code */}
             <form.Field
                 name="code"
                 validators={{
-                    onChange: ({ value }: { value: string }) =>
-                        !value || !value.trim() ? 'Mã phòng ban là bắt buộc' : undefined,
+                    onBlur: ({ value }: { value: string }) => validateCode(value),
                 }}
             >
-                {() => (
-                    <InputField<FormValues>
-                        form={form as FormApiOf<FormValues>}
-                        name="code"
-                        label="Mã phòng ban"
-                        required
-                        placeholder="Nhập mã phòng ban"
-                        disabled={isEdit}
-                    />
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="code" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Mã phòng ban
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <input
+                                id="code"
+                                type="text"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isEdit || isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={(field.state.value as string) || ''}
+                                onChange={(e) => field.handleChange(e.target.value as never)}
+                                onBlur={field.handleBlur}
+                                placeholder="Nhập mã phòng ban"
+                                disabled={isEdit || isLoading}
+                            />
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
+            {/* Name */}
             <form.Field
                 name="name"
                 validators={{
-                    onChange: ({ value }: { value: string }) =>
-                        !value || !value.trim() ? 'Tên phòng ban là bắt buộc' : undefined,
+                    onBlur: ({ value }: { value: string }) => validateName(value),
                 }}
             >
-                {() => (
-                    <InputField<FormValues>
-                        form={form as FormApiOf<FormValues>}
-                        name="name"
-                        label="Tên phòng ban"
-                        required
-                        placeholder="Nhập tên phòng ban"
-                    />
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="name" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Tên phòng ban
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <input
+                                id="name"
+                                type="text"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={(field.state.value as string) || ''}
+                                onChange={(e) => field.handleChange(e.target.value as never)}
+                                onBlur={field.handleBlur}
+                                placeholder="Nhập tên phòng ban"
+                                disabled={isLoading}
+                            />
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
+            {/* Level Order */}
             <form.Field
                 name="levelOrder"
                 validators={{
-                    onChange: ({ value }: { value: number }) =>
-                        value === undefined || value === null ? 'Cấp độ là bắt buộc' : undefined,
+                    onBlur: ({ value }: { value: number | string }) => validateLevelOrder(value),
                 }}
             >
-                {() => (
-                    <SelectField<FormValues>
-                        form={form as FormApiOf<FormValues>}
-                        name="levelOrder"
-                        label="Cấp độ"
-                        required
-                        options={DEPARTMENT_LEVELS.map((level) => ({
-                            value: level.value.toString(),
-                            label: level.label,
-                        }))}
-                        placeholder="Chọn cấp độ"
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="levelOrder" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Cấp độ
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <select
+                                id="levelOrder"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                value={String(field.state.value || '')}
+                                onChange={(e) => field.handleChange(parseInt(e.target.value, 10) as never)}
+                                onBlur={field.handleBlur}
+                                disabled={isLoading}
+                            >
+                                <option value="">Chọn cấp độ</option>
+                                {DEPARTMENT_LEVELS.map((level) => (
+                                    <option key={level.value} value={level.value}>
+                                        {level.label}
+                                    </option>
+                                ))}
+                            </select>
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
+            </form.Field>
+
+            {/* Description */}
+            <div className="md:col-span-2">
+                <form.Field
+                    name="description"
+                    validators={{
+                        onBlur: ({ value }: { value: string | undefined }) => validateDescription(value),
+                    }}
+                >
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="description" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Mô tả
+                                </label>
+                                <textarea
+                                    id="description"
+                                    className={`w-full rounded-xl border bg-white outline-none transition p-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    placeholder="Nhập mô tả phòng ban"
+                                    rows={3}
+                                    disabled={isLoading}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
+                </form.Field>
+            </div>
+
+            {/* Is Active */}
+            <form.Field name="isActive">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => (
+                    <ToggleSwitch
+                        checked={field.state.value ?? false}
+                        onChange={(value: boolean) => {
+                            field.handleChange(value);
+                        }}
+                        label="Kích hoạt phòng ban"
+                        description={field.state.value ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                        disabled={isLoading}
+                        aria-label="Kích hoạt phòng ban"
                     />
                 )}
             </form.Field>
-
-            <TextareaField<FormValues>
-                className="md:col-span-2"
-                form={form as FormApiOf<FormValues>}
-                name="description"
-                label="Mô tả"
-                placeholder="Nhập mô tả phòng ban"
-                rows={3}
-            />
-
-            <ToggleSwitch
-                checked={isActive}
-                onChange={handleActiveChange}
-                label="Kích hoạt phòng ban"
-                description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
-                aria-label="Kích hoạt phòng ban"
-            />
         </div>
     );
 };
-

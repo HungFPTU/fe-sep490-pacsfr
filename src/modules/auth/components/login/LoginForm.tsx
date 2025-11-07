@@ -63,11 +63,16 @@ export function LoginForm({ onSubmit, isLoading = false }: LoginFormProps) {
         console.error("Login error:", error);
         // Handle specific error cases
         if (error instanceof Error) {
-          if (error.message.includes("401") || error.message.includes("Unauthorized")) {
+          const errorMessage = error.message;
+          // Extract error message from exception (already extracted by service/http client)
+          if (errorMessage.includes("401") || errorMessage.includes("Unauthorized") || errorMessage.includes("không đúng")) {
             setErrors({ username: "Thông tin đăng nhập không chính xác" });
           } else {
-            setErrors({ password: error.message });
+            // Display the exact error message from API
+            setErrors({ password: errorMessage });
           }
+        } else {
+          setErrors({ password: "Đã xảy ra lỗi khi đăng nhập" });
         }
       }
     }

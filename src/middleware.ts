@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+// import type { NextRequest } from 'next/server';
 // TEMPORARILY DISABLED: Route classification imports
 // TODO: Re-enable after fixing login redirect issues
 // import { classifyRoute, requiresAuthentication } from './core/utils/route-classifier';
@@ -9,7 +9,7 @@ import type { NextRequest } from 'next/server';
  * Prevents redirect loops and unnecessary processing
  */
 
-export function middleware(request: NextRequest) {
+export function middleware() {
     // TEMPORARILY DISABLED: Route authorization logic
     // TODO: Re-enable after fixing login redirect issues
     // const { pathname } = _request.nextUrl;

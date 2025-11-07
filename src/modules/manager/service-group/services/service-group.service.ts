@@ -1,65 +1,65 @@
-import { RestPaged, RestResponse } from "@/types/rest";
-import { serviceGroupAPI } from "../api/service-group.api";
-import { CreateServiceGroupRequest, ServiceGroup, UpdateServiceGroupRequest } from "../types";
+/**
+ * Service Group Service Layer
+ * Business logic and data transformation
+ */
+
+import type { RestPaged } from '@/types/rest';
+import { serviceGroupApi } from '../api/service-group.api';
+import type { ServiceGroup } from '../types/response';
+import type { CreateServiceGroupRequest, UpdateServiceGroupRequest, ServiceGroupFilters } from '../types/request';
 
 export const serviceGroupService = {
-    async getServiceGroups(
-        keyword: string = "",
-        isActive: boolean = true,
-        page: number = 1,
-        size: number = 10
-    ): Promise<RestPaged<ServiceGroup>> {
-        const res = await serviceGroupAPI.getAllServiceGroups(keyword, isActive, page, size);
-        return res.data;
+    /**
+     * Get service groups list with filters
+     */
+    async getServiceGroups(filters: ServiceGroupFilters): Promise<RestPaged<ServiceGroup>> {
+        const response = await serviceGroupApi.getList(filters);
+        return response.data;
     },
 
-    async getServiceGroupById(id: string): Promise<RestResponse<ServiceGroup>> {
-        const res = await serviceGroupAPI.getServiceGroupById(id);
-        return res.data;
+    /**
+     * Get service group by ID
+     */
+    async getServiceGroupById(id: string): Promise<ServiceGroup | null> {
+        const response = await serviceGroupApi.getById(id);
+        if (!response.data?.success || !response.data?.data) {
+            return null;
+        }
+        return response.data.data as ServiceGroup;
     },
 
-    async createServiceGroup(request: CreateServiceGroupRequest): Promise<RestResponse<ServiceGroup>> {
-        console.log('[ServiceGroup Service] Creating service group with request:', request);
-
-        // Use the provided iconUrl directly - no need to re-upload
-        // The image was already uploaded when user selected it in the form
-        const iconUrl = request.iconUrl || '';
-        console.log('[ServiceGroup Service] Using provided iconUrl:', iconUrl);
-
-        // Create service group with iconUrl
-        const serviceGroupData = {
-            groupCode: request.groupCode,
-            groupName: request.groupName,
-            description: request.description,
-            iconUrl: iconUrl,
-            displayOrder: Number(request.displayOrder) || 0,
-            isActive: request.isActive,
-        };
-
-        console.log('[ServiceGroup Service] Creating service group with data:', serviceGroupData);
-        const res = await serviceGroupAPI.createServiceGroup(serviceGroupData);
-        return res.data;
+    /**
+     * Create new service group
+     */
+    async createServiceGroup(data: CreateServiceGroupRequest): Promise<ServiceGroup> {
+        const response = await serviceGroupApi.create(data);
+        if (!response.data?.success || !response.data?.data) {
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to create service group';
+            throw new Error(errorMessage);
+        }
+        return response.data.data as ServiceGroup;
     },
 
-    async updateServiceGroup(
-        id: string,
-        request: UpdateServiceGroupRequest
-    ): Promise<RestResponse<ServiceGroup>> {
-        // Use the provided iconUrl directly - no need to re-upload
-        // The image was already uploaded when user selected it in the form
-        const iconUrl = request.iconUrl || '';
-        console.log('[ServiceGroup Service] Using provided iconUrl for update:', iconUrl);
-
-        // Update service group with iconUrl
-        const res = await serviceGroupAPI.updateServiceGroup(request.id, {
-            ...request,
-            iconUrl: iconUrl,
-        } as UpdateServiceGroupRequest);
-        return res.data;
+    /**
+     * Update existing service group
+     */
+    async updateServiceGroup(id: string, data: UpdateServiceGroupRequest): Promise<ServiceGroup> {
+        const response = await serviceGroupApi.update(id, data);
+        if (!response.data?.success || !response.data?.data) {
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to update service group';
+            throw new Error(errorMessage);
+        }
+        return response.data.data as ServiceGroup;
     },
 
+    /**
+     * Delete service group
+     */
     async deleteServiceGroup(id: string): Promise<void> {
-        await serviceGroupAPI.deleteServiceGroup(id);
+        await serviceGroupApi.delete(id);
     },
 };
-

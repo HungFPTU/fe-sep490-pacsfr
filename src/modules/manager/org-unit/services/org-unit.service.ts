@@ -15,11 +15,23 @@ export const orgUnitService = {
 
     async createOrgUnit(data: CreateOrgUnitRequest) {
         const response = await orgUnitApi.create(data);
+        if (!response.data?.success || !response.data?.data) {
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to create org unit';
+            throw new Error(errorMessage);
+        }
         return response.data;
     },
 
     async updateOrgUnit(id: string, data: UpdateOrgUnitRequest) {
         const response = await orgUnitApi.update(id, data);
+        if (!response.data?.success || !response.data?.data) {
+            // Extract message from API response if available (message is at root level)
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to update org unit';
+            throw new Error(errorMessage);
+        }
         return response.data;
     },
 

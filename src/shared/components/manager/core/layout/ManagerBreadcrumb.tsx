@@ -10,19 +10,53 @@ interface BreadcrumbItem {
     href?: string;
 }
 
-// Map paths to readable labels
+// Map paths to readable labels based on sidebar navigation
 const pathLabels: Record<string, string> = {
+    // Main sections
     manager: 'Quản lý',
-    'staff-management': 'Quản lý nhân viên',
+
+    // Quản lý nhân sự
+    'quan-ly-nhan-vien': 'Quản lý nhân viên',
     'ca-lam-viec': 'Quản lý ca làm việc',
-    'co-quan': 'Cơ quan',
-    'phong-ban': 'Phòng ban',
-    'nhom-dich-vu': 'Nhóm dịch vụ',
-    'dich-vu': 'Dịch vụ',
-    queue: 'Hàng đợi',
-    status: 'Trạng thái',
     account: 'Tài khoản',
+    roles: 'Phân quyền & Vai trò',
+    performance: 'Hiệu suất làm việc',
+
+    // Quản lý dịch vụ
+    'dich-vu': 'Danh sách dịch vụ',
+    'nhom-dich-vu': 'Nhóm dịch vụ',
     service: 'Dịch vụ',
+    list: 'Phân loại dịch vụ',
+    config: 'Cấu hình quy trình phục vụ',
+    'phuong-thuc-nop-ho-so': 'Phương thức nộp hồ sơ',
+
+    // Quản lý phòng ban
+    'phong-ban': 'Quản lý phòng ban',
+    'co-quan': 'Quản lý cơ quan',
+    operation: 'Vận hành',
+    hours: 'Giờ làm việc',
+    limits: 'Giới hạn số lượng hàng chờ',
+    counter: 'Quầy phục vụ',
+
+    // Giám sát thời gian thực
+    monitoring: 'Giám sát thời gian thực',
+    special: 'Ưu tiên nhóm đặc biệt',
+
+    // Thống kê & Báo cáo
+    reporting: 'Thống kê & Báo cáo',
+
+    // Quản lý hàng đợi
+    queue: 'Quản lý hàng đợi',
+    statistics: 'Thống kê hàng đợi',
+    status: 'Tình trạng hàng chờ',
+
+    // Quản lý văn bản pháp luật
+    'van-ban-phap-luat': 'Danh sách văn bản',
+    'nhom-van-ban': 'Nhóm văn bản',
+    'loai-van-ban': 'Loại văn bản',
+    'mau-van-ban': 'Mẫu văn bản',
+    'phan-loai': 'Phân loại văn bản',
+    'bao-cao': 'Báo cáo văn bản',
 };
 
 /**

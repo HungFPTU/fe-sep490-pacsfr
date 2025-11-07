@@ -36,17 +36,17 @@ export function CurrentServingPanel({
     onChangeQueue,
 }: CurrentServingPanelProps) {
     return (
-        <Card className="p-6 bg-gradient-to-r from-red-50 to-rose-50 border-red-200">
+        <Card className="p-6 bg-gray-50 border-gray-200">
             {/* Queue Info Header */}
             {serviceGroupId && queueStatus && (
-                <div className="flex items-center justify-between mb-4 pb-4 border-b border-red-200">
+                <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
                                 {isLoadingQueueStatus ? (
-                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
                                 ) : (
-                                    <Users className="w-5 h-5 text-red-600" />
+                                    <Users className="w-5 h-5 text-blue-600" />
                                 )}
                             </div>
                             <div>
@@ -54,11 +54,11 @@ export function CurrentServingPanel({
                                 <p className="font-semibold text-gray-900">{queueStatus.queueName}</p>
                             </div>
                         </div>
-                        <div className="h-8 w-px bg-red-200"></div>
+                        <div className="h-8 w-px bg-gray-300"></div>
                         <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4 text-red-600" />
+                            <Clock className="w-4 h-4 text-gray-600" />
                             <span className="text-sm text-gray-700">
-                                <strong className="text-red-600">{queueStatus.messageCount}</strong> ticket đang chờ
+                                <strong className="text-blue-600">{queueStatus.messageCount}</strong> ticket đang chờ
                             </span>
                         </div>
                     </div>
@@ -66,7 +66,7 @@ export function CurrentServingPanel({
                         variant="outline"
                         size="sm"
                         onClick={onChangeQueue}
-                        className="border-red-300 text-red-700 hover:bg-red-100"
+                        className="border-gray-300 text-gray-700 hover:bg-gray-100"
                     >
                         <Settings className="w-4 h-4 mr-2" />
                         Đổi Queue
@@ -79,15 +79,15 @@ export function CurrentServingPanel({
                     {/* Current Serving Display */}
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
-                            <UserCheck className="w-5 h-5 text-red-600" />
+                            <UserCheck className="w-5 h-5 text-gray-600" />
                             <span className="text-sm font-medium text-gray-700">Đang phục vụ:</span>
                         </div>
                         <div className="flex items-center space-x-3">
                             {currentServing ? (
                                 <div className="flex items-center space-x-3">
                                     <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${currentServing.status === 'completed'
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800'
+                                            ? 'bg-green-100 text-green-700'
+                                            : 'bg-blue-100 text-blue-700'
                                         }`}>
                                         {currentServing.number}
                                     </div>
@@ -130,7 +130,7 @@ export function CurrentServingPanel({
                     <Button
                         onClick={onCallNext}
                         disabled={isCallingNext || !serviceGroupId || (queueStatus?.messageCount === 0)}
-                        className="bg-red-600 hover:bg-red-700"
+                        className="bg-indigo-600 hover:bg-indigo-700"
                         title={!serviceGroupId ? 'Vui lòng cấu hình Service Group ID trước' : (queueStatus?.messageCount === 0 ? 'Không có ticket trong hàng đợi' : '')}
                     >
                         {isCallingNext ? (
@@ -150,7 +150,7 @@ export function CurrentServingPanel({
                         <Button
                             onClick={onComplete}
                             variant="outline"
-                            className="border-red-600 text-red-600 hover:bg-red-50"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-50"
                         >
                             <CheckCircle className="w-4 h-4 mr-2" />
                             Hoàn thành

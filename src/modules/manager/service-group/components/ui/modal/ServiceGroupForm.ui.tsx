@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ToggleSwitch } from '@/shared/components/manager/ui';
-import { InputField, TextareaField } from '@/shared/components/layout/manager/form/BaseForm';
+import { InputField } from '@/shared/components/layout/manager/form/BaseForm';
 import { ImageIcon, AlertCircle } from 'lucide-react';
 import { useImageUpload } from '@/core/hooks/useImageUpload';
 import { FormApiOf } from '@/types/types';
@@ -22,30 +22,31 @@ interface Props {
     form: any;
     isLoading: boolean;
     isEdit: boolean;
+    initData?: { iconUrl?: string | null } | null;
 }
 
-export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
+export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit, initData }) => {
     const [uploadedIconUrl, setUploadedIconUrl] = useState<string>('');
     const [uploadedIconName, setUploadedIconName] = useState<string>('');
-    const [isActive, setIsActive] = useState<boolean>(false);
 
-    // Debug logging
-    console.log('[ServiceGroupForm] Form values:', {
-        iconUrl: form.state.values.iconUrl,
-        isActive: form.state.values.isActive,
-        groupCode: form.state.values.groupCode,
-        groupName: form.state.values.groupName,
-        formState: form.state
-    });
-
-    // Sync uploadedIconUrl with form iconUrl
+    // Sync uploadedIconUrl from both initData and form values
     const formIconUrl = form.state.values.iconUrl;
+
     useEffect(() => {
-        if (formIconUrl && formIconUrl !== uploadedIconUrl) {
-            setUploadedIconUrl(formIconUrl);
-            console.log('[ServiceGroupForm] Synced iconUrl from form:', formIconUrl);
+        // Priority: form iconUrl > initData iconUrl
+        const finalIconUrl = formIconUrl || initData?.iconUrl || '';
+
+        if (finalIconUrl && finalIconUrl !== uploadedIconUrl) {
+            setUploadedIconUrl(finalIconUrl);
+            const fileName = finalIconUrl.split('/').pop() || 'Icon hiện tại';
+            setUploadedIconName(fileName);
+        } else if (!finalIconUrl && uploadedIconUrl) {
+            // Reset when iconUrl becomes empty
+            setUploadedIconUrl('');
+            setUploadedIconName('');
         }
-    }, [formIconUrl, uploadedIconUrl]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formIconUrl, initData?.iconUrl, isEdit]);
 
     const { uploadImage, isUploading, error: uploadError, validateImage } = useImageUpload({
         maxSize: 5 * 1024 * 1024, // 5MB for images
@@ -58,47 +59,27 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
 
         // Prevent duplicate uploads
         if (isUploading) {
-            console.log('[ServiceGroupForm] Already uploading, ignoring duplicate call');
             return;
         }
 
-        console.log('[ServiceGroupForm] File selected:', file.name);
-        console.log('[ServiceGroupForm] File details:', {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            lastModified: file.lastModified
-        });
-        console.log('[ServiceGroupForm] Current form values before upload:', form.state.values);
-
         // Validate file first
-        console.log('[ServiceGroupForm] Validating file...');
         const validation = validateImage(file);
-        console.log('[ServiceGroupForm] Validation result:', validation);
-
         if (!validation.isValid) {
-            console.error('[ServiceGroupForm] Validation failed:', validation.message);
             alert(validation.message);
             return;
         }
 
-        console.log('[ServiceGroupForm] File validation passed, starting upload...');
         try {
             // Upload file to backend
-            console.log('[ServiceGroupForm] Calling uploadImage...');
             const result = await uploadImage(file);
-            console.log('[ServiceGroupForm] Upload result:', result);
 
             if (result && result.data && result.data.fileUrl) {
                 const fileUrl = result.data.fileUrl;
                 const fileName = result.data.originalFileName;
 
-                console.log('[ServiceGroupForm] Setting iconUrl to:', fileUrl);
-
                 // Update local state
                 setUploadedIconUrl(fileUrl);
                 setUploadedIconName(fileName);
-                setIsActive(true);
 
                 // Update form using setFieldValue with callback
                 form.setFieldValue('iconUrl', fileUrl, {
@@ -128,6 +109,19 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
         }
     }
 
+    // Helper to get first error
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const getFirstError = (field: any) => {
+        const te = field.state.meta.touchedErrors;
+        const e = field.state.meta.errors;
+        const isTouched = field.state.meta.isTouched;
+        const arr = isTouched
+            ? (Array.isArray(e) && e.length ? e : [])
+            : (Array.isArray(te) && te.length ? te : []);
+        const first = (arr as Array<string | undefined>).find((m): m is string => typeof m === 'string' && m.length > 0);
+        return first ?? null;
+    };
+
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <form.Field
@@ -141,16 +135,29 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                     },
                 }}
             >
-                {() => (
-                    <InputField<FormValues>
-                        form={form as FormApiOf<FormValues>}
-                        name="groupCode"
-                        label="Mã nhóm"
-                        required
-                        placeholder="Nhập mã nhóm dịch vụ"
-                        disabled={isEdit}
-                    />
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = getFirstError(field);
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="groupCode" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Mã nhóm
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <input
+                                id="groupCode"
+                                type="text"
+                                disabled={isEdit || isLoading}
+                                value={(field.state.value as string) ?? ''}
+                                onBlur={field.handleBlur}
+                                onChange={(e) => field.handleChange(e.currentTarget.value as never)}
+                                placeholder="Nhập mã nhóm dịch vụ"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isEdit || isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                            />
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
             <form.Field
@@ -164,15 +171,29 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                     },
                 }}
             >
-                {() => (
-                    <InputField<FormValues>
-                        form={form as FormApiOf<FormValues>}
-                        name="groupName"
-                        label="Tên nhóm"
-                        required
-                        placeholder="Nhập tên nhóm dịch vụ"
-                    />
-                )}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    const error = getFirstError(field);
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="groupName" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Tên nhóm
+                                <span className="ml-0.5 text-red-500">*</span>
+                            </label>
+                            <input
+                                id="groupName"
+                                type="text"
+                                disabled={isLoading}
+                                value={(field.state.value as string) ?? ''}
+                                onBlur={field.handleBlur}
+                                onChange={(e) => field.handleChange(e.currentTarget.value as never)}
+                                placeholder="Nhập tên nhóm dịch vụ"
+                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                            />
+                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                        </div>
+                    );
+                }}
             </form.Field>
 
             <InputField<FormValues>
@@ -195,16 +216,29 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                         },
                     }}
                 >
-                    {() => (
-                        <TextareaField<FormValues>
-                            form={form as FormApiOf<FormValues>}
-                            name="description"
-                            label="Mô tả"
-                            required
-                            placeholder="Nhập mô tả nhóm dịch vụ"
-                            rows={4}
-                        />
-                    )}
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = getFirstError(field);
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="description" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Mô tả
+                                    <span className="ml-0.5 text-red-500">*</span>
+                                </label>
+                                <textarea
+                                    id="description"
+                                    disabled={isLoading}
+                                    value={(field.state.value as string) ?? ''}
+                                    onBlur={field.handleBlur}
+                                    onChange={(e) => field.handleChange(e.currentTarget.value as never)}
+                                    placeholder="Nhập mô tả nhóm dịch vụ"
+                                    rows={4}
+                                    className={`w-full rounded-xl border bg-white outline-none transition p-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
                 </form.Field>
             </div>
 
@@ -215,7 +249,7 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                     </label>
 
                     {/* Icon Upload Area */}
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-gray-400 transition-colors relative">
                         <input
                             type="file"
                             onChange={handleIconChange}
@@ -224,29 +258,60 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                             id="icon-upload"
                             disabled={isUploading || isLoading}
                         />
-                        <label
-                            htmlFor="icon-upload"
-                            className={`cursor-pointer flex flex-col items-center space-y-2 ${isUploading || isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                            {isUploading ? (
-                                <>
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                                    <span className="text-sm text-gray-600">Đang upload...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <ImageIcon className="w-8 h-8 text-gray-400" />
-                                    <div>
-                                        <span className="text-sm font-medium text-blue-600 hover:text-blue-500">
-                                            Chọn icon để upload
-                                        </span>
+
+                        {/* Display image if uploaded or exists */}
+                        {(uploadedIconUrl || form.state.values.iconUrl) && !isUploading ? (
+                            <label
+                                htmlFor="icon-upload"
+                                className={`cursor-pointer flex flex-col items-center justify-center space-y-3 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                <div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-gray-200">
+                                    <Image
+                                        src={uploadedIconUrl || form.state.values.iconUrl || ''}
+                                        alt="Icon preview"
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                                        {uploadedIconUrl ? 'Icon đã upload' : 'Icon hiện tại'}
+                                    </p>
+                                    {uploadedIconName && (
                                         <p className="text-xs text-gray-500 mt-1">
-                                            JPG, PNG, GIF, WEBP (tối đa 5MB)
+                                            {uploadedIconName}
                                         </p>
-                                    </div>
-                                </>
-                            )}
-                        </label>
+                                    )}
+                                    <p className="text-xs text-gray-400 mt-1">
+                                        Click để thay đổi
+                                    </p>
+                                </div>
+                            </label>
+                        ) : (
+                            <label
+                                htmlFor="icon-upload"
+                                className={`cursor-pointer flex flex-col items-center space-y-2 ${isUploading || isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {isUploading ? (
+                                    <>
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                                        <span className="text-sm text-gray-600">Đang upload...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <ImageIcon className="w-8 h-8 text-gray-400" />
+                                        <div>
+                                            <span className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                                                Chọn icon để upload
+                                            </span>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                JPG, PNG, GIF, WEBP (tối đa 5MB)
+                                            </p>
+                                        </div>
+                                    </>
+                                )}
+                            </label>
+                        )}
                     </div>
 
                     {/* Upload Error */}
@@ -256,63 +321,26 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit }) =
                             <span className="text-sm text-red-600">{uploadError}</span>
                         </div>
                     )}
-
-                    {/* Current Icon Preview */}
-                    {form.state.values.iconUrl && !uploadedIconUrl && (
-                        <div className="p-3 bg-gray-50 border border-gray-200 rounded-md">
-                            <div className="flex items-center space-x-3">
-                                <Image
-                                    src={form.state.values.iconUrl}
-                                    alt="Current icon"
-                                    width={48}
-                                    height={48}
-                                    className="w-12 h-12 object-cover rounded"
-                                />
-                                <div>
-                                    <p className="text-sm text-gray-700 font-medium">
-                                        Icon hiện tại
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                        Click để thay đổi
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Uploaded Icon Preview */}
-                    {uploadedIconUrl && (
-                        <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                            <div className="flex items-center space-x-3">
-                                <Image
-                                    src={uploadedIconUrl}
-                                    alt="Uploaded icon"
-                                    width={48}
-                                    height={48}
-                                    className="w-12 h-12 object-cover rounded"
-                                />
-                                <div>
-                                    <p className="text-sm text-green-700 font-medium">
-                                        Icon đã upload
-                                    </p>
-                                    <p className="text-xs text-green-600">
-                                        {uploadedIconName}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
 
             <div className="flex items-end pb-2">
-                <ToggleSwitch
-                    checked={isActive}
-                    onChange={(value: boolean) => setIsActive(value)}
-                    label="Kích hoạt nhóm dịch vụ"
-                    description={isActive ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
-                    aria-label="Kích hoạt nhóm dịch vụ"
-                />
+                <form.Field name="isActive">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => (
+                        <ToggleSwitch
+                            checked={field.state.value ?? false}
+                            onChange={(value: boolean) => {
+                                field.handleChange(value);
+                                form.setFieldValue('isActive', value);
+                            }}
+                            label="Kích hoạt nhóm dịch vụ"
+                            description={field.state.value ? 'Hiển thị công khai' : 'Ẩn khỏi danh sách'}
+                            aria-label="Kích hoạt nhóm dịch vụ"
+                            disabled={isLoading}
+                        />
+                    )}
+                </form.Field>
             </div>
         </div>
     );
