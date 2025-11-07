@@ -334,6 +334,7 @@ export const API_PATH = {
             const queryString = params.toString();
             return `/ManagerDashboard/comprehensive-report${queryString ? `?${queryString}` : ''}`;
         },
+        QUEUE_MONITORING: '/ManagerDashboard/queue-monitoring',
     },
 
 };

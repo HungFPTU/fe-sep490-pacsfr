@@ -98,3 +98,23 @@ export function calculateAge(dateOfBirth: Date | string): number {
 
     return age;
 }
+
+/**
+ * Convert YYYY-MM-DD to ISO string with timezone
+ * @param dateString - Date string in YYYY-MM-DD format
+ * @param endOfDay - If true, set time to 23:59:59, otherwise 00:00:00
+ * @returns ISO string with timezone (e.g., "2025-11-01T00:00:00.000Z")
+ */
+export function convertToISOString(dateString: string, endOfDay: boolean = false): string {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    
+    if (endOfDay) {
+        date.setHours(23, 59, 59, 999);
+    } else {
+        date.setHours(0, 0, 0, 0);
+    }
+    
+    return date.toISOString();
+}
