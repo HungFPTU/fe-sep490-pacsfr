@@ -335,6 +335,12 @@ export const API_PATH = {
             return `/ManagerDashboard/comprehensive-report${queryString ? `?${queryString}` : ''}`;
         },
         QUEUE_MONITORING: '/ManagerDashboard/queue-monitoring',
+        PRIORITY_MONITORING: '/ManagerDashboard/priority-monitoring',
+        UPDATE_PRIORITY: '/ManagerDashboard/priority-access',
+    },
+
+    CASE: {
+        GET_ALL: '/Case',
     },
 
 };
