@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
+import { Button } from '@/shared/components/ui/button.ui';
+import { Input } from '@/shared/components/ui/input.ui';
+import { cn } from '@/shared/lib/utils';
 import { LegalDocumentService } from '../../../services/legal-document.service';
 import type { LegalDocumentFilters } from '../../../types';
 
@@ -89,12 +92,12 @@ export const LegalDocumentFilter: React.FC<Props> = ({
     };
 
     return (
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
-            <div className="flex flex-wrap items-center gap-3">
+        <div className="mb-4">
+            <div className="flex items-center gap-1 flex-nowrap">
                 {/* Keyword Search */}
-                <div className="relative flex-1 min-w-[200px]">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
+                <div className="relative flex-1 min-w-[280px] mr-3">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                    <Input
                         type="text"
                         placeholder="Tìm theo số văn bản, tên..."
                         value={localFilters.keyword || ''}
@@ -104,64 +107,88 @@ export const LegalDocumentFilter: React.FC<Props> = ({
                                 handleApplyFilters();
                             }
                         }}
-                        className="w-full h-10 pl-10 pr-4 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="pl-10"
                     />
                 </div>
 
                 {/* Document Type Filter */}
-                <select
-                    value={localFilters.documentType || ''}
-                    onChange={handleDocumentTypeChange}
-                    className="h-10 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[150px]"
-                >
-                    <option value="">Tất cả loại văn bản</option>
-                    {documentTypeOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
+                <div className="min-w-[170px] mr-3">
+                    <select
+                        value={localFilters.documentType || ''}
+                        onChange={handleDocumentTypeChange}
+                        className={cn(
+                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
+                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:cursor-not-allowed disabled:opacity-50"
+                        )}
+                    >
+                        <option value="">Tất cả loại văn bản</option>
+                        {documentTypeOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
                 {/* Status Filter */}
-                <select
-                    value={localFilters.status || ''}
-                    onChange={handleStatusChange}
-                    className="h-10 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[150px]"
-                >
-                    <option value="">Tất cả trạng thái</option>
-                    {documentStatusOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
+                <div className="min-w-[170px] mr-3">
+                    <select
+                        value={localFilters.status || ''}
+                        onChange={handleStatusChange}
+                        className={cn(
+                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
+                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:cursor-not-allowed disabled:opacity-50"
+                        )}
+                    >
+                        <option value="">Tất cả trạng thái</option>
+                        {documentStatusOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
                 {/* Active Status Filter */}
-                <select
-                    value={localFilters.isActive === undefined ? '' : String(localFilters.isActive)}
-                    onChange={handleActiveChange}
-                    className="h-10 px-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[150px]"
-                >
-                    <option value="">Tất cả</option>
-                    <option value="true">Hoạt động</option>
-                    <option value="false">Không hoạt động</option>
-                </select>
+                <div className="min-w-[170px] mr-3">
+                    <select
+                        value={localFilters.isActive === undefined ? '' : String(localFilters.isActive)}
+                        onChange={handleActiveChange}
+                        className={cn(
+                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
+                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:cursor-not-allowed disabled:opacity-50"
+                        )}
+                    >
+                        <option value="">Tất cả</option>
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Không hoạt động</option>
+                    </select>
+                </div>
 
                 {/* Action Buttons */}
-                <button
+                <Button
                     onClick={handleApplyFilters}
-                    className="px-4 py-2 h-10 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
+                    size="default"
+                    className="whitespace-nowrap mr-2 flex-shrink-0"
                 >
-                    <Search className="w-4 h-4" />
+                    <Search className="h-4 w-4 mr-1" />
                     Tìm kiếm
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={handleResetFilters}
-                    className="px-4 py-2 h-10 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
+                    variant="outline"
+                    size="default"
+                    className="whitespace-nowrap flex-shrink-0"
                 >
-                    <X className="w-4 h-4" />
+                    <X className="h-4 w-4 mr-1" />
                     Đặt lại
-                </button>
+                </Button>
             </div>
         </div>
     );

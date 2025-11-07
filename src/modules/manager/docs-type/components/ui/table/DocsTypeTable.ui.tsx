@@ -3,6 +3,7 @@
 import React from 'react';
 import { DocsTypeTableHeader } from './DocsTypeTableHeader.ui';
 import { DocsTypeTableRow } from './DocsTypeTableRow.ui';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { DocsType } from '../../../types';
 
 interface Props {
@@ -23,22 +24,24 @@ export const DocsTypeTable: React.FC<Props> = ({
     isDeleting = false,
 }) => {
     return (
-        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow">
-            <table className="w-full">
-                <DocsTypeTableHeader />
-                <tbody className="divide-y divide-slate-200 bg-white">
+        <div className="rounded-md border">
+            <Table>
+                <TableHeader>
+                    <DocsTypeTableHeader />
+                </TableHeader>
+                <TableBody>
                     {isLoading ? (
-                        <tr>
-                            <td colSpan={8} className="px-6 py-4 text-center text-sm text-slate-500">
+                        <TableRow>
+                            <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                                 Đang tải...
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ) : docsTypes.length === 0 ? (
-                        <tr>
-                            <td colSpan={8} className="px-6 py-4 text-center text-sm text-slate-500">
+                        <TableRow>
+                            <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
                                 Không có dữ liệu
-                            </td>
-                        </tr>
+                            </TableCell>
+                        </TableRow>
                     ) : (
                         docsTypes.map((docsType) => (
                             <DocsTypeTableRow
@@ -51,8 +54,8 @@ export const DocsTypeTable: React.FC<Props> = ({
                             />
                         ))
                     )}
-                </tbody>
-            </table>
+                </TableBody>
+            </Table>
         </div>
     );
 };

@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useServiceGroups } from '@/modules/manager/service-group/hooks';
 import { getValuesPage } from '@/types/rest';
 import { Search, X } from 'lucide-react';
+import { Button } from '@/shared/components/ui/button.ui';
+import { Input } from '@/shared/components/ui/input.ui';
+import { cn } from '@/shared/lib/utils';
 
 interface Props {
     keyword: string;
@@ -67,61 +70,80 @@ export const ServiceFilter: React.FC<Props> = ({
     };
 
     return (
-        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex flex-wrap items-center gap-3">
+        <div className="mb-4">
+            <div className="flex items-center gap-1 flex-nowrap">
                 {/* Search */}
-                <div className="relative flex-1 min-w-[220px]">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
+                <div className="relative flex-1 min-w-[280px] mr-3">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                    <Input
                         type="text"
                         value={localKeyword}
                         onChange={(e) => setLocalKeyword(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') handleApply(); }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleApply();
+                        }}
                         placeholder="Tên hoặc mã dịch vụ..."
-                        className="w-full h-10 pl-10 pr-4 rounded-md border border-slate-300 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="pl-10"
                     />
                 </div>
 
                 {/* Service Group */}
-                <select
-                    value={localServiceGroupId}
-                    onChange={(e) => setLocalServiceGroupId(e.target.value)}
-                    className="h-10 min-w-[180px] rounded-md border border-slate-300 px-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                >
-                    <option value="">Tất cả nhóm</option>
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    {serviceGroups.map((group: any) => (
-                        <option key={group.id} value={group.id}>
-                            {group.groupName}
-                        </option>
-                    ))}
-                </select>
+                <div className="min-w-[170px] mr-3">
+                    <select
+                        value={localServiceGroupId}
+                        onChange={(e) => setLocalServiceGroupId(e.target.value)}
+                        className={cn(
+                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
+                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:cursor-not-allowed disabled:opacity-50"
+                        )}
+                    >
+                        <option value="">Tất cả nhóm</option>
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {serviceGroups.map((group: any) => (
+                            <option key={group.id} value={group.id}>
+                                {group.groupName}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
                 {/* Status */}
-                <select
-                    value={localIsActive ? 'true' : 'false'}
-                    onChange={(e) => setLocalIsActive(e.target.value === 'true')}
-                    className="h-10 min-w-[160px] rounded-md border border-slate-300 px-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                >
-                    <option value="true">Hoạt động</option>
-                    <option value="false">Ngừng hoạt động</option>
-                </select>
+                <div className="min-w-[170px] mr-3">
+                    <select
+                        value={localIsActive ? 'true' : 'false'}
+                        onChange={(e) => setLocalIsActive(e.target.value === 'true')}
+                        className={cn(
+                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
+                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:cursor-not-allowed disabled:opacity-50"
+                        )}
+                    >
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Ngừng hoạt động</option>
+                    </select>
+                </div>
 
                 {/* Actions */}
-                <button
+                <Button
                     onClick={handleApply}
-                    className="px-4 h-10 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
+                    size="default"
+                    className="whitespace-nowrap mr-2 flex-shrink-0"
                 >
-                    <Search className="w-4 h-4" />
+                    <Search className="h-4 w-4 mr-1" />
                     Tìm kiếm
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={handleResetLocal}
-                    className="px-4 h-10 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
+                    variant="outline"
+                    size="default"
+                    className="whitespace-nowrap flex-shrink-0"
                 >
-                    <X className="w-4 h-4" />
+                    <X className="h-4 w-4 mr-1" />
                     Đặt lại
-                </button>
+                </Button>
             </div>
         </div>
     );
