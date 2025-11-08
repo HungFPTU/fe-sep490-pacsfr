@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import QueuePage from "@/modules/manager/queue/components/status/page";
+import { QueueListPage } from '@/modules/manager/queue';
 
 export default function Page() {
-  return <QueuePage />;
+    return <QueueListPage />;
 }
