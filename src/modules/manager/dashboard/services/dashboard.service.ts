@@ -1,5 +1,11 @@
 import { dashboardApi } from '../api/dashboard.api';
-import type { ComprehensiveReport, DashboardFilters } from '../types';
+import type { 
+    ComprehensiveReport, 
+    DashboardFilters, 
+    LineChartData,
+    PieChartData,
+    BarChartData
+} from '../types';
 
 const parseArray = (data: { $values?: unknown[] } | unknown[] | undefined) => {
     if (!data) return [];
@@ -61,6 +67,65 @@ export const dashboardService = {
             toDate: (rawData.toDate as string) || '',
         };
         
+        return parsedData;
+    },
+
+    async getLineChart(filters?: { month?: number; year?: number }): Promise<LineChartData | null> {
+        const response = await dashboardApi.getLineChart(filters);
+        if (!response.data?.success || !response.data?.data) {
+            return null;
+        }
+
+        const rawData = response.data.data as Record<string, unknown>;
+        const dataPoints = rawData.dataPoints as Record<string, unknown>;
+
+        const parsedData: LineChartData = {
+            dataPoints: parseArray(dataPoints as never) as never,
+            totalCases: (rawData.totalCases as number) || 0,
+            month: (rawData.month as number) || 0,
+            year: (rawData.year as number) || 0,
+        };
+
+        return parsedData;
+    },
+
+    async getPieChart(filters?: { startDate?: string; endDate?: string }): Promise<PieChartData | null> {
+        const response = await dashboardApi.getPieChart(filters);
+        if (!response.data?.success || !response.data?.data) {
+            return null;
+        }
+
+        const rawData = response.data.data as Record<string, unknown>;
+        const serviceData = rawData.serviceData as Record<string, unknown>;
+
+        const parsedData: PieChartData = {
+            serviceData: parseArray(serviceData as never) as never,
+            totalUsage: (rawData.totalUsage as number) || 0,
+            startDate: (rawData.startDate as string) || '',
+            endDate: (rawData.endDate as string) || '',
+        };
+
+        return parsedData;
+    },
+
+    async getBarChart(filters?: { startDate?: string; endDate?: string }): Promise<BarChartData | null> {
+        const response = await dashboardApi.getBarChart(filters);
+        if (!response.data?.success || !response.data?.data) {
+            return null;
+        }
+
+        const rawData = response.data.data as Record<string, unknown>;
+        const hourlyData = rawData.hourlyData as Record<string, unknown>;
+
+        const parsedData: BarChartData = {
+            hourlyData: parseArray(hourlyData as never) as never,
+            totalTickets: (rawData.totalTickets as number) || 0,
+            peakHour: (rawData.peakHour as number) || 0,
+            peakHourTicketCount: (rawData.peakHourTicketCount as number) || 0,
+            startDate: (rawData.startDate as string) || '',
+            endDate: (rawData.endDate as string) || '',
+        };
+
         return parsedData;
     },
 };
