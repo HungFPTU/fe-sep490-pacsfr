@@ -349,4 +349,21 @@ export const API_PATH = {
         GET_CONVERSATION: (conversationId: string) => `/Chatbox/conversation/${conversationId}`
     },
 
+    MANAGER_DASHBOARD: {
+        GET_COMPREHENSIVE_REPORT: (fromDate?: string, toDate?: string) => {
+            const params = new URLSearchParams();
+            if (fromDate) params.append('fromDate', fromDate);
+            if (toDate) params.append('toDate', toDate);
+            const queryString = params.toString();
+            return `/ManagerDashboard/comprehensive-report${queryString ? `?${queryString}` : ''}`;
+        },
+        QUEUE_MONITORING: '/ManagerDashboard/queue-monitoring',
+        PRIORITY_MONITORING: '/ManagerDashboard/priority-monitoring',
+        UPDATE_PRIORITY: '/ManagerDashboard/priority-access',
+    },
+
+    CASE: {
+        GET_ALL: '/Case',
+    },
+
 };

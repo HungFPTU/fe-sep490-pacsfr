@@ -1,9 +1,8 @@
 'use client';
 
 import React from 'react';
-import { LegalDocumentTableHeader } from './LegalDocumentTableHeader.ui';
-import { LegalDocumentTableRow } from './LegalDocumentTableRow.ui';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
+import { DataTable } from '@/shared/components/manager';
+import { ColumnDef } from '@tanstack/react-table';
 import type { LegalDocument } from '../../../types';
 
 interface Props {

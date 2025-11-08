@@ -3,7 +3,6 @@
 import React from 'react';
 import { SubmissionMethodTableHeader } from './SubmissionMethodTableHeader.ui';
 import { SubmissionMethodTableRow } from './SubmissionMethodTableRow.ui';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { SubmissionMethod } from '../../../types';
 
 interface Props {

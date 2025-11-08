@@ -4,8 +4,6 @@ import React from 'react';
 import {
     Tooltip,
 } from '@heroui/react';
-import { Button } from '@/shared/components/ui/button.ui';
-import { TableRow, TableCell } from '@/shared/components/manager/ui/table';
 import { Trash2, Eye, UserPlus, Calendar, Clock } from 'lucide-react';
 import { Badge } from '@/shared/components/ui/badge.ui';
 import { Staff } from '../../../types';
@@ -14,7 +12,7 @@ import {
     getStatusLabel,
     getRoleTypeLabel,
     getTableConfig,
-    getTableColumns,
+    getTableColumns
 } from '../../../utils';
 import { getRoleTypeStyle, getStatusStyle } from '../../../utils';
 import { AssignWorkShiftModal, StaffWorkShiftAssignmentsModal } from '../modal';

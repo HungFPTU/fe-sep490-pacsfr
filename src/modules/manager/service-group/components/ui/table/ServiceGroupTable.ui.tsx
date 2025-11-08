@@ -3,7 +3,6 @@
 import React from 'react';
 import { ServiceGroupTableHeader } from './ServiceGroupTableHeader.ui';
 import { ServiceGroupTableRow } from './ServiceGroupTableRow.ui';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { ServiceGroup } from '../../../types';
 
 interface Props {

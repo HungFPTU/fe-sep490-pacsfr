@@ -7,7 +7,6 @@ import { Button } from '@/shared/components/ui/button.ui';
 import { Badge } from '@/shared/components/ui/badge.ui';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
 import type { ServiceGroup } from '../../../types';
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar.ui';
 
 interface Props {
     group: ServiceGroup;

@@ -3,7 +3,6 @@
 import React from 'react';
 import { ServiceTableHeader } from './ServiceTableHeader.ui';
 import { ServiceTableRow } from './ServiceTableRow.ui';
-import { Table, TableBody, TableHeader } from '@/shared/components/manager/ui/table';
 import type { Service } from '../../../types';
 
 interface Props {

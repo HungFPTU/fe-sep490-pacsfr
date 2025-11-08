@@ -3,7 +3,6 @@
 import React from 'react';
 import { DocsTypeGroupTableHeader } from './DocsTypeGroupTableHeader.ui';
 import { DocsTypeGroupTableRow } from './DocsTypeGroupTableRow.ui';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { DocsTypeGroup } from '../../../types';
 
 interface Props {
