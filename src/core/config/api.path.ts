@@ -357,6 +357,27 @@ export const API_PATH = {
             const queryString = params.toString();
             return `/ManagerDashboard/comprehensive-report${queryString ? `?${queryString}` : ''}`;
         },
+        GET_LINE_CHART: (month?: number, year?: number) => {
+            const params = new URLSearchParams();
+            if (month !== undefined) params.append('month', month.toString());
+            if (year !== undefined) params.append('year', year.toString());
+            const queryString = params.toString();
+            return `/Dashboard/case-processing-line-chart${queryString ? `?${queryString}` : ''}`;
+        },
+        GET_PIE_CHART: (startDate?: string, endDate?: string) => {
+            const params = new URLSearchParams();
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+            const queryString = params.toString();
+            return `/Dashboard/service-usage-pie-chart${queryString ? `?${queryString}` : ''}`;
+        },
+        GET_BAR_CHART: (startDate?: string, endDate?: string) => {
+            const params = new URLSearchParams();
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+            const queryString = params.toString();
+            return `/Dashboard/queue-by-hour-bar-chart${queryString ? `?${queryString}` : ''}`;
+        },
         QUEUE_MONITORING: '/ManagerDashboard/queue-monitoring',
         PRIORITY_MONITORING: '/ManagerDashboard/priority-monitoring',
         UPDATE_PRIORITY: '/ManagerDashboard/priority-access',
