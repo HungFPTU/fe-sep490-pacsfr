@@ -41,7 +41,7 @@
         "react-dom": "19.1.0",
         "react-hook-form": "^7.62.0",
         "react-markdown": "^10.1.0",
-        "recharts": "^3.3.0",
+        "recharts": "latest",
         "shadcn-ui": "^0.9.5",
         "swr": "^2.3.6",
         "tailwind-merge": "^3.3.1",
