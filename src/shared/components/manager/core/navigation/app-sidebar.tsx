@@ -77,6 +77,10 @@ const data = {
           url: "/manager/nhom-dich-vu",
         },
         {
+          title: "Tài liệu yêu cầu",
+          url: "/manager/tai-lieu-yeu-cau",
+        },
+        {
           title: "Phân loại dịch vụ",
           url: "/manager/service/list",
         },

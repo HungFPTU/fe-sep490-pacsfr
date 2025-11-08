@@ -276,6 +276,21 @@ export const API_PATH = {
             PUT: (id: string) => `/Template/${id}`,
             DELETE: (id: string) => `/Template/${id}`,
         },
+        REQUIRED_DOCUMENT: {
+            GET_ALL: (
+                keyword: string,
+                serviceId: string,
+                docTypeId: string,
+                isActive: boolean,
+                page: number,
+                size: number,
+            ) =>
+                `/RequiredDocument?keyword=${keyword}&serviceId=${serviceId}&docTypeId=${docTypeId}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            GET_BY_ID: (id: string) => `/RequiredDocument/${id}`,
+            POST: '/RequiredDocument',
+            PUT: (id: string) => `/RequiredDocument/${id}`,
+            DELETE: (id: string) => `/RequiredDocument/${id}`,
+        },
         SERVICE_PROCEDURE: {
             GET_ALL: (keyword: string, serviceId: string, isActive: boolean, page: number, size: number) =>
                 `/ServiceProcedure?keyword=${keyword}&serviceId=${serviceId}&isActive=${isActive}&Page=${page}&Size=${size}`,
