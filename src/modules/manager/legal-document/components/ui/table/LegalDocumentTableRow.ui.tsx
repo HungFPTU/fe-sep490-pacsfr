@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Eye, Pencil, Trash2, Download } from 'lucide-react';
-import { formatDate } from '@/shared/lib/utils';
 import { TableRow, TableCell } from '@/shared/components/manager/ui/table';
 import { Button } from '@/shared/components/ui/button.ui';
 import { Badge } from '@/shared/components/ui/badge.ui';
