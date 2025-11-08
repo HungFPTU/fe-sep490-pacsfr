@@ -4,12 +4,6 @@
     "framework": "nextjs",
     "installCommand": "bun install",
     "devCommand": "bun run dev",
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/$1"
-        }
-    ],
     "headers": [
         {
             "source": "/(.*)",
