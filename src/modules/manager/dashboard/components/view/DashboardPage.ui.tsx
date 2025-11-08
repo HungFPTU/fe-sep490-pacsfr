@@ -10,6 +10,7 @@ import {
     DashboardTable,
     FeedbackStatisticsSection,
     StaffPerformanceSection,
+    DashboardCharts,
 } from '../ui';
 
 export const DashboardPage: React.FC = () => {
@@ -40,6 +41,10 @@ export const DashboardPage: React.FC = () => {
             <div className="mx-auto max-w-7xl space-y-6">
                 <DashboardHeader />
 
+                <DashboardCharts />
+
+                <h1 className="text-3xl font-bold text-slate-900 underline">Thống Kê Nội Bộ</h1>                
+            <p className="mt-2 text-sm text-slate-600">Thống Kê Theo Dịch Vụ , Phản Hồi Khách Hàng & Hiệu Suất Nhân Viên</p>
                 <DashboardFilter
                     fromDate={fromDate}
                     toDate={toDate}
@@ -68,6 +73,7 @@ export const DashboardPage: React.FC = () => {
                         <FeedbackStatisticsSection data={data.feedbackStatistics} />
 
                         <StaffPerformanceSection data={data.staffPerformance} />
+ 
 
                         {data.systemStatistics.averageProcessingTime > 0 && (
                             <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
