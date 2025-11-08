@@ -195,8 +195,8 @@ const nextConfig: NextConfig = {
     unoptimized: false,
   },
 
-  // Tối ưu hóa output - sử dụng standalone cho Vercel
-  output: "standalone",
+  // Tối ưu hóa output - không dùng standalone trên Vercel (Vercel tự xử lý)
+  // output: "standalone", // Disabled for Vercel deployment
 
   // Tối ưu hóa performance
   poweredByHeader: false,
