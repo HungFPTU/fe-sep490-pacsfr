@@ -77,6 +77,10 @@ const data = {
           url: "/manager/nhom-dich-vu",
         },
         {
+          title: "Tài liệu yêu cầu",
+          url: "/manager/tai-lieu-yeu-cau",
+        },
+        {
           title: "Phân loại dịch vụ",
           url: "/manager/service/list",
         },
@@ -91,6 +95,10 @@ const data = {
         {
           title: "Phương thức nộp hồ sơ",
           url: "/manager/phuong-thuc-nop-ho-so",
+        },
+        {
+          title: "Quy trình dịch vụ",
+          url: "/manager/quy-trinh-dich-vu",
         },
       ],
     },

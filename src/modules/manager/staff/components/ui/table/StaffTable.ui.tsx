@@ -6,7 +6,6 @@ import {
 } from '@heroui/react';
 import { Button } from '@/shared/components/ui/button.ui';
 import { TableRow, TableCell } from '@/shared/components/manager/ui/table';
-import { cn } from '@/shared/lib/utils';
 import { Trash2, Eye, UserPlus, Calendar, Clock } from 'lucide-react';
 import { Badge } from '@/shared/components/ui/badge.ui';
 import { Staff } from '../../../types';
@@ -14,12 +13,10 @@ import { formatDateVN } from '@core/utils/date';
 import {
     getStatusLabel,
     getRoleTypeLabel,
-    getActionButtonColors,
     getTableConfig,
     getTableColumns,
-    getRoleTypeColor
 } from '../../../utils';
-import { getBadgeStyle, getRoleTypeStyle, getStatusStyle } from '../../../utils';
+import { getRoleTypeStyle, getStatusStyle } from '../../../utils';
 import { AssignWorkShiftModal, StaffWorkShiftAssignmentsModal } from '../modal';
 
 interface StaffTableProps {
@@ -46,7 +43,6 @@ export function StaffTable({
     const [selectedStaff, setSelectedStaff] = React.useState<Staff | null>(null);
 
     const columns = getTableColumns();
-    const actionColors = getActionButtonColors();
 
     const handleAssignWorkShift = (staff: Staff) => {
         setSelectedStaff(staff);

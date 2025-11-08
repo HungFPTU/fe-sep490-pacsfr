@@ -3,7 +3,7 @@
 import React from 'react';
 import { OrgUnitTableHeader } from './OrgUnitTableHeader.ui';
 import { OrgUnitTableRow } from './OrgUnitTableRow.ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { OrgUnit } from '../../../types';
 
 interface Props {
