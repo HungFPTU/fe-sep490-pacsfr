@@ -3,8 +3,7 @@
 import React from 'react';
 import { DepartmentTableHeader } from './DepartmentTableHeader.ui';
 import { DepartmentTableRow } from './DepartmentTableRow.ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
-import { cn } from '@/shared/lib/utils';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { Department } from '../../../types';
 
 interface Props {

@@ -3,7 +3,7 @@
 import React from 'react';
 import { TemplateTableHeader } from './TemplateTableHeader.ui';
 import { TemplateTableRow } from './TemplateTableRow.ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { Template } from '../../../types';
 
 interface Props {

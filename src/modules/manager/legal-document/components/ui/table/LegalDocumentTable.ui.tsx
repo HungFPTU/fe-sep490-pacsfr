@@ -3,7 +3,7 @@
 import React from 'react';
 import { LegalDocumentTableHeader } from './LegalDocumentTableHeader.ui';
 import { LegalDocumentTableRow } from './LegalDocumentTableRow.ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { LegalDocument } from '../../../types';
 
 interface Props {
