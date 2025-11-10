@@ -61,13 +61,13 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.62.0",
     "react-markdown": "^10.1.0",
+    "recharts": "^3.4.1",
     "shadcn-ui": "^0.9.5",
     "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1",
     "yup": "^1.7.0",
     "zod": "^4.1.12",
-    "zustand": "^5.0.8",
-    "recharts": "latest"
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
