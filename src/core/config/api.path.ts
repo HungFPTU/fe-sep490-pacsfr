@@ -421,4 +421,16 @@ export const API_PATH = {
         GET_ALL: '/Case',
     },
 
+    FILE: {
+        UPLOAD_IMAGE: '/FileUpload/image',
+    },
+
+    SUBMISSION_METHOD: {
+        GET_ALL: '/SubmissionMethod',
+    },
+
+    CASE_STATUS: {
+        GET_ALL: '/CaseStatus',
+    },
+
 };

@@ -13,8 +13,8 @@ export const useServices = (filters: ServiceFilters) => {
     return useQuery({
         queryKey: QUERY_KEYS.SERVICE_LIST(filters),
         queryFn: () => serviceService.getServiceList(filters),
-        gcTime: CACHE_TIME,
-        staleTime: STALE_TIME,
+        gcTime: CACHE_TIME.SHORT,
+        staleTime: STALE_TIME.MEDIUM,
     });
 };
 

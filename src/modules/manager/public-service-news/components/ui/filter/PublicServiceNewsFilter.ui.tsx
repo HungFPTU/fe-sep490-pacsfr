@@ -1,9 +1,6 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
-import { Button } from "@/shared/components/ui/button.ui";
-import { Input } from "@/shared/components/ui/input.ui";
 import { cn } from "@/shared/lib/utils";
 import { useServices } from "@/modules/manager/service/hooks";
 import { useNewsCategories } from "@/modules/manager/news-category/hooks";
@@ -12,6 +9,7 @@ import { getValues, getValuesPage } from "@/types/rest";
 import type { Service } from "@/modules/manager/service/types";
 import type { NewsCategory } from "@/modules/manager/news-category/types";
 import type { Staff } from "@/modules/manager/staff/types";
+import { ManagerFilterBar } from "@/shared/components/manager/ui";
 
 interface Props {
     keyword: string;
@@ -116,25 +114,16 @@ export const PublicServiceNewsFilter: React.FC<Props> = ({
     };
 
     return (
-        <div className="mb-5 space-y-3">
-            <div className="flex flex-wrap items-center gap-3">
-                <div className="relative flex-1 min-w-[260px]">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                        type="text"
-                        placeholder="Tìm kiếm theo tiêu đề, slug..."
-                        value={localFilters.keyword}
-                        onChange={(e) => setLocalFilters((prev) => ({ ...prev, keyword: e.target.value }))}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                handleApply();
-                            }
-                        }}
-                        className="pl-10"
-                    />
-                </div>
-
-                <div className="w-full shrink-0 sm:w-[190px]">
+        <div className="mb-5">
+            <ManagerFilterBar
+                searchValue={localFilters.keyword}
+                onSearchChange={(value) => setLocalFilters((prev) => ({ ...prev, keyword: value }))}
+                onSubmit={handleApply}
+                onReset={handleReset}
+                searchPlaceholder="Tìm kiếm theo tiêu đề hoặc mã bài viết..."
+                className="flex-nowrap overflow-x-auto"
+            >
+                <div className="shrink-0 w-[190px]">
                     <select
                         value={localFilters.serviceId}
                         onChange={(e) => setLocalFilters((prev) => ({ ...prev, serviceId: e.target.value }))}
@@ -152,7 +141,7 @@ export const PublicServiceNewsFilter: React.FC<Props> = ({
                     </select>
                 </div>
 
-                <div className="w-full shrink-0 sm:w-[190px]">
+                <div className="shrink-0 w-[190px]">
                     <select
                         value={localFilters.newsCategoryId}
                         onChange={(e) => setLocalFilters((prev) => ({ ...prev, newsCategoryId: e.target.value }))}
@@ -170,7 +159,7 @@ export const PublicServiceNewsFilter: React.FC<Props> = ({
                     </select>
                 </div>
 
-                <div className="w-full shrink-0 sm:w-[190px]">
+                <div className="shrink-0 w-[190px]">
                     <select
                         value={localFilters.staffId}
                         onChange={(e) => setLocalFilters((prev) => ({ ...prev, staffId: e.target.value }))}
@@ -188,7 +177,7 @@ export const PublicServiceNewsFilter: React.FC<Props> = ({
                     </select>
                 </div>
 
-                <div className="w-full shrink-0 sm:w-[170px]">
+                <div className="shrink-0 w-[170px]">
                     <select
                         value={String(localFilters.isPublished)}
                         onChange={(e) => setLocalFilters((prev) => ({ ...prev, isPublished: e.target.value === "true" }))}
@@ -200,20 +189,8 @@ export const PublicServiceNewsFilter: React.FC<Props> = ({
                         <option value="true">Đã xuất bản</option>
                         <option value="false">Nháp</option>
                     </select>
-
                 </div>
-
-                <div className="flex items-center gap-2">
-                    <Button onClick={handleApply} size="default" className="shrink-0">
-                        <Search className="h-4 w-4 mr-1" />
-                        Tìm kiếm
-                    </Button>
-                    <Button onClick={handleReset} variant="outline" size="default" className="shrink-0">
-                        <X className="h-4 w-4 mr-1" />
-                        Đặt lại
-                    </Button>
-                </div>
-            </div>
+            </ManagerFilterBar>
         </div>
     );
 };

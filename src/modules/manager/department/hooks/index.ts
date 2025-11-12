@@ -13,8 +13,8 @@ export const useDepartments = (filters: DepartmentFilters) => {
     return useQuery({
         queryKey: QUERY_KEYS.DEPARTMENT_LIST(filters),
         queryFn: () => departmentService.getDepartmentList(filters),
-        gcTime: CACHE_TIME,
-        staleTime: STALE_TIME,
+        gcTime: CACHE_TIME.SHORT,
+        staleTime: STALE_TIME.MEDIUM,
     });
 };
 
