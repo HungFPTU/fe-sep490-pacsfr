@@ -1,5 +1,9 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
+import { UserInfo } from "./UserInfo.com";
+import { useAuth } from "@/modules/auth/hooks";
 
 interface GovernmentHeaderProps {
   showBreadcrumb?: boolean;
@@ -12,6 +16,8 @@ export function GovernmentHeader({
   breadcrumbItems = [],
   currentPage = "home"
 }: GovernmentHeaderProps) {
+  const { isAuthenticated } = useAuth();
+
   return (
     <>
       {/* Header với background trong-dong */}
@@ -63,6 +69,18 @@ export function GovernmentHeader({
                 <option>Tiếng Việt</option>
                 <option>English</option>
               </select>
+
+              {/* User Info - Hiển thị khi đã đăng nhập */}
+              {isAuthenticated ? (
+                <UserInfo />
+              ) : (
+                <Link
+                  href="/login"
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+                >
+                  Đăng nhập
+                </Link>
+              )}
             </div>
           </div>
         </div>
