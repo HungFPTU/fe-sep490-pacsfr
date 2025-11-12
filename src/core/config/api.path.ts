@@ -307,6 +307,14 @@ export const API_PATH = {
             PUT: (id: string) => `/SubmissionMethod/${id}`,
             DELETE: (id: string) => `/SubmissionMethod/${id}`,
         },
+        FAQ_CATEGORY: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/FAQCategory?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/FAQCategory/${id}`,
+            POST: '/FAQCategory',
+            PUT: (id: string) => `/FAQCategory/${id}`,
+            DELETE: (id: string) => `/FAQCategory/${id}`,
+        },
     },
     STAFF: {
         DASHBOARD: {

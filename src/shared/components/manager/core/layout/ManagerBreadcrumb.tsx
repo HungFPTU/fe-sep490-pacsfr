@@ -30,6 +30,7 @@ const pathLabels: Record<string, string> = {
     config: 'Cấu hình quy trình phục vụ',
     'phuong-thuc-nop-ho-so': 'Phương thức nộp hồ sơ',
     'quy-trinh-dich-vu': 'Quy trình dịch vụ',
+    'tai-lieu-yeu-cau': 'Tài liệu yêu cầu',
 
     // Quản lý phòng ban
     'phong-ban': 'Quản lý phòng ban',
@@ -58,6 +59,9 @@ const pathLabels: Record<string, string> = {
     'mau-van-ban': 'Mẫu văn bản',
     'phan-loai': 'Phân loại văn bản',
     'bao-cao': 'Báo cáo văn bản',
+
+    // Quản lý FAQ
+    'faq-category': 'Danh mục câu hỏi thường gặp',
 };
 
 /**

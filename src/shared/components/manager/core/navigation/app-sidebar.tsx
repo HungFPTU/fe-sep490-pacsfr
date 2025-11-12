@@ -10,6 +10,7 @@ import {
   BarChart3,
   ListChecks,
   FileText,
+  HelpCircle,
 } from "lucide-react"
 
 import {
@@ -196,6 +197,17 @@ const data = {
         {
           title: "Báo cáo văn bản",
           url: "/manager/van-ban-phap-luat/bao-cao",
+        },
+      ],
+    },
+    {
+      title: "Quản lý FAQ",
+      url: "",
+      icon: HelpCircle,
+      items: [
+        {
+          title: "Danh mục câu hỏi thường gặp",
+          url: "/manager/faq-category",
         },
       ],
     },

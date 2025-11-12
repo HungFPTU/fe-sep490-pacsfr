@@ -11,7 +11,7 @@
     "dev:restart:win": "powershell -ExecutionPolicy Bypass -File scripts/restart-bun-dev.ps1",
     "clear:watchman": "bun run scripts/clear-watchman-cache.sh",
     "clear:watchman:win": "powershell -ExecutionPolicy Bypass -File scripts/clear-watchman-cache.ps1",
-    "build": "NODE_ENV=production bun --bun run next build",
+    "build": "bun --bun run next build",
     "build:vercel": "next build",
     "start": "bun --bun run next start",
     "lint": "bun --bun run next lint",
