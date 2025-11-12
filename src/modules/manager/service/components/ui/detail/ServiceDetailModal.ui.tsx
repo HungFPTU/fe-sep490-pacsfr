@@ -3,6 +3,7 @@
 import React from 'react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { ServiceInfo } from './ServiceInfo.ui';
+import { ServiceSubmissionMethods } from './ServiceSubmissionMethods.ui';
 import type { Service } from '../../../types';
 
 interface Props {
@@ -62,6 +63,14 @@ export const ServiceDetailModal: React.FC<Props> = ({
                     </div>
                 </div>
                 <ServiceInfo service={service} />
+
+                {/* Submission Methods Section */}
+                <div className="mt-6 pt-6 border-t border-slate-200">
+                    <ServiceSubmissionMethods
+                        serviceId={service.id}
+                        assignedMethodIds={[]} // TODO: Get from service data if available
+                    />
+                </div>
             </div>
         </BaseModal>
     );
