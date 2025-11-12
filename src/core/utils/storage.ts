@@ -184,3 +184,31 @@ export const TokenStorage = {
     },
 };
 
+/**
+ * Payment QR Code Storage utilities (LocalStorage)
+ */
+export const PaymentQRStorage = {
+    setPaymentQRUrl: (fileUrl: string): boolean => {
+        return LocalStorage.set(STORAGE_KEYS.PAYMENT_QR_URL, fileUrl);
+    },
+
+    getPaymentQRUrl: (): string | null => {
+        return LocalStorage.get<string>(STORAGE_KEYS.PAYMENT_QR_URL);
+    },
+
+    removePaymentQRUrl: (): boolean => {
+        return LocalStorage.remove(STORAGE_KEYS.PAYMENT_QR_URL);
+    },
+
+    setPaymentQRData: (data: { fileUrl: string; publicId: string; originalFileName: string }): boolean => {
+        return LocalStorage.set(STORAGE_KEYS.PAYMENT_QR_DATA, data);
+    },
+
+    getPaymentQRData: (): { fileUrl: string; publicId: string; originalFileName: string } | null => {
+        return LocalStorage.get<{ fileUrl: string; publicId: string; originalFileName: string }>(STORAGE_KEYS.PAYMENT_QR_DATA);
+    },
+
+    removePaymentQRData: (): boolean => {
+        return LocalStorage.remove(STORAGE_KEYS.PAYMENT_QR_DATA);
+    },
+};

@@ -4,8 +4,7 @@ export const QUERY_KEYS = {
     ORG_UNIT_DETAIL: (id: string) => ['org-unit', 'detail', id] as const,
 };
 
-export const CACHE_TIME = 5 * 60 * 1000; // 5 minutes
-export const STALE_TIME = 1 * 60 * 1000; // 1 minute
+export { CACHE_TIME, STALE_TIME } from '@/shared/constants/react-query';
 
 export const DEFAULT_PAGE_SIZE = 10;
 
