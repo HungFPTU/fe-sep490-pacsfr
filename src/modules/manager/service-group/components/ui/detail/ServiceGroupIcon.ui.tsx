@@ -22,8 +22,8 @@ export const ServiceGroupIcon: React.FC<Props> = ({
                         <Image
                             src={iconUrl}
                             alt={groupName}
-                            layout="fill"
-                            objectFit="cover"
+                            fill
+                            className="object-cover"
                         />
                     </div>
                 ) : (

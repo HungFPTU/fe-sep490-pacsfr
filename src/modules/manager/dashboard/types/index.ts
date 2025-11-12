@@ -1,3 +1,5 @@
+import type { RestResponse } from '@/types/rest';
+
 export type ServiceStatistic = {
     serviceId: string;
     serviceName: string;
@@ -83,5 +85,65 @@ export type ComprehensiveReport = {
 export type DashboardFilters = {
     fromDate?: string;
     toDate?: string;
+};
+
+export type LineChartDataPoint = {
+    day: number;
+    date: string;
+    caseCount: number;
+    completedCount: number;
+    processingCount: number;
+};
+
+export type LineChartData = {
+    dataPoints: LineChartDataPoint[];
+    totalCases: number;
+    month: number;
+    year: number;
+};
+
+export type LineChartResponse = RestResponse<LineChartData>;
+
+export type PieChartDataPoint = {
+    serviceId: string;
+    serviceName: string;
+    serviceCode: string;
+    usageCount: number;
+    usagePercentage: number;
+    serviceGroupName: string;
+};
+
+export type PieChartData = {
+    serviceData: PieChartDataPoint[];
+    totalUsage: number;
+    startDate: string;
+    endDate: string;
+};
+
+export type PieChartResponse = RestResponse<PieChartData>;
+
+export type BarChartDataPoint = {
+    hour: number;
+    hourLabel: string;
+    ticketCount: number;
+    percentage: number;
+};
+
+export type BarChartData = {
+    hourlyData: BarChartDataPoint[];
+    totalTickets: number;
+    peakHour: number;
+    peakHourTicketCount: number;
+    startDate: string;
+    endDate: string;
+};
+
+export type BarChartResponse = RestResponse<BarChartData>;
+
+export type ChartFilters = {
+    month?: number;
+    year?: number;
+    startDate?: string;
+    endDate?: string;
 };
 

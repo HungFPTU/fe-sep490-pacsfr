@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   // Tối ưu hóa cho Bun runtime
   serverExternalPackages: [],
 
-  // Turbopack configuration (now stable)
+  // Turbopack configuration (default in Next.js 16, but keeping for custom rules)
   turbopack: {
     rules: {
       "*.svg": {
@@ -183,13 +183,14 @@ const nextConfig: NextConfig = {
   },
 
   // Tối ưu hóa images
+  // Note: Next.js 16 default minimumCacheTTL is 14400 (4 hours), but we keep 60s for shorter cache
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*" },
       { protocol: "http", hostname: "*" },
     ],
     formats: ["image/webp", "image/avif"],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 60, // Next.js 16 default is 14400, but keeping 60 for shorter cache
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     unoptimized: false,
