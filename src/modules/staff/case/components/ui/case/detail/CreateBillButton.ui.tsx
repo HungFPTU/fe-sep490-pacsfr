@@ -15,6 +15,7 @@ interface CreateBillButtonProps {
 export const CreateBillButton: React.FC<CreateBillButtonProps> = ({ caseId, isPayment }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string>(PaymentMethod.DIRECT);
+  const [billUrl, setBillUrl] = useState<string | null>(null);
   const createBillMutation = useCreateBill();
   const { addToast } = useGlobalToast();
 
@@ -40,11 +41,20 @@ export const CreateBillButton: React.FC<CreateBillButtonProps> = ({ caseId, isPa
         paymentMethod: selectedMethod
       },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
+          if (response.success && response.data?.billUrl) {
+            setBillUrl(response.data.billUrl);
+          }
           setShowModal(false);
         }
       }
     );
+  };
+
+  const handleViewBill = () => {
+    if (billUrl) {
+      window.open(billUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   return (
@@ -59,6 +69,20 @@ export const CreateBillButton: React.FC<CreateBillButtonProps> = ({ caseId, isPa
         </svg>
         {createBillMutation.isPending ? 'Đang tạo...' : 'Tạo hóa đơn'}
       </button>
+
+      {/* View Bill Button */}
+      {billUrl && (
+        <button
+          onClick={handleViewBill}
+          className="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all shadow-sm hover:shadow-md mb-2"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Xem hóa đơn
+        </button>
+      )}
 
       {/* Create Bill Modal */}
       <BaseModal
