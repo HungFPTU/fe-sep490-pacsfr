@@ -1,12 +1,12 @@
-import { http } from '@core/http/client';
+import { http, httpNoLoading } from '@core/http/client';
 import { API_PATH } from '@/core/config/api.path';
 import { RestResponse, RestPaged } from '@/types/rest';
-import type { Service, CreateServiceRequest, UpdateServiceRequest, ServiceFilters } from '../types';
+import type { Service, CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest } from '../types';
 
 export const serviceApi = {
     // GET list with filters
     getAll: (filters: ServiceFilters) => {
-        return http.get<RestPaged<Service>>(
+        return httpNoLoading.get<RestPaged<Service>>(
             API_PATH.MANAGER.SERVICES.GET_ALL(
                 filters.keyword,
                 filters.serviceGroupId,
@@ -45,6 +45,14 @@ export const serviceApi = {
     delete: (id: string) => {
         return http.delete<RestResponse<object>>(
             API_PATH.MANAGER.SERVICES.DELETE(id)
+        );
+    },
+
+    // Assign submission methods
+    assignSubmissionMethods: (data: AssignSubmissionMethodsRequest) => {
+        return httpNoLoading.post<RestResponse<{ success: boolean; message: string }>>(
+            API_PATH.MANAGER.SERVICES.ASSIGN_SUBMISSION_METHODS,
+            data
         );
     },
 };
