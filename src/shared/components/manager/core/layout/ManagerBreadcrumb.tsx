@@ -63,6 +63,10 @@ const pathLabels: Record<string, string> = {
     // Quản lý FAQ
     'faq-category': 'Danh mục câu hỏi thường gặp',
     faq: 'Câu hỏi thường gặp',
+
+    // Quản lý tin tức
+    'news-category': 'Danh mục tin tức',
+    'public-service-news': 'Tin tức dịch vụ công',
 };
 
 /**

@@ -38,6 +38,7 @@ export const API_PATH = {
                 PUT: (id: string) => `/Service/${id}`,
                 DELETE: (id: string) => `/Service/${id}`,
                 GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
+                ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
             },
             ACCOUNTS: {
                 GET_ALL: "/Staff",
@@ -166,6 +167,7 @@ export const API_PATH = {
             DELETE: (id: string) => `/Service/${id}`,
             GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) =>
                 `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
+            ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
         },
         ACCOUNTS: {
             GET_ALL: '/Staff',
@@ -322,6 +324,22 @@ export const API_PATH = {
             POST: '/FAQ',
             PUT: (id: string) => `/FAQ/${id}`,
             DELETE: (id: string) => `/FAQ/${id}`,
+        },
+        NEWS_CATEGORY: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/NewsCategory?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/NewsCategory/${id}`,
+            POST: '/NewsCategory',
+            PUT: (id: string) => `/NewsCategory/${id}`,
+            DELETE: (id: string) => `/NewsCategory/${id}`,
+        },
+        PUBLIC_SERVICE_NEWS: {
+            GET_ALL: (Keyword: string, ServiceId: string, NewsCategoryId: string, StaffId: string, IsPublished: boolean, Page: number, PageSize: number) =>
+                `/PublicServiceNew?keyword=${Keyword}&serviceId=${ServiceId}&newsCategoryId=${NewsCategoryId}&staffId=${StaffId}&isPublished=${IsPublished}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/PublicServiceNew/${id}`,
+            POST: '/PublicServiceNew',
+            PUT: (id: string) => `/PublicServiceNew/${id}`,
+            DELETE: (id: string) => `/PublicServiceNew/${id}`,
         },
     },
     STAFF: {

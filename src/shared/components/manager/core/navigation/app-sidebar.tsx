@@ -11,6 +11,7 @@ import {
   ListChecks,
   FileText,
   HelpCircle,
+  Newspaper,
 } from "lucide-react"
 
 import {
@@ -212,6 +213,21 @@ const data = {
         {
           title: "Câu hỏi thường gặp",
           url: "/manager/faq",
+        },
+      ],
+    },
+    {
+      title: "Quản lý tin tức",
+      url: "",
+      icon: Newspaper,
+      items: [
+        {
+          title: "Danh mục tin tức",
+          url: "/manager/news-category",
+        },
+        {
+          title: "Tin tức dịch vụ công",
+          url: "/manager/public-service-news",
         },
       ],
     },
