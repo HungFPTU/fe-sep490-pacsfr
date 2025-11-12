@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LegalDocumentService } from '../services/legal-document.service';
+import { CACHE_TIME, STALE_TIME } from '../constants';
 import type {
     CreateLegalDocumentRequest,
     UpdateLegalDocumentRequest,
@@ -12,7 +13,8 @@ export const useLegalDocuments = (filters: LegalDocumentFilters) => {
     return useQuery({
         queryKey: ['legal-documents', filters],
         queryFn: () => LegalDocumentService.getLegalDocuments(filters),
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        gcTime: CACHE_TIME.LONG,
+        staleTime: STALE_TIME.LONG,
     });
 };
 

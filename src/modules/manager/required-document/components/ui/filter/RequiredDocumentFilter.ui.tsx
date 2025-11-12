@@ -1,15 +1,13 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Search, X } from 'lucide-react';
-import { Button } from '@/shared/components/ui/button.ui';
-import { Input } from '@/shared/components/ui/input.ui';
 import { cn } from '@/shared/lib/utils';
 import { useServices } from '@/modules/manager/service/hooks';
 import { useDocsTypes } from '@/modules/manager/docs-type/hooks';
 import { getValuesPage } from '@/types/rest';
 import type { Service } from '@/modules/manager/service/types';
 import type { DocsType } from '@/modules/manager/docs-type/types';
+import { ManagerFilterBar } from '@/shared/components/manager/ui';
 
 interface Props {
     keyword: string;
@@ -81,7 +79,6 @@ export const RequiredDocumentFilter: React.FC<Props> = ({
             docTypeId: localFilters.docTypeId,
             isActive: localFilters.isActive,
         });
-        onReset();
     };
 
     const handleReset = () => {
@@ -98,30 +95,19 @@ export const RequiredDocumentFilter: React.FC<Props> = ({
 
     return (
         <div className="mb-4">
-            <div className="flex items-center gap-1 flex-nowrap">
-                {/* Search */}
-                <div className="relative flex-1 min-w-[280px] mr-3">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                    <Input
-                        type="text"
-                        placeholder="Tìm kiếm theo mô tả, tên dịch vụ..."
-                        value={localFilters.keyword || ''}
-                        onChange={(e) => setLocalFilters({ ...localFilters, keyword: e.target.value })}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleApply();
-                        }}
-                        className="pl-10"
-                    />
-                </div>
-
-                {/* Service Filter */}
-                <div className="min-w-[170px] mr-3">
+            <ManagerFilterBar
+                searchValue={localFilters.keyword || ''}
+                onSearchChange={(value: string) => setLocalFilters((prev) => ({ ...prev, keyword: value }))}
+                onSubmit={handleApply}
+                onReset={handleReset}
+                searchPlaceholder="Tìm kiếm theo mô tả, tên dịch vụ..."
+            >
+                <div className="w-full shrink-0 sm:w-[190px]">
                     <select
                         value={localFilters.serviceId || ''}
-                        onChange={(e) => setLocalFilters({ ...localFilters, serviceId: e.target.value })}
+                        onChange={(e) => setLocalFilters((prev) => ({ ...prev, serviceId: e.target.value }))}
                         className={cn(
-                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
-                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors",
                             "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                             "disabled:cursor-not-allowed disabled:opacity-50"
                         )}
@@ -136,14 +122,12 @@ export const RequiredDocumentFilter: React.FC<Props> = ({
                     </select>
                 </div>
 
-                {/* Doc Type Filter */}
-                <div className="min-w-[170px] mr-3">
+                <div className="w-full shrink-0 sm:w-[190px]">
                     <select
                         value={localFilters.docTypeId || ''}
-                        onChange={(e) => setLocalFilters({ ...localFilters, docTypeId: e.target.value })}
+                        onChange={(e) => setLocalFilters((prev) => ({ ...prev, docTypeId: e.target.value }))}
                         className={cn(
-                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
-                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors",
                             "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                             "disabled:cursor-not-allowed disabled:opacity-50"
                         )}
@@ -158,14 +142,12 @@ export const RequiredDocumentFilter: React.FC<Props> = ({
                     </select>
                 </div>
 
-                {/* Status Filter */}
-                <div className="min-w-[170px] mr-3">
+                <div className="w-full shrink-0 sm:w-[170px]">
                     <select
                         value={String(localFilters.isActive)}
-                        onChange={(e) => setLocalFilters({ ...localFilters, isActive: e.target.value === 'true' })}
+                        onChange={(e) => setLocalFilters((prev) => ({ ...prev, isActive: e.target.value === 'true' }))}
                         className={cn(
-                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
-                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors",
                             "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                             "disabled:cursor-not-allowed disabled:opacity-50"
                         )}
@@ -174,26 +156,7 @@ export const RequiredDocumentFilter: React.FC<Props> = ({
                         <option value="false">Ngừng áp dụng</option>
                     </select>
                 </div>
-
-                {/* Action Buttons */}
-                <Button
-                    onClick={handleApply}
-                    size="default"
-                    className="whitespace-nowrap mr-2 flex-shrink-0"
-                >
-                    <Search className="h-4 w-4 mr-1" />
-                    Tìm kiếm
-                </Button>
-                <Button
-                    onClick={handleReset}
-                    variant="outline"
-                    size="default"
-                    className="whitespace-nowrap flex-shrink-0"
-                >
-                    <X className="h-4 w-4 mr-1" />
-                    Đặt lại
-                </Button>
-            </div>
+            </ManagerFilterBar>
         </div>
     );
 };

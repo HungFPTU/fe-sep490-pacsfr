@@ -46,3 +46,6 @@ export * from './breadcrumb';
 // Toggle Switch
 export * from './toggle-switch';
 
+// Filter
+export * from './filter/ManagerFilterBar.ui';
+
