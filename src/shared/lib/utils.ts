@@ -23,12 +23,18 @@ export function formatCurrency(amount: number): string {
  * Format date for Vietnamese locale
  */
 export function formatDate(
-    date: Date | string,
+    date: Date | string | null | undefined,
     options: Intl.DateTimeFormatOptions = {}
 ): string {
+    // Handle null or undefined
+    if (!date) {
+        return "-";
+    }
+
     const dateObj = typeof date === "string" ? new Date(date) : date;
 
-    if (Number.isNaN(dateObj.getTime())) {
+    // Check if dateObj is valid
+    if (!dateObj || Number.isNaN(dateObj.getTime())) {
         return "-";
     }
 

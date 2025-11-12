@@ -4,6 +4,8 @@ import type { NextConfig } from "next";
 process.env.WEBPACK_DISABLE_WATCHPACK = 'true';
 process.env.WEBPACK_WATCH_OPTIONS = 'false';
 process.env.NEXT_WEBPACK_USEPOLLING = 'false';
+// Disable webpack workers for Bun compatibility
+process.env.WEBPACK_DISABLE_WORKERS = 'true';
 
 const nextConfig: NextConfig = {
   // Tối ưu hóa cho Bun runtime
@@ -43,8 +45,8 @@ const nextConfig: NextConfig = {
       "@emotion/styled",
       "@emotion/is-prop-valid",
     ],
-    // Tối ưu hóa memory usage
-    memoryBasedWorkersCount: true,
+    // Tối ưu hóa memory usage - Disabled for Bun compatibility
+    memoryBasedWorkersCount: false,
     // Tối ưu hóa CSS - tắt để tránh lỗi critters với Bun
     optimizeCss: false,
     // Tối ưu hóa server actions
@@ -55,8 +57,8 @@ const nextConfig: NextConfig = {
     // fastRefresh: true,
     // Optimize for auto-reload
     optimizeServerReact: true,
-    // Use Next.js built-in file watching
-    webpackBuildWorker: true,
+    // Disable webpackBuildWorker for Bun compatibility (Bun doesn't fully support worker_threads options)
+    webpackBuildWorker: false,
   },
 
   // Tối ưu hóa build performance
@@ -69,6 +71,14 @@ const nextConfig: NextConfig = {
 
   // Tối ưu hóa webpack cho Bun và SSR
   webpack: (config, { dev, isServer }) => {
+    // Disable webpack workers for Bun compatibility
+    config.parallelism = 1; // Disable parallel processing
+    // Keep cache enabled but disable worker-based cache
+    if (config.cache && typeof config.cache === 'object') {
+      config.cache.type = 'filesystem';
+      config.cache.buildDependencies = {};
+    }
+
     // Enable Next.js built-in file watching for auto-reload
     if (dev) {
       // Enable file watching for auto-reload
@@ -105,9 +115,12 @@ const nextConfig: NextConfig = {
     }
 
     // Xử lý lỗi tương thích với Bun và SSR
+    const path = require('path');
+    const emptyModulePath = path.resolve(__dirname, 'empty-module.js');
     config.resolve.alias = {
       ...config.resolve.alias,
-      'async_hooks': 'empty-module',
+      'async_hooks': emptyModulePath,
+      'worker_threads': emptyModulePath, // Disable worker_threads for Bun compatibility
       // Fix for emotion dependencies
       '@emotion/is-prop-valid': require.resolve('@emotion/is-prop-valid'),
       '@emotion/styled': require.resolve('@emotion/styled'),
@@ -149,6 +162,8 @@ const nextConfig: NextConfig = {
     // Xử lý lỗi "i.M" trong build và chunk loading
     config.optimization = {
       ...config.optimization,
+      // Disable parallel processing for Bun compatibility
+      minimize: !dev, // Only minimize in production
       splitChunks: {
         ...config.optimization.splitChunks,
         chunks: 'all',
