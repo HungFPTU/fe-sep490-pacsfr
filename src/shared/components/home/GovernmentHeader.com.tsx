@@ -71,16 +71,7 @@ export function GovernmentHeader({
               </select>
 
               {/* User Info - Hiển thị khi đã đăng nhập */}
-              {isAuthenticated ? (
-                <UserInfo />
-              ) : (
-                <Link
-                  href="/login"
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
-                >
-                  Đăng nhập
-                </Link>
-              )}
+              {isAuthenticated && <UserInfo />}
             </div>
           </div>
         </div>

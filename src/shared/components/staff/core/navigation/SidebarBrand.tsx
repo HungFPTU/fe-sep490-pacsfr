@@ -28,7 +28,7 @@ export function SidebarBrand() {
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     asChild
                 >
-                    <Link href="/staff/dashboard">
+                    <Link href="/">
                         <div className="relative w-8 h-8">
                             <Image src="/logo.png" alt="Logo" fill className="object-contain" />
                         </div>
