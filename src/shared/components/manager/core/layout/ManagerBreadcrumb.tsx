@@ -62,6 +62,7 @@ const pathLabels: Record<string, string> = {
 
     // Quản lý FAQ
     'faq-category': 'Danh mục câu hỏi thường gặp',
+    faq: 'Câu hỏi thường gặp',
 };
 
 /**

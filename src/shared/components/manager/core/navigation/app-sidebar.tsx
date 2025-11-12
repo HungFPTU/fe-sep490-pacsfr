@@ -209,6 +209,10 @@ const data = {
           title: "Danh mục câu hỏi thường gặp",
           url: "/manager/faq-category",
         },
+        {
+          title: "Câu hỏi thường gặp",
+          url: "/manager/faq",
+        },
       ],
     },
   ],

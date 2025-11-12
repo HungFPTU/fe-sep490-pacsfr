@@ -315,6 +315,14 @@ export const API_PATH = {
             PUT: (id: string) => `/FAQCategory/${id}`,
             DELETE: (id: string) => `/FAQCategory/${id}`,
         },
+        FAQ: {
+            GET_ALL: (Keyword: string, ServiceId: string, FaqCategoryId: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/FAQ?keyword=${Keyword}&serviceId=${ServiceId}&faqCategoryId=${FaqCategoryId}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/FAQ/${id}`,
+            POST: '/FAQ',
+            PUT: (id: string) => `/FAQ/${id}`,
+            DELETE: (id: string) => `/FAQ/${id}`,
+        },
     },
     STAFF: {
         DASHBOARD: {
