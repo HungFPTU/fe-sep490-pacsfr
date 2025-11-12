@@ -208,11 +208,11 @@ const data = {
       items: [
         {
           title: "Danh mục câu hỏi thường gặp",
-          url: "/manager/faq-category",
+          url: "/manager/danh-muc-cau-hoi",
         },
         {
           title: "Câu hỏi thường gặp",
-          url: "/manager/faq",
+          url: "/manager/cau-hoi-thuong-gap",
         },
       ],
     },
@@ -223,11 +223,11 @@ const data = {
       items: [
         {
           title: "Danh mục tin tức",
-          url: "/manager/news-category",
+          url: "/manager/danh-muc-tin-tuc",
         },
         {
           title: "Tin tức dịch vụ công",
-          url: "/manager/public-service-news",
+          url: "/manager/tin-tuc-dich-vu",
         },
       ],
     },

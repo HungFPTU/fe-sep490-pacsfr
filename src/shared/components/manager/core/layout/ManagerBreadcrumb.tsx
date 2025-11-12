@@ -61,12 +61,12 @@ const pathLabels: Record<string, string> = {
     'bao-cao': 'Báo cáo văn bản',
 
     // Quản lý FAQ
-    'faq-category': 'Danh mục câu hỏi thường gặp',
-    faq: 'Câu hỏi thường gặp',
+    'danh-muc-cau-hoi': 'Danh mục câu hỏi thường gặp',
+    'cau-hoi-thuong-gap': 'Câu hỏi thường gặp',
 
     // Quản lý tin tức
-    'news-category': 'Danh mục tin tức',
-    'public-service-news': 'Tin tức dịch vụ công',
+    'danh-muc-tin-tuc': 'Danh mục tin tức',
+    'tin-tuc-dich-vu': 'Tin tức dịch vụ công',
 };
 
 /**
