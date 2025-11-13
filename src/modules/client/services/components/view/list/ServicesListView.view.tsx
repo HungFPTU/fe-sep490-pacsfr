@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardBody } from "@heroui/react";
 import { ServiceFilters } from "../../ui/filter/ServiceFilters.ui";
 import { ServiceList } from "../../ui/list/ServiceList.ui";
@@ -17,24 +17,54 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
     className = "",
     initialFilters = {},
 }) => {
-    const { filters, updateFilter, resetFilters } = useServiceFilters({
+    const { filters, updateFilter, resetFilters, setPage } = useServiceFilters({
         size: 10,
         ...initialFilters,
     });
 
-    const handleFiltersChange = (newFilters: ServiceFiltersType) => {
-        // Update all filters at once
-        Object.entries(newFilters).forEach(([key, value]) => {
-            updateFilter(key as keyof ServiceFiltersType, value);
-        });
-    };
+    // Active filters state - only updated when search button is clicked
+    const [activeFilters, setActiveFilters] = useState<ServiceFiltersType>(filters);
 
-    const { data: response, isLoading, error } = useServices(filters);
+    // Sync activeFilters when filters change (e.g., initial mount)
+    useEffect(() => {
+        setActiveFilters(filters);
+    }, []); // Only on mount
+
+    const { data: response, isLoading, error, refetch } = useServices(activeFilters);
     const services = response?.data?.items?.$values || [];
     const pagination = response?.data;
 
+    // Handle search - apply filters and refetch
+    const handleSearch = (newFilters: ServiceFiltersType) => {
+        setActiveFilters({
+            ...newFilters,
+            page: 1, // Reset to first page on search
+        });
+        // Refetch will be triggered automatically by React Query when activeFilters changes
+    };
+
+    // Handle reset - clear filters and refetch
+    const handleReset = () => {
+        const defaultFilters: ServiceFiltersType = {
+            keyword: "",
+            serviceGroupId: "",
+            legalBasisId: "",
+            isActive: null,
+            page: 1,
+            size: 10,
+            implementingAgency: "",
+            field: "",
+            implementationLevel: "",
+            targetAudience: "",
+            searchBy: "department",
+        };
+        resetFilters();
+        setActiveFilters(defaultFilters);
+        // Refetch will be triggered automatically by React Query when activeFilters changes
+    };
+
     const handlePageChange = (page: number) => {
-        updateFilter("page", page as unknown as string | boolean | null);
+        setActiveFilters(prev => ({ ...prev, page }));
     };
 
     return (
@@ -52,8 +82,16 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
             {/* Filters */}
             <ServiceFilters
                 filters={filters}
-                onFiltersChange={handleFiltersChange}
-                onReset={resetFilters}
+                activeFilters={activeFilters}
+                onFiltersChange={(newFilters) => {
+                    // Update local filter state (not triggering API)
+                    Object.entries(newFilters).forEach(([key, value]) => {
+                        updateFilter(key as keyof ServiceFiltersType, value);
+                    });
+                }}
+                onSearch={handleSearch}
+                onReset={handleReset}
+                isLoading={isLoading}
             />
 
             {/* Results Summary */}
@@ -63,8 +101,8 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                             <p className="text-gray-700">
                                 <span className="font-semibold">{pagination.total}</span> thủ tục được tìm thấy
-                                {filters.keyword && (
-                                    <span> cho từ khóa <strong>&quot;{filters.keyword}&quot;</strong></span>
+                                {activeFilters.keyword && (
+                                    <span> cho từ khóa <strong>&quot;{activeFilters.keyword}&quot;</strong></span>
                                 )}
                             </p>
                             <div className="text-sm text-gray-600">

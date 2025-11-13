@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ServiceService } from "../services/service.service";
+import { extractServiceFromDetail } from "../mappers";
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
 import type { ServiceFilters } from "../types/req";
 
@@ -23,8 +24,11 @@ export const useServices = (filters: ServiceFilters) => {
 export const useService = (id: string) => {
     return useQuery({
         queryKey: serviceKeys.SERVICE_DETAIL(id),
-        queryFn: () => ServiceService.getServiceById(id),
-        enabled: !!id,
+        queryFn: () => {
+            console.log('[useService] Fetching service with id:', id);
+            return ServiceService.getServiceById(id);
+        },
+        enabled: !!id && id.length > 0,
         staleTime: STALE_TIME.MEDIUM,
         gcTime: CACHE_TIME.LONG,
     });
