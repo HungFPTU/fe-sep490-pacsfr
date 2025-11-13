@@ -1,26 +1,61 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useServices, useServiceFilters } from "@/modules/client/services/hooks/useServices";
 import { ServiceFilters } from "@/modules/client/services/components/ui/filter/ServiceFilters.ui";
 import { ServicesListView } from "@/modules/client/services/components/view/list/ServicesListView.view";
 import { ServicePagination } from "@/modules/client/services/components/ui/pagination/ServicePagination.ui";
+import type { ServiceFilters as ServiceFiltersType } from "@/modules/client/services/types/req";
 
 export default function SearchPage() {
-    const { filters, updateFilter, resetFilters, setPage } = useServiceFilters();
-    const { data: servicesResponse } = useServices(filters);
+    const { filters, updateFilter, resetFilters } = useServiceFilters();
 
-    const handleFiltersChange = (newFilters: typeof filters) => {
+    // Active filters state - only updated when search button is clicked
+    const [activeFilters, setActiveFilters] = useState<ServiceFiltersType>(filters);
+
+    // Sync activeFilters when filters change (e.g., initial mount)
+    useEffect(() => {
+        setActiveFilters(filters);
+    }, []); // Only on mount
+
+    const { data: servicesResponse, isLoading } = useServices(activeFilters);
+
+    const handleFiltersChange = (newFilters: ServiceFiltersType) => {
+        // Update local filter state (not triggering API)
         Object.entries(newFilters).forEach(([key, value]) => {
-            updateFilter(key as keyof typeof filters, value);
+            updateFilter(key as keyof ServiceFiltersType, value);
         });
     };
 
+    const handleSearch = (newFilters: ServiceFiltersType) => {
+        setActiveFilters({
+            ...newFilters,
+            page: 1, // Reset to first page on search
+        });
+        // Refetch will be triggered automatically by React Query when activeFilters changes
+    };
+
     const handleReset = () => {
+        const defaultFilters: ServiceFiltersType = {
+            keyword: "",
+            serviceGroupId: "",
+            legalBasisId: "",
+            isActive: null,
+            page: 1,
+            size: 10,
+            implementingAgency: "",
+            field: "",
+            implementationLevel: "",
+            targetAudience: "",
+            searchBy: "department",
+        };
         resetFilters();
+        setActiveFilters(defaultFilters);
+        // Refetch will be triggered automatically by React Query when activeFilters changes
     };
 
     const handlePageChange = (page: number) => {
-        setPage(page);
+        setActiveFilters(prev => ({ ...prev, page }));
     };
 
     return (
@@ -40,8 +75,11 @@ export default function SearchPage() {
                 <div className="mb-8">
                     <ServiceFilters
                         filters={filters}
+                        activeFilters={activeFilters}
                         onFiltersChange={handleFiltersChange}
+                        onSearch={handleSearch}
                         onReset={handleReset}
+                        isLoading={isLoading}
                     />
                 </div>
 
@@ -63,8 +101,11 @@ export default function SearchPage() {
                             <div className="flex items-center gap-2">
                                 <label className="text-sm text-gray-600">Hiển thị:</label>
                                 <select
-                                    value={filters.size}
-                                    onChange={(e) => updateFilter("size", parseInt(e.target.value) as unknown as string | boolean | null)}
+                                    value={activeFilters.size}
+                                    onChange={(e) => {
+                                        const newSize = parseInt(e.target.value);
+                                        setActiveFilters(prev => ({ ...prev, size: newSize, page: 1 }));
+                                    }}
                                     className="border border-gray-300 rounded px-2 py-1 text-sm"
                                 >
                                     <option value={10}>10</option>

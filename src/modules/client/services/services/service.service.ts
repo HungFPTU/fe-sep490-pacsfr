@@ -1,5 +1,14 @@
+/**
+ * Service Service Layer
+ * 
+ * Business logic layer for service operations.
+ * Follows Service Layer pattern - encapsulates business logic and coordinates between API and domain.
+ */
+
 import { serviceApi } from "../api/service.api";
 import { UI_CONSTANTS } from "../constants";
+import { extractServicesFromPage } from "../mappers";
+import { validateServiceFilters } from "../helpers";
 import type {
     Service,
     ServiceListResponse,
@@ -11,8 +20,16 @@ import type {
 } from "../types";
 
 export class ServiceService {
-    // Get services with search and filter
+    /**
+     * Get services with search and filter
+     * Validates filters before making API call
+     */
     static async getServices(filters: ServiceFilters): Promise<ServiceListResponse> {
+        // Validate filters
+        if (!validateServiceFilters(filters)) {
+            throw new Error("Invalid service filters");
+        }
+
         try {
             const params: ServiceSearchRequest = {
                 keyword: filters.keyword || undefined,
@@ -30,8 +47,14 @@ export class ServiceService {
         }
     }
 
-    // Get service by ID
+    /**
+     * Get service by ID
+     */
     static async getServiceById(id: string): Promise<ServiceDetailResponse> {
+        if (!id || id.trim() === '') {
+            throw new Error("Service ID is required");
+        }
+
         try {
             return await serviceApi.getServiceById(id);
         } catch (error) {
@@ -40,7 +63,9 @@ export class ServiceService {
         }
     }
 
-    // Get featured services for homepage
+    /**
+     * Get featured services for homepage
+     */
     static async getFeaturedServices(limit: number = UI_CONSTANTS.MAX_FEATURED_SERVICES): Promise<Service[]> {
         try {
             const response = await serviceApi.getServices({
@@ -48,18 +73,24 @@ export class ServiceService {
                 size: limit,
                 page: 1,
             });
-            return response.data.items.$values;
+            return extractServicesFromPage(response);
         } catch (error) {
             console.error("Error fetching featured services:", error);
             throw error;
         }
     }
 
-    // Search services by keyword
+    /**
+     * Search services by keyword
+     */
     static async searchServices(keyword: string, page: number = 1, size: number = 10): Promise<ServiceListResponse> {
+        if (!keyword || keyword.trim() === '') {
+            throw new Error("Search keyword is required");
+        }
+
         try {
             return await serviceApi.getServices({
-                keyword,
+                keyword: keyword.trim(),
                 isActive: true,
                 page,
                 size,
@@ -70,7 +101,9 @@ export class ServiceService {
         }
     }
 
-    // Get service groups for filter
+    /**
+     * Get service groups for filter
+     */
     static async getServiceGroups(): Promise<ServiceGroupListResponse> {
         try {
             return await serviceApi.getServiceGroups();
@@ -80,38 +113,15 @@ export class ServiceService {
         }
     }
 
-    // Get legal basis for filter
+    /**
+     * Get legal basis for filter
+     */
     static async getLegalBasis(): Promise<LegalBasisListResponse> {
         try {
             return await serviceApi.getLegalBasis();
         } catch (error) {
             console.error("Error fetching legal basis:", error);
             throw error;
-        }
-    }
-
-    // Format fee amount for display
-    static formatFeeAmount(amount: number): string {
-        return new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-        }).format(amount);
-    }
-
-    // Format processing time for display
-    static formatProcessingTime(time: string): string {
-        return time;
-    }
-
-    // Get service type badge color
-    static getServiceTypeColor(type: string): string {
-        switch (type) {
-            case "Trực tuyến":
-                return "bg-green-100 text-green-800";
-            case "Trực tiếp":
-                return "bg-blue-100 text-blue-800";
-            default:
-                return "bg-gray-100 text-gray-800";
         }
     }
 }
