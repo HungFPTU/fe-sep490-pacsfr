@@ -28,6 +28,9 @@ const pathLabels: Record<string, string> = {
     service: 'Dịch vụ',
     list: 'Phân loại dịch vụ',
     config: 'Cấu hình quy trình phục vụ',
+    'phuong-thuc-nop-ho-so': 'Phương thức nộp hồ sơ',
+    'quy-trinh-dich-vu': 'Quy trình dịch vụ',
+    'tai-lieu-yeu-cau': 'Tài liệu yêu cầu',
 
     // Quản lý phòng ban
     'phong-ban': 'Quản lý phòng ban',
@@ -56,6 +59,14 @@ const pathLabels: Record<string, string> = {
     'mau-van-ban': 'Mẫu văn bản',
     'phan-loai': 'Phân loại văn bản',
     'bao-cao': 'Báo cáo văn bản',
+
+    // Quản lý FAQ
+    'danh-muc-cau-hoi': 'Danh mục câu hỏi thường gặp',
+    'cau-hoi-thuong-gap': 'Câu hỏi thường gặp',
+
+    // Quản lý tin tức
+    'danh-muc-tin-tuc': 'Danh mục tin tức',
+    'tin-tuc-dich-vu': 'Tin tức dịch vụ công',
 };
 
 /**

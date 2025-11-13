@@ -5,6 +5,7 @@ import { formatDate } from '@/shared/lib/utils';
 import { ServiceGroupDetail } from './ServiceGroupDetail.ui';
 import type { Service } from '../../../types';
 import { getServiceTypeLabel, getExecutionLevelLabel, getServiceFieldLabel } from '../../../utils';
+import { Badge } from '@/shared/components/ui/badge.ui';
 
 interface Props {
     service: Service;
@@ -46,9 +47,11 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <label className="block text-sm font-medium text-slate-700">
                     Loại dịch vụ
                 </label>
-                <span className="mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold bg-indigo-100 text-indigo-800">
-                    {getServiceTypeLabel(service.serviceType)}
-                </span>
+                <div className="mt-1">
+                    <Badge variant="outline">
+                        {getServiceTypeLabel(service.serviceType)}
+                    </Badge>
+                </div>
             </div>
 
             {/* Execution Level */}
@@ -56,9 +59,11 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <label className="block text-sm font-medium text-slate-700">
                     Cấp thực hiện
                 </label>
-                <span className="mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold bg-purple-100 text-purple-800">
-                    {getExecutionLevelLabel(service.executionLevel)}
-                </span>
+                <div className="mt-1">
+                    <Badge variant="outline">
+                        {getExecutionLevelLabel(service.executionLevel)}
+                    </Badge>
+                </div>
             </div>
 
             {/* Field */}
@@ -66,9 +71,11 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <label className="block text-sm font-medium text-slate-700">
                     Lĩnh vực
                 </label>
-                <span className="mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800">
-                    {getServiceFieldLabel(service.field)}
-                </span>
+                <div className="mt-1">
+                    <Badge variant="outline">
+                        {getServiceFieldLabel(service.field)}
+                    </Badge>
+                </div>
             </div>
 
             {/* Decision Number */}
@@ -92,14 +99,11 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <label className="block text-sm font-medium text-slate-700">
                     Hỗ trợ trực tuyến
                 </label>
-                <span
-                    className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${service.isOnlineAvailable
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                >
-                    {service.isOnlineAvailable ? 'Có' : 'Không'}
-                </span>
+                <div className="mt-1">
+                    <Badge variant={service.isOnlineAvailable ? 'outline' : 'secondary'}>
+                        {service.isOnlineAvailable ? 'Có' : 'Không'}
+                    </Badge>
+                </div>
             </div>
 
             {/* Status */}
@@ -107,14 +111,11 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <label className="block text-sm font-medium text-slate-700">
                     Trạng thái
                 </label>
-                <span
-                    className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${service.isActive
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                >
-                    {service.isActive ? 'Hoạt động' : 'Ngừng hoạt động'}
-                </span>
+                <div className="mt-1">
+                    <Badge variant={service.isActive ? 'outline' : 'secondary'}>
+                        {service.isActive ? 'Hoạt động' : 'Ngừng'}
+                    </Badge>
+                </div>
             </div>
 
             {/* Created At */}

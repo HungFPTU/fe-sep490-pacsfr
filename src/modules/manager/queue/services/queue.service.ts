@@ -1,42 +1,55 @@
-import { queuesAPI } from "../api/system.queue.api";
-import { Queue } from "../types";
+import { queueApi } from '../api/queue.api';
+import type { QueueMonitoringData } from '../types';
 
-export function createMockData(count: number): Queue[] {
-  const queues: Queue[] = [];
+const parseArray = <T>(data: { $values?: T[] } | T[] | undefined): T[] => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (typeof data === 'object' && '$values' in data) {
+        return (data as { $values?: T[] }).$values || [];
+    }
+    return [];
+};
 
-  for (let i = 1; i <= count; i++) {
-    queues.push({
-      id: String(i),
-      serviceName: `Dịch vụ ${i}`,
-      counterName: `Quầy ${i}`,
-      totalTicket: Math.floor(Math.random() * 100),
-      pendingTicket: Math.floor(Math.random() * 50),
-      currentTicket: Math.floor(Math.random() * 100).toString().padStart(2, "0"),
-      completeTicket: Math.floor(Math.random() * 30),
-      createTime: new Date(2025, 0, i).toISOString(),
-      employeeName: `Nhân viên ${i}`,
-      description: `Mô tả dịch vụ ${i}`,
-      updateTime: new Date(2025, 0, i, 12, 0, 0).toISOString(),
-    });
-  }
-
-  return queues;
-}
-
-export const queueData = {
-    getElapsedSeconds(startedAt?: string | null): number {
-        if (!startedAt) return 0;
-        const started = new Date(startedAt).getTime();
-        if (Number.isNaN(started)) return 0;
-        const diffMs = Date.now() - started;
-        return Math.max(0, Math.floor(diffMs / 1000));
-    },
-    async getData(): Promise<Queue[]> {
-        try {
-            const res = await queuesAPI.getAllQueuesStatus();
-            return res.data;
-        } catch {
-            return createMockData(20);
+export const queueService = {
+    async getQueueMonitoring(): Promise<QueueMonitoringData | null> {
+        const response = await queueApi.getQueueMonitoring();
+        
+        if (!response.data?.success || !response.data?.data) {
+            return null;
         }
+
+        const rawData = response.data.data as Record<string, unknown>;
+        const serviceGroupQueuesData = rawData.serviceGroupQueues as Record<string, unknown>;
+
+        const parsedData: QueueMonitoringData = {
+            serviceGroupQueues: parseArray(serviceGroupQueuesData as never).map((queue: unknown) => {
+                const queueData = queue as Record<string, unknown>;
+                const countersData = queueData.counters as Record<string, unknown>;
+                
+                return {
+                    serviceGroupId: (queueData.serviceGroupId as string) || '',
+                    serviceGroupName: (queueData.serviceGroupName as string) || '',
+                    queueLength: (queueData.queueLength as number) || 0,
+                    activeCounters: (queueData.activeCounters as number) || 0,
+                    estimatedWaitTime: (queueData.estimatedWaitTime as number) || 0,
+                    status: (queueData.status as 'Empty' | 'Normal' | 'Busy' | 'Critical') || 'Empty',
+                    counters: parseArray(countersData as never).map((counter: unknown) => {
+                        const counterData = counter as Record<string, unknown>;
+                        return {
+                            counterId: (counterData.counterId as string) || '',
+                            counterCode: (counterData.counterCode as string) || '',
+                            status: (counterData.status as 'Available' | 'Busy' | 'Offline') || 'Available',
+                        };
+                    }),
+                };
+            }),
+            totalActiveQueues: (rawData.totalActiveQueues as number) || 0,
+            totalWaitingCustomers: (rawData.totalWaitingCustomers as number) || 0,
+            totalActiveCounters: (rawData.totalActiveCounters as number) || 0,
+            lastUpdated: (rawData.lastUpdated as string) || '',
+        };
+
+        return parsedData;
     },
 };
+

@@ -1,4 +1,5 @@
-import { http } from "@/core/http/client";
+import { httpNoLoading } from "@/core/http/client";
+import { API_PATH } from "@/core/config/api.path";
 import type {
     ServiceListResponse,
     ServiceDetailResponse,
@@ -20,30 +21,30 @@ export const serviceApi = {
         if (params.size) searchParams.append("Size", params.size.toString());
 
         const queryString = searchParams.toString();
-        const url = `/Service${queryString ? `?${queryString}` : ""}`;
+        const url = `${API_PATH.CLIENT.SERVICES.ALL}${queryString ? `?${queryString}` : ""}`;
 
-        const response = await http.get<ServiceListResponse>(url);
+        const response = await httpNoLoading.get<ServiceListResponse>(url);
         return response.data;
     },
 
     // Get service by ID
     getServiceById: async (id: string): Promise<ServiceDetailResponse> => {
-        const url = `/Service/${id}`;
-        const response = await http.get<ServiceDetailResponse>(url);
+        const url = API_PATH.CLIENT.SERVICES.BY_ID(id);
+        const response = await httpNoLoading.get<ServiceDetailResponse>(url);
         return response.data;
     },
 
     // Get service groups (for filter dropdown)
     getServiceGroups: async (): Promise<ServiceGroupListResponse> => {
-        const url = `/ServiceGroup`;
-        const response = await http.get<ServiceGroupListResponse>(url);
+        const url = API_PATH.CLIENT.SERVICE_GROUPS.ALL;
+        const response = await httpNoLoading.get<ServiceGroupListResponse>(url);
         return response.data;
     },
 
     // Get legal basis (for filter dropdown)
     getLegalBasis: async (): Promise<LegalBasisListResponse> => {
-        const url = `/LegalBasis`;
-        const response = await http.get<LegalBasisListResponse>(url);
+        const url = API_PATH.CLIENT.LEGAL_BASIS.ALL;
+        const response = await httpNoLoading.get<LegalBasisListResponse>(url);
         return response.data;
     },
 };

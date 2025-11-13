@@ -38,6 +38,7 @@ export const API_PATH = {
                 PUT: (id: string) => `/Service/${id}`,
                 DELETE: (id: string) => `/Service/${id}`,
                 GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
+                ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
             },
             ACCOUNTS: {
                 GET_ALL: "/Staff",
@@ -166,6 +167,7 @@ export const API_PATH = {
             DELETE: (id: string) => `/Service/${id}`,
             GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) =>
                 `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
+            ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
         },
         ACCOUNTS: {
             GET_ALL: '/Staff',
@@ -276,6 +278,69 @@ export const API_PATH = {
             PUT: (id: string) => `/Template/${id}`,
             DELETE: (id: string) => `/Template/${id}`,
         },
+        REQUIRED_DOCUMENT: {
+            GET_ALL: (
+                keyword: string,
+                serviceId: string,
+                docTypeId: string,
+                isActive: boolean,
+                page: number,
+                size: number,
+            ) =>
+                `/RequiredDocument?keyword=${keyword}&serviceId=${serviceId}&docTypeId=${docTypeId}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            GET_BY_ID: (id: string) => `/RequiredDocument/${id}`,
+            POST: '/RequiredDocument',
+            PUT: (id: string) => `/RequiredDocument/${id}`,
+            DELETE: (id: string) => `/RequiredDocument/${id}`,
+        },
+        SERVICE_PROCEDURE: {
+            GET_ALL: (keyword: string, serviceId: string, isActive: boolean, page: number, size: number) =>
+                `/ServiceProcedure?keyword=${keyword}&serviceId=${serviceId}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            GET_BY_ID: (id: string) => `/ServiceProcedure/${id}`,
+            POST: '/ServiceProcedure',
+            PUT: (id: string) => `/ServiceProcedure/${id}`,
+            DELETE: (id: string) => `/ServiceProcedure/${id}`,
+        },
+        SUBMISSION_METHOD: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/SubmissionMethod?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/SubmissionMethod/${id}`,
+            POST: '/SubmissionMethod',
+            PUT: (id: string) => `/SubmissionMethod/${id}`,
+            DELETE: (id: string) => `/SubmissionMethod/${id}`,
+        },
+        FAQ_CATEGORY: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/FAQCategory?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/FAQCategory/${id}`,
+            POST: '/FAQCategory',
+            PUT: (id: string) => `/FAQCategory/${id}`,
+            DELETE: (id: string) => `/FAQCategory/${id}`,
+        },
+        FAQ: {
+            GET_ALL: (Keyword: string, ServiceId: string, FaqCategoryId: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/FAQ?keyword=${Keyword}&serviceId=${ServiceId}&faqCategoryId=${FaqCategoryId}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/FAQ/${id}`,
+            POST: '/FAQ',
+            PUT: (id: string) => `/FAQ/${id}`,
+            DELETE: (id: string) => `/FAQ/${id}`,
+        },
+        NEWS_CATEGORY: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/NewsCategory?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/NewsCategory/${id}`,
+            POST: '/NewsCategory',
+            PUT: (id: string) => `/NewsCategory/${id}`,
+            DELETE: (id: string) => `/NewsCategory/${id}`,
+        },
+        PUBLIC_SERVICE_NEWS: {
+            GET_ALL: (Keyword: string, ServiceId: string, NewsCategoryId: string, StaffId: string, IsPublished: boolean, Page: number, PageSize: number) =>
+                `/PublicServiceNew?keyword=${Keyword}&serviceId=${ServiceId}&newsCategoryId=${NewsCategoryId}&staffId=${StaffId}&isPublished=${IsPublished}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/PublicServiceNew/${id}`,
+            POST: '/PublicServiceNew',
+            PUT: (id: string) => `/PublicServiceNew/${id}`,
+            DELETE: (id: string) => `/PublicServiceNew/${id}`,
+        },
     },
     STAFF: {
         DASHBOARD: {
@@ -318,16 +383,54 @@ export const API_PATH = {
         GET_CONVERSATION: (conversationId: string) => `/Chatbox/conversation/${conversationId}`
     },
 
-  FILE: {
-    UPLOAD_IMAGE: '/FileUpload/image',
-  },
+    MANAGER_DASHBOARD: {
+        GET_COMPREHENSIVE_REPORT: (fromDate?: string, toDate?: string) => {
+            const params = new URLSearchParams();
+            if (fromDate) params.append('fromDate', fromDate);
+            if (toDate) params.append('toDate', toDate);
+            const queryString = params.toString();
+            return `/ManagerDashboard/comprehensive-report${queryString ? `?${queryString}` : ''}`;
+        },
+        GET_LINE_CHART: (month?: number, year?: number) => {
+            const params = new URLSearchParams();
+            if (month !== undefined) params.append('month', month.toString());
+            if (year !== undefined) params.append('year', year.toString());
+            const queryString = params.toString();
+            return `/Dashboard/case-processing-line-chart${queryString ? `?${queryString}` : ''}`;
+        },
+        GET_PIE_CHART: (startDate?: string, endDate?: string) => {
+            const params = new URLSearchParams();
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+            const queryString = params.toString();
+            return `/Dashboard/service-usage-pie-chart${queryString ? `?${queryString}` : ''}`;
+        },
+        GET_BAR_CHART: (startDate?: string, endDate?: string) => {
+            const params = new URLSearchParams();
+            if (startDate) params.append('startDate', startDate);
+            if (endDate) params.append('endDate', endDate);
+            const queryString = params.toString();
+            return `/Dashboard/queue-by-hour-bar-chart${queryString ? `?${queryString}` : ''}`;
+        },
+        QUEUE_MONITORING: '/ManagerDashboard/queue-monitoring',
+        PRIORITY_MONITORING: '/ManagerDashboard/priority-monitoring',
+        UPDATE_PRIORITY: '/ManagerDashboard/priority-access',
+    },
 
-  SUBMISSION_METHOD: {
-    GET_ALL: '/SubmissionMethod',
-  },
+    CASE: {
+        GET_ALL: '/Case',
+    },
 
-  CASE_STATUS: {
-    GET_ALL: '/CaseStatus',
-  },
+    FILE: {
+        UPLOAD_IMAGE: '/FileUpload/image',
+    },
+
+    SUBMISSION_METHOD: {
+        GET_ALL: '/SubmissionMethod',
+    },
+
+    CASE_STATUS: {
+        GET_ALL: '/CaseStatus',
+    },
 
 };

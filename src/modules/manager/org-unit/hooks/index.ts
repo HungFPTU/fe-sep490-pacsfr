@@ -13,8 +13,8 @@ export const useOrgUnits = (filters: OrgUnitFilters) => {
     return useQuery({
         queryKey: QUERY_KEYS.ORG_UNIT_LIST(filters),
         queryFn: () => orgUnitService.getOrgUnitList(filters),
-        gcTime: CACHE_TIME,
-        staleTime: STALE_TIME,
+        gcTime: CACHE_TIME.SHORT,
+        staleTime: STALE_TIME.MEDIUM,
     });
 };
 

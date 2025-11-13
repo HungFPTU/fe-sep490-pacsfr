@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useServiceGroups } from '@/modules/manager/service-group/hooks';
 import { getValuesPage } from '@/types/rest';
-import { Search, X } from 'lucide-react';
+import { cn } from '@/shared/lib/utils';
+import { ManagerFilterBar } from '@/shared/components/manager/ui';
 
 interface Props {
     keyword: string;
@@ -13,6 +14,7 @@ interface Props {
     onServiceGroupIdChange: (value: string) => void;
     onIsActiveChange: (value: boolean) => void;
     onReset: () => void;
+    onRefresh?: () => void;
 }
 
 export const ServiceFilter: React.FC<Props> = ({
@@ -23,6 +25,7 @@ export const ServiceFilter: React.FC<Props> = ({
     onServiceGroupIdChange,
     onIsActiveChange,
     onReset,
+    onRefresh,
 }) => {
     // Fetch service groups for dropdown
     const { data: serviceGroupsData } = useServiceGroups({
@@ -51,6 +54,10 @@ export const ServiceFilter: React.FC<Props> = ({
         onKeywordChange(localKeyword);
         onServiceGroupIdChange(localServiceGroupId);
         onIsActiveChange(localIsActive);
+        // Refresh data sau khi apply filters
+        if (onRefresh) {
+            onRefresh();
+        }
     };
 
     const handleResetLocal = () => {
@@ -61,62 +68,49 @@ export const ServiceFilter: React.FC<Props> = ({
     };
 
     return (
-        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex flex-wrap items-center gap-3">
-                {/* Search */}
-                <div className="relative flex-1 min-w-[220px]">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                        type="text"
-                        value={localKeyword}
-                        onChange={(e) => setLocalKeyword(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') handleApply(); }}
-                        placeholder="Tên hoặc mã dịch vụ..."
-                        className="w-full h-10 pl-10 pr-4 rounded-md border border-slate-300 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    />
+        <div className="mb-4">
+            <ManagerFilterBar
+                searchValue={localKeyword}
+                onSearchChange={(value: string) => setLocalKeyword(value)}
+                onSubmit={handleApply}
+                onReset={handleResetLocal}
+                searchPlaceholder="Tên hoặc mã dịch vụ..."
+            >
+                <div className="w-full shrink-0 sm:w-[190px]">
+                    <select
+                        value={localServiceGroupId}
+                        onChange={(e) => setLocalServiceGroupId(e.target.value)}
+                        className={cn(
+                            "flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:cursor-not-allowed disabled:opacity-50"
+                        )}
+                    >
+                        <option value="">Tất cả nhóm</option>
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {serviceGroups.map((group: any) => (
+                            <option key={group.id} value={group.id}>
+                                {group.groupName}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
-                {/* Service Group */}
-                <select
-                    value={localServiceGroupId}
-                    onChange={(e) => setLocalServiceGroupId(e.target.value)}
-                    className="h-10 min-w-[180px] rounded-md border border-slate-300 px-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                >
-                    <option value="">Tất cả nhóm</option>
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    {serviceGroups.map((group: any) => (
-                        <option key={group.id} value={group.id}>
-                            {group.groupName}
-                        </option>
-                    ))}
-                </select>
-
-                {/* Status */}
-                <select
-                    value={localIsActive ? 'true' : 'false'}
-                    onChange={(e) => setLocalIsActive(e.target.value === 'true')}
-                    className="h-10 min-w-[160px] rounded-md border border-slate-300 px-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                >
-                    <option value="true">Hoạt động</option>
-                    <option value="false">Ngừng hoạt động</option>
-                </select>
-
-                {/* Actions */}
-                <button
-                    onClick={handleApply}
-                    className="px-4 h-10 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
-                >
-                    <Search className="w-4 h-4" />
-                    Tìm kiếm
-                </button>
-                <button
-                    onClick={handleResetLocal}
-                    className="px-4 h-10 bg-gray-100 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors flex items-center gap-2 whitespace-nowrap"
-                >
-                    <X className="w-4 h-4" />
-                    Đặt lại
-                </button>
-            </div>
+                <div className="w-full shrink-0 sm:w-[170px]">
+                    <select
+                        value={localIsActive ? 'true' : 'false'}
+                        onChange={(e) => setLocalIsActive(e.target.value === 'true')}
+                        className={cn(
+                            "flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors",
+                            "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                            "disabled:cursor-not-allowed disabled:opacity-50"
+                        )}
+                    >
+                        <option value="true">Hoạt động</option>
+                        <option value="false">Ngừng hoạt động</option>
+                    </select>
+                </div>
+            </ManagerFilterBar>
         </div>
     );
 };

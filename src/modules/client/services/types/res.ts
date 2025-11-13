@@ -4,20 +4,78 @@
 export interface Service {
   id: string;
   serviceGroupId: string;
-  legalBasisId: string;
+  legalBasisId?: string;
   serviceName: string;
   serviceCode: string;
-  description: string;
-  serviceType: "Trực tiếp" | "Trực tuyến";
-  processingTime: string;
-  feeAmount: number;
-  resultDocument: string;
-  isOnlineAvailable: boolean;
+  description?: string;
+  serviceType?: string;
+  processingTime?: string;
+  feeAmount?: number;
+  resultDocument?: string;
+  decisionNumber?: string;
+  executionLevel?: string;
+  field?: string;
+  isOnlineAvailable?: boolean;
   isActive: boolean;
-  requiredDocuments: {
+  requiredDocuments?: {
     $values: RequiredDocument[];
   };
+  serviceProcedures?: {
+    $values: ServiceProcedure[];
+  };
+  legalBases?: {
+    $values: LegalBasisItem[];
+  };
+  submissionMethods?: {
+    $values: SubmissionMethod[];
+  };
+  serviceAgencies?: {
+    $values: ServiceAgency[];
+  };
   createdAt: string;
+  createdBy?: string;
+}
+
+export interface ServiceProcedure {
+  id: string;
+  serviceId: string;
+  stepNumber: number;
+  stepName: string;
+  stepDescription?: string;
+  responsibleUnit?: string;
+  processingTime?: string;
+  notes?: string;
+  isActive?: boolean;
+  isDeleted?: boolean;
+  createdAt?: string;
+}
+
+export interface LegalBasisItem {
+  legislationDocumentId: string;
+  documentNumber: string;
+  documentType: string;
+  name: string;
+  issueDate: string;
+  issueBody: string;
+  effectiveDate: string;
+  status: string;
+  fileUrl?: string;
+}
+
+export interface SubmissionMethod {
+  id: string;
+  submissionMethodName: string;
+  processingTime?: string;
+  fee?: number;
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface ServiceAgency {
+  id: string;
+  agencyName: string;
+  description?: string;
+  isActive: boolean;
 }
 
 export interface RequiredDocument {

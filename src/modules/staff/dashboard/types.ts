@@ -106,14 +106,12 @@ export type CallNextResponse = {
 
 // Case management types
 export type CreateCaseRequest = {
-    createdBy: unknown;
     guestId: string;
     serviceId: string;
     priorityLevel: number;
-    submissionMethodId: string;
+    submissionMethod: string;
     notes?: string;
-    estimatedCompletionDate: string; // ISO date string format
-    resultDescription?: string;
+    createdBy: string;
 };
 
 export type CaseResponse = {
@@ -124,10 +122,9 @@ export type CaseResponse = {
     priorityLevel: number;
     submissionMethod: string;
     notes?: string;
-    estimatedCompletionDate: string;
-    resultDescription?: string;
-    status: string;
+    createdBy: string;
     createdAt: string;
+    status: string;
 };
 
 export type CreateCaseApiResponse = {
@@ -298,30 +295,6 @@ export type GetGuestsResponse = {
 export type GuestSearchFilters = {
     keyword?: string;
     isActive?: boolean;
-    page?: number;
-    size?: number;
-};
-
-// Submission Method Types
-export type SubmissionMethod = {
-    $id?: string;
-    id: string;
-    submissionMethodName: string;
-    processingTime: string;
-    fee: number;
-    description: string;
-};
-
-export type SubmissionMethodListResponse = {
-    $id?: string;
-    success: boolean;
-    message: string;
-    data: PaginatedData<SubmissionMethod>;
-    timestamp: string;
-};
-
-export type SubmissionMethodFilters = {
-    keyword?: string;
     page?: number;
     size?: number;
 };

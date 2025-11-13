@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { Building2 } from 'lucide-react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
+import { Button } from '@/shared/components/ui/button.ui';
 import { OrgUnitInfo } from './OrgUnitInfo.ui';
 import type { OrgUnit } from '../../../types';
 
@@ -28,37 +30,25 @@ export const OrgUnitDetailModal: React.FC<Props> = ({
             centered
             size="large"
             footer={
-                <button
+                <Button
                     type="button"
                     onClick={onClose}
-                    className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+                    variant="default"
                 >
                     Đóng
-                </button>
+                </Button>
             }
         >
             <div className="space-y-6">
-                <div className="flex items-center gap-4 border-b border-slate-200 pb-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100">
-                        <svg
-                            className="h-8 w-8 text-indigo-600"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                            />
-                        </svg>
+                <div className="flex items-center gap-4 border-b border-border pb-4">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                        <Building2 className="h-8 w-8 text-primary" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-semibold text-slate-900">
+                        <h3 className="text-lg font-semibold text-foreground">
                             {orgUnit.unitName}
                         </h3>
-                        <p className="text-sm text-slate-500">Mã: {orgUnit.unitCode}</p>
+                        <p className="text-sm text-muted-foreground">Mã: {orgUnit.unitCode}</p>
                     </div>
                 </div>
                 <OrgUnitInfo orgUnit={orgUnit} />

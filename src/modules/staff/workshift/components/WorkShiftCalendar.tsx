@@ -65,7 +65,7 @@ export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkSh
     const weekdays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
     return (
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="min-h-screen bg-white rounded-lg shadow-lg p-6">
             <div className="mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
                     Lịch làm việc tháng {new Date().toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}
@@ -110,7 +110,7 @@ export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkSh
             </div>
 
             {selectedDate && (
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <div className="min-h-screen mt-6 p-4 rounded-lg">
                     <h3 className="font-medium text-gray-900 mb-2">
                         Lịch làm việc ngày {workshiftService.formatDate(selectedDate)}
                     </h3>

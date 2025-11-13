@@ -10,6 +10,8 @@ import {
   BarChart3,
   ListChecks,
   FileText,
+  HelpCircle,
+  Newspaper,
 } from "lucide-react"
 
 import {
@@ -77,6 +79,10 @@ const data = {
           url: "/manager/nhom-dich-vu",
         },
         {
+          title: "Tài liệu yêu cầu",
+          url: "/manager/tai-lieu-yeu-cau",
+        },
+        {
           title: "Phân loại dịch vụ",
           url: "/manager/service/list",
         },
@@ -87,6 +93,14 @@ const data = {
         {
           title: "Quy tắc xếp hàng",
           url: "/manager/service/queue",
+        },
+        {
+          title: "Phương thức nộp hồ sơ",
+          url: "/manager/phuong-thuc-nop-ho-so",
+        },
+        {
+          title: "Quy trình dịch vụ",
+          url: "/manager/quy-trinh-dich-vu",
         },
       ],
     },
@@ -131,7 +145,7 @@ const data = {
           url: "/manager/monitoring/manager",
         },
         {
-          title: "Ưu tiên nhóm đặc biệt",
+          title: "Quản lý hồ sơ & Ưu tiên",
           url: "/manager/monitoring/special",
         },
       ],
@@ -184,6 +198,36 @@ const data = {
         {
           title: "Báo cáo văn bản",
           url: "/manager/van-ban-phap-luat/bao-cao",
+        },
+      ],
+    },
+    {
+      title: "Quản lý FAQ",
+      url: "",
+      icon: HelpCircle,
+      items: [
+        {
+          title: "Danh mục câu hỏi thường gặp",
+          url: "/manager/danh-muc-cau-hoi",
+        },
+        {
+          title: "Câu hỏi thường gặp",
+          url: "/manager/cau-hoi-thuong-gap",
+        },
+      ],
+    },
+    {
+      title: "Quản lý tin tức",
+      url: "",
+      icon: Newspaper,
+      items: [
+        {
+          title: "Danh mục tin tức",
+          url: "/manager/danh-muc-tin-tuc",
+        },
+        {
+          title: "Tin tức dịch vụ công",
+          url: "/manager/tin-tuc-dich-vu",
         },
       ],
     },

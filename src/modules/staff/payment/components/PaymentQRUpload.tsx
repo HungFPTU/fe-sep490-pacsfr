@@ -15,9 +15,9 @@ export function PaymentQRUpload() {
         maxSize: 5 * 1024 * 1024, // 5MB
         folder: "payment"
     });
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null);
-    
+
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [uploadedData, setUploadedData] = useState<{
@@ -34,11 +34,11 @@ export function PaymentQRUpload() {
     React.useEffect(() => {
         const savedUrl = PaymentQRStorage.getPaymentQRUrl();
         const savedData = PaymentQRStorage.getPaymentQRData();
-        
+
         if (savedUrl) {
             setSavedQRUrl(savedUrl);
         }
-        
+
         // Load full data if available
         if (savedData) {
             setUploadedData({
@@ -57,7 +57,7 @@ export function PaymentQRUpload() {
 
         // Validate using the hook's validation
         const validation = validateImage(file);
-        
+
         if (!validation.isValid) {
             addToast({
                 message: validation.message || "File không hợp lệ!",
@@ -67,7 +67,7 @@ export function PaymentQRUpload() {
         }
 
         setSelectedFile(file);
-        
+
         // Create preview URL
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -97,7 +97,7 @@ export function PaymentQRUpload() {
                     fileSize: result.data.fileSize,
                     fileType: result.data.fileType
                 });
-                
+
                 // Save to localStorage
                 PaymentQRStorage.setPaymentQRUrl(result.data.fileUrl);
                 PaymentQRStorage.setPaymentQRData({
@@ -138,7 +138,7 @@ export function PaymentQRUpload() {
 
     const handleRemoveSaved = async () => {
         setIsDeleting(true);
-        
+
         try {
             // TODO: Uncomment this when API is ready
             // Get saved data to retrieve publicId
@@ -159,7 +159,7 @@ export function PaymentQRUpload() {
             PaymentQRStorage.removePaymentQRData();
             setSavedQRUrl(null);
             setUploadedData(null);
-            
+
             addToast({
                 message: "Đã xóa mã thanh toán đã lưu",
                 type: "success"

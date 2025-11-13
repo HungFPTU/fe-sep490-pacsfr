@@ -59,3 +59,8 @@ export type ServiceFilters = {
     size: number;
 };
 
+export type AssignSubmissionMethodsRequest = {
+    serviceId: string;
+    submissionMethodIds: string[];
+};
+
