@@ -1,16 +1,18 @@
 export const SERVICE_TYPES = [
-    { value: 'ADMINISTRATIVE', label: 'Hành chính' },
-    { value: 'PUBLIC', label: 'Công cộng' },
-    { value: 'HEALTHCARE', label: 'Y tế' },
-    { value: 'EDUCATION', label: 'Giáo dục' },
-    { value: 'SOCIAL', label: 'Xã hội' },
-    { value: 'OTHER', label: 'Khác' },
+    // { value: 'ADMINISTRATIVE', label: 'Hành chính' },
+    // { value: 'PUBLIC', label: 'Công cộng' },
+    // { value: 'HEALTHCARE', label: 'Y tế' },
+    // { value: 'EDUCATION', label: 'Giáo dục' },
+    // { value: 'SOCIAL', label: 'Xã hội' },
+    // { value: 'OTHER', label: 'Khác' },
+    { value: 'CITIZEN', label: 'Công dân' },
+    { value: 'BUSINESS', label: 'Doanh nghiệp' },
 ] as const;
 
 export const EXECUTION_LEVELS = [
-    { value: 'NATIONAL', label: 'Quốc gia' },
+    // { value: 'NATIONAL', label: 'Quốc gia' },
     { value: 'PROVINCIAL', label: 'Tỉnh/Thành phố' },
-    { value: 'DISTRICT', label: 'Quận/Huyện' },
+    // { value: 'DISTRICT', label: 'Quận/Huyện' },
     { value: 'WARD', label: 'Phường/Xã' },
 ] as const;
 
