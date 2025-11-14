@@ -1,5 +1,6 @@
 import { workshiftApi } from "../api/workshift.api";
 import type { WorkShift, CalendarShift } from "../types";
+import { formatLocalDate, parseLocalDate } from "@/core/utils/date";
 
 export const workshiftService = {
     async getMyShifts() {
@@ -25,7 +26,7 @@ export const workshiftService = {
         // Convert to array and sort by date
         return Array.from(calendarShifts.entries())
             .map(([date, shifts]) => ({ date, shifts }))
-            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+            .sort((a, b) => parseLocalDate(a.date).getTime() - parseLocalDate(b.date).getTime());
     },
 
     /**
@@ -47,12 +48,6 @@ export const workshiftService = {
      * Format date for display
      */
     formatDate(dateString: string): string {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('vi-VN', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        return formatLocalDate(dateString);
     },
 };
