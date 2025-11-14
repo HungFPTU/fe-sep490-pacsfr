@@ -1,12 +1,4 @@
-import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
-
 export default function SearchQuestionsPage() {
-    const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
-        { label: "Hỗ trợ", href: "#" },
-        { label: "Tra cứu câu hỏi" }
-    ];
-
     const questions = [
         {
             id: 1,
@@ -47,12 +39,6 @@ export default function SearchQuestionsPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <GovernmentHeader
-                showBreadcrumb={true}
-                breadcrumbItems={breadcrumbItems}
-                currentPage="search-questions"
-            />
-
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-8">

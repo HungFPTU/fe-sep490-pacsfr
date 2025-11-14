@@ -12,6 +12,19 @@ export const API_PATH = {
             ALL: '/Service',
             BY_ID: (id: string) => `/Service/${id}`,
         },
+        CASE: {
+            PROGRESS: '/Case/progress',
+        },
+        FAQ: {
+            ALL: (keyword: string, serviceId: string, faqCategoryId: string, isActive: boolean, page: number, size: number) =>
+                `/FAQ?keyword=${keyword}&serviceId=${serviceId}&faqCategoryId=${faqCategoryId}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/FAQ/${id}`,
+        },
+        FAQ_CATEGORY: {
+            ALL: (keyword: string, isActive: boolean, page: number, size: number) =>
+                `/FAQCategory?keyword=${keyword}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/FAQCategory/${id}`,
+        },
         LEGAL_BASIS: {
             ALL: '/LegalBasis',
             BY_ID: (id: string) => `/LegalBasis/${id}`,
@@ -19,6 +32,11 @@ export const API_PATH = {
         SERVICE_GROUPS: {
             ALL: '/ServiceGroup',
             BY_ID: (id: string) => `/ServiceGroup/${id}`,
+        },
+        PUBLIC_SERVICE_NEWS: {
+            ALL: (keyword: string, serviceId: string, newsCategoryId: string, isPublished: boolean, page: number, size: number) =>
+                `/PublicServiceNew?keyword=${keyword}&serviceId=${serviceId}&newsCategoryId=${newsCategoryId}&isPublished=${isPublished}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/PublicServiceNew/${id}`,
         },
         QUEUE: {
             COUNTERS: "/queue/counters",
