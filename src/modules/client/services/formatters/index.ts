@@ -48,14 +48,8 @@ export const formatProcessingTime = (timeString?: string): string => {
 export const formatServiceType = (serviceType?: string): string => {
     if (!serviceType) return '';
     const typeMap: Record<string, string> = {
-        'ADMINISTRATIVE': 'Hành chính',
-        'PUBLIC_SERVICE': 'Dịch vụ công',
-        'ONLINE': 'Trực tuyến',
-        'DIRECT': 'Trực tiếp',
-        'Mức độ 1': 'Mức độ 1',
-        'Mức độ 2': 'Mức độ 2',
-        'Mức độ 3': 'Mức độ 3',
-        'Mức độ 4': 'Mức độ 4',
+        'CITIZEN': 'Công dân',
+        'BUSINESS': 'Doanh nghiệp',
     };
     return typeMap[serviceType] || serviceType;
 };
