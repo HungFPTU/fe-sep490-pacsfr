@@ -265,8 +265,25 @@ class HttpClient {
             }
 
             if (!response.ok) {
+                // Try to extract error message from response data
+                let errorMessage = `HTTP ${response.status}`;
+                
+                if (typeof data === "object" && data !== null) {
+                    // Check for common error message fields
+                    const errorObj = data as Record<string, unknown>;
+                    errorMessage = 
+                        (typeof errorObj.message === "string" && errorObj.message) ||
+                        (typeof errorObj.error === "string" && errorObj.error) ||
+                        (typeof errorObj.errorMessage === "string" && errorObj.errorMessage) ||
+                        JSON.stringify(data);
+                } else if (typeof data === "string") {
+                    errorMessage = data;
+                } else {
+                    errorMessage = JSON.stringify(data) || `HTTP ${response.status}`;
+                }
+
                 const error: HttpError = {
-                    message: typeof data === "string" ? data : (JSON.stringify(data) || `HTTP ${response.status}`),
+                    message: errorMessage,
                     status: response.status,
                     data,
                 };
@@ -414,8 +431,25 @@ class HttpClientNoLoading extends HttpClient {
             }
 
             if (!response.ok) {
+                // Try to extract error message from response data
+                let errorMessage = `HTTP ${response.status}`;
+                
+                if (typeof data === "object" && data !== null) {
+                    // Check for common error message fields
+                    const errorObj = data as Record<string, unknown>;
+                    errorMessage = 
+                        (typeof errorObj.message === "string" && errorObj.message) ||
+                        (typeof errorObj.error === "string" && errorObj.error) ||
+                        (typeof errorObj.errorMessage === "string" && errorObj.errorMessage) ||
+                        JSON.stringify(data);
+                } else if (typeof data === "string") {
+                    errorMessage = data;
+                } else {
+                    errorMessage = JSON.stringify(data) || `HTTP ${response.status}`;
+                }
+
                 const error: HttpError = {
-                    message: typeof data === "string" ? data : (JSON.stringify(data) || `HTTP ${response.status}`),
+                    message: errorMessage,
                     status: response.status,
                     data,
                 };

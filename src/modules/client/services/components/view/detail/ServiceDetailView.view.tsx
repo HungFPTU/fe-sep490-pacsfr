@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardBody, Button, Chip } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import { Button } from "@/shared";
 import { useService } from "../../../hooks/useServices";
 import { useServiceGroup } from "@/modules/client/services-group";
 import { LoadingSpinner } from "@/shared/components/common";
@@ -132,11 +133,9 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                         </div>
                     </div>
                     <Button
-                        color="primary"
-                        variant="solid"
-                        startContent={<Eye className="w-4 h-4" />}
-                        onPress={() => setIsDetailModalOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        variant="red"
+                        size="lg"
+                        onClick={() => setIsDetailModalOpen(true)}
                     >
                         Xem chi tiết đầy đủ
                     </Button>

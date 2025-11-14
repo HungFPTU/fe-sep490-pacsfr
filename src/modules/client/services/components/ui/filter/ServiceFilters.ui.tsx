@@ -71,6 +71,7 @@ export const ServiceFilters: React.FC<ServiceFiltersProps> = ({
                     onReset={handleReset}
                     searchPlaceholder="Tìm kiếm thủ tục hành chính..."
                     isSubmitting={isLoading}
+                    searchButtonVariant="red"
                 >
                     {/* Additional filters can be added here as children */}
                     <button

@@ -1,15 +1,9 @@
 "use client";
 
-import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
 import Image from "next/image";
 import { useState } from "react";
 
 export default function ContactPage() {
-    const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
-        { label: "Thông tin liên hệ, hỗ trợ hỏi đáp dịch vụ công" }
-    ];
-
     const [searchForm, setSearchForm] = useState({
         agencyLevel: "Cấp Phường/ Xã",
         province: "Thành phố Hồ Chí Minh",
@@ -63,12 +57,6 @@ export default function ContactPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <GovernmentHeader
-                showBreadcrumb={true}
-                breadcrumbItems={breadcrumbItems}
-                currentPage="contact"
-            />
-
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-6xl mx-auto">
                     {/* Page Title */}

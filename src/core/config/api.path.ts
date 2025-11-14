@@ -12,6 +12,9 @@ export const API_PATH = {
             ALL: '/Service',
             BY_ID: (id: string) => `/Service/${id}`,
         },
+        CASE: {
+            PROGRESS: '/Case/progress',
+        },
         LEGAL_BASIS: {
             ALL: '/LegalBasis',
             BY_ID: (id: string) => `/LegalBasis/${id}`,

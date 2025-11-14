@@ -1,14 +1,8 @@
 "use client";
 
-import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
 import { useState } from "react";
 
 export default function NewsPage() {
-    const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
-        { label: "Tin tức" }
-    ];
-
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -113,12 +107,6 @@ export default function NewsPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <GovernmentHeader
-                showBreadcrumb={true}
-                breadcrumbItems={breadcrumbItems}
-                currentPage="news"
-            />
-
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-6xl mx-auto">
                     {/* Page Title */}

@@ -1,15 +1,8 @@
 "use client";
 
-import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
 import { useEffect } from "react";
 
 export default function SurveyPage() {
-    const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
-        { label: "Hỗ trợ", href: "#" },
-        { label: "Khảo sát ý kiến" }
-    ];
-
     useEffect(() => {
         // Redirect to Google Form after 2 seconds
         const timer = setTimeout(() => {
@@ -21,12 +14,6 @@ export default function SurveyPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <GovernmentHeader
-                showBreadcrumb={true}
-                breadcrumbItems={breadcrumbItems}
-                currentPage="survey"
-            />
-
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-2xl mx-auto text-center">
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-8">

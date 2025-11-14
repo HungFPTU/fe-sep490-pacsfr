@@ -1,16 +1,9 @@
 
 "use client";
 
-import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
 import { useState } from "react";
 
 export default function FAQPage() {
-    const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
-        { label: "Hỗ trợ", href: "#" },
-        { label: "Câu hỏi thường gặp" }
-    ];
-
     const [searchKeyword, setSearchKeyword] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("Tất cả");
     const [expandedQuestion, setExpandedQuestion] = useState<number | null>(2); // Default expand question 2
@@ -97,12 +90,6 @@ export default function FAQPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <GovernmentHeader
-                showBreadcrumb={true}
-                breadcrumbItems={breadcrumbItems}
-                currentPage="faq"
-            />
-
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     {/* Search and Filter Section */}

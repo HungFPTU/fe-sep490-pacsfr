@@ -1,5 +1,6 @@
 // Services Module
 export * from "./services";
+export * from "./case";
 
 // Service Group Module (explicit exports to avoid conflicts)
 export type { ServiceGroup, ServiceGroupDetailResponse, ServiceGroupListResponse } from "./services-group/types";

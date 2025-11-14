@@ -4,19 +4,98 @@ import Link from "next/link";
 import Image from "next/image";
 import { UserInfo } from "./UserInfo.com";
 import { useAuth } from "@/modules/auth/hooks";
+import { usePathname } from "next/navigation";
+import {
+  HOME_NAVIGATION_ITEMS,
+  HOME_BREADCRUMB_MAP,
+  getHomeBreadcrumbsByPath,
+  getHomeNavigationKeyByPath,
+  type HomeBreadcrumbItem,
+  type HomeNavigationItem,
+} from "./constants/navigation";
 
 interface GovernmentHeaderProps {
   showBreadcrumb?: boolean;
-  breadcrumbItems?: Array<{ label: string; href?: string }>;
+  breadcrumbItems?: HomeBreadcrumbItem[];
   currentPage?: string;
 }
 
 export function GovernmentHeader({
   showBreadcrumb = false,
   breadcrumbItems = [],
-  currentPage = "home"
+  currentPage,
 }: GovernmentHeaderProps) {
   const { isAuthenticated } = useAuth();
+  const pathname = usePathname();
+  const derivedPageKey = getHomeNavigationKeyByPath(pathname || '/');
+  const activePageKey = currentPage ?? derivedPageKey;
+
+  const resolvedBreadcrumbs =
+    breadcrumbItems.length > 0
+      ? breadcrumbItems
+      : getHomeBreadcrumbsByPath(pathname || '/');
+
+  const renderNavigationItem = (item: HomeNavigationItem) => {
+    const isActive = activePageKey === item.key;
+
+    if (item.type === "home" && item.href) {
+      return (
+        <Link
+          key={item.key}
+          href={item.href}
+          className={`flex items-center justify-center w-12 h-12 transition-colors ${isActive ? "bg-red-700" : "hover:bg-red-700"
+            }`}
+          title={item.label}
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          </svg>
+        </Link>
+      );
+    }
+
+    if (item.subItems && item.subItems.length > 0) {
+      return (
+        <div key={item.key} className="relative group">
+          <button className="py-4 px-2 hover:bg-red-700 transition-colors font-medium flex items-center">
+            {item.label}
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <div className="absolute top-full left-0 w-64 bg-white shadow-lg border border-gray-200 rounded-b-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div className="py-2">
+              {item.subItems.map((subItem) => (
+                <Link
+                  key={subItem.key}
+                  href={subItem.href}
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
+                >
+                  {subItem.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (item.href) {
+      return (
+        <Link
+          key={item.key}
+          href={item.href}
+          className={`py-4 px-2 transition-colors font-medium ${isActive ? "bg-red-700" : "hover:bg-red-700"
+            }`}
+        >
+          {item.label}
+        </Link>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <>
@@ -92,143 +171,17 @@ export function GovernmentHeader({
       <nav className="bg-red-600 text-white">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center space-x-8">
-            {/* Icon HOME riêng biệt */}
-            <Link
-              href="/"
-              className={`flex items-center justify-center w-12 h-12 transition-colors ${currentPage === "home"
-                ? "bg-red-700"
-                : "hover:bg-red-700"
-                }`}
-              title="Trang chủ"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-              </svg>
-            </Link>
-
-            <Link
-              href="/tin-tuc"
-              className={`py-4 px-2 transition-colors font-medium ${currentPage === "news"
-                ? "bg-red-700"
-                : "hover:bg-red-700"
-                }`}
-            >
-              Giới thiệu
-            </Link>
-            <Link
-              href="/thu-tuc-hanh-chinh"
-              className={`py-4 px-2 transition-colors font-medium ${currentPage === "procedures"
-                ? "bg-red-700"
-                : "hover:bg-red-700"
-                }`}
-            >
-              Thủ tục hành chính
-            </Link>
-            <Link
-              href="/submit"
-              className={`py-4 px-2 transition-colors font-medium ${currentPage === "submit"
-                ? "bg-red-700"
-                : "hover:bg-red-700"
-                }`}
-            >
-              Nộp hồ sơ trực tuyến
-            </Link>
-            <Link
-              href="/lookup"
-              className={`py-4 px-2 transition-colors font-medium ${currentPage === "lookup"
-                ? "bg-red-700"
-                : "hover:bg-red-700"
-                }`}
-            >
-              Tra cứu hồ sơ
-            </Link>
-            <Link
-              href="/feedback"
-              className={`py-4 px-2 transition-colors font-medium ${currentPage === "feedback"
-                ? "bg-red-700"
-                : "hover:bg-red-700"
-                }`}
-            >
-              Phản ánh - Kiến nghị
-            </Link>
-            <Link
-              href="/evaluation"
-              className={`py-4 px-2 transition-colors font-medium ${currentPage === "evaluation"
-                ? "bg-red-700"
-                : "hover:bg-red-700"
-                }`}
-            >
-              Đánh giá
-            </Link>
-            <Link
-              href="/statistics"
-              className={`py-4 px-2 transition-colors font-medium ${currentPage === "statistics"
-                ? "bg-red-700"
-                : "hover:bg-red-700"
-                }`}
-            >
-              Thống kê
-            </Link>
-            <div className="relative group">
-              <button className="py-4 px-2 hover:bg-red-700 transition-colors font-medium flex items-center">
-                Hỗ trợ
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {/* Dropdown Menu */}
-              <div className="absolute top-full left-0 w-64 bg-white shadow-lg border border-gray-200 rounded-b-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <div className="py-2">
-                  <Link
-                    href="/lookup"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    Tra cứu hồ sơ TTHC
-                  </Link>
-                  <Link
-                    href="/guide"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    Hướng dẫn sử dụng
-                  </Link>
-                  <Link
-                    href="/faq"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    Câu hỏi thường gặp
-                  </Link>
-                  <Link
-                    href="/survey"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    Khảo sát ý kiến
-                  </Link>
-                  <Link
-                    href="/search-questions"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    Tra cứu câu hỏi
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors"
-                  >
-                    Số điện thoại hướng dẫn giải quyết TTHC
-                  </Link>
-                </div>
-              </div>
-            </div>
+            {HOME_NAVIGATION_ITEMS.map(renderNavigationItem)}
           </div>
         </div>
       </nav>
 
       {/* Breadcrumb */}
-      {showBreadcrumb && breadcrumbItems.length > 0 && (
+      {showBreadcrumb && resolvedBreadcrumbs.length > 0 && (
         <div className="bg-white border-b border-gray-200">
           <div className="container mx-auto px-4 py-3">
             <nav className="flex items-center space-x-2 text-sm">
-              {breadcrumbItems.map((item, index) => (
+              {resolvedBreadcrumbs.map((item, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   {index > 0 && (
                     <span className="text-gray-400">&gt;</span>

@@ -1,11 +1,4 @@
-import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
-
 export default function TinTucPage() {
-    const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
-        { label: "Tin tức" }
-    ];
-
     const newsItems = [
         {
             id: 1,
@@ -39,12 +32,6 @@ export default function TinTucPage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <GovernmentHeader
-                showBreadcrumb={true}
-                breadcrumbItems={breadcrumbItems}
-                currentPage="news"
-            />
-
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     <h1 className="text-3xl font-bold text-gray-800 mb-6">
