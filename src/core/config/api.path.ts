@@ -33,6 +33,11 @@ export const API_PATH = {
             ALL: '/ServiceGroup',
             BY_ID: (id: string) => `/ServiceGroup/${id}`,
         },
+        PUBLIC_SERVICE_NEWS: {
+            ALL: (keyword: string, serviceId: string, newsCategoryId: string, isPublished: boolean, page: number, size: number) =>
+                `/PublicServiceNew?keyword=${keyword}&serviceId=${serviceId}&newsCategoryId=${newsCategoryId}&isPublished=${isPublished}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/PublicServiceNew/${id}`,
+        },
         QUEUE: {
             COUNTERS: "/queue/counters",
             OVERVIEW: "/queue/overview",
