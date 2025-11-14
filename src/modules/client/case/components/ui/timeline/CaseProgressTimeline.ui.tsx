@@ -1,7 +1,7 @@
 'use client';
 
 import { CheckCircle2, Clock3, Circle, User } from "lucide-react";
-import type { CaseProgressTimelineStep } from "../../types";
+import type { CaseProgressTimelineStep } from "../../../types";
 import { cn } from "@/shared/lib";
 
 interface CaseProgressTimelineProps {

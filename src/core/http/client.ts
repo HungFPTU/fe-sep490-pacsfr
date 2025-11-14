@@ -267,11 +267,11 @@ class HttpClient {
             if (!response.ok) {
                 // Try to extract error message from response data
                 let errorMessage = `HTTP ${response.status}`;
-                
+
                 if (typeof data === "object" && data !== null) {
                     // Check for common error message fields
                     const errorObj = data as Record<string, unknown>;
-                    errorMessage = 
+                    errorMessage =
                         (typeof errorObj.message === "string" && errorObj.message) ||
                         (typeof errorObj.error === "string" && errorObj.error) ||
                         (typeof errorObj.errorMessage === "string" && errorObj.errorMessage) ||
@@ -433,11 +433,11 @@ class HttpClientNoLoading extends HttpClient {
             if (!response.ok) {
                 // Try to extract error message from response data
                 let errorMessage = `HTTP ${response.status}`;
-                
+
                 if (typeof data === "object" && data !== null) {
                     // Check for common error message fields
                     const errorObj = data as Record<string, unknown>;
-                    errorMessage = 
+                    errorMessage =
                         (typeof errorObj.message === "string" && errorObj.message) ||
                         (typeof errorObj.error === "string" && errorObj.error) ||
                         (typeof errorObj.errorMessage === "string" && errorObj.errorMessage) ||

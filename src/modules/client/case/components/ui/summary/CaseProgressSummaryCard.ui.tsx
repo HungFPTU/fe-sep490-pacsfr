@@ -1,7 +1,7 @@
 'use client';
 
-import { CalendarDays, ClipboardList, Contact, FileText, MapPin, Timer } from "lucide-react";
-import type { CaseProgressSummary } from "../../types";
+import { CalendarDays, ClipboardList, Contact, FileText, MapPin, Timer, TrendingUp, User } from "lucide-react";
+import type { CaseProgressSummary } from "../../../types";
 import { cn } from "@/shared/lib";
 
 interface CaseProgressSummaryCardProps {
@@ -24,7 +24,7 @@ const SummaryRow: React.FC<{
                 highlight ? "border-blue-200 bg-blue-50" : "",
             )}
         >
-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
                 {icon}
             </div>
             <div className="flex-1">
@@ -73,8 +73,8 @@ export const CaseProgressSummaryCard: React.FC<CaseProgressSummaryCardProps> = (
                     value={summary.applicantName}
                 />
                 <SummaryRow
-                    icon={<MapPin className="h-5 w-5" />}
-                    label="Cơ quan xử lý"
+                    icon={<User className="h-5 w-5" />}
+                    label="Cán bộ phụ trách"
                     value={summary.processingAgency}
                 />
                 <SummaryRow
@@ -87,6 +87,14 @@ export const CaseProgressSummaryCard: React.FC<CaseProgressSummaryCardProps> = (
                     label="Ngày cập nhật gần nhất"
                     value={summary.updatedAt}
                 />
+                {summary.progressPercentage !== undefined && (
+                    <SummaryRow
+                        icon={<TrendingUp className="h-5 w-5" />}
+                        label="Tiến độ xử lý"
+                        value={`${summary.progressPercentage}%`}
+                        highlight
+                    />
+                )}
             </div>
 
             {(summary.status || summary.statusNote || summary.estimatedCompletionDate || summary.receivedChannel) && (

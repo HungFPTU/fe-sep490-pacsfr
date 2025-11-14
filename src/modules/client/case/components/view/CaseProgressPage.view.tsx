@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useCaseProgress } from "../../hooks";
-import { CaseLookupForm, type CaseLookupFormValues, CaseProgressResultView } from "../ui";
+import { CaseLookupForm, type CaseLookupFormValues } from "../ui/form";
+import { CaseProgressResultView } from "../ui";
 import { executeRecaptcha, verifyRecaptchaToken } from "@/shared/lib";
 import { CASE_RECAPTCHA_ACTION } from "../../constants";
 import { ENV } from "@/core/config/env";
@@ -55,10 +56,11 @@ export const CaseProgressPageView: React.FC = () => {
                 return;
             }
 
-            // Step 2: Verify token with our API route (optional - backend may verify too)
-            // Note: Token expires in ~2 minutes, so verify immediately after generation
-            // If backend also verifies, we can skip this step, but it's good to verify early
-            const shouldVerifyOnFrontend = process.env.NEXT_PUBLIC_VERIFY_RECAPTCHA_ON_FRONTEND !== "false";
+            // Step 2: Skip frontend verification by default
+            // Backend will verify the token, so we don't need to verify on frontend
+            // This avoids browser-error issues with domain mismatch
+            // Set NEXT_PUBLIC_VERIFY_RECAPTCHA_ON_FRONTEND=true to enable frontend verification
+            const shouldVerifyOnFrontend = process.env.NEXT_PUBLIC_VERIFY_RECAPTCHA_ON_FRONTEND === "true";
 
             if (shouldVerifyOnFrontend) {
                 console.log("[CaseProgress] Verifying reCAPTCHA token on frontend...");
@@ -66,23 +68,23 @@ export const CaseProgressPageView: React.FC = () => {
                     const verifyResult = await verifyRecaptchaToken(token);
                     if (!verifyResult.success) {
                         const verifyMessage = verifyResult.message || "Xác thực CAPTCHA thất bại. Vui lòng thử lại.";
-                        setErrorMessage(verifyMessage);
-                        addToast({
-                            message: verifyMessage.includes("hết hạn")
-                                ? "Token đã hết hạn. Vui lòng thử lại ngay."
-                                : verifyMessage,
-                            type: "error"
-                        });
-                        return;
+
+                        // If it's a browser-error (domain mismatch), silently continue to backend
+                        // Backend may have different domain configuration
+                        if (verifyMessage.includes("Domain không khớp") || verifyMessage.includes("browser-error")) {
+                            console.warn("[CaseProgress] Frontend verification failed with browser-error, proceeding to backend (backend will verify)");
+                            // Continue silently - don't show error to user
+                        } else {
+                            // For other errors, log but still proceed to backend
+                            console.warn("[CaseProgress] Frontend verification failed, but proceeding to backend:", verifyMessage);
+                            // Don't block - let backend verify instead
+                        }
+                    } else {
+                        console.log("[CaseProgress] reCAPTCHA verified successfully on frontend, score:", verifyResult.score);
                     }
-                    console.log("[CaseProgress] reCAPTCHA verified successfully on frontend, score:", verifyResult.score);
                 } catch (verifyError) {
-                    // If frontend verification fails but we want to proceed anyway, log and continue
-                    console.warn("[CaseProgress] Frontend verification failed, but proceeding:", verifyError);
-                    // Uncomment below to block on frontend verification failure:
-                    // setErrorMessage("Xác thực CAPTCHA thất bại. Vui lòng thử lại.");
-                    // addToast({ message: "Xác thực CAPTCHA thất bại. Vui lòng thử lại.", type: "error" });
-                    // return;
+                    // If frontend verification fails, log and continue to backend
+                    console.warn("[CaseProgress] Frontend verification error, but proceeding to backend:", verifyError);
                 }
             } else {
                 console.log("[CaseProgress] Skipping frontend verification (backend will verify)");

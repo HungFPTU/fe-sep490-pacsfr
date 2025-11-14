@@ -1,9 +1,9 @@
 'use client';
 
-import { CaseProgressSummaryCard } from "./CaseProgressSummaryCard.ui";
-import { CaseProgressTimeline } from "./CaseProgressTimeline.ui";
-import { CaseProgressRawDataCard } from "./CaseProgressRawDataCard.ui";
-import type { CaseProgressResult } from "../../types";
+import { CaseProgressSummaryCard } from '../summary/CaseProgressSummaryCard.ui';
+import { CaseProgressTimeline } from '../timeline/CaseProgressTimeline.ui';
+import { CaseProgressDetailTable } from '../detail/CaseProgressDetailTable.ui';
+import type { CaseProgressResult } from '../../../types';
 
 interface CaseProgressResultProps {
     result: CaseProgressResult | null;
@@ -51,7 +51,7 @@ export const CaseProgressResultView: React.FC<CaseProgressResultProps> = ({
         <div className="mt-10 space-y-8">
             <CaseProgressSummaryCard summary={result.summary} message={result.message} />
             <CaseProgressTimeline steps={result.steps} />
-            <CaseProgressRawDataCard rawData={result.rawData} />
+            <CaseProgressDetailTable rawData={result.rawData} />
         </div>
     );
 };

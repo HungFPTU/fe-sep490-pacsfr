@@ -15,6 +15,16 @@ export const API_PATH = {
         CASE: {
             PROGRESS: '/Case/progress',
         },
+        FAQ: {
+            ALL: (keyword: string, serviceId: string, faqCategoryId: string, isActive: boolean, page: number, size: number) =>
+                `/FAQ?keyword=${keyword}&serviceId=${serviceId}&faqCategoryId=${faqCategoryId}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/FAQ/${id}`,
+        },
+        FAQ_CATEGORY: {
+            ALL: (keyword: string, isActive: boolean, page: number, size: number) =>
+                `/FAQCategory?keyword=${keyword}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/FAQCategory/${id}`,
+        },
         LEGAL_BASIS: {
             ALL: '/LegalBasis',
             BY_ID: (id: string) => `/LegalBasis/${id}`,

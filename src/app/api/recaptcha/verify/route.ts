@@ -73,7 +73,9 @@ export async function POST(req: NextRequest) {
             // Provide more specific error messages
             let errorMessage = "Xác thực CAPTCHA thất bại. Vui lòng thử lại.";
 
-            if (errorCodes.includes("invalid-input-response")) {
+            if (errorCodes.includes("browser-error")) {
+                errorMessage = "Domain không khớp với cấu hình reCAPTCHA. Vui lòng kiểm tra domain trong Google reCAPTCHA Console hoặc thử lại sau.";
+            } else if (errorCodes.includes("invalid-input-response")) {
                 errorMessage = "Token reCAPTCHA không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.";
             } else if (errorCodes.includes("invalid-input-secret")) {
                 errorMessage = "Cấu hình reCAPTCHA không đúng. Vui lòng liên hệ quản trị viên.";
