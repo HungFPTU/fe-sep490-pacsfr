@@ -21,7 +21,8 @@ import {
     ChevronDown,
     ChevronUp,
     Briefcase,
-    Info
+    Info,
+    X
 } from "lucide-react";
 
 interface ServiceDetailPopupProps {
@@ -56,6 +57,13 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
+            onOpenChange={(open) => {
+                if (!open) {
+                    onClose();
+                }
+            }}
+            isDismissable
+            hideCloseButton
             size="4xl"
             scrollBehavior="inside"
             backdrop="blur"
@@ -67,10 +75,10 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
             }}
         >
             <ModalContent className="bg-white shadow-2xl border border-gray-200">
-                <ModalHeader className="flex flex-col gap-1 bg-gradient-to-r from-red-50 via-white to-blue-50 border-b-2 border-red-100">
+                <ModalHeader className="flex flex-col gap-1 bg-linear-to-r from-red-50 via-white to-blue-50 border-b-2 border-red-100">
                     <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gradient-to-br from-red-600 to-red-700 rounded-lg">
+                            <div className="p-2 bg-linear-to-br from-red-600 to-red-700 rounded-lg">
                                 <FileText className="w-6 h-6 text-white" />
                             </div>
                             <div>
@@ -80,14 +88,24 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
                                 <p className="text-sm text-gray-600 mt-1">{service.serviceName}</p>
                             </div>
                         </div>
-                        {service.serviceType && (
-                            <Chip
-                                className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white border-0 text-sm font-semibold shadow-md"
-                                size="md"
+                        <div className="flex items-center gap-3">
+                            {service.serviceType && (
+                                <Chip
+                                    className="bg-linear-to-r from-blue-500 to-indigo-600 text-white border-0 text-sm font-semibold shadow-md"
+                                    size="md"
+                                >
+                                    {formatServiceType(service.serviceType)}
+                                </Chip>
+                            )}
+                            <button
+                                type="button"
+                                aria-label="Đóng cửa sổ chi tiết"
+                                onClick={onClose}
+                                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                             >
-                                {formatServiceType(service.serviceType)}
-                            </Chip>
-                        )}
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
                     </div>
                 </ModalHeader>
 
@@ -314,7 +332,7 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
                                         .sort((a, b) => a.stepNumber - b.stepNumber)
                                         .map((procedure) => (
                                             <div key={procedure.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                                <div className="shrink-0 w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-full flex items-center justify-center text-lg font-bold shadow-md">
+                                                <div className="shrink-0 w-10 h-10 bg-linear-to-br from-emerald-500 to-teal-600 text-white rounded-full flex items-center justify-center text-lg font-bold shadow-md">
                                                     {procedure.stepNumber}
                                                 </div>
                                                 <div className="flex-1">

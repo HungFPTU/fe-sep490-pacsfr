@@ -3,7 +3,7 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/shared/components/ui/input.ui';
-import { Button } from '@/shared/components/ui/button.ui';
+import { Button, type ButtonProps } from '@/shared/components/ui/button.ui';
 import { cn } from '@/shared/lib/utils';
 
 interface ManagerFilterBarProps {
@@ -15,6 +15,7 @@ interface ManagerFilterBarProps {
     isSubmitting?: boolean;
     children?: React.ReactNode;
     className?: string;
+    searchButtonVariant?: ButtonProps['variant'];
 }
 
 export const ManagerFilterBar: React.FC<ManagerFilterBarProps> = ({
@@ -26,6 +27,7 @@ export const ManagerFilterBar: React.FC<ManagerFilterBarProps> = ({
     isSubmitting = false,
     children,
     className,
+    searchButtonVariant = 'default',
 }) => {
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
@@ -55,6 +57,7 @@ export const ManagerFilterBar: React.FC<ManagerFilterBarProps> = ({
                 size="default"
                 className="whitespace-nowrap"
                 disabled={isSubmitting}
+                variant={searchButtonVariant}
             >
                 <Search className="mr-1 h-4 w-4" />
                 Tìm kiếm
