@@ -7,23 +7,6 @@ export default function ServiceDetailPage() {
     const params = useParams();
     const serviceId = params?.id as string;
 
-    if (!serviceId) {
-        return (
-            <div className="min-h-screen bg-gray-50">
-                <GovernmentHeader
-                    showBreadcrumb={true}
-                    breadcrumbItems={breadcrumbItems}
-                    currentPage="procedures"
-                />
-                <div className="container mx-auto px-4 py-8">
-                    <div className="text-center py-12">
-                        <p className="text-gray-600">Đang tải...</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="container mx-auto px-4 py-8">
