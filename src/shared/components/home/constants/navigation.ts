@@ -41,7 +41,7 @@ export const HOME_NAVIGATION_ITEMS: HomeNavigationItem[] = [
     {
         key: 'lookup',
         label: 'Tra cứu hồ sơ',
-        href: '/lookup',
+        href: '/tra-cuu-ho-so',
         type: 'link',
     },
     {
@@ -67,9 +67,9 @@ export const HOME_NAVIGATION_ITEMS: HomeNavigationItem[] = [
         label: 'Hỗ trợ',
         type: 'dropdown',
         subItems: [
-            { key: 'support-lookup', label: 'Tra cứu hồ sơ TTHC', href: '/lookup' },
+            { key: 'support-lookup', label: 'Tra cứu hồ sơ TTHC', href: '/tra-cuu-ho-so' },
             { key: 'support-guide', label: 'Hướng dẫn sử dụng', href: '/guide' },
-            { key: 'support-faq', label: 'Câu hỏi thường gặp', href: '/faq' },
+            { key: 'support-faq', label: 'Câu hỏi thường gặp', href: '/cau-hoi-thuong-gap' },
             { key: 'support-survey', label: 'Khảo sát ý kiến', href: '/survey' },
             { key: 'support-search-questions', label: 'Tra cứu câu hỏi', href: '/search-questions' },
             { key: 'support-contact', label: 'Số điện thoại hướng dẫn giải quyết TTHC', href: '/contact' },
@@ -81,11 +81,11 @@ export const HOME_BREADCRUMB_MAP: Record<string, HomeBreadcrumbItem[]> = {
     home: [{ label: 'Trang chủ', href: '/' }],
     news: [
         { label: 'Trang chủ', href: '/' },
-        { label: 'Giới thiệu' },
+        { label: 'Giới thiệu', href: '/tin-tuc' },
     ],
     procedures: [
         { label: 'Trang chủ', href: '/' },
-        { label: 'Thủ tục hành chính' },
+        { label: 'Thủ tục hành chính', href: '/thu-tuc-hanh-chinh' },
     ],
     submit: [
         { label: 'Trang chủ', href: '/' },
@@ -93,7 +93,7 @@ export const HOME_BREADCRUMB_MAP: Record<string, HomeBreadcrumbItem[]> = {
     ],
     lookup: [
         { label: 'Trang chủ', href: '/' },
-        { label: 'Tra cứu hồ sơ' },
+        { label: 'Tra cứu hồ sơ', href: '/tra-cuu-ho-so' },
     ],
     feedback: [
         { label: 'Trang chủ', href: '/' },
@@ -123,7 +123,7 @@ export const HOME_PATH_KEY_MAP: Record<string, string> = {
     '/thu-tuc-hanh-chinh': 'procedures',
     '/thu-tuc-hanh-chinh/': 'procedures',
     '/submit': 'submit',
-    '/lookup': 'lookup',
+    '/tra-cuu-ho-so': 'lookup',
     '/feedback': 'feedback',
     '/evaluation': 'evaluation',
     '/statistics': 'statistics',
@@ -132,6 +132,8 @@ export const HOME_PATH_KEY_MAP: Record<string, string> = {
     '/survey': 'support',
     '/search-questions': 'support',
     '/contact': 'support',
+    '/nhom-dich-vu': 'procedures',
+    '/search': 'procedures',
 };
 
 export function getHomeNavigationKeyByPath(pathname: string): string {
@@ -156,6 +158,7 @@ export function getHomeNavigationKeyByPath(pathname: string): string {
 const HOME_DETAIL_BREADCRUMB_LABEL: Partial<Record<string, string>> = {
     procedures: 'Chi tiết thủ tục hành chính',
     news: 'Chi tiết bài viết',
+    'service-group': 'Chi tiết nhóm dịch vụ',
 };
 
 export function getHomeBreadcrumbsByPath(pathname: string): HomeBreadcrumbItem[] {
@@ -164,6 +167,15 @@ export function getHomeBreadcrumbsByPath(pathname: string): HomeBreadcrumbItem[]
 
     if (normalizedPath === '/') {
         return [];
+    }
+
+    // Special handling for service group detail page
+    if (normalizedPath.startsWith('/nhom-dich-vu/')) {
+        return [
+            { label: 'Trang chủ', href: '/' },
+            { label: 'Thủ tục hành chính', href: '/thu-tuc-hanh-chinh' },
+            { label: HOME_DETAIL_BREADCRUMB_LABEL['service-group'] ?? 'Chi tiết nhóm dịch vụ' },
+        ];
     }
 
     let matchedKey: string = 'home';

@@ -7,7 +7,6 @@ import { useAuth } from "@/modules/auth/hooks";
 import { usePathname } from "next/navigation";
 import {
   HOME_NAVIGATION_ITEMS,
-  HOME_BREADCRUMB_MAP,
   getHomeBreadcrumbsByPath,
   getHomeNavigationKeyByPath,
   type HomeBreadcrumbItem,
