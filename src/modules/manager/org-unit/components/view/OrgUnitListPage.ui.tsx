@@ -88,22 +88,15 @@ export const OrgUnitListPage: React.FC = () => {
         setPage(1);
     };
 
-    const handleFilterChange = (filters: { keyword: string; isActive: boolean }) => {
-        setKeyword(filters.keyword);
-        setIsActive(filters.isActive);
-        setPage(1); // Reset to first page when filters change
-    };
-
     return (
         <div className="p-6">
             <OrgUnitHeader onCreateClick={handleCreate} />
 
             <OrgUnitFilter
                 keyword={keyword}
-                onKeywordChange={(kw) => handleFilterChange({ keyword: kw, isActive })}
+                onKeywordChange={setKeyword}
                 isActive={isActive}
-                onStatusChange={(active) => handleFilterChange({ keyword, isActive: active })}
-                onRefresh={refetch}
+                onStatusChange={setIsActive}
             />
 
             <OrgUnitTable

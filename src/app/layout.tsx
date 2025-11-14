@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" suppressHydrationWarning>
-      <body suppressHydrationWarning>
+    <html lang="vi">
+      <body>
         <AppProviders>
           <GlobalLoadingOverlay />
           <GlobalToast />

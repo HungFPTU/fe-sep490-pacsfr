@@ -131,12 +131,12 @@ class HttpClient {
         }
     }
 
-    protected getBaseUrl(): string {
+    private getBaseUrl(): string {
         const baseUrl = ENV.API_BASE_URL || "/api";
         return baseUrl;
     }
 
-    protected resolveAuthHeader(
+    private resolveAuthHeader(
         headers: HeadersInit | undefined,
         auth: AuthOptions | undefined
     ): Record<string, string> {
@@ -161,7 +161,7 @@ class HttpClient {
         return { [headerName]: value };
     }
 
-    protected async executeRequestInterceptors(config: HttpRequestOptions): Promise<HttpRequestOptions> {
+    private async executeRequestInterceptors(config: HttpRequestOptions): Promise<HttpRequestOptions> {
         let finalConfig = config;
         for (const interceptor of this.requestInterceptors) {
             finalConfig = await interceptor(finalConfig);
@@ -169,7 +169,7 @@ class HttpClient {
         return finalConfig;
     }
 
-    protected async executeResponseInterceptors<T>(response: HttpResponse<T>): Promise<HttpResponse<T>> {
+    private async executeResponseInterceptors<T>(response: HttpResponse<T>): Promise<HttpResponse<T>> {
         let finalResponse = response;
         for (const interceptor of this.responseInterceptors) {
             finalResponse = await interceptor(finalResponse);
@@ -177,7 +177,7 @@ class HttpClient {
         return finalResponse;
     }
 
-    protected async executeErrorInterceptors(error: HttpError): Promise<HttpError> {
+    private async executeErrorInterceptors(error: HttpError): Promise<HttpError> {
         let finalError = error;
         for (const interceptor of this.errorInterceptors) {
             finalError = await interceptor(finalError);

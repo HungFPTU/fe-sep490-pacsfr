@@ -14,7 +14,6 @@ interface Props {
     onGroupIdChange: (groupId: string) => void;
     isActive: boolean;
     onStatusChange: (isActive: boolean) => void;
-    onRefresh?: () => void;
 }
 
 export const DocsTypeFilter: React.FC<Props> = ({
@@ -24,18 +23,20 @@ export const DocsTypeFilter: React.FC<Props> = ({
     onGroupIdChange,
     isActive,
     onStatusChange,
-    onRefresh,
 }) => {
+    // Local state để tránh gọi API liên tục khi gõ
     const [localKeyword, setLocalKeyword] = useState<string>(keyword || '');
     const [localGroupId, setLocalGroupId] = useState<string>(groupId || '');
     const [localIsActive, setLocalIsActive] = useState<boolean>(isActive);
 
+    // Đồng bộ khi props thay đổi từ phía ngoài
     useEffect(() => {
         setLocalKeyword(keyword || '');
         setLocalGroupId(groupId || '');
         setLocalIsActive(isActive);
     }, [keyword, groupId, isActive]);
 
+    // Fetch docs type groups for dropdown
     const { data: groupsData } = useDocsTypeGroups({
         keyword: '',
         isActive: true,
@@ -47,12 +48,10 @@ export const DocsTypeFilter: React.FC<Props> = ({
     const groups = pageResult?.items || [];
 
     const handleApply = () => {
+        // Gọi các setter của parent trong cùng một tick → React sẽ batch lại
         onKeywordChange(localKeyword);
         onGroupIdChange(localGroupId);
         onStatusChange(localIsActive);
-        if (onRefresh) {
-            onRefresh();
-        }
     };
 
     const handleReset = () => {
@@ -110,3 +109,4 @@ export const DocsTypeFilter: React.FC<Props> = ({
         </div>
     );
 };
+

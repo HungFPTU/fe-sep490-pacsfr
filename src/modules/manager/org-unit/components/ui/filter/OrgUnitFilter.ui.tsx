@@ -9,7 +9,6 @@ interface Props {
     onKeywordChange: (keyword: string) => void;
     isActive: boolean;
     onStatusChange: (isActive: boolean) => void;
-    onRefresh?: () => void;
 }
 
 export const OrgUnitFilter: React.FC<Props> = ({
@@ -17,35 +16,7 @@ export const OrgUnitFilter: React.FC<Props> = ({
     onKeywordChange,
     isActive,
     onStatusChange,
-    onRefresh,
 }) => {
-    // Local state để tránh gọi API liên tục khi gõ
-    const [localKeyword, setLocalKeyword] = useState<string>(keyword || '');
-    const [localIsActive, setLocalIsActive] = useState<boolean>(isActive);
-
-    // Đồng bộ khi props thay đổi từ phía ngoài
-    useEffect(() => {
-        setLocalKeyword(keyword || '');
-        setLocalIsActive(isActive);
-    }, [keyword, isActive]);
-
-    const handleApply = () => {
-        // Gọi các setter của parent trong cùng một tick → React sẽ batch lại
-        onKeywordChange(localKeyword);
-        onStatusChange(localIsActive);
-        // Refresh data sau khi apply filters
-        if (onRefresh) {
-            onRefresh();
-        }
-    };
-
-    const handleReset = () => {
-        setLocalKeyword('');
-        setLocalIsActive(true);
-        onKeywordChange('');
-        onStatusChange(true);
-    };
-
     return (
         <div className="mb-4">
             <ManagerFilterBar

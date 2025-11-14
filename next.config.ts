@@ -4,14 +4,12 @@ import type { NextConfig } from "next";
 process.env.WEBPACK_DISABLE_WATCHPACK = 'true';
 process.env.WEBPACK_WATCH_OPTIONS = 'false';
 process.env.NEXT_WEBPACK_USEPOLLING = 'false';
-// Disable webpack workers for Bun compatibility
-process.env.WEBPACK_DISABLE_WORKERS = 'true';
 
 const nextConfig: NextConfig = {
   // Tối ưu hóa cho Bun runtime
   serverExternalPackages: [],
 
-  // Turbopack configuration (default in Next.js 16, but keeping for custom rules)
+  // Turbopack configuration (now stable)
   turbopack: {
     rules: {
       "*.svg": {
@@ -45,8 +43,8 @@ const nextConfig: NextConfig = {
       "@emotion/styled",
       "@emotion/is-prop-valid",
     ],
-    // Tối ưu hóa memory usage - Disabled for Bun compatibility
-    memoryBasedWorkersCount: false,
+    // Tối ưu hóa memory usage
+    memoryBasedWorkersCount: true,
     // Tối ưu hóa CSS - tắt để tránh lỗi critters với Bun
     optimizeCss: false,
     // Tối ưu hóa server actions
@@ -57,8 +55,8 @@ const nextConfig: NextConfig = {
     // fastRefresh: true,
     // Optimize for auto-reload
     optimizeServerReact: true,
-    // Disable webpackBuildWorker for Bun compatibility (Bun doesn't fully support worker_threads options)
-    webpackBuildWorker: false,
+    // Use Next.js built-in file watching
+    webpackBuildWorker: true,
   },
 
   // Tối ưu hóa build performance
@@ -71,14 +69,6 @@ const nextConfig: NextConfig = {
 
   // Tối ưu hóa webpack cho Bun và SSR
   webpack: (config, { dev, isServer }) => {
-    // Disable webpack workers for Bun compatibility
-    config.parallelism = 1; // Disable parallel processing
-    // Keep cache enabled but disable worker-based cache
-    if (config.cache && typeof config.cache === 'object') {
-      config.cache.type = 'filesystem';
-      config.cache.buildDependencies = {};
-    }
-
     // Enable Next.js built-in file watching for auto-reload
     if (dev) {
       // Enable file watching for auto-reload
@@ -115,12 +105,9 @@ const nextConfig: NextConfig = {
     }
 
     // Xử lý lỗi tương thích với Bun và SSR
-    const path = require('path');
-    const emptyModulePath = path.resolve(__dirname, 'empty-module.js');
     config.resolve.alias = {
       ...config.resolve.alias,
-      'async_hooks': emptyModulePath,
-      'worker_threads': emptyModulePath, // Disable worker_threads for Bun compatibility
+      'async_hooks': 'empty-module',
       // Fix for emotion dependencies
       '@emotion/is-prop-valid': require.resolve('@emotion/is-prop-valid'),
       '@emotion/styled': require.resolve('@emotion/styled'),
@@ -162,8 +149,6 @@ const nextConfig: NextConfig = {
     // Xử lý lỗi "i.M" trong build và chunk loading
     config.optimization = {
       ...config.optimization,
-      // Disable parallel processing for Bun compatibility
-      minimize: !dev, // Only minimize in production
       splitChunks: {
         ...config.optimization.splitChunks,
         chunks: 'all',
@@ -198,21 +183,20 @@ const nextConfig: NextConfig = {
   },
 
   // Tối ưu hóa images
-  // Note: Next.js 16 default minimumCacheTTL is 14400 (4 hours), but we keep 60s for shorter cache
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*" },
       { protocol: "http", hostname: "*" },
     ],
     formats: ["image/webp", "image/avif"],
-    minimumCacheTTL: 60, // Next.js 16 default is 14400, but keeping 60 for shorter cache
+    minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     unoptimized: false,
   },
 
-  // Tối ưu hóa output - không dùng standalone trên Vercel (Vercel tự xử lý)
-  // output: "standalone", // Disabled for Vercel deployment
+  // Tối ưu hóa output - sử dụng standalone cho Vercel
+  output: "standalone",
 
   // Tối ưu hóa performance
   poweredByHeader: false,

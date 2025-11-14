@@ -102,7 +102,6 @@ export const DocsTypeGroupListPage: React.FC = () => {
                 onKeywordChange={setKeyword}
                 isActive={isActive}
                 onStatusChange={setIsActive}
-                onRefresh={refetch}
             />
 
             <DocsTypeGroupTable

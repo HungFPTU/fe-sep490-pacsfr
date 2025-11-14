@@ -9,13 +9,11 @@ import { ManagerFilterBar } from '@/shared/components/manager/ui';
 interface Props {
     filters: LegalDocumentFilters;
     onFilterChange: (filters: LegalDocumentFilters) => void;
-    onRefresh?: () => void;
 }
 
 export const LegalDocumentFilter: React.FC<Props> = ({
     filters,
     onFilterChange,
-    onRefresh,
 }) => {
     const documentTypeOptions = LegalDocumentService.getDocumentTypeOptions();
     const documentStatusOptions = LegalDocumentService.getDocumentStatusOptions();
@@ -45,10 +43,6 @@ export const LegalDocumentFilter: React.FC<Props> = ({
             page: 1,
             size: filters.size || 10,
         });
-        // Refresh data sau khi apply filters
-        if (onRefresh) {
-            onRefresh();
-        }
     };
 
     const handleResetFilters = () => {

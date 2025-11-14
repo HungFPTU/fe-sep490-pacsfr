@@ -23,7 +23,7 @@ export const serviceApi = {
         const queryString = searchParams.toString();
         const url = `${API_PATH.CLIENT.SERVICES.ALL}${queryString ? `?${queryString}` : ""}`;
 
-        const response = await httpNoLoading.get<ServiceListResponse>(url);
+        const response = await http.get<ServiceListResponse>(url);
         return response.data;
     },
 

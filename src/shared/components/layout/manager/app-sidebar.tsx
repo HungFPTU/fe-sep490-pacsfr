@@ -150,7 +150,7 @@ const data = {
           url: "/manager/monitoring/manager",
         },
         {
-          title: "Quản lý hồ sơ & Ưu tiên",
+          title: "Ưu tiên nhóm đặc biệt",
           url: "/manager/monitoring/special",
         },
       ],

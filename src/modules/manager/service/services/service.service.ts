@@ -1,5 +1,5 @@
 import { serviceApi } from '../api/service.api';
-import type { CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest } from '../types';
+import type { CreateServiceRequest, UpdateServiceRequest, ServiceFilters } from '../types';
 
 export const serviceService = {
     getServiceList: async (filters: ServiceFilters) => {
@@ -37,19 +37,6 @@ export const serviceService = {
     deleteService: async (id: string) => {
         const response = await serviceApi.delete(id);
         return response.data;
-    },
-
-    assignSubmissionMethods: async (data: AssignSubmissionMethodsRequest) => {
-        const response = await serviceApi.assignSubmissionMethods(data);
-        const apiResponse = response.data;
-
-        // Check if request was successful
-        if (!apiResponse?.success) {
-            const errorMessage = (apiResponse as { message?: string })?.message || 'Failed to assign submission methods';
-            throw new Error(errorMessage);
-        }
-
-        return apiResponse;
     },
 };
 

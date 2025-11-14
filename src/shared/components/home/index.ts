@@ -3,7 +3,6 @@ export { FeaturesSection } from "./FeaturesSection.com";
 export { StatsSection } from "./StatsSection.com";
 export { FeatureCard } from "./FeatureCard.com";
 export { GovernmentHeader } from "./GovernmentHeader.com";
-export { UserInfo } from "./UserInfo.com";
 export { UncleHoTeachings } from "./UncleHoTeachings.com";
 export { NewProceduresCarousel } from "./NewProceduresCarousel.com";
 export { AdministrativeProcedures } from "./AdministrativeProcedures.com";

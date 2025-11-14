@@ -1,5 +1,3 @@
-'use client';
-
 import Link from "next/link";
 import Image from "next/image";
 import { UserInfo } from "./UserInfo.com";
@@ -147,9 +145,6 @@ export function GovernmentHeader({
                 <option>Tiếng Việt</option>
                 <option>English</option>
               </select>
-
-              {/* User Info - Hiển thị khi đã đăng nhập */}
-              {isAuthenticated && <UserInfo />}
             </div>
           </div>
         </div>

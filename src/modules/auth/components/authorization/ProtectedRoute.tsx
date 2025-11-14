@@ -14,7 +14,6 @@ import { ClientOnly } from './ClientOnly';
 // import { AccessDeniedPage } from '@/shared/components/common/403'; // No longer used
 import { LoadingRedirect } from '@/shared/components/common/LoadingRedirect';
 import { useLogoutState } from '../../hooks/useLogoutState';
-import { GlobalLoadingOverlay } from '@/shared/components';
 
 
 interface ProtectedRouteProps {
@@ -104,7 +103,14 @@ function ProtectedRouteContent({
 
   // Show loading state
   if (isLoading) {
-    return <GlobalLoadingOverlay />;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+          <p className="mt-4 text-sm text-slate-600">Đang tải...</p>
+        </div>
+      </div>
+    );
   }
 
   // Check authentication
@@ -185,7 +191,12 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
   return (
     <ClientOnly
       fallback={
-        <GlobalLoadingOverlay />
+        <div className="flex h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+            <p className="mt-4 text-sm text-slate-600">Đang tải...</p>
+          </div>
+        </div>
       }
     >
       <ProtectedRouteContent {...props} />

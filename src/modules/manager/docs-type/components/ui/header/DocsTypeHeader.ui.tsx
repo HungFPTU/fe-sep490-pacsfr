@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/shared/components/ui/button.ui';
-import { Plus } from 'lucide-react';
 
 interface Props {
     onCreateClick: () => void;
@@ -11,15 +9,13 @@ interface Props {
 export const DocsTypeHeader: React.FC<Props> = ({ onCreateClick }) => {
     return (
         <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-foreground">Quản lý Loại Văn Bản</h1>
-            <Button
+            <h1 className="text-2xl font-bold text-slate-900">Quản lý Loại Văn Bản</h1>
+            <button
                 onClick={onCreateClick}
-                size="default"
-                className="whitespace-nowrap"
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
             >
-                <Plus className="h-4 w-4" />
-                Tạo loại mới
-            </Button>
+                + Tạo loại mới
+            </button>
         </div>
     );
 };

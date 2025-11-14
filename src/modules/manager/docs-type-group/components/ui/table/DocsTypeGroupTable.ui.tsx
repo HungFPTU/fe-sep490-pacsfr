@@ -3,7 +3,6 @@
 import React from 'react';
 import { DocsTypeGroupTableHeader } from './DocsTypeGroupTableHeader.ui';
 import { DocsTypeGroupTableRow } from './DocsTypeGroupTableRow.ui';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { DocsTypeGroup } from '../../../types';
 
 interface Props {
@@ -24,24 +23,22 @@ export const DocsTypeGroupTable: React.FC<Props> = ({
     isDeleting = false,
 }) => {
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <DocsTypeGroupTableHeader />
-                </TableHeader>
-                <TableBody>
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow">
+            <table className="w-full">
+                <DocsTypeGroupTableHeader />
+                <tbody className="divide-y divide-slate-200 bg-white">
                     {isLoading ? (
-                        <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">
                                 Đang tải...
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : groups.length === 0 ? (
-                        <TableRow>
-                            <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={6} className="px-6 py-4 text-center text-sm text-slate-500">
                                 Không có dữ liệu
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : (
                         groups.map((group) => (
                             <DocsTypeGroupTableRow
@@ -54,8 +51,8 @@ export const DocsTypeGroupTable: React.FC<Props> = ({
                             />
                         ))
                     )}
-                </TableBody>
-            </Table>
+                </tbody>
+            </table>
         </div>
     );
 };

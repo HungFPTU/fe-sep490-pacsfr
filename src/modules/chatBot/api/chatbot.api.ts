@@ -1,4 +1,4 @@
-import { httpNoLoading } from '@core/http/client';
+import { http } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
 import type { SendMessageRequest, ChatResponse, ConversationDetail } from '../types';
 
@@ -26,7 +26,7 @@ export const chatbotApi = {
             userType,
         };
 
-        const response = await httpNoLoading.post<{
+        const response = await http.post<{
             $id: string;
             isSuccess: boolean;
             message: string;
@@ -51,8 +51,8 @@ export const chatbotApi = {
         console.log('API: Getting conversation', conversationId);
         const url = API_PATH.CHATBOT.GET_CONVERSATION(conversationId);
         console.log('API: URL', url);
-
-        const response = await httpNoLoading.get<{
+        
+        const response = await http.get<{
             $id: string;
             isSuccess: boolean;
             message: string;

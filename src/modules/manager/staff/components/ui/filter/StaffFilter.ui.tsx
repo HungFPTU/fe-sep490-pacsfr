@@ -9,10 +9,9 @@ import { ManagerFilterBar } from '@/shared/components/manager/ui';
 interface StaffFilterProps {
     filters: StaffFilters;
     onFilterChange: (filters: StaffFilters) => void;
-    onRefresh?: () => void;
 }
 
-export function StaffFilter({ filters, onFilterChange, onRefresh }: StaffFilterProps) {
+export function StaffFilter({ filters, onFilterChange }: StaffFilterProps) {
     const filterOptions = getFilterOptions();
 
     // Local state for filter inputs (not triggering API)
@@ -34,10 +33,6 @@ export function StaffFilter({ filters, onFilterChange, onRefresh }: StaffFilterP
     const handleApplyFilters = () => {
         // Apply filters - trigger API call
         onFilterChange(localFilters);
-        // Refresh data sau khi apply filters
-        if (onRefresh) {
-            onRefresh();
-        }
     };
 
     const handleResetFilters = () => {

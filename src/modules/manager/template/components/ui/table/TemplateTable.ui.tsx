@@ -3,7 +3,6 @@
 import React from 'react';
 import { TemplateTableHeader } from './TemplateTableHeader.ui';
 import { TemplateTableRow } from './TemplateTableRow.ui';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { Template } from '../../../types';
 
 interface Props {
@@ -24,24 +23,22 @@ export const TemplateTable: React.FC<Props> = ({
     isDeleting = false,
 }) => {
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TemplateTableHeader />
-                </TableHeader>
-                <TableBody>
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow">
+            <table className="w-full">
+                <TemplateTableHeader />
+                <tbody className="divide-y divide-slate-200 bg-white">
                     {isLoading ? (
-                        <TableRow>
-                            <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={8} className="px-6 py-4 text-center text-sm text-slate-500">
                                 Đang tải...
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : templates.length === 0 ? (
-                        <TableRow>
-                            <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={8} className="px-6 py-4 text-center text-sm text-slate-500">
                                 Không có dữ liệu
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : (
                         templates.map((template) => (
                             <TemplateTableRow
@@ -54,8 +51,8 @@ export const TemplateTable: React.FC<Props> = ({
                             />
                         ))
                     )}
-                </TableBody>
-            </Table>
+                </tbody>
+            </table>
         </div>
     );
 };

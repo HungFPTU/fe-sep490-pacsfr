@@ -14,7 +14,6 @@ interface Props {
     onDocsTypeIdChange: (docsTypeId: string) => void;
     isActive: boolean;
     onStatusChange: (isActive: boolean) => void;
-    onRefresh?: () => void;
 }
 
 export const TemplateFilter: React.FC<Props> = ({
@@ -24,18 +23,20 @@ export const TemplateFilter: React.FC<Props> = ({
     onDocsTypeIdChange,
     isActive,
     onStatusChange,
-    onRefresh,
 }) => {
+    // Local state để tránh gọi API liên tục khi gõ
     const [localKeyword, setLocalKeyword] = useState<string>(keyword || '');
     const [localDocsTypeId, setLocalDocsTypeId] = useState<string>(docsTypeId || '');
     const [localIsActive, setLocalIsActive] = useState<boolean>(isActive);
 
+    // Đồng bộ khi props thay đổi từ phía ngoài
     useEffect(() => {
         setLocalKeyword(keyword || '');
         setLocalDocsTypeId(docsTypeId || '');
         setLocalIsActive(isActive);
     }, [keyword, docsTypeId, isActive]);
 
+    // Fetch docs types for dropdown
     const { data: docsTypesData } = useDocsTypes({
         keyword: '',
         groupId: '',
@@ -48,12 +49,10 @@ export const TemplateFilter: React.FC<Props> = ({
     const docsTypes = pageResult?.items || [];
 
     const handleApply = () => {
+        // Gọi các setter của parent trong cùng một tick → React sẽ batch lại
         onKeywordChange(localKeyword);
         onDocsTypeIdChange(localDocsTypeId);
         onStatusChange(localIsActive);
-        if (onRefresh) {
-            onRefresh();
-        }
     };
 
     const handleReset = () => {

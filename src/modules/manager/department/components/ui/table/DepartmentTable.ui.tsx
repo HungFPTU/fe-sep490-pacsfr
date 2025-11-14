@@ -3,7 +3,6 @@
 import React from 'react';
 import { DepartmentTableHeader } from './DepartmentTableHeader.ui';
 import { DepartmentTableRow } from './DepartmentTableRow.ui';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { Department } from '../../../types';
 
 interface Props {
@@ -24,24 +23,22 @@ export const DepartmentTable: React.FC<Props> = ({
     isDeleting = false,
 }) => {
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <DepartmentTableHeader />
-                </TableHeader>
-                <TableBody>
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow">
+            <table className="w-full">
+                <DepartmentTableHeader />
+                <tbody className="divide-y divide-slate-200 bg-white">
                     {isLoading ? (
-                        <TableRow>
-                            <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={8} className="px-6 py-4 text-center text-sm text-slate-500">
                                 Đang tải...
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : departments.length === 0 ? (
-                        <TableRow>
-                            <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={8} className="px-6 py-4 text-center text-sm text-slate-500">
                                 Không có dữ liệu
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : (
                         departments.map((department) => (
                             <DepartmentTableRow
@@ -54,8 +51,8 @@ export const DepartmentTable: React.FC<Props> = ({
                             />
                         ))
                     )}
-                </TableBody>
-            </Table>
+                </tbody>
+            </table>
         </div>
     );
 };

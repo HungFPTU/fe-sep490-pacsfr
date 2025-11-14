@@ -52,7 +52,7 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
     }, [formFileUrl, initFileUrl, isEdit, uploadedFileUrl]);
 
     const { uploadFile, isUploading, error: uploadError, validateFile, formatFileSize } = useFileUpload({
-        maxSize: 100 * 1024 * 1024, // 100MB
+        maxSize: 10 * 1024 * 1024, // 10MB
         allowedTypes: [
             'application/pdf',
             'application/msword',
@@ -422,7 +422,7 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
 
             {/* File Upload */}
             <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
+                <label className="text-sm font-medium text-gray-900">
                     File đính kèm {isEdit && <span className="text-gray-500">(Chỉ thay đổi khi cần thiết)</span>}
                 </label>
 
@@ -453,7 +453,7 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
                                         Chọn file để upload
                                     </span>
                                     <p className="text-xs text-gray-500 mt-1">
-                                        PDF, DOC, DOCX, TXT (tối đa 100MB)
+                                        PDF, DOC, DOCX, TXT (tối đa 10MB)
                                     </p>
                                 </div>
                             </>

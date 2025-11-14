@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useServiceGroup } from '@/modules/manager/service-group/hooks';
 import { getOne } from '@/types/rest';
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar.ui';
 import type { ServiceGroup } from '@/modules/manager/service-group/types';
 
 interface Props {
@@ -16,42 +16,41 @@ export const ServiceGroupDetail: React.FC<Props> = ({ serviceGroupId }) => {
     if (isLoading) {
         return (
             <div className="animate-pulse">
-                <div className="h-4 bg-muted rounded w-32"></div>
+                <div className="h-4 bg-slate-200 rounded w-32"></div>
             </div>
         );
     }
 
     if (!serviceGroupData) {
-        return <p className="text-sm text-muted-foreground">-</p>;
+        return <p className="text-sm text-slate-500">-</p>;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const serviceGroup = getOne<ServiceGroup>(serviceGroupData as any);
 
     if (!serviceGroup) {
-        return <p className="text-sm text-muted-foreground">-</p>;
+        return <p className="text-sm text-slate-500">-</p>;
     }
-
-    const getAvatarFallback = (name: string, code?: string) =>
-        (name?.trim()?.[0]?.toUpperCase() ?? code?.[0]?.toUpperCase() ?? '?') +
-        (name?.trim()?.split(' ')[1]?.[0]?.toUpperCase() ?? code?.[1]?.toUpperCase() ?? '');
 
     return (
         <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10 rounded-lg">
-                {serviceGroup.iconUrl && (
-                    <AvatarImage src={serviceGroup.iconUrl} alt={serviceGroup.groupName} />
-                )}
-                <AvatarFallback className="bg-muted text-xs text-muted-foreground">
-                    {getAvatarFallback(serviceGroup.groupName, serviceGroup.groupCode)}
-                </AvatarFallback>
-            </Avatar>
+            {serviceGroup.iconUrl && (
+                <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200">
+                    <Image
+                        src={serviceGroup.iconUrl}
+                        alt={serviceGroup.groupName}
+                        width={40}
+                        height={40}
+                        className="object-cover"
+                    />
+                </div>
+            )}
             <div>
-                <p className="text-sm font-medium text-foreground">
+                <p className="text-sm font-medium text-slate-900">
                     {serviceGroup.groupName}
                 </p>
                 {serviceGroup.description && (
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-slate-500">
                         {serviceGroup.description.length > 50
                             ? `${serviceGroup.description.substring(0, 50)}...`
                             : serviceGroup.description}

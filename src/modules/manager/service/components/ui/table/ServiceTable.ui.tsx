@@ -3,7 +3,6 @@
 import React from 'react';
 import { ServiceTableHeader } from './ServiceTableHeader.ui';
 import { ServiceTableRow } from './ServiceTableRow.ui';
-import { Table, TableBody, TableHeader } from '@/shared/components/manager/ui/table';
 import type { Service } from '../../../types';
 
 interface Props {
@@ -25,31 +24,31 @@ export const ServiceTable: React.FC<Props> = ({
 }) => {
     if (services.length === 0) {
         return (
-            <div className="rounded-md border p-8 text-center">
-                <p className="text-muted-foreground">Không có dịch vụ nào</p>
+            <div className="rounded-lg border border-slate-200 bg-white p-8 text-center">
+                <p className="text-slate-500">Không có dịch vụ nào</p>
             </div>
         );
     }
 
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-200">
                     <ServiceTableHeader />
-                </TableHeader>
-                <TableBody>
-                    {services.map((service) => (
-                        <ServiceTableRow
-                            key={service.id}
-                            service={service}
-                            onView={onView}
-                            onEdit={onEdit}
-                            onDelete={onDelete}
-                            isDeleting={isDeleting && deletingId === service.id}
-                        />
-                    ))}
-                </TableBody>
-            </Table>
+                    <tbody className="divide-y divide-slate-200 bg-white">
+                        {services.map((service) => (
+                            <ServiceTableRow
+                                key={service.id}
+                                service={service}
+                                onView={onView}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                                isDeleting={isDeleting && deletingId === service.id}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

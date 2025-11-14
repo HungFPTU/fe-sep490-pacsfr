@@ -3,7 +3,6 @@
 import React from 'react';
 import { ServiceGroupTableHeader } from './ServiceGroupTableHeader.ui';
 import { ServiceGroupTableRow } from './ServiceGroupTableRow.ui';
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/shared/components/manager/ui/table';
 import type { ServiceGroup } from '../../../types';
 
 interface Props {
@@ -24,24 +23,22 @@ export const ServiceGroupTable: React.FC<Props> = ({
     isDeleting = false,
 }) => {
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <ServiceGroupTableHeader />
-                </TableHeader>
-                <TableBody>
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow">
+            <table className="w-full">
+                <ServiceGroupTableHeader />
+                <tbody className="divide-y divide-slate-200 bg-white">
                     {isLoading ? (
-                        <TableRow>
-                            <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={7} className="px-6 py-4 text-center text-sm text-slate-500">
                                 Đang tải...
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : groups.length === 0 ? (
-                        <TableRow>
-                            <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                        <tr>
+                            <td colSpan={7} className="px-6 py-4 text-center text-sm text-slate-500">
                                 Không có dữ liệu
-                            </TableCell>
-                        </TableRow>
+                            </td>
+                        </tr>
                     ) : (
                         groups.map((group) => (
                             <ServiceGroupTableRow
@@ -54,8 +51,8 @@ export const ServiceGroupTable: React.FC<Props> = ({
                             />
                         ))
                     )}
-                </TableBody>
-            </Table>
+                </tbody>
+            </table>
         </div>
     );
 };

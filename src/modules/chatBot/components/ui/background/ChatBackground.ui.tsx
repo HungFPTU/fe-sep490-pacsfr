@@ -18,8 +18,8 @@ export const ChatBackground: React.FC<ChatBackgroundProps> = ({
                 <Image
                     src={imageSrc}
                     alt={imageAlt}
-                    fill
-                    className="object-cover"
+                    layout="fill"
+                    objectFit="cover"
                     priority
                 />
             </div>

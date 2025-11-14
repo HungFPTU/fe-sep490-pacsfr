@@ -1,32 +1,6 @@
 'use client';
 
-import * as React from 'react';
-import * as SwitchPrimitives from '@radix-ui/react-switch';
-
-import { cn } from '@/shared/lib/utils';
-
-type SwitchElement = React.ElementRef<typeof SwitchPrimitives.Root>;
-type SwitchProps = React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>;
-
-const Switch = React.forwardRef<SwitchElement, SwitchProps>(({ className, ...props }, ref) => (
-    <SwitchPrimitives.Root
-        ref={ref}
-        className={cn(
-            'peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50',
-            'data-[state=checked]:bg-gray-900 data-[state=unchecked]:bg-gray-200',
-            className,
-        )}
-        {...props}
-    >
-        <SwitchPrimitives.Thumb
-            className={cn(
-                'pointer-events-none block h-4 w-4 rounded-full bg-white shadow transition-transform',
-                'data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-1',
-            )}
-        />
-    </SwitchPrimitives.Root>
-));
-Switch.displayName = SwitchPrimitives.Root.displayName;
+import React from 'react';
 
 interface ToggleSwitchProps {
     checked: boolean;
@@ -44,44 +18,51 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
     label,
     description,
     disabled = false,
-    className,
+    className = '',
     'aria-label': ariaLabel,
 }) => {
-    const controlId = React.useId();
-    const statusLabel = checked ? 'BẬT' : 'TẮT';
+    const handleToggle = () => {
+        if (!disabled) {
+            onChange(!checked);
+        }
+    };
 
     return (
-        <div className={cn('space-y-2', className)}>
-            <label htmlFor={controlId} className="text-sm font-medium text-gray-900">
+        <div className={`space-y-2 ${className}`}>
+            <label className="text-sm font-medium text-gray-900">
                 {label}
             </label>
-            <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4">
+            <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
                 <div className="flex items-center gap-3">
-                    <Switch
-                        id={controlId}
-                        checked={checked}
-                        onCheckedChange={(next: boolean) => {
-                            if (!disabled) {
-                                onChange(next);
-                            }
-                        }}
+                    <button
+                        type="button"
+                        onClick={handleToggle}
                         disabled={disabled}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${checked ? 'bg-gray-600' : 'bg-gray-200'
+                            } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                         aria-label={ariaLabel || label}
-                    />
+                    >
+                        <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${checked ? 'translate-x-6' : 'translate-x-1'
+                                }`}
+                        />
+                    </button>
                     <div>
-                        <span className="text-sm font-medium text-gray-900">{label}</span>
-                        {description ? (
-                            <p className="mt-0.5 text-xs text-gray-500">{description}</p>
-                        ) : null}
+                        <span className="text-sm font-medium text-gray-900">
+                            {label}
+                        </span>
+                        {description && (
+                            <p className="text-xs text-gray-500 mt-0.5">
+                                {description}
+                            </p>
+                        )}
                     </div>
                 </div>
-                <div
-                    className={cn(
-                        'rounded px-2 py-1 text-xs font-medium transition-colors',
-                        checked ? 'bg-gray-100 text-gray-900' : 'bg-gray-100 text-gray-500',
-                    )}
-                >
-                    {statusLabel}
+                <div className={`px-2 py-1 rounded text-xs font-medium ${checked
+                    ? 'bg-gray-100 text-gray-900'
+                    : 'bg-gray-100 text-gray-500'
+                    }`}>
+                    {checked ? 'BẬT' : 'TẮT'}
                 </div>
             </div>
         </div>

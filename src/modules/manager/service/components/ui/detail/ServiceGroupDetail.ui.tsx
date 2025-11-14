@@ -35,7 +35,7 @@ export const ServiceGroupDetail: React.FC<Props> = ({ serviceGroupId }) => {
     return (
         <div className="flex items-center gap-3">
             {serviceGroup.iconUrl && (
-                <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-border">
+                <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-slate-200">
                     <Image
                         src={serviceGroup.iconUrl}
                         alt={serviceGroup.groupName}
