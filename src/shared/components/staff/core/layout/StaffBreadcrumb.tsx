@@ -44,6 +44,12 @@ export function StaffBreadcrumb() {
         let currentPath = '';
         paths.forEach((path, index) => {
             currentPath += `/${path}`;
+            
+            // Skip the "staff" segment - don't display it in breadcrumb
+            if (path === 'staff') {
+                return;
+            }
+            
             const label = pathLabels[path] || path.charAt(0).toUpperCase() + path.slice(1);
 
             // Don't add link for the last item

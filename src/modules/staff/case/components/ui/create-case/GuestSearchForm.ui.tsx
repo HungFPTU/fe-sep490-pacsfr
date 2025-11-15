@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/ui/input.ui";
 import { Search, User, Check } from "lucide-react";
@@ -41,7 +40,7 @@ export function GuestSearchForm({
                         onChange={(e) => onSearchKeywordChange(e.target.value)}
                         placeholder="Nhập tên hoặc số CMND/CCCD (để trống để xem tất cả)..."
                         disabled={isSearching}
-                        onKeyPress={(e) => {
+                        onKeyDown={(e) => { 
                             if (e.key === 'Enter') {
                                 e.preventDefault();
                                 onSearch();
