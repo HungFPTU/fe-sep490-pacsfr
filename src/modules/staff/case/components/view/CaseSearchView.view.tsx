@@ -65,6 +65,11 @@ export const CaseSearchView: React.FC = () => {
     setSearchFilters((prev) => ({ ...prev, page }));
   };
 
+  const handleSizeChange = (size: number) => {
+    setFilters((prev) => ({ ...prev, size, page: 1 }));
+    setSearchFilters((prev) => ({ ...prev, size, page: 1 }));
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch();
@@ -127,6 +132,7 @@ export const CaseSearchView: React.FC = () => {
                 hasPreviousPage: caseListData?.hasPreviousPage || false,
               }}
               onPageChange={handlePageChange}
+              onSizeChange={handleSizeChange}
               onViewDetail={handleViewDetail}
             />
           ) : (

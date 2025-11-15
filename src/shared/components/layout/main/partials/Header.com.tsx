@@ -23,7 +23,7 @@ export function Header() {
             window.location.href = '/staff-login';
         } else if (user?.role === 'Staff') {
             // Đã đăng nhập và là Staff -> chuyển đến staff dashboard
-            window.location.href = ROUTES.STAFF_QUEUE;
+            window.location.href = '/staff/dashboard';
         } else {
             // Đã đăng nhập nhưng không phải Staff -> chuyển đến staff-login
             window.location.href = '/staff-login';
