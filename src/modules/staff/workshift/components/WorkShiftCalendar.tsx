@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import  { useMemo } from "react";
 import type { WorkShift } from "../types";
 import { workshiftService } from "../services/workshift.service";
 import { toLocalDateString, getTodayLocal } from "@/core/utils/date";
