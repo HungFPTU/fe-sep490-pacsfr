@@ -1,15 +1,8 @@
 "use client";
 
-import { GovernmentHeader } from "@/shared/components/home/GovernmentHeader.com";
 import { useState } from "react";
 
 export default function GuidePage() {
-    const breadcrumbItems = [
-        { label: "Trang chủ", href: "/" },
-        { label: "Hỗ trợ", href: "#" },
-        { label: "Tài liệu hướng dẫn công dân" }
-    ];
-
     const [searchTitle, setSearchTitle] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("---Tất cả---");
     const [currentPage, setCurrentPage] = useState(1);
@@ -80,12 +73,6 @@ export default function GuidePage() {
 
     return (
         <div className="min-h-screen bg-white">
-            <GovernmentHeader
-                showBreadcrumb={true}
-                breadcrumbItems={breadcrumbItems}
-                currentPage="guide"
-            />
-
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-6xl mx-auto">
                     {/* Page Title */}

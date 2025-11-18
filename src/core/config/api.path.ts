@@ -12,6 +12,19 @@ export const API_PATH = {
             ALL: '/Service',
             BY_ID: (id: string) => `/Service/${id}`,
         },
+        CASE: {
+            PROGRESS: '/Case/progress',
+        },
+        FAQ: {
+            ALL: (keyword: string, serviceId: string, faqCategoryId: string, isActive: boolean, page: number, size: number) =>
+                `/FAQ?keyword=${keyword}&serviceId=${serviceId}&faqCategoryId=${faqCategoryId}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/FAQ/${id}`,
+        },
+        FAQ_CATEGORY: {
+            ALL: (keyword: string, isActive: boolean, page: number, size: number) =>
+                `/FAQCategory?keyword=${keyword}&isActive=${isActive}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/FAQCategory/${id}`,
+        },
         LEGAL_BASIS: {
             ALL: '/LegalBasis',
             BY_ID: (id: string) => `/LegalBasis/${id}`,
@@ -19,6 +32,11 @@ export const API_PATH = {
         SERVICE_GROUPS: {
             ALL: '/ServiceGroup',
             BY_ID: (id: string) => `/ServiceGroup/${id}`,
+        },
+        PUBLIC_SERVICE_NEWS: {
+            ALL: (keyword: string, serviceId: string, newsCategoryId: string, isPublished: boolean, page: number, size: number) =>
+                `/PublicServiceNew?keyword=${keyword}&serviceId=${serviceId}&newsCategoryId=${newsCategoryId}&isPublished=${isPublished}&Page=${page}&Size=${size}`,
+            BY_ID: (id: string) => `/PublicServiceNew/${id}`,
         },
         QUEUE: {
             COUNTERS: "/queue/counters",
@@ -38,6 +56,7 @@ export const API_PATH = {
                 PUT: (id: string) => `/Service/${id}`,
                 DELETE: (id: string) => `/Service/${id}`,
                 GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
+                ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
             },
             ACCOUNTS: {
                 GET_ALL: "/Staff",
@@ -103,7 +122,7 @@ export const API_PATH = {
                 POST: "/WorkShift",
                 PUT: (id: string) => `/WorkShift/${id}`,
                 DELETE: (id: string) => `/WorkShift/${id}`,
-                MY_SHIFTS: "/WorkShift/my-shifts",
+                MY_SHIFTS: "/WorkShift",
             },
             COUNTER: {
                 GET_BY_ID: (id: string) => `/Counter/${id}`,
@@ -145,7 +164,7 @@ export const API_PATH = {
                 UPDATE_PAYMENT: (caseId: string) => `/Case/${caseId}/payment`,
             },
             WORKSHIFT: {
-                MY_SHIFTS: "/WorkShift/my-shifts",
+                MY_SHIFTS: "/WorkShift",
             },
         },
     },
@@ -166,6 +185,7 @@ export const API_PATH = {
             DELETE: (id: string) => `/Service/${id}`,
             GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) =>
                 `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
+            ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
         },
         ACCOUNTS: {
             GET_ALL: '/Staff',
@@ -244,7 +264,7 @@ export const API_PATH = {
             POST: '/WorkShift',
             PUT: (id: string) => `/WorkShift/${id}`,
             DELETE: (id: string) => `/WorkShift/${id}`,
-            MY_SHIFTS: '/WorkShift/my-shifts',
+            MY_SHIFTS: '/WorkShift',
             GET_ACTIVE_COUNTERS: '/Counter/active',
             GET_STAFF_LIST: '/Staff',
         },
@@ -307,6 +327,38 @@ export const API_PATH = {
             PUT: (id: string) => `/SubmissionMethod/${id}`,
             DELETE: (id: string) => `/SubmissionMethod/${id}`,
         },
+        FAQ_CATEGORY: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/FAQCategory?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/FAQCategory/${id}`,
+            POST: '/FAQCategory',
+            PUT: (id: string) => `/FAQCategory/${id}`,
+            DELETE: (id: string) => `/FAQCategory/${id}`,
+        },
+        FAQ: {
+            GET_ALL: (Keyword: string, ServiceId: string, FaqCategoryId: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/FAQ?keyword=${Keyword}&serviceId=${ServiceId}&faqCategoryId=${FaqCategoryId}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/FAQ/${id}`,
+            POST: '/FAQ',
+            PUT: (id: string) => `/FAQ/${id}`,
+            DELETE: (id: string) => `/FAQ/${id}`,
+        },
+        NEWS_CATEGORY: {
+            GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
+                `/NewsCategory?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/NewsCategory/${id}`,
+            POST: '/NewsCategory',
+            PUT: (id: string) => `/NewsCategory/${id}`,
+            DELETE: (id: string) => `/NewsCategory/${id}`,
+        },
+        PUBLIC_SERVICE_NEWS: {
+            GET_ALL: (Keyword: string, ServiceId: string, NewsCategoryId: string, StaffId: string, IsPublished: boolean, Page: number, PageSize: number) =>
+                `/PublicServiceNew?keyword=${Keyword}&serviceId=${ServiceId}&newsCategoryId=${NewsCategoryId}&staffId=${StaffId}&isPublished=${IsPublished}&Page=${Page}&Size=${PageSize}`,
+            GET_BY_ID: (id: string) => `/PublicServiceNew/${id}`,
+            POST: '/PublicServiceNew',
+            PUT: (id: string) => `/PublicServiceNew/${id}`,
+            DELETE: (id: string) => `/PublicServiceNew/${id}`,
+        },
     },
     STAFF: {
         DASHBOARD: {
@@ -340,7 +392,7 @@ export const API_PATH = {
             UPDATE_PAYMENT: (caseId: string) => `/Case/${caseId}/payment`,
         },
         WORKSHIFT: {
-            MY_SHIFTS: '/WorkShift/my-shifts',
+            MY_SHIFTS: '/WorkShift',
         },
     },
 
@@ -385,6 +437,18 @@ export const API_PATH = {
 
     CASE: {
         GET_ALL: '/Case',
+    },
+
+    FILE: {
+        UPLOAD_IMAGE: '/FileUpload/image',
+    },
+
+    SUBMISSION_METHOD: {
+        GET_ALL: '/SubmissionMethod',
+    },
+
+    CASE_STATUS: {
+        GET_ALL: '/CaseStatus',
     },
 
 };

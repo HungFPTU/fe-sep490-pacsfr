@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { WorkShiftCalendar, workshiftService } from "@/modules/staff/workshift";
 import { LoadingSpinner } from "@/shared/components/common/LoadingSpinner.com";
+import { parseLocalDate } from "@/core/utils/date";
 
 export default function WorkShiftPage() {
     const [selectedDate, setSelectedDate] = useState<string | undefined>();
@@ -36,7 +37,7 @@ export default function WorkShiftPage() {
     const shifts = workshiftResponse?.$values || [];
 
     return (
-        <div className="bg-gray-50 py-8">
+        <div className="min-h-screen py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -81,7 +82,7 @@ export default function WorkShiftPage() {
                                     <>
                                         <div className="border-t pt-4">
                                             <h4 className="font-medium text-gray-900 mb-2">
-                                                Chi tiết ngày {new Date(selectedDate).getDate()}
+                                                Chi tiết ngày {parseLocalDate(selectedDate).getDate()}
                                             </h4>
                                             {(() => {
                                                 const dayShifts = workshiftService.getShiftsForDate(shifts, selectedDate);

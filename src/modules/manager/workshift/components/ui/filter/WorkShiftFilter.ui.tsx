@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { ManagerFilterBar } from '@/shared/components/manager/ui';
+import { cn } from '@/shared/lib/utils';
 
 type Opt = { value: string; label: string };
 
@@ -62,98 +64,95 @@ export const WorkShiftFilter: React.FC<Props> = ({
   onToTimeChange,
   onClear,
 }) => {
+  const inputClass =
+    'flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50';
+
   return (
-    <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-4">
-      {/* Keyword */}
-      <input
-        type="text"
-        placeholder="Tìm theo từ khóa…"
-        value={keyword}
-        onChange={(e) => onKeywordChange(e.target.value)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-      />
-
-      {/* Counter */}
-      <select
-        value={counterId}
-        onChange={(e) => onCounterChange(e.target.value)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+    <div className="mb-4 space-y-3">
+      <ManagerFilterBar
+        searchValue={keyword}
+        onSearchChange={(value: string) => onKeywordChange(value)}
+        onSubmit={() => onKeywordChange(keyword)}
+        onReset={onClear}
+        searchPlaceholder="Tìm theo từ khóa…"
       >
-        {counterOptions.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+        <div className="w-full shrink-0 sm:w-[200px]">
+          <select
+            value={counterId}
+            onChange={(e) => onCounterChange(e.target.value)}
+            className={inputClass}
+          >
+            {counterOptions.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* Staff */}
-      <select
-        value={staffId}
-        onChange={(e) => onStaffChange(e.target.value)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-      >
-        {staffOptions.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+        <div className="w-full shrink-0 sm:w-[200px]">
+          <select
+            value={staffId}
+            onChange={(e) => onStaffChange(e.target.value)}
+            className={inputClass}
+          >
+            {staffOptions.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* Shift Type */}
-      <select
-        value={shiftType}
-        onChange={(e) => onShiftTypeChange(e.target.value)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-      >
-        {shiftTypeOptions.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+        <div className="w-full shrink-0 sm:w-[180px]">
+          <select
+            value={shiftType}
+            onChange={(e) => onShiftTypeChange(e.target.value)}
+            className={inputClass}
+          >
+            {shiftTypeOptions.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* Shift Date */}
-      <input
-        type="date"
-        value={shiftDate}
-        onChange={(e) => onShiftDateChange(e.target.value)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-      />
+        <div className="w-full shrink-0 sm:w-[180px]">
+          <select
+            value={String(isActive)}
+            onChange={(e) => onStatusChange(e.target.value === 'true')}
+            className={inputClass}
+          >
+            <option value="true">Đang hoạt động</option>
+            <option value="false">Ngừng hoạt động</option>
+          </select>
+        </div>
 
-      {/* From / To Time */}
-      <input
-        type="time"
-        value={fromTime}
-        onChange={(e) => onFromTimeChange(e.target.value)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-      />
-      <input
-        type="time"
-        value={toTime}
-        onChange={(e) => onToTimeChange(e.target.value)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-      />
+        <div className="w-full shrink-0 sm:w-[180px]">
+          <input
+            type="date"
+            value={shiftDate}
+            onChange={(e) => onShiftDateChange(e.target.value)}
+            className={cn(inputClass, 'px-2')}
+          />
+        </div>
 
-      {/* Status + Actions */}
-      <div className="flex gap-2">
-        <select
-          value={String(isActive)}
-          onChange={(e) => onStatusChange(e.target.value === 'true')}
-          className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-        >
-          <option value="true">Đang hoạt động</option>
-          <option value="false">Ngừng hoạt động</option>
-        </select>
-
-        <button
-          type="button"
-          onClick={onClear}
-          className="rounded-lg bg-slate-100 px-3 py-2 text-sm hover:bg-slate-200"
-          title="Xóa bộ lọc"
-        >
-          Xóa
-        </button>
-      </div>
+        <div className="flex w-full shrink-0 items-center gap-2 sm:w-[220px]">
+          <input
+            type="time"
+            value={fromTime}
+            onChange={(e) => onFromTimeChange(e.target.value)}
+            className={cn(inputClass, 'px-2')}
+          />
+          <input
+            type="time"
+            value={toTime}
+            onChange={(e) => onToTimeChange(e.target.value)}
+            className={cn(inputClass, 'px-2')}
+          />
+        </div>
+      </ManagerFilterBar>
     </div>
   );
 };

@@ -57,7 +57,7 @@ export function CreateCasePageView() {
         guestId: "",
         serviceId: "",
         priorityLevel: 0,
-        submissionMethod: "Trực tiếp",
+        submissionMethodId: "",
         notes: "",
         createdBy: "system",
     });
@@ -79,7 +79,6 @@ export function CreateCasePageView() {
     const idTypes = ["CCCD", "CMND", "Hộ chiếu"];
     const genders = ["Nam", "Nữ", "Khác"];
     const guestTypes = ["Cá nhân", "Tổ chức"];
-    const submissionMethods = ["Trực tiếp", "Online", "Qua điện thoại", "Qua email"];
     const priorityLevels = [
         { value: 0, label: "Bình thường" },
         { value: 2, label: "Ưu tiên thấp" },
@@ -174,7 +173,7 @@ export function CreateCasePageView() {
 
     const handleCreateGuest = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!validateGuestForm()) {
             addToast({ message: "Vui lòng điền đầy đủ thông tin bắt buộc!", type: "warning" });
             return;
@@ -183,7 +182,7 @@ export function CreateCasePageView() {
         setIsSubmitting(true);
         try {
             const response = await staffDashboardApi.createGuest(guestData);
-            
+
             if (response.success && response.data) {
                 setGuestId(response.data);
                 setGuestCreatedSuccess(true);
@@ -215,7 +214,7 @@ export function CreateCasePageView() {
         setIsSubmitting(true);
         try {
             const response = await staffDashboardApi.createCase(caseData);
-            
+
             if (response.success && response.data) {
                 addToast({ message: "Tạo hồ sơ thành công!", type: "success" });
                 router.push("/staff/dashboard");
@@ -317,18 +316,9 @@ export function CreateCasePageView() {
     // Create Case Mode
     if (mode === "create-case") {
         return (
-            <div className="min-h-screen bg-gray-50 py-8">
-                <div className="max-w-4xl mx-auto px-4">
+            <div className="min-h-screen py-8">
+                <div className="max-w-4xl mx-auto">
                     <div className="mb-6 flex items-center gap-4">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setMode("select")}
-                            className="flex items-center gap-2"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            Quay lại
-                        </Button>
                         <h1 className="text-3xl font-bold text-gray-900">Tạo hồ sơ mới</h1>
                     </div>
 
@@ -372,7 +362,6 @@ export function CreateCasePageView() {
                             <CaseFormFields
                                 caseData={caseData}
                                 priorityLevels={priorityLevels}
-                                submissionMethods={submissionMethods}
                                 onDataChange={setCaseData}
                             />
 

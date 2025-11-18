@@ -100,11 +100,44 @@ export function calculateAge(dateOfBirth: Date | string): number {
 }
 
 /**
- * Convert YYYY-MM-DD to ISO string with timezone
- * @param dateString - Date string in YYYY-MM-DD format
- * @param endOfDay - If true, set time to 23:59:59, otherwise 00:00:00
- * @returns ISO string with timezone (e.g., "2025-11-01T00:00:00.000Z")
+ * Parse ISO date string (YYYY-MM-DD) to local Date object
+ * Prevents timezone issues by treating the date as local time
  */
+export function parseLocalDate(dateString: string): Date {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}
+
+/**
+ * Convert Date object to YYYY-MM-DD format in local timezone
+ */
+export function toLocalDateString(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+/**
+ * Get today's date in YYYY-MM-DD format (local timezone)
+ */
+export function getTodayLocal(): string {
+    return toLocalDateString(new Date());
+}
+
+/**
+ * Format date string (YYYY-MM-DD) for display in Vietnamese locale
+ */
+export function formatLocalDate(dateString: string): string {
+    const date = parseLocalDate(dateString);
+    return date.toLocaleDateString('vi-VN', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
 export function convertToISOString(dateString: string, endOfDay: boolean = false): string {
     if (!dateString) return '';
     

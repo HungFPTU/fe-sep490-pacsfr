@@ -1,4 +1,4 @@
-import { GovernmentFooter } from "@/shared/components/home/GovernmentFooter.com";
+import { GovernmentFooter, GovernmentHeader } from "@/shared/components/home";
 
 export default function AppLayout({
     children,
@@ -7,6 +7,7 @@ export default function AppLayout({
 }) {
     return (
         <div className="min-h-screen bg-white">
+            <GovernmentHeader showBreadcrumb />
             {children}
             <GovernmentFooter />
         </div>

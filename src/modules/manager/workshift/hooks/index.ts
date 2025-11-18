@@ -13,8 +13,8 @@ export const useWorkShifts = (filters: WorkShiftFilters) => {
   return useQuery({
     queryKey: QUERY_KEYS.WORKSHIFT_LIST(filters),
     queryFn: () => WorkShiftService.getWorkShifts(filters),
-    gcTime: CACHE_TIME,
-    staleTime: STALE_TIME,
+    gcTime: CACHE_TIME.SHORT,
+    staleTime: STALE_TIME.MEDIUM,
   });
 };
 

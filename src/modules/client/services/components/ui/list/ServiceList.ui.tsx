@@ -68,10 +68,10 @@ export const ServiceList: React.FC<ServiceListProps> = ({
                                 Tên
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Cơ quan ban hành
+                                Số quyết định
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Cơ quan thực hiện
+                                Cấp thực hiện
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Lĩnh vực
@@ -102,13 +102,13 @@ export const ServiceList: React.FC<ServiceListProps> = ({
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    Bộ Tài chính
+                                    {service.decisionNumber || '-'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    Ủy ban nhân dân cấp xã
+                                    {service.executionLevel || '-'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    Thành lập và hoạt động của tổ hợp tác, hợp tác xã
+                                    {service.field || '-'}
                                 </td>
                             </tr>
                         ))}

@@ -2,11 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { StaffFilters } from '../../../types';
-import { Search, X } from 'lucide-react';
-import { Button } from '@/shared/components/ui/button.ui';
-import { Input } from '@/shared/components/ui/input.ui';
 import { cn } from '@/shared/lib/utils';
 import { getFilterOptions } from '../../../utils';
+import { ManagerFilterBar } from '@/shared/components/manager/ui';
 
 interface StaffFilterProps {
     filters: StaffFilters;
@@ -33,22 +31,6 @@ export function StaffFilter({ filters, onFilterChange, onRefresh }: StaffFilterP
         });
     }, [filters]);
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLocalFilters({ ...localFilters, SearchTerm: e.target.value });
-    };
-
-    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value;
-        setLocalFilters({
-            ...localFilters,
-            IsActive: value === '' ? undefined : value === 'true',
-        });
-    };
-
-    const handleRoleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setLocalFilters({ ...localFilters, RoleType: e.target.value || '' });
-    };
-
     const handleApplyFilters = () => {
         // Apply filters - trigger API call
         onFilterChange(localFilters);
@@ -70,30 +52,24 @@ export function StaffFilter({ filters, onFilterChange, onRefresh }: StaffFilterP
 
     return (
         <div className="mb-4">
-            <div className="flex items-center gap-1 flex-nowrap">
-                {/* Search */}
-                <div className="relative flex-1 min-w-[280px] mr-3">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                    <Input
-                        type="text"
-                        placeholder="Tìm kiếm theo tên, mã, email..."
-                        value={localFilters.SearchTerm || ''}
-                        onChange={handleSearchChange}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleApplyFilters();
-                        }}
-                        className="pl-10"
-                    />
-                </div>
-
-                {/* Status Filter */}
-                <div className="min-w-[170px] mr-3">
+            <ManagerFilterBar
+                searchValue={localFilters.SearchTerm || ''}
+                onSearchChange={(value: string) => setLocalFilters((prev) => ({ ...prev, SearchTerm: value }))}
+                onSubmit={handleApplyFilters}
+                onReset={handleResetFilters}
+                searchPlaceholder="Tìm kiếm theo tên, mã, email..."
+            >
+                <div className="w-full shrink-0 sm:w-[180px]">
                     <select
                         value={localFilters.IsActive === undefined ? '' : String(localFilters.IsActive)}
-                        onChange={handleStatusChange}
+                        onChange={(e) =>
+                            setLocalFilters((prev) => ({
+                                ...prev,
+                                IsActive: e.target.value === '' ? undefined : e.target.value === 'true',
+                            }))
+                        }
                         className={cn(
-                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
-                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors",
                             "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                             "disabled:cursor-not-allowed disabled:opacity-50"
                         )}
@@ -106,14 +82,12 @@ export function StaffFilter({ filters, onFilterChange, onRefresh }: StaffFilterP
                     </select>
                 </div>
 
-                {/* Role Type Filter */}
-                <div className="min-w-[170px] mr-3">
+                <div className="w-full shrink-0 sm:w-[180px]">
                     <select
                         value={localFilters.RoleType || ''}
-                        onChange={handleRoleTypeChange}
+                        onChange={(e) => setLocalFilters((prev) => ({ ...prev, RoleType: e.target.value || '' }))}
                         className={cn(
-                            "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors",
-                            "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+                            "flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors",
                             "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
                             "disabled:cursor-not-allowed disabled:opacity-50"
                         )}
@@ -125,26 +99,7 @@ export function StaffFilter({ filters, onFilterChange, onRefresh }: StaffFilterP
                         ))}
                     </select>
                 </div>
-
-                {/* Action Buttons */}
-                <Button
-                    onClick={handleApplyFilters}
-                    size="default"
-                    className="whitespace-nowrap mr-2 flex-shrink-0"
-                >
-                    <Search className="h-4 w-4 mr-1" />
-                    Tìm kiếm
-                </Button>
-                <Button
-                    onClick={handleResetFilters}
-                    variant="outline"
-                    size="default"
-                    className="whitespace-nowrap flex-shrink-0"
-                >
-                    <X className="h-4 w-4 mr-1" />
-                    Đặt lại
-                </Button>
-            </div>
+            </ManagerFilterBar>
         </div>
     );
 }

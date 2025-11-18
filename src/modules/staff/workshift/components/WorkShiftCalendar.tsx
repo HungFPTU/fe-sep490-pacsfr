@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useMemo } from "react";
+import  { useMemo } from "react";
 import type { WorkShift } from "../types";
 import { workshiftService } from "../services/workshift.service";
+import { toLocalDateString, getTodayLocal } from "@/core/utils/date";
 
 interface WorkShiftCalendarProps {
     shifts: WorkShift[];
@@ -34,16 +35,18 @@ export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkSh
         // Adjust to start from Sunday
         startDate.setDate(startDate.getDate() - startDate.getDay());
 
+        const todayString = getTodayLocal();
+
         for (let week = 0; week < 6; week++) {
             const weekDays = [];
             for (let day = 0; day < 7; day++) {
                 const date = new Date(startDate);
                 date.setDate(startDate.getDate() + (week * 7) + day);
 
-                const dateString = date.toISOString().split('T')[0];
+                const dateString = toLocalDateString(date);
                 const hasShift = datesWithShifts.has(dateString);
                 const isCurrentMonth = date.getMonth() === currentMonth;
-                const isToday = date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
+                const isToday = dateString === todayString;
 
                 weekDays.push({
                     date,
@@ -62,7 +65,7 @@ export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkSh
     const weekdays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
     return (
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="min-h-screen bg-white rounded-lg shadow-lg p-6">
             <div className="mb-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
                     Lịch làm việc tháng {new Date().toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}
@@ -107,7 +110,7 @@ export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkSh
             </div>
 
             {selectedDate && (
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <div className="min-h-screen mt-6 p-4 rounded-lg">
                     <h3 className="font-medium text-gray-900 mb-2">
                         Lịch làm việc ngày {workshiftService.formatDate(selectedDate)}
                     </h3>

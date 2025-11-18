@@ -1,26 +1,46 @@
+/**
+ * Services Module - Barrel Export
+ * 
+ * Main entry point for the client services module.
+ * Follows Facade pattern to provide a clean API.
+ */
+
 // Types
-export * from "./types";
+export type * from './types';
+export type * from './types/filter-options';
+export type * from './types/filter.types';
 
-// Enums
-export * from "./enums";
+// API Layer
+export { serviceApi } from './api/service.api';
 
-// Constants
-export * from "./constants";
-
-// Utils
-export * from "./utils";
-
-// API
-export * from "./api/service.api";
-
-// Services
-export * from "./services/service.service";
+// Services Layer
+export { ServiceService } from './services/service.service';
+export { FilterOptionsService } from './services/filter-options.service';
 
 // Hooks
-export * from "./hooks/useServices";
+export * from './hooks/useServices';
+export * from './hooks/useFilterOptions';
 
-// UI Components (Pure UI components)
-export { ServiceFilters, AdvancedSearchFilters, ServiceList, ServicePagination, ServiceDetailPopup } from "./components/ui";
+// Formatters
+export * from './formatters';
 
-// View Components (Complete page views)
-export { ServicesListView, ServiceDetailView } from "./components/view";
+// Helpers
+export * from './helpers';
+
+// Mappers
+export * from './mappers';
+
+// Constants
+export * from './constants';
+export * from './constants/filter-options';
+
+// Enums
+export * from './enums';
+
+// Utils - Colors only (to avoid conflicts)
+export {
+    SERVICE_TYPE_COLORS,
+    SERVICE_TYPE_CHIP_COLORS,
+    getServiceTypeColor,
+    getServiceTypeChipColor,
+} from './utils/colors';

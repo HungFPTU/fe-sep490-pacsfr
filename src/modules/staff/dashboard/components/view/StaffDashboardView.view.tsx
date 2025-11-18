@@ -7,7 +7,7 @@ import { useStaffDashboardStore } from "../../stores/useStaffDashboardStore";
 import { staffDashboardService } from "../../services/staff-dashboard.service";
 import { getMockWaitingList, SERVICE_TYPES } from "../../consts";
 import type { CitizenProfile, ServiceGroup } from "../../types";
-import { Filter, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useMinimumLoadingTime } from "@/shared/hooks";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
 
@@ -17,8 +17,6 @@ import {
     ServiceGroupSetup,
     CurrentServingPanel,
     StatsCards,
-    SearchFilters,
-    WaitingList,
 } from "../ui";
 import { StaffDashboardTabsView } from "./StaffDashboardTabsView.view";
 
@@ -329,10 +327,6 @@ export function StaffDashboardView() {
                             <Plus className="w-4 h-4 mr-2" />
                             Tạo hồ sơ mới
                         </Button>
-                        <Button variant="outline" size="sm">
-                            <Filter className="w-4 h-4 mr-2" />
-                            Lọc nâng cao
-                        </Button>
                     </div>
                 </div>
 
@@ -380,24 +374,7 @@ export function StaffDashboardView() {
                 {/* Stats Cards */}
                 <StatsCards stats={stats} queueStatus={queueStatus} />
 
-                {/* Search and Filters */}
-                <SearchFilters
-                    searchQuery={searchQuery}
-                    selectedServiceType={selectedServiceType}
-                    serviceTypes={SERVICE_TYPES}
-                    onSearchChange={handleSearch}
-                    onServiceTypeChange={handleServiceTypeFilter}
-                />
 
-                {/* Waiting List */}
-                <WaitingList
-                    waitingList={waitingList}
-                    isLoading={isLoadingWaitingList}
-                    onRefresh={loadDashboardData}
-                    onViewCitizen={handleViewCitizen}
-                    getServiceTypeName={getServiceTypeName}
-                    getStatusBadge={getStatusBadge}
-                />
             </div>
         </StaffDashboardTabsView>
     );

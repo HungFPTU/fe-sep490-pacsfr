@@ -7,12 +7,14 @@
 export type PublicEnvKeys =
     | "NEXT_PUBLIC_API_BASE_URL"
     | "NEXT_PUBLIC_APP_NAME"
-    | "NEXT_PUBLIC_LOG_LEVEL";
+    | "NEXT_PUBLIC_LOG_LEVEL"
+    | "NEXT_PUBLIC_RECAPTCHA_SITE_KEY";
 
 export type ServerEnvKeys =
     | "API_BASE_URL"
     | "DATABASE_URL"
-    | "JWT_SECRET";
+    | "JWT_SECRET"
+    | "RECAPTCHA_SECRET_KEY";
 
 // Safe environment access functions
 export function getPublicEnv(key: PublicEnvKeys, defaultValue: string = ""): string {
@@ -85,6 +87,14 @@ export const ENV = {
         } catch (error) {
             console.warn("[ENV] Failed to access LOG_LEVEL:", error);
             return "info";
+        }
+    },
+    get RECAPTCHA_SITE_KEY() {
+        try {
+            return process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+        } catch (error) {
+            console.warn("[ENV] Failed to access RECAPTCHA_SITE_KEY:", error);
+            return "";
         }
     },
 

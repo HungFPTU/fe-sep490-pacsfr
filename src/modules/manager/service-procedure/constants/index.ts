@@ -2,17 +2,7 @@
  * Service Procedure Constants
  */
 
-export const CACHE_TIME = {
-    SHORT: 1000 * 60 * 5,
-    MEDIUM: 1000 * 60 * 10,
-    LONG: 1000 * 60 * 30,
-} as const;
-
-export const STALE_TIME = {
-    SHORT: 1000 * 30,
-    MEDIUM: 1000 * 60,
-    LONG: 1000 * 60 * 5,
-} as const;
+export { CACHE_TIME, STALE_TIME } from '@/shared/constants/react-query';
 
 export const QUERY_KEYS = {
     SERVICE_PROCEDURE_BASE: ['service-procedures'] as const,

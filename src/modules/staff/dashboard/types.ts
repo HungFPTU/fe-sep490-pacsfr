@@ -109,7 +109,7 @@ export type CreateCaseRequest = {
     guestId: string;
     serviceId: string;
     priorityLevel: number;
-    submissionMethod: string;
+    submissionMethodId: string;
     notes?: string;
     createdBy: string;
 };
@@ -120,7 +120,7 @@ export type CaseResponse = {
     guestId: string;
     serviceId: string;
     priorityLevel: number;
-    submissionMethod: string;
+    submissionMethodId: string;
     notes?: string;
     createdBy: string;
     createdAt: string;
