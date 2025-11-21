@@ -65,9 +65,19 @@ export function StaffBreadcrumb() {
 
     const breadcrumbs = generateBreadcrumbs();
 
-    // Don't show breadcrumb on homepage
+    // On dashboard, only show home icon without breadcrumbs
     if (pathname === '/staff/dashboard' || pathname === '/staff/dashboard/') {
-        return null;
+        return (
+            <nav className="flex items-center gap-2 px-4 py-3 text-sm" aria-label="Breadcrumb">
+                <Link
+                    href="/staff/dashboard"
+                    className="flex items-center gap-1 text-slate-600 transition-colors hover:text-slate-900"
+                >
+                    <Home className="h-4 w-4" />
+                    <span className="hidden sm:inline">Trang chủ</span>
+                </Link>
+            </nav>
+        );
     }
 
     return (
