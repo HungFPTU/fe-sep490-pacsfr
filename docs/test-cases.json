@@ -1,0 +1,862 @@
+{
+    "auth": [
+        {
+            "name": "User Login",
+            "description": "Đăng nhập vào hệ thống với username và password",
+            "preCondition": "Người dùng đã được tạo tài khoản trong hệ thống"
+        },
+        {
+            "name": "Get Current User Info",
+            "description": "Lấy thông tin user hiện tại đang đăng nhập",
+            "preCondition": "User đã đăng nhập, có JWT token hợp lệ"
+        }
+    ],
+    "cases": [
+        {
+            "name": "Get Case By ID",
+            "description": "Lấy thông tin chi tiết hồ sơ theo ID",
+            "preCondition": "User đã đăng nhập, có quyền truy cập Case"
+        },
+        {
+            "name": "Get Case By Code",
+            "description": "Lấy thông tin hồ sơ theo mã hồ sơ",
+            "preCondition": "Case code phải tồn tại, có quyền truy cập"
+        },
+        {
+            "name": "Get All Cases With Filter",
+            "description": "Lấy danh sách hồ sơ có filter + phân trang",
+            "preCondition": "User đã đăng nhập, có quyền xem danh sách Case"
+        },
+        {
+            "name": "Create New Case",
+            "description": "Tạo mới hồ sơ",
+            "preCondition": "User đã đăng nhập, Service và Guest phải tồn tại"
+        },
+        {
+            "name": "Get Case Progress",
+            "description": "Lấy tiến trình xử lý hồ sơ theo Case Code",
+            "preCondition": "Case Code phải tồn tại"
+        },
+        {
+            "name": "Get Processed Cases Today",
+            "description": "Danh sách hồ sơ xử lý trong ngày",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Update Case Status",
+            "description": "Cập nhật trạng thái hồ sơ",
+            "preCondition": "User đã đăng nhập, Case tồn tại"
+        },
+        {
+            "name": "Update Case Information",
+            "description": "Cập nhật thông tin hồ sơ",
+            "preCondition": "User đã đăng nhập, Case tồn tại"
+        },
+        {
+            "name": "Update Case Payment",
+            "description": "Cập nhật thông tin thanh toán hồ sơ",
+            "preCondition": "User đã đăng nhập, Case tồn tại"
+        }
+    ],
+    "caseStatuses": [
+        {
+            "name": "Get All Case Statuses",
+            "description": "Lấy danh sách tất cả trạng thái hồ sơ",
+            "preCondition": "Public"
+        },
+        {
+            "name": "Get Case Status By Code",
+            "description": "Lấy thông tin trạng thái theo mã",
+            "preCondition": "Status code phải tồn tại"
+        }
+    ],
+    "services": [
+        {
+            "name": "Get All Services",
+            "description": "Danh sách dịch vụ có filter + phân trang",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Get Service By ID",
+            "description": "Chi tiết dịch vụ theo ID",
+            "preCondition": "Service ID tồn tại, User có quyền"
+        },
+        {
+            "name": "Create Service",
+            "description": "Tạo dịch vụ mới",
+            "preCondition": "User role Admin/Manager, ServiceGroup tồn tại"
+        },
+        {
+            "name": "Update Service",
+            "description": "Cập nhật dịch vụ",
+            "preCondition": "User role Admin/Manager, Service tồn tại"
+        },
+        {
+            "name": "Delete Service",
+            "description": "Xóa dịch vụ (soft delete)",
+            "preCondition": "User role Admin/Manager, Service tồn tại"
+        },
+        {
+            "name": "Browse Public Services",
+            "description": "Tra cứu dịch vụ công khai",
+            "preCondition": "Public"
+        },
+        {
+            "name": "Get Public Service Detail",
+            "description": "Lấy chi tiết dịch vụ công khai",
+            "preCondition": "Service active"
+        },
+        {
+            "name": "Assign Submission Methods",
+            "description": "Gán phương thức nộp cho dịch vụ",
+            "preCondition": "User đã đăng nhập, Service & Method tồn tại"
+        }
+    ],
+    "serviceGroups": [
+        {
+            "name": "Get All Service Groups",
+            "description": "Danh sách nhóm dịch vụ",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Get Service Group By ID",
+            "description": "Chi tiết nhóm dịch vụ theo ID",
+            "preCondition": "ServiceGroup ID tồn tại"
+        },
+        {
+            "name": "Create Service Group",
+            "description": "Tạo nhóm dịch vụ",
+            "preCondition": "User role Admin/Manager"
+        },
+        {
+            "name": "Update Service Group",
+            "description": "Cập nhật nhóm dịch vụ",
+            "preCondition": "User role Admin/Manager, tồn tại"
+        },
+        {
+            "name": "Delete Service Group",
+            "description": "Xóa nhóm dịch vụ",
+            "preCondition": "User role Admin/Manager, tồn tại"
+        }
+    ],
+    "serviceProcedures": [
+        {
+            "name": "Get All Service Procedures",
+            "description": "Danh sách quy trình dịch vụ",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Get Service Procedure By ID",
+            "description": "Chi tiết quy trình theo ID",
+            "preCondition": "Tồn tại, User có quyền"
+        },
+        {
+            "name": "Create Service Procedure",
+            "description": "Tạo quy trình",
+            "preCondition": "User đã đăng nhập, Service tồn tại"
+        },
+        {
+            "name": "Update Service Procedure",
+            "description": "Cập nhật quy trình",
+            "preCondition": "Tồn tại"
+        },
+        {
+            "name": "Delete Service Procedure",
+            "description": "Xóa quy trình",
+            "preCondition": "Tồn tại"
+        }
+    ],
+    "documents": {
+        "requiredDocuments": [
+            {
+                "name": "Get All Required Documents",
+                "description": "Danh sách tài liệu yêu cầu",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Get Required Document By ID",
+                "description": "Chi tiết tài liệu yêu cầu",
+                "preCondition": "ID tồn tại"
+            },
+            {
+                "name": "Create Required Document",
+                "description": "Tạo tài liệu yêu cầu",
+                "preCondition": "Service & DocsType tồn tại"
+            },
+            {
+                "name": "Update Required Document",
+                "description": "Cập nhật tài liệu yêu cầu",
+                "preCondition": "Tồn tại"
+            },
+            {
+                "name": "Delete Required Document",
+                "description": "Xóa tài liệu yêu cầu",
+                "preCondition": "Tồn tại"
+            }
+        ],
+        "submissionMethods": [
+            {
+                "name": "Get All Submission Methods",
+                "description": "Danh sách phương thức nộp",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Get Submission Method By ID",
+                "description": "Chi tiết phương thức nộp",
+                "preCondition": "ID tồn tại"
+            },
+            {
+                "name": "Create Submission Method",
+                "description": "Tạo phương thức nộp",
+                "preCondition": "User Admin"
+            },
+            {
+                "name": "Update Submission Method",
+                "description": "Cập nhật phương thức nộp",
+                "preCondition": "Tồn tại"
+            },
+            {
+                "name": "Delete Submission Method",
+                "description": "Xóa phương thức nộp",
+                "preCondition": "Tồn tại"
+            }
+        ],
+        "legislation": [
+            {
+                "name": "Get All Legal Basis",
+                "description": "Danh sách cơ sở pháp lý",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Get Legal Basis By IDs",
+                "description": "Chi tiết legal basis",
+                "preCondition": "ServiceId & DocumentId tồn tại"
+            },
+            {
+                "name": "Get Legal Basis By Service ID",
+                "description": "Danh sách CSDL theo service",
+                "preCondition": "ServiceId tồn tại"
+            },
+            {
+                "name": "Get Legal Basis By Document ID",
+                "description": "Danh sách dịch vụ theo văn bản",
+                "preCondition": "DocumentId tồn tại"
+            },
+            {
+                "name": "Create Legal Basis",
+                "description": "Tạo liên kết legal basis",
+                "preCondition": "Service & Document tồn tại"
+            },
+            {
+                "name": "Update Legal Basis",
+                "description": "Cập nhật legal basis",
+                "preCondition": "Tồn tại"
+            },
+            {
+                "name": "Delete Legal Basis",
+                "description": "Xóa legal basis",
+                "preCondition": "Tồn tại"
+            }
+        ],
+        "legislationDocuments": [
+            {
+                "name": "Get All Legislation Documents",
+                "description": "Danh sách văn bản pháp luật",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Get Legislation Document By ID",
+                "description": "Chi tiết văn bản",
+                "preCondition": "ID tồn tại"
+            },
+            {
+                "name": "Create Legislation Document",
+                "description": "Tạo văn bản pháp luật",
+                "preCondition": "User Admin/Manager"
+            },
+            {
+                "name": "Update Legislation Document",
+                "description": "Update văn bản pháp luật",
+                "preCondition": "Tồn tại"
+            },
+            {
+                "name": "Delete Legislation Document",
+                "description": "Xóa văn bản",
+                "preCondition": "Tồn tại"
+            }
+        ]
+    },
+    "guestsStaff": {
+        "guests": [
+            {
+                "name": "Get All Guests",
+                "description": "Danh sách khách hàng",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Get Guest By ID",
+                "description": "Chi tiết khách hàng",
+                "preCondition": "ID tồn tại"
+            },
+            {
+                "name": "Create Guest",
+                "description": "Tạo khách hàng",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Update Guest",
+                "description": "Update khách hàng",
+                "preCondition": "Guest tồn tại"
+            },
+            {
+                "name": "Delete Guest",
+                "description": "Delete khách",
+                "preCondition": "Guest tồn tại"
+            },
+            {
+                "name": "Get Guest By ID Number",
+                "description": "Tìm khách bằng CCCD",
+                "preCondition": "ID number tồn tại"
+            }
+        ],
+        "staff": [
+            {
+                "name": "Get Staff By ID",
+                "description": "Chi tiết staff",
+                "preCondition": "ID tồn tại"
+            },
+            {
+                "name": "Get All Staff",
+                "description": "Danh sách nhân viên",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Create Staff",
+                "description": "Tạo nhân viên",
+                "preCondition": "Role Admin/Manager"
+            },
+            {
+                "name": "Update Staff",
+                "description": "Update nhân viên",
+                "preCondition": "Tồn tại"
+            },
+            {
+                "name": "Delete Staff",
+                "description": "Xóa nhân viên",
+                "preCondition": "Role Admin"
+            },
+            {
+                "name": "Assign Department to Staff",
+                "description": "Phân phòng ban",
+                "preCondition": "Staff & Department tồn tại"
+            }
+        ]
+    },
+    "countersQueue": {
+        "counters": [
+            {
+                "name": "Get Counter By ID",
+                "description": "Chi tiết quầy",
+                "preCondition": "ID tồn tại"
+            },
+            {
+                "name": "Get All Active Counters",
+                "description": "Danh sách quầy active",
+                "preCondition": "None"
+            },
+            {
+                "name": "Get Counters By Service Group",
+                "description": "Quầy theo ServiceGroup",
+                "preCondition": "ServiceGroup ID tồn tại"
+            },
+            {
+                "name": "Create Counter",
+                "description": "Tạo quầy",
+                "preCondition": "Role Admin/Manager"
+            },
+            {
+                "name": "Assign Service Group to Counter",
+                "description": "Gán nhóm dịch vụ cho quầy",
+                "preCondition": "Counter & ServiceGroup tồn tại"
+            },
+            {
+                "name": "Update Counter Status",
+                "description": "Update trạng thái quầy",
+                "preCondition": "Counter tồn tại"
+            },
+            {
+                "name": "Assign Staff to Counter",
+                "description": "Gán staff cho quầy",
+                "preCondition": "Counter & Staff tồn tại"
+            },
+            {
+                "name": "Get Counter Statistics",
+                "description": "Thống kê quầy",
+                "preCondition": "Counter ID tồn tại"
+            }
+        ],
+        "queue": [
+            {
+                "name": "Generate Queue Ticket",
+                "description": "Tạo phiếu số",
+                "preCondition": "ServiceGroup & Guest tồn tại"
+            },
+            {
+                "name": "Get Ticket Info",
+                "description": "Lấy thông tin phiếu",
+                "preCondition": "Ticket tồn tại"
+            },
+            {
+                "name": "Track Queue Position",
+                "description": "Theo dõi vị trí",
+                "preCondition": "Ticket tồn tại"
+            },
+            {
+                "name": "Get Queue Status",
+                "description": "Trạng thái hàng đợi",
+                "preCondition": "ServiceGroup ID tồn tại"
+            },
+            {
+                "name": "Call Next Ticket",
+                "description": "Gọi số tiếp theo",
+                "preCondition": "Có phiếu đang chờ"
+            },
+            {
+                "name": "Update Ticket Status",
+                "description": "Cập nhật trạng thái phiếu",
+                "preCondition": "Ticket tồn tại"
+            },
+            {
+                "name": "Test Queue System",
+                "description": "Tạo dữ liệu test",
+                "preCondition": "Env development"
+            }
+        ]
+    },
+    "workShifts": [
+        {
+            "name": "Get All Work Shifts",
+            "description": "Danh sách ca làm",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Get Work Shift By ID",
+            "description": "Chi tiết ca làm",
+            "preCondition": "ID tồn tại"
+        },
+        {
+            "name": "Create Work Shift",
+            "description": "Tạo ca làm",
+            "preCondition": "Role Admin/Manager"
+        },
+        {
+            "name": "Update Work Shift",
+            "description": "Update ca làm",
+            "preCondition": "Tồn tại"
+        },
+        {
+            "name": "Delete Work Shift",
+            "description": "Xóa ca làm",
+            "preCondition": "Tồn tại"
+        },
+        {
+            "name": "Get All Staff Work Shifts",
+            "description": "Danh sách phân công ca",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Get Staff Work Shift By ID",
+            "description": "Chi tiết phân công ca",
+            "preCondition": "Tồn tại"
+        },
+        {
+            "name": "Create Staff Work Shift",
+            "description": "Tạo phân công ca",
+            "preCondition": "Staff & WorkShift tồn tại"
+        },
+        {
+            "name": "Update Staff Work Shift",
+            "description": "Update phân công ca",
+            "preCondition": "Tồn tại"
+        },
+        {
+            "name": "Delete Staff Work Shift",
+            "description": "Xóa phân công",
+            "preCondition": "Tồn tại"
+        },
+        {
+            "name": "Get My Schedule",
+            "description": "Lịch làm của staff hiện tại",
+            "preCondition": "Role Staff"
+        }
+    ],
+    "departmentsOrgUnits": {
+        "departments": [
+            {
+                "name": "Get All Departments",
+                "description": "Danh sách phòng ban",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Get Department By ID",
+                "description": "Thông tin phòng ban",
+                "preCondition": "ID tồn tại"
+            },
+            {
+                "name": "Create Department",
+                "description": "Tạo phòng ban",
+                "preCondition": "Role Admin"
+            },
+            {
+                "name": "Update Department",
+                "description": "Update phòng ban",
+                "preCondition": "Tồn tại"
+            },
+            {
+                "name": "Delete Department",
+                "description": "Xóa phòng ban",
+                "preCondition": "Tồn tại"
+            }
+        ],
+        "organizationUnits": [
+            {
+                "name": "Get All Organization Units",
+                "description": "Danh sách đơn vị tổ chức",
+                "preCondition": "User đã đăng nhập"
+            },
+            {
+                "name": "Get Organization Unit By ID",
+                "description": "Chi tiết đơn vị",
+                "preCondition": "ID tồn tại"
+            },
+            {
+                "name": "Create Organization Unit",
+                "description": "Tạo đơn vị tổ chức",
+                "preCondition": "Role Admin"
+            },
+            {
+                "name": "Update Organization Unit",
+                "description": "Update đơn vị",
+                "preCondition": "Tồn tại"
+            },
+            {
+                "name": "Delete Organization Unit",
+                "description": "Xóa đơn vị",
+                "preCondition": "Tồn tại"
+            }
+        ]
+    },
+    "fileAndStorage": [
+        {
+            "name": "Upload File",
+            "description": "Upload file lên cloud",
+            "preCondition": "File hợp lệ"
+        },
+        {
+            "name": "Delete File",
+            "description": "Xóa file cloud",
+            "preCondition": "publicId hợp lệ"
+        },
+        {
+            "name": "Upload Image",
+            "description": "Upload ảnh lên cloud",
+            "preCondition": "File ảnh hợp lệ"
+        }
+    ],
+    "feedback": [
+        {
+            "name": "Submit Feedback",
+            "description": "Gửi phản hồi",
+            "preCondition": "Case tồn tại"
+        },
+        {
+            "name": "Get Feedback By Case",
+            "description": "Lấy phản hồi case",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Get All Feedbacks",
+            "description": "Danh sách feedback",
+            "preCondition": "User có quyền"
+        },
+        {
+            "name": "Get Feedback Statistics",
+            "description": "Thống kê feedback",
+            "preCondition": "User có quyền"
+        },
+        {
+            "name": "Update Feedback Status",
+            "description": "Cập nhật trạng thái feedback",
+            "preCondition": "Feedback tồn tại"
+        }
+    ],
+    "payment": [
+        {
+            "name": "Create Payment",
+            "description": "Tạo payment cho hồ sơ",
+            "preCondition": "Case tồn tại"
+        },
+        {
+            "name": "Get Payment By Case Code",
+            "description": "Lấy payment theo Case Code",
+            "preCondition": "Case Code tồn tại"
+        }
+    ],
+    "chatbot": [
+        {
+            "name": "Send Message",
+            "description": "Gửi tin nhắn cho chatbot",
+            "preCondition": "User hoặc Guest"
+        },
+        {
+            "name": "Get Conversation",
+            "description": "Lấy lịch sử hội thoại",
+            "preCondition": "Conversation ID tồn tại"
+        },
+        {
+            "name": "Get All Conversations",
+            "description": "Danh sách hội thoại",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Delete Conversation",
+            "description": "Xóa hội thoại",
+            "preCondition": "Conversation tồn tại"
+        },
+        {
+            "name": "Add Knowledge Base",
+            "description": "Thêm knowledge base",
+            "preCondition": "Admin"
+        },
+        {
+            "name": "Update Knowledge Base",
+            "description": "Cập nhật knowledge base",
+            "preCondition": "Admin"
+        },
+        {
+            "name": "Delete Knowledge Base",
+            "description": "Xóa knowledge base",
+            "preCondition": "Admin"
+        },
+        {
+            "name": "Get All Knowledge Base",
+            "description": "Danh sách knowledge base",
+            "preCondition": "User đã đăng nhập"
+        },
+        {
+            "name": "Search Knowledge Base",
+            "description": "Tìm kiếm KB",
+            "preCondition": "None"
+        },
+        {
+            "name": "Sync FAQs to Knowledge",
+            "description": "Đồng bộ FAQ vào KB",
+            "preCondition": "Admin"
+        },
+        {
+            "name": "Sync Services to Knowledge",
+            "description": "Đồng bộ dịch vụ vào KB",
+            "preCondition": "Admin"
+        }
+    ],
+    "notification": [
+        {
+            "name": "Get All Notification Templates",
+            "description": "Danh sách template thông báo",
+            "preCondition": "User có quyền"
+        },
+        {
+            "name": "Get Notification Template By ID",
+            "description": "Chi tiết template",
+            "preCondition": "ID tồn tại"
+        },
+        {
+            "name": "Get Notification Template By Code",
+            "description": "Chi tiết template theo code",
+            "preCondition": "Code tồn tại"
+        },
+        {
+            "name": "Create Notification Template",
+            "description": "Tạo template",
+            "preCondition": "Admin"
+        },
+        {
+            "name": "Update Notification Template",
+            "description": "Update template",
+            "preCondition": "Tồn tại"
+        },
+        {
+            "name": "Delete Notification Template",
+            "description": "Xóa template",
+            "preCondition": "Tồn tại"
+        },
+        {
+            "name": "Get All Notification Configs",
+            "description": "Danh sách config thông báo",
+            "preCondition": "User có quyền"
+        },
+        {
+            "name": "Get Notification Config By ID",
+            "description": "Chi tiết config",
+            "preCondition": "ID tồn tại"
+        }
+    ],
+    "dashboard": [
+        {
+            "name": "Get Case Processing Line Chart",
+            "description": "Biểu đồ tiến trình xử lý hồ sơ",
+            "preCondition": "Có quyền dashboard"
+        },
+        {
+            "name": "Get Service Usage Pie Chart",
+            "description": "Biểu đồ sử dụng dịch vụ",
+            "preCondition": "Có quyền dashboard"
+        },
+        {
+            "name": "Get Queue By Hour Bar Chart",
+            "description": "Biểu đồ hàng đợi theo giờ",
+            "preCondition": "Có quyền dashboard"
+        },
+        {
+            "name": "Get Comprehensive Dashboard",
+            "description": "Dashboard tổng quan",
+            "preCondition": "Có quyền dashboard"
+        }
+    ],
+    "managerView": [
+        {
+            "name": "Get Services For Manager",
+            "description": "Danh sách dịch vụ (Manager)",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Get Work Shifts For Manager",
+            "description": "Danh sách ca làm",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Get Staff For Manager",
+            "description": "Danh sách nhân viên",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Monitor Queue Status",
+            "description": "Giám sát hàng đợi",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Get Statistics For Manager",
+            "description": "Thống kê tổng quan",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Get Staff Performance",
+            "description": "Hiệu suất nhân viên",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Get Feedback Report",
+            "description": "Báo cáo feedback",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Create Priority Access",
+            "description": "Tạo quyền ưu tiên",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Configure Queue Rules",
+            "description": "Cấu hình quy tắc hàng đợi",
+            "preCondition": "Admin/Manager"
+        },
+        {
+            "name": "Get Comprehensive Report",
+            "description": "Báo cáo toàn diện",
+            "preCondition": "Admin/Manager"
+        }
+    ],
+    "staffView": [
+        {
+            "name": "Get Queue For Staff",
+            "description": "Danh sách hàng đợi theo ServiceGroup",
+            "preCondition": "Role Staff"
+        },
+        {
+            "name": "Call Next In Queue",
+            "description": "Gọi số tiếp theo",
+            "preCondition": "Role Staff"
+        },
+        {
+            "name": "Get Case Detail For Staff",
+            "description": "Chi tiết hồ sơ được xử lý",
+            "preCondition": "Role Staff"
+        },
+        {
+            "name": "Update Case Status By Staff",
+            "description": "Cập nhật trạng thái hồ sơ",
+            "preCondition": "Role Staff"
+        },
+        {
+            "name": "Update Case Priority",
+            "description": "Cập nhật độ ưu tiên",
+            "preCondition": "Role Staff"
+        },
+        {
+            "name": "Get Assigned Cases",
+            "description": "Danh sách hồ sơ phân công",
+            "preCondition": "Role Staff"
+        },
+        {
+            "name": "Get Staff Feedback",
+            "description": "Xem feedback dành cho Staff",
+            "preCondition": "Role Staff"
+        },
+        {
+            "name": "Get Staff Statistics",
+            "description": "Thống kê nhân viên",
+            "preCondition": "Role Staff"
+        }
+    ],
+    "performance": [
+        {
+            "name": "Get Guest Demographics",
+            "description": "Thống kê nhân khẩu học",
+            "preCondition": "Có quyền performance"
+        },
+        {
+            "name": "Get Service Performance",
+            "description": "Hiệu suất dịch vụ",
+            "preCondition": "Có quyền performance"
+        },
+        {
+            "name": "Get Data Quality",
+            "description": "Chất lượng dữ liệu",
+            "preCondition": "Có quyền performance"
+        },
+        {
+            "name": "Get Payment By Service",
+            "description": "Thống kê payment theo dịch vụ",
+            "preCondition": "Có quyền performance"
+        },
+        {
+            "name": "Get Payment By Staff",
+            "description": "Thống kê payment theo staff",
+            "preCondition": "Có quyền performance"
+        },
+        {
+            "name": "Get Payment By Work Shift",
+            "description": "Payment theo ca làm",
+            "preCondition": "Có quyền performance"
+        },
+        {
+            "name": "Get Payment By Guest Type",
+            "description": "Payment theo loại khách",
+            "preCondition": "Có quyền performance"
+        },
+        {
+            "name": "Get Top Guests By Payment",
+            "description": "Top khách hàng chi tiền nhiều nhất",
+            "preCondition": "Có quyền performance"
+        }
+    ]
+}

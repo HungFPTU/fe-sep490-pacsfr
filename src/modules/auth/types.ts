@@ -11,7 +11,7 @@ import { Position } from "./config/role-permissions.config";
 export interface User {
     id: string;
     username: string;
-    email: string;
+    email?: string;
     fullName?: string;
     name: string;
     phone?: string;
