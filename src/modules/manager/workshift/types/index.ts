@@ -72,4 +72,27 @@ export type ServiceGroup = {
     status: string;
 };
 
+// Types for assignment
+export type AssignStaffWorkShiftRequest = {
+    workShiftId: string;
+    staffId: string;
+    counterId: string;
+    workDate: string | Date;
+    status?: string;
+    checkInTime?: string | Date;
+    checkOutTime?: string | Date;
+    notes?: string;
+};
+
+// Simplified types for dropdowns (only id and name)
+export type CounterOption = {
+    id: string;
+    counterName: string;
+};
+
+export type StaffOption = {
+    id: string;
+    fullName: string;
+};
+
 

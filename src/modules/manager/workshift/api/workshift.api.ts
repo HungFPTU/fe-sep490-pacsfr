@@ -1,7 +1,7 @@
 import { http } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
 import type { RestResponse, RestMany } from '@/types/rest';
-import type { WorkShift, CreateWorkShiftRequest } from '../types';
+import type { WorkShift, CreateWorkShiftRequest, AssignStaffWorkShiftRequest, CounterOption, StaffOption } from '../types';
 
 /**
  * Lấy danh sách ca làm việc (không có filter)
@@ -38,5 +38,58 @@ export const updateWorkShift = async (
 
 export const deleteWorkShift = async (id: string): Promise<RestResponse<object>> => {
   const response = await http.delete<RestResponse<object>>(API_PATH.MANAGER.WORKSHIFT.DELETE(id));
+  return response.data;
+};
+
+/**
+ * Lấy danh sách tất cả quầy đang hoạt động (chỉ lấy id và counterName)
+ */
+export const getActiveCounters = async (): Promise<CounterOption[]> => {
+  const response = await http.get<RestMany<{ id: string; counterName: string; [key: string]: unknown }>>(
+    API_PATH.MANAGER.WORKSHIFT.GET_ACTIVE_COUNTERS,
+  );
+  const data = response.data;
+  if (!data?.success || !data.data) return [];
+  
+  // Extract $values array
+  const values = (data.data as { $values?: Array<{ id: string; counterName: string }> }).$values || [];
+  
+  // Map to only id and counterName
+  return values.map((item) => ({
+    id: item.id,
+    counterName: item.counterName || '',
+  }));
+};
+
+/**
+ * Lấy danh sách tất cả nhân viên (chỉ lấy id và fullName)
+ */
+export const getStaffList = async (): Promise<StaffOption[]> => {
+  const response = await http.get<RestMany<{ id: string; fullName: string; [key: string]: unknown }>>(
+    API_PATH.MANAGER.WORKSHIFT.GET_STAFF_LIST,
+  );
+  const data = response.data;
+  if (!data?.success || !data.data) return [];
+  
+  // Extract $values array
+  const values = (data.data as { $values?: Array<{ id: string; fullName: string }> }).$values || [];
+  
+  // Map to only id and fullName
+  return values.map((item) => ({
+    id: item.id,
+    fullName: item.fullName || '',
+  }));
+};
+
+/**
+ * Phân công nhân viên vào ca làm việc
+ */
+export const assignStaffWorkShift = async (
+  data: AssignStaffWorkShiftRequest,
+): Promise<RestResponse<object>> => {
+  const response = await http.post<RestResponse<object>>(
+    API_PATH.MANAGER.WORKSHIFT.ASSIGN_STAFF,
+    data,
+  );
   return response.data;
 };
