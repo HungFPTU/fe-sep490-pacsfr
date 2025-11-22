@@ -3,16 +3,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { WorkShiftService } from '../services/workshift.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
-import type { CreateWorkShiftRequest, WorkShiftFilters } from '../types';
+import type { CreateWorkShiftRequest, AssignStaffWorkShiftRequest } from '../types';
 
 // Export hooks first
 // Re-export custom hooks at the end
 export { useWorkShiftForm } from './useWorkShiftForm';
-// GET list hook
-export const useWorkShifts = (filters: WorkShiftFilters) => {
+// GET list hook (không có filter)
+export const useWorkShifts = () => {
   return useQuery({
-    queryKey: QUERY_KEYS.WORKSHIFT_LIST(filters),
-    queryFn: () => WorkShiftService.getWorkShifts(filters),
+    queryKey: QUERY_KEYS.WORKSHIFT_LIST,
+    queryFn: () => WorkShiftService.getWorkShifts(),
     gcTime: CACHE_TIME.SHORT,
     staleTime: STALE_TIME.MEDIUM,
   });
@@ -62,6 +62,40 @@ export const useDeleteWorkShift = () => {
 
   return useMutation({
     mutationFn: (id: string) => WorkShiftService.deleteWorkShift(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.WORKSHIFT_BASE,
+      });
+    },
+  });
+};
+
+// GET active counters hook
+export const useActiveCounters = () => {
+  return useQuery({
+    queryKey: ['workshift', 'active-counters'],
+    queryFn: () => WorkShiftService.getActiveCounters(),
+    gcTime: CACHE_TIME.SHORT,
+    staleTime: STALE_TIME.MEDIUM,
+  });
+};
+
+// GET staff list hook
+export const useStaffList = () => {
+  return useQuery({
+    queryKey: ['workshift', 'staff-list'],
+    queryFn: () => WorkShiftService.getStaffList(),
+    gcTime: CACHE_TIME.SHORT,
+    staleTime: STALE_TIME.MEDIUM,
+  });
+};
+
+// ASSIGN staff to workshift mutation
+export const useAssignStaffWorkShift = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: AssignStaffWorkShiftRequest) => WorkShiftService.assignStaffWorkShift(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_BASE,

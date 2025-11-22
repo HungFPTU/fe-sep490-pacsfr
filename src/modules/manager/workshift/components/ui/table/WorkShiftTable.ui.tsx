@@ -11,18 +11,15 @@ import {
   Chip,
   Tooltip,
 } from '@heroui/react';
-import { Eye, Pencil, Trash2, CalendarClock, User2, Store } from 'lucide-react';
+import { Eye, Pencil, Trash2, CalendarClock } from 'lucide-react';
 import { formatDateVN } from '@core/utils/date';
-import { Counter, Staff, WorkShift } from '../../../types';
+import { WorkShift } from '../../../types';
 
 type Key = React.Key;
 
 interface WorkShiftTableProps {
   data: WorkShift[];
   isLoading?: boolean;
-
-  counters?: Counter[];
-  staffs?: Staff[];
 
   // Actions
   onView?: (shift: WorkShift) => void;
@@ -33,8 +30,6 @@ interface WorkShiftTableProps {
 export const WorkShiftTable: React.FC<WorkShiftTableProps> = ({
   data,
   isLoading = false,
-  counters = [],
-  staffs = [],
   onView,
   onEdit,
   onDelete,
@@ -47,24 +42,10 @@ export const WorkShiftTable: React.FC<WorkShiftTableProps> = ({
         { key: 'startTime', label: 'GIỜ BẮT ĐẦU' },
         { key: 'endTime', label: 'GIỜ KẾT THÚC' },
         { key: 'status', label: 'TRẠNG THÁI' },
-        { key: 'counter', label: 'QUẦY' },
-        { key: 'staff', label: 'NHÂN VIÊN' },
         { key: 'actions', label: 'THAO TÁC' },
       ] as { key: Key; label: string }[],
     [],
   );
-
-  const counterMap = useMemo(() => {
-    const m = new Map<string, string>();
-    counters.forEach((c) => m.set(c.id, c.counterName || c.counterCode || c.id));
-    return m;
-  }, [counters]);
-
-  const staffMap = useMemo(() => {
-    const m = new Map<string, string>();
-    staffs.forEach((s) => m.set(s.id, s.fullName || s.username || s.id));
-    return m;
-  }, [staffs]);
 
   const renderCell = (ws: WorkShift, columnKey: Key) => {
     switch (columnKey) {
@@ -91,26 +72,6 @@ export const WorkShiftTable: React.FC<WorkShiftTableProps> = ({
             {ws.isActive ? 'Đang hoạt động' : 'Ngừng hoạt động'}
           </Chip>
         );
-
-      case 'counter': {
-        const name = ws.counterId ? counterMap.get(ws.counterId) : undefined;
-        return (
-          <div className="flex items-center gap-2">
-            <Store className="w-4 h-4 text-slate-500" />
-            <span className="text-sm">{name || <i className="text-slate-400">Chưa gán</i>}</span>
-          </div>
-        );
-      }
-
-      case 'staff': {
-        const name = ws.staffId ? staffMap.get(ws.staffId) : undefined;
-        return (
-          <div className="flex items-center gap-2">
-            <User2 className="w-4 h-4 text-slate-500" />
-            <span className="text-sm">{name || <i className="text-slate-400">Chưa gán</i>}</span>
-          </div>
-        );
-      }
 
       case 'actions':
         return (
