@@ -3,16 +3,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { WorkShiftService } from '../services/workshift.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
-import type { CreateWorkShiftRequest, WorkShiftFilters } from '../types';
+import type { CreateWorkShiftRequest } from '../types';
 
 // Export hooks first
 // Re-export custom hooks at the end
 export { useWorkShiftForm } from './useWorkShiftForm';
-// GET list hook
-export const useWorkShifts = (filters: WorkShiftFilters) => {
+// GET list hook (không có filter)
+export const useWorkShifts = () => {
   return useQuery({
-    queryKey: QUERY_KEYS.WORKSHIFT_LIST(filters),
-    queryFn: () => WorkShiftService.getWorkShifts(filters),
+    queryKey: QUERY_KEYS.WORKSHIFT_LIST,
+    queryFn: () => WorkShiftService.getWorkShifts(),
     gcTime: CACHE_TIME.SHORT,
     staleTime: STALE_TIME.MEDIUM,
   });

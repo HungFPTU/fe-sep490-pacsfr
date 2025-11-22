@@ -1,8 +1,6 @@
 // Main WorkShift entity type
 export type WorkShift = {
     id: string;
-    counterId: string;
-    staffId: string;
     shiftDate: string | Date;
     startTime: string;
     endTime: string;
@@ -16,8 +14,6 @@ export type WorkShift = {
 
 // Request types
 export type CreateWorkShiftRequest = {
-    counterId: string;
-    staffId: string;
     shiftDate: string | Date;
     startTime: string;
     endTime: string;
@@ -27,8 +23,6 @@ export type CreateWorkShiftRequest = {
 
 export type UpdateWorkShiftRequest = {
     id: string;
-    counterId: string;
-    staffId: string;
     shiftDate: string | Date;
     startTime: string;
     endTime: string;
@@ -39,8 +33,6 @@ export type UpdateWorkShiftRequest = {
 // Work Shift Assignment type (for assigned shifts)
 export type WorkShiftAssignment = {
     id: string;
-    counterId: string;
-    staffId: string;
     shiftDate: string;
     startTime: string;
     endTime: string;
@@ -49,14 +41,12 @@ export type WorkShiftAssignment = {
     $id?: string;
 };
 
-// Filter types
+
 export type WorkShiftFilters = {
     keyword?: string;
-    counterId?: string; // ← thêm
-    staffId?: string;
     shiftType?: string;
-    shiftDate?: string; // ISO 'YYYY-MM-DD' hoặc ISODate
-    fromTime?: string; // 'HH:mm' hoặc 'HH:mm:ss'
+    shiftDate?: string; 
+    fromTime?: string; 
     toTime?: string;
     isActive?: boolean;
     page?: number;
@@ -82,19 +72,4 @@ export type ServiceGroup = {
     status: string;
 };
 
-// Staff types
-export type Staff = {
-    id: string;
-    staffCode: string;
-    fullName: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-    position?: string;
-    roleType?: string;
-    specialization?: string;
-    isActive: boolean;
-    orgUnitName?: string;
-    createdAt?: string | Date;
-};
 

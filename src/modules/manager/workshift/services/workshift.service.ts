@@ -1,15 +1,15 @@
 import * as workshiftApi from '../api/workshift.api';
-import type { WorkShift, CreateWorkShiftRequest, WorkShiftFilters } from '../types';
+import type { WorkShift, CreateWorkShiftRequest } from '../types';
 import type { RestResponse } from '@/types/rest';
 
 // ==================== WorkShift Service ====================
 
 export class WorkShiftService {
   /**
-   * Lấy danh sách ca làm việc với bộ lọc
+   * Lấy danh sách ca làm việc (không có filter)
    */
-  static async getWorkShifts(filters?: WorkShiftFilters): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.getWorkShifts(filters);
+  static async getWorkShifts(): Promise<RestResponse<WorkShift>> {
+    return workshiftApi.getWorkShifts();
   }
 
   /**

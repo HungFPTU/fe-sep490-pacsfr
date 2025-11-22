@@ -4,16 +4,15 @@ import React, { useState, useEffect } from 'react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { LoadingSpinner } from '@/shared/components/common';
 import { Staff } from '../../../types';
-import { WorkShiftAssignment } from '@modules/manager/workshift/types';
+import { WorkShift } from '@modules/manager/workshift/types';
 import { useWorkShifts } from '@modules/manager/workshift';
 import { formatDateVN } from '@core/utils/date';
-import { useCounterMap } from '@/modules/manager/counter/hooks';
+import { getValuesPage, RestPaged } from '@/types/rest';
 
 interface StaffWorkShiftAssignmentsModalProps {
     open: boolean;
     onClose: () => void;
     staff: Staff | null;
-    // assignments are fetched internally by staffId
 }
 
 // Helper function to format time
@@ -41,56 +40,31 @@ export function StaffWorkShiftAssignmentsModal({
     onClose,
     staff,
 }: StaffWorkShiftAssignmentsModalProps) {
-    const staffId = staff?.id || '';
-    const { data, isLoading, error } = useWorkShifts({
-        page: 1,
-        size: 100,
-        staffId,
-    });
+    // Get all work shifts (no filter params)
+    const { data, isLoading, error } = useWorkShifts();
 
-    const assignments: WorkShiftAssignment[] = (() => {
-        type DotNetArray<T> = { $id?: string; $values?: T[] };
-        type RestManyLike<T> = { items?: T[] | DotNetArray<T>; $values?: T[] };
-
-        const raw: unknown = data?.data;
-        if (!raw) return [];
-        if (Array.isArray(raw)) return raw as WorkShiftAssignment[];
-
-        if (typeof raw === 'object' && raw !== null) {
-            const obj = raw as RestManyLike<WorkShiftAssignment>;
-            if (Array.isArray(obj.items)) return obj.items as WorkShiftAssignment[];
-            if (obj.items && Array.isArray((obj.items as DotNetArray<WorkShiftAssignment>).$values)) {
-                return (obj.items as DotNetArray<WorkShiftAssignment>).$values as WorkShiftAssignment[];
-            }
-            if (Array.isArray(obj.$values)) return obj.$values as WorkShiftAssignment[];
-        }
-        return [];
+    // Extract work shifts from API response
+    const allWorkShifts: WorkShift[] = (() => {
+        if (!data) return [];
+        const pageResult = getValuesPage(data as RestPaged<WorkShift>);
+        return pageResult?.items || [];
     })();
 
-    const [filteredAssignments, setFilteredAssignments] = useState<WorkShiftAssignment[]>([]);
-    useEffect(() => {
-        if (staffId) {
-            setFilteredAssignments(assignments.filter(a => a.staffId === staffId));
-        } else {
-            setFilteredAssignments([]);
-        }
-    }, [assignments, staffId]);
-
-    // Dùng custom hook từ counter module
-    const uniqueCounterIds = filteredAssignments
-        .filter(a => a.counterId)
-        .map(a => a.counterId);
-    const { counterMap } = useCounterMap(uniqueCounterIds, open);
+    // Since WorkShift no longer has staffId, we show all work shifts
+    // In a real scenario, you might need a different API endpoint to get staff-specific assignments
+    const filteredAssignments = allWorkShifts;
 
     // Group assignments by date
     const groupedAssignments = filteredAssignments.reduce((groups, assignment) => {
-        const date = assignment.shiftDate.split('T')[0];
-        if (!groups[date]) {
-            groups[date] = [];
+        const dateStr = assignment.shiftDate instanceof Date 
+            ? assignment.shiftDate.toISOString().split('T')[0]
+            : assignment.shiftDate.toString().split('T')[0];
+        if (!groups[dateStr]) {
+            groups[dateStr] = [];
         }
-        groups[date].push(assignment);
+        groups[dateStr].push(assignment);
         return groups;
-    }, {} as Record<string, WorkShiftAssignment[]>);
+    }, {} as Record<string, WorkShift[]>);
 
     return (
         <BaseModal
@@ -177,23 +151,13 @@ export function StaffWorkShiftAssignmentsModal({
                                                                     {assignment.shiftType}
                                                                 </span>
                                                             </div>
-                                                            <div className="mt-1">
-                                                                <p className="text-xs text-gray-500">
-                                                                    Counter ID: {assignment.counterId}
-                                                                </p>
-                                                                {assignment.counterId && (
-                                                                    counterMap[assignment.counterId] ? (
-                                                                        <div className="text-xs text-blue-700">
-                                                                            <strong>Quầy:</strong> {counterMap[assignment.counterId]?.counterName}<br />
-                                                                            <strong>Vị trí:</strong> {counterMap[assignment.counterId]?.location}
-                                                                        </div>
-                                                                    ) : (
-                                                                        <div className="italic text-xs text-gray-400">
-                                                                            Đang tải thông tin quầy...
-                                                                        </div>
-                                                                    )
-                                                                )}
-                                                            </div>
+                                                            {assignment.description && (
+                                                                <div className="mt-1">
+                                                                    <p className="text-xs text-gray-500">
+                                                                        {assignment.description}
+                                                                    </p>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
