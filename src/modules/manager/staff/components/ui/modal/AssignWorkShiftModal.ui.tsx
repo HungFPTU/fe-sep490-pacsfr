@@ -39,12 +39,8 @@ export function AssignWorkShiftModal({
     const [selectedWorkShiftId, setSelectedWorkShiftId] = useState<string>('');
     const { addToast } = useGlobalToast();
 
-    // Get all active work shifts
-    const { data: workShiftsData, isLoading: isLoadingWorkShifts, error: workShiftsError } = useWorkShifts({
-        isActive: true,
-        page: 1,
-        size: 100
-    });
+    // Get all work shifts (no filter params)
+    const { data: workShiftsData, isLoading: isLoadingWorkShifts, error: workShiftsError } = useWorkShifts();
 
     // Debug logging
     React.useEffect(() => {
@@ -53,22 +49,30 @@ export function AssignWorkShiftModal({
         console.log('AssignWorkShiftModal - workShiftsError:', workShiftsError);
     }, [workShiftsData, isLoadingWorkShifts, workShiftsError]);
 
-    // Extract work shifts from API response with robust shape handling
+    // Extract work shifts from API response with robust shape handling and filter active only
     const workShifts: WorkShift[] = (() => {
         type DotNetArray<T> = { $id?: string; $values?: T[] };
         type RestManyLike<T> = { items?: T[] | DotNetArray<T>; $values?: T[] };
 
         const rawUnknown: unknown = workShiftsData?.data as unknown;
         if (!rawUnknown) return [];
-        if (Array.isArray(rawUnknown)) return rawUnknown as WorkShift[];
-
-        const obj = rawUnknown as RestManyLike<WorkShift>;
-        if (Array.isArray(obj.items)) return obj.items as WorkShift[];
-        if (obj.items && Array.isArray((obj.items as DotNetArray<WorkShift>).$values)) {
-            return (obj.items as DotNetArray<WorkShift>).$values as WorkShift[];
+        
+        let allShifts: WorkShift[] = [];
+        if (Array.isArray(rawUnknown)) {
+            allShifts = rawUnknown as WorkShift[];
+        } else {
+            const obj = rawUnknown as RestManyLike<WorkShift>;
+            if (Array.isArray(obj.items)) {
+                allShifts = obj.items as WorkShift[];
+            } else if (obj.items && Array.isArray((obj.items as DotNetArray<WorkShift>).$values)) {
+                allShifts = (obj.items as DotNetArray<WorkShift>).$values as WorkShift[];
+            } else if (Array.isArray(obj.$values)) {
+                allShifts = obj.$values as WorkShift[];
+            }
         }
-        if (Array.isArray(obj.$values)) return obj.$values as WorkShift[];
-        return [];
+        
+        // Filter only active work shifts on client side
+        return allShifts.filter((shift) => shift.isActive !== false);
     })();
 
     // Assign work shift mutation

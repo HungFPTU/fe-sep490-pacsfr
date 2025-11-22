@@ -4,8 +4,6 @@ import { useGlobalToast } from '@core/patterns/SingletonHook';
 import type { WorkShift, CreateWorkShiftRequest } from '../types';
 
 export interface WorkShiftFormValues {
-  counterId: string;
-  staffId: string;
   shiftDate: string;
   shiftType: string;
   startTime: string;
@@ -23,8 +21,6 @@ interface UseWorkShiftFormProps {
 }
 
 const toFormValues = (data?: WorkShift | null): WorkShiftFormValues => ({
-  counterId: data?.counterId ?? '',
-  staffId: data?.staffId ?? '',
   shiftDate: data?.shiftDate ? new Date(data.shiftDate).toISOString().split('T')[0] : '',
   shiftType: data?.shiftType ?? '',
   startTime: data?.startTime ?? '',
@@ -35,8 +31,6 @@ const toFormValues = (data?: WorkShift | null): WorkShiftFormValues => ({
 
 function toRequest(values: WorkShiftFormValues): CreateWorkShiftRequest {
   return {
-    counterId: values.counterId,
-    staffId: values.staffId,
     shiftDate: values.shiftDate,
     shiftType: values.shiftType,
     startTime: values.startTime,

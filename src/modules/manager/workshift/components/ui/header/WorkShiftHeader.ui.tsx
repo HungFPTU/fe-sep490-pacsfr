@@ -9,12 +9,12 @@ interface Props {
 export const WorkShiftHeader: React.FC<Props> = ({ onCreateClick }) => {
     return (
         <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-slate-900">Quản lý Ca Làm Việc</h1>
+            <h1 className="text-2xl font-bold text-slate-900">Quản Lý Ca Làm Việc</h1>
             <button
                 onClick={onCreateClick}
                 className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
             >
-                + Tạo ca làm việc mới
+                + Tạo Lịch Làm Việc
             </button>
         </div>
     );
