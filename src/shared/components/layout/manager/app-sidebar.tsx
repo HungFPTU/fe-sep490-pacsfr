@@ -132,7 +132,7 @@ const data = {
         },
         {
           title: "Quầy phục vụ",
-          url: "/manager/operation/counter",
+          url: "/manager/quan-li-quay",
         },
       ],
     },

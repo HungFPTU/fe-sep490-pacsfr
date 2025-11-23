@@ -93,7 +93,7 @@ export function ServiceListWithPagination({
                     type="button"
                     onClick={onSearch}
                     disabled={isSearching}
-                    className="bg-indigo-600 hover:bg-indigo-700"
+                    className="bg-indigo-600 hover:bg-indigo-700 flex items-center gap-2"
                 >
                     <FileText className="w-4 h-4 mr-2" />
                     {isSearching ? "Đang tìm..." : "Tìm kiếm"}

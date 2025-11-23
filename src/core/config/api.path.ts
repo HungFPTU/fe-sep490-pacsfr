@@ -122,7 +122,7 @@ export const API_PATH = {
                 POST: "/WorkShift",
                 PUT: (id: string) => `/WorkShift/${id}`,
                 DELETE: (id: string) => `/WorkShift/${id}`,
-                MY_SHIFTS: "/WorkShift/my-shifts",
+                MY_SHIFTS: "/WorkShift",
             },
             COUNTER: {
                 GET_BY_ID: (id: string) => `/Counter/${id}`,
@@ -164,7 +164,7 @@ export const API_PATH = {
                 UPDATE_PAYMENT: (caseId: string) => `/Case/${caseId}/payment`,
             },
             WORKSHIFT: {
-                MY_SHIFTS: "/WorkShift/my-shifts",
+                MY_SHIFTS: "/WorkShift",
             },
         },
     },
@@ -264,13 +264,20 @@ export const API_PATH = {
             POST: '/WorkShift',
             PUT: (id: string) => `/WorkShift/${id}`,
             DELETE: (id: string) => `/WorkShift/${id}`,
-            MY_SHIFTS: '/WorkShift/my-shifts',
+            MY_SHIFTS: '/WorkShift',
             GET_ACTIVE_COUNTERS: '/Counter/active',
             GET_STAFF_LIST: '/Staff',
+            ASSIGN_STAFF: '/StaffWorkShift',
+            GET_STAFF_WORKSHIFTS: '/StaffWorkShift',
+            DELETE_STAFF_WORKSHIFT: (id: string) => `/StaffWorkShift/${id}`,
         },
         COUNTER: {
             GET_ALL_ACTIVE: () => `/Counter/active`,
             GET_BY_ID: (id: string) => `/Counter/${id}`,
+            POST: '/Counter',
+            GET_ALL_SERVICE_GROUPS: '/ServiceGroup',
+            GET_ALL_STAFF: '/Staff',
+            ASSIGN_STAFF: (counterId: string) => `/Counter/${counterId}/assign-staff`,
         },
         DOCS_TYPE_GROUP: {
             GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>
@@ -392,7 +399,7 @@ export const API_PATH = {
             UPDATE_PAYMENT: (caseId: string) => `/Case/${caseId}/payment`,
         },
         WORKSHIFT: {
-            MY_SHIFTS: '/WorkShift/my-shifts',
+            MY_SHIFTS: '/WorkShift',
         },
     },
 

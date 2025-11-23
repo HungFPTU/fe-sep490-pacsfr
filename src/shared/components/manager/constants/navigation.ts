@@ -122,8 +122,8 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
                 url: '/manager/operation/limits',
             },
             {
-                title: 'Quầy phục vụ',
-                url: '/manager/operation/counter',
+                title: "Quầy phục vụ",
+                url: "/manager/quan-li-quay",
             },
         ],
     },

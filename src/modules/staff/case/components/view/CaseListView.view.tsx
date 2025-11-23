@@ -18,6 +18,7 @@ interface CaseListViewProps {
   isLoading: boolean;
   pagination: PaginationInfo;
   onPageChange: (page: number) => void;
+  onSizeChange?: (size: number) => void;
   onViewDetail?: (caseItem: CaseData) => void;
 }
 
@@ -26,6 +27,7 @@ export const CaseListView: React.FC<CaseListViewProps> = ({
   isLoading,
   pagination,
   onPageChange,
+  onSizeChange,
   onViewDetail,
 }) => {
   return (
@@ -89,7 +91,7 @@ export const CaseListView: React.FC<CaseListViewProps> = ({
       {/* Pagination */}
       {!isLoading && cases.length > 0 && (
         <div className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
-          <TablePagination pagination={pagination} onPageChange={onPageChange} />
+          <TablePagination pagination={pagination} onPageChange={onPageChange} onSizeChange={onSizeChange} />
         </div>
       )}
     </div>
