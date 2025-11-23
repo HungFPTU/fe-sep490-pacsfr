@@ -21,6 +21,9 @@
     "analyze": "bun --bun run cross-env ANALYZE=true next build",
     "test": "bun test",
     "test:watch": "bun test --watch",
+    "test:parse": "bun run src/test/scripts/parse-excel-tests.ts",
+    "test:export": "bun run src/test/scripts/export-tests-to-excel.ts",
+    "test:coverage": "bun test --coverage",
     "postinstall": "bun --bun run next telemetry disable"
   },
   "dependencies": {
@@ -78,10 +81,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/xlsx": "^0.0.36",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "xlsx": "^0.18.5"
   },
   "packageManager": "bun@1.1.0"
 }
