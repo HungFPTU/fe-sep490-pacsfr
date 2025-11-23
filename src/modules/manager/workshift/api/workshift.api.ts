@@ -1,7 +1,7 @@
 import { http } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
-import type { RestResponse, RestMany } from '@/types/rest';
-import type { WorkShift, CreateWorkShiftRequest, AssignStaffWorkShiftRequest, CounterOption, StaffOption } from '../types';
+import type { RestResponse, RestMany, RestPaged } from '@/types/rest';
+import type { WorkShift, CreateWorkShiftRequest, AssignStaffWorkShiftRequest, CounterOption, StaffOption, StaffWorkShift } from '../types';
 
 /**
  * Lấy danh sách ca làm việc (không có filter)
@@ -90,6 +90,26 @@ export const assignStaffWorkShift = async (
   const response = await http.post<RestResponse<object>>(
     API_PATH.MANAGER.WORKSHIFT.ASSIGN_STAFF,
     data,
+  );
+  return response.data;
+};
+
+/**
+ * Lấy danh sách tất cả phân công nhân viên vào ca làm việc (không có filter)
+ */
+export const getStaffWorkShifts = async (): Promise<RestPaged<StaffWorkShift>> => {
+  const response = await http.get<RestPaged<StaffWorkShift>>(
+    API_PATH.MANAGER.WORKSHIFT.GET_STAFF_WORKSHIFTS,
+  );
+  return response.data;
+};
+
+/**
+ * Xóa phân công nhân viên khỏi ca làm việc
+ */
+export const deleteStaffWorkShift = async (id: string): Promise<RestResponse<object>> => {
+  const response = await http.delete<RestResponse<object>>(
+    API_PATH.MANAGER.WORKSHIFT.DELETE_STAFF_WORKSHIFT(id),
   );
   return response.data;
 };
