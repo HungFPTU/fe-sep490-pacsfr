@@ -12,7 +12,7 @@ export type WorkShift = {
     $id?: string;
 };
 
-// Request types
+
 export type CreateWorkShiftRequest = {
     shiftDate: string | Date;
     startTime: string;
@@ -30,7 +30,7 @@ export type UpdateWorkShiftRequest = {
     description?: string;
 };
 
-// Work Shift Assignment type (for assigned shifts)
+// Work Shift Assignment 
 export type WorkShiftAssignment = {
     id: string;
     shiftDate: string;
@@ -72,7 +72,7 @@ export type ServiceGroup = {
     status: string;
 };
 
-// Types for assignment
+
 export type AssignStaffWorkShiftRequest = {
     workShiftId: string;
     staffId: string;
@@ -84,7 +84,7 @@ export type AssignStaffWorkShiftRequest = {
     notes?: string;
 };
 
-// Simplified types for dropdowns (only id and name)
+
 export type CounterOption = {
     id: string;
     counterName: string;
@@ -93,6 +93,28 @@ export type CounterOption = {
 export type StaffOption = {
     id: string;
     fullName: string;
+};
+
+// Staff WorkShift 
+export type StaffWorkShift = {
+    id: string;
+    workShiftId: string;
+    staffId: string;
+    counterId?: string; 
+    workDate: string | Date;
+    status: string;
+    checkInTime?: string | Date;
+    checkOutTime?: string | Date;
+    isDeleted: boolean;
+    staffName: string;
+    shiftType: string;
+    startTime: string;
+    endTime: string;
+    counterName: string;
+    createdAt: string | Date;
+    createdBy?: string;
+    notes?: string;
+    $id?: string;
 };
 
 

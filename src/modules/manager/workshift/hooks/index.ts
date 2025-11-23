@@ -100,6 +100,37 @@ export const useAssignStaffWorkShift = () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_BASE,
       });
+      // Also invalidate staff work shifts
+      queryClient.invalidateQueries({
+        queryKey: ['workshift', 'staff-work-shifts'],
+      });
+    },
+  });
+};
+
+// GET staff work shifts hook
+export const useStaffWorkShifts = () => {
+  return useQuery({
+    queryKey: ['workshift', 'staff-work-shifts'],
+    queryFn: () => WorkShiftService.getStaffWorkShifts(),
+    gcTime: CACHE_TIME.SHORT,
+    staleTime: STALE_TIME.MEDIUM,
+  });
+};
+
+// DELETE staff work shift mutation
+export const useDeleteStaffWorkShift = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => WorkShiftService.deleteStaffWorkShift(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['workshift', 'staff-work-shifts'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.WORKSHIFT_BASE,
+      });
     },
   });
 };
