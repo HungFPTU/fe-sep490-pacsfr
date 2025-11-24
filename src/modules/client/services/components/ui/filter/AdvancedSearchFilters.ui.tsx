@@ -1,12 +1,7 @@
 "use client";
 
 import type { ServiceFilters } from "@/modules/client/services/types/req";
-import {
-    useImplementingAgencies,
-    useFields,
-    useImplementationLevels,
-    useTargetAudiences,
-} from "@/modules/client/services/hooks/useFilterOptions";
+import type { OptionItem } from "@/modules/client/services/types/filter.types";
 import { useAdvancedFilters } from "@/modules/client/services/hooks/useAdvancedFilters";
 import { SearchableSelect } from "../select/SearchableSelect.ui";
 import { SearchByRadio } from "./SearchByRadio.ui";
@@ -14,12 +9,28 @@ import { SearchByRadio } from "./SearchByRadio.ui";
 interface AdvancedSearchFiltersProps {
     filters: ServiceFilters;
     onFiltersChange: (filters: ServiceFilters) => void;
+    options: {
+        serviceTypes: OptionItem[];
+        fields: OptionItem[];
+        executionLevels: OptionItem[];
+    };
     className?: string;
 }
+
+const ONLINE_OPTIONS: OptionItem[] = [
+    { id: "true", name: "Có hỗ trợ trực tuyến" },
+    { id: "false", name: "Không hỗ trợ trực tuyến" },
+];
+
+const STATUS_OPTIONS: OptionItem[] = [
+    { id: "true", name: "Hoạt động" },
+    { id: "false", name: "Ngừng" },
+];
 
 export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
     filters,
     onFiltersChange,
+    options,
     className = "",
 }) => {
     const { searchBy, handleFilterChange } = useAdvancedFilters({
@@ -27,58 +38,68 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
         onFiltersChange,
     });
 
-    // Get filter options based on searchBy type
-    const implementingAgencies = useImplementingAgencies(searchBy);
-    const fields = useFields(searchBy);
-    const implementationLevels = useImplementationLevels(searchBy);
-    const targetAudiences = useTargetAudiences(searchBy);
+    const handleBooleanChange = (key: keyof ServiceFilters, value: string) => {
+        if (!value) {
+            handleFilterChange(key, null);
+            return;
+        }
+        handleFilterChange(key, value === "true");
+    };
+
+    const onlineValue = typeof filters.onlineAvailable === "boolean" ? String(filters.onlineAvailable) : "";
+    const statusValue = typeof filters.isActive === "boolean" ? String(filters.isActive) : "";
 
     return (
-        <div className={`bg-white rounded-2xl shadow-xl border border-gray-100 p-8 ${className}`}>
-            {/* Search By Radio Buttons */}
+        <div className={`space-y-6 ${className}`}>
             <SearchByRadio
                 value={searchBy}
                 onChange={(value) => handleFilterChange("searchBy", value)}
             />
 
-            {/* Advanced Filters Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* First Row */}
                 <SearchableSelect
-                    label="Cơ quan thực hiện"
-                    placeholder="Chọn cơ quan thực hiện..."
-                    emptyMessage="Không tìm thấy cơ quan phù hợp"
-                    options={implementingAgencies}
-                    value={filters.implementingAgency ?? ""}
-                    onChange={(selected) => handleFilterChange("implementingAgency", selected)}
+                    label="Loại thủ tục"
+                    placeholder="Chọn loại thủ tục..."
+                    emptyMessage="Không có dữ liệu"
+                    options={options.serviceTypes}
+                    value={filters.serviceType ?? ""}
+                    onChange={(selected) => handleFilterChange("serviceType", selected)}
                 />
 
                 <SearchableSelect
                     label="Lĩnh vực"
                     placeholder="Chọn lĩnh vực..."
-                    emptyMessage="Không tìm thấy lĩnh vực phù hợp"
-                    options={fields}
+                    emptyMessage="Không có dữ liệu"
+                    options={options.fields}
                     value={filters.field ?? ""}
                     onChange={(selected) => handleFilterChange("field", selected)}
                 />
 
-                {/* Second Row */}
                 <SearchableSelect
                     label="Cấp thực hiện"
                     placeholder="Chọn cấp thực hiện..."
-                    emptyMessage="Không tìm thấy cấp thực hiện phù hợp"
-                    options={implementationLevels}
-                    value={filters.implementationLevel ?? ""}
-                    onChange={(selected) => handleFilterChange("implementationLevel", selected)}
+                    emptyMessage="Không có dữ liệu"
+                    options={options.executionLevels}
+                    value={filters.executionLevel ?? ""}
+                    onChange={(selected) => handleFilterChange("executionLevel", selected)}
                 />
 
                 <SearchableSelect
-                    label="Đối tượng thực hiện"
-                    placeholder="Chọn đối tượng thực hiện..."
-                    emptyMessage="Không tìm thấy đối tượng phù hợp"
-                    options={targetAudiences}
-                    value={filters.targetAudience ?? ""}
-                    onChange={(selected) => handleFilterChange("targetAudience", selected)}
+                    label="Hỗ trợ trực tuyến"
+                    placeholder="Chọn trạng thái hỗ trợ..."
+                    emptyMessage="Không có dữ liệu"
+                    options={ONLINE_OPTIONS}
+                    value={onlineValue}
+                    onChange={(selected) => handleBooleanChange("onlineAvailable", selected)}
+                />
+
+                <SearchableSelect
+                    label="Trạng thái hoạt động"
+                    placeholder="Chọn trạng thái..."
+                    emptyMessage="Không có dữ liệu"
+                    options={STATUS_OPTIONS}
+                    value={statusValue}
+                    onChange={(selected) => handleBooleanChange("isActive", selected)}
                 />
             </div>
         </div>

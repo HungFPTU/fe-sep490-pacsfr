@@ -32,12 +32,12 @@ export const HOME_NAVIGATION_ITEMS: HomeNavigationItem[] = [
         href: '/thu-tuc-hanh-chinh',
         type: 'link',
     },
-    {
-        key: 'submit',
-        label: 'Nộp hồ sơ trực tuyến',
-        href: '/submit',
-        type: 'link',
-    },
+    // {
+    //     key: 'submit',
+    //     label: 'Nộp hồ sơ trực tuyến',
+    //     href: '/submit',
+    //     type: 'link',
+    // },
     {
         key: 'lookup',
         label: 'Tra cứu hồ sơ',

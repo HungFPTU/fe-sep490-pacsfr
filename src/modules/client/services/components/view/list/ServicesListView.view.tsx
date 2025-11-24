@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, CardBody } from "@heroui/react";
 import { ServiceFilters } from "../../ui/filter/ServiceFilters.ui";
 import { ServiceList } from "../../ui/list/ServiceList.ui";
 import { ServicePagination } from "../../ui/pagination/ServicePagination.ui";
 import { useServices, useServiceFilters } from "../../../hooks/useServices";
 import type { ServiceFilters as ServiceFiltersType } from "../../../types/req";
+import { useDerivedFilterOptions } from "../../../hooks/useDerivedFilterOptions";
+import { filterServicesByAdvancedFilters, hasAdvancedFilters } from "../../../utils/service-filtering";
 
 interface ServicesListViewProps {
     className?: string;
@@ -32,6 +34,12 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
 
     const { data: response, isLoading, error, refetch } = useServices(activeFilters);
     const services = response?.data?.items?.$values || [];
+    const filterOptions = useDerivedFilterOptions(services);
+    const filteredServices = useMemo(
+        () => filterServicesByAdvancedFilters(services, activeFilters),
+        [services, activeFilters]
+    );
+    const isUsingAdvancedFilters = hasAdvancedFilters(activeFilters);
     const pagination = response?.data;
 
     // Handle search - apply filters and refetch
@@ -52,10 +60,10 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
             isActive: null,
             page: 1,
             size: 10,
-            implementingAgency: "",
+            serviceType: "",
             field: "",
-            implementationLevel: "",
-            targetAudience: "",
+            executionLevel: "",
+            onlineAvailable: null,
             searchBy: "department",
         };
         resetFilters();
@@ -92,6 +100,7 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
                 onSearch={handleSearch}
                 onReset={handleReset}
                 isLoading={isLoading}
+                options={filterOptions}
             />
 
             {/* Results Summary */}
@@ -100,11 +109,16 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
                     <CardBody className="p-4">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                             <p className="text-gray-700">
-                                <span className="font-semibold">{pagination.total}</span> thủ tục được tìm thấy
+                                <span className="font-semibold">{pagination.total}</span> thủ tục trong hệ thống
                                 {activeFilters.keyword && (
                                     <span> cho từ khóa <strong>&quot;{activeFilters.keyword}&quot;</strong></span>
                                 )}
                             </p>
+                            {isUsingAdvancedFilters && (
+                                <p className="text-sm text-emerald-600">
+                                    {filteredServices.length} kết quả phù hợp bộ lọc nâng cao trên trang hiện tại
+                                </p>
+                            )}
                             <div className="text-sm text-gray-600">
                                 Trang {pagination.page} / {pagination.totalPages}
                             </div>
@@ -115,7 +129,7 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
 
             {/* Services List */}
             <ServiceList
-                services={services}
+                services={filteredServices}
                 loading={isLoading}
                 error={error}
                 showDescription={true}

@@ -20,6 +20,7 @@ export { FilterOptionsService } from './services/filter-options.service';
 // Hooks
 export * from './hooks/useServices';
 export * from './hooks/useFilterOptions';
+export * from './hooks/useDerivedFilterOptions';
 
 // Formatters
 export * from './formatters';

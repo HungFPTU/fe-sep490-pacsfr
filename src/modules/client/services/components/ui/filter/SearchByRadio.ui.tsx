@@ -24,7 +24,7 @@ export const SearchByRadio: React.FC<SearchByRadioProps> = ({
                         value="department"
                         checked={value === "department"}
                         onChange={(e) => onChange(e.target.value as SearchByType)}
-                        className="w-5 h-5 text-red-600 border-2 border-gray-300 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200"
+                        className="w-5 h-5 text-red-600 border-2 border-gray-300 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200"
                     />
                     <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
                         Bộ/ Ban/ Ngành
@@ -37,7 +37,7 @@ export const SearchByRadio: React.FC<SearchByRadioProps> = ({
                         value="province"
                         checked={value === "province"}
                         onChange={(e) => onChange(e.target.value as SearchByType)}
-                        className="w-5 h-5 text-red-600 border-2 border-gray-300 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200"
+                        className="w-5 h-5 text-red-600 border-2 border-gray-300 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all duration-200"
                     />
                     <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
                         Tỉnh/ Thành phố
