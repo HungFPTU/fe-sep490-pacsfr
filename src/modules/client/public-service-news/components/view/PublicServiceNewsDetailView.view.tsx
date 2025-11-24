@@ -46,8 +46,8 @@ export const PublicServiceNewsDetailView: React.FC<PublicServiceNewsDetailViewPr
     }
 
     return (
-        <article className="space-y-8 rounded-2xl bg-white p-6 shadow-sm">
-            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+        <article className="space-y-4 sm:space-y-8 rounded-xl sm:rounded-2xl bg-white p-4 sm:p-6 shadow-sm">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
                 <Link href="/tin-tuc" className="font-semibold text-red-600 hover:text-red-700">
                     Tin tức
                 </Link>
@@ -61,11 +61,11 @@ export const PublicServiceNewsDetailView: React.FC<PublicServiceNewsDetailViewPr
                 )}
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-900">{data.title}</h1>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{data.title}</h1>
 
             {data.thumbnailUrl && (
                 <>
-                    <div className="relative h-80 w-full overflow-hidden rounded-2xl">
+                    <div className="relative h-48 sm:h-64 md:h-80 w-full overflow-hidden rounded-xl sm:rounded-2xl">
                         <Image
                             src={data.thumbnailUrl}
                             alt={data.title}
@@ -76,25 +76,26 @@ export const PublicServiceNewsDetailView: React.FC<PublicServiceNewsDetailViewPr
 
                         <button
                             onClick={() => setFullImageOpen(true)}
-                            className="absolute bottom-4 right-4 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-gray-800 shadow hover:bg-white"
+                            className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 rounded-full bg-white/90 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-gray-800 shadow hover:bg-white"
                         >
-                            Xem ảnh đầy đủ
+                            <span className="hidden sm:inline">Xem ảnh đầy đủ</span>
+                            <span className="sm:hidden">Xem ảnh</span>
                         </button>
                     </div>
 
                     {fullImageOpen && (
                         <div
-                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+                            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4"
                             onClick={() => setFullImageOpen(false)}
                         >
                             <button
                                 onClick={() => setFullImageOpen(false)}
-                                className="absolute right-6 top-6 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-800 shadow"
+                                className="absolute right-2 sm:right-6 top-2 sm:top-6 rounded-full bg-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-gray-800 shadow"
                             >
                                 Đóng
                             </button>
                             <div
-                                className="relative h-[80vh] w-full max-w-5xl"
+                                className="relative h-[70vh] sm:h-[80vh] w-full max-w-5xl"
                                 onClick={(event) => event.stopPropagation()}
                             >
                                 <Image
@@ -110,10 +111,10 @@ export const PublicServiceNewsDetailView: React.FC<PublicServiceNewsDetailViewPr
                 </>
             )}
 
-            <p className="text-lg text-gray-700">{data.summary}</p>
+            <p className="text-base sm:text-lg text-gray-700">{data.summary}</p>
 
             <div
-                className="prose prose-red max-w-none text-gray-800"
+                className="prose prose-sm sm:prose-base prose-red max-w-none text-gray-800"
                 dangerouslySetInnerHTML={{ __html: data.content || '' }}
             />
         </article>
