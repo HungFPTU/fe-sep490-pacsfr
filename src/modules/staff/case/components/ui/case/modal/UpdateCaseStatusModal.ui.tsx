@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { useUpdateCaseStatus } from '../../../../hooks/useUpdateCaseStatus';
-import { CASE_STATUSES } from '../../../../constants/case-statuses';
+import { useGetCaseStatuses } from '../../../../hooks/useGetCaseStatuses';
 
 interface UpdateCaseStatusModalProps {
   open: boolean;
@@ -21,9 +21,11 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
   currentStatus,
   onSuccess,
 }) => {
+  const { data: caseStatuses = [], isLoading: isLoadingStatuses } = useGetCaseStatuses();
+  
   // Find current status ID from status name
   const getCurrentStatusId = () => {
-    const status = CASE_STATUSES.find(s => s.name === currentStatus);
+    const status = caseStatuses.find(s => s.name === currentStatus);
     return status?.id || '';
   };
 
@@ -118,14 +120,14 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
                 backgroundSize: '1.5em 1.5em',
               }}
             >
-              {CASE_STATUSES.map((status) => {
+              {caseStatuses.map((status) => {
                 return (
                   <option 
                     key={status.id} 
                     value={status.id}
                     className="py-2"
                   >
-                    {status.name} - {status.description}
+                    {status.name}
                   </option>
                 );
               })}
@@ -139,8 +141,8 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
         {/* Reason */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Lý do
-          </label>
+            Lý do <span className="text-red-500">*</span>
+          </label> 
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
