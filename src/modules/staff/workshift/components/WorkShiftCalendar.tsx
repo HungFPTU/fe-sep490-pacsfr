@@ -1,143 +1,234 @@
 "use client";
 
-import  { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react";
 import type { WorkShift } from "../types";
 import { workshiftService } from "../services/workshift.service";
-import { toLocalDateString, getTodayLocal } from "@/core/utils/date";
+import { getShiftTypeColors } from "../constants";
+import { toLocalDateString } from "@/core/utils/date";
 
 interface WorkShiftCalendarProps {
     shifts: WorkShift[];
-    selectedDate?: string;
-    onDateSelect?: (date: string) => void;
+    isLoading?: boolean;
+    onShiftClick?: (shift: WorkShift) => void;
 }
 
-export function WorkShiftCalendar({ shifts, selectedDate, onDateSelect }: WorkShiftCalendarProps) {
-    const calendarShifts = useMemo(() => {
-        return workshiftService.transformShiftsForCalendar(shifts);
+export function WorkShiftCalendar({ 
+    shifts, 
+    isLoading = false,
+    onShiftClick 
+}: WorkShiftCalendarProps) {
+    const [currentDate, setCurrentDate] = useState(new Date());
+
+    // Get first day of month and number of days
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
+    const startingDayOfWeek = firstDayOfMonth.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+    // Group workshifts by date (filter valid shifts only)
+    const shiftsByDate = useMemo(() => {
+        const map = new Map<string, WorkShift[]>();
+        console.log('🔍 DEBUG - Building shiftsByDate map from', shifts.length, 'shifts');
+        shifts.forEach((shift) => {
+            // Only include valid shifts (not placeholder dates)
+            if (!workshiftService.isValidShift(shift)) {
+                console.log('🔍 DEBUG - Skipping invalid shift:', shift.shiftDate);
+                return;
+            }
+            const dateKey = shift.shiftDate.split('T')[0];
+            console.log('🔍 DEBUG - Adding shift for dateKey:', dateKey, 'time:', shift.startTime, '-', shift.endTime);
+            if (!map.has(dateKey)) {
+                map.set(dateKey, []);
+            }
+            map.get(dateKey)!.push(shift);
+        });
+        console.log('🔍 DEBUG - Final shiftsByDate map:', Array.from(map.keys()));
+        return map;
     }, [shifts]);
 
-    // Get dates with shifts for highlighting
-    const datesWithShifts = useMemo(() => {
-        return new Set(calendarShifts.map(cs => cs.date));
-    }, [calendarShifts]);
+    // Navigate months
+    const goToPreviousMonth = () => {
+        setCurrentDate(new Date(year, month - 1, 1));
+    };
 
-    // Generate calendar for current month
-    const calendarData = useMemo(() => {
+    const goToNextMonth = () => {
+        setCurrentDate(new Date(year, month + 1, 1));
+    };
+
+    const goToToday = () => {
+        setCurrentDate(new Date());
+    };
+
+    // Get shifts for a specific date
+    const getShiftsForDate = (day: number): WorkShift[] => {
+        const date = new Date(year, month, day);
+        const dateKey = toLocalDateString(date);
+        console.log(`🔍 DEBUG - getShiftsForDate(${day}): dateKey=${dateKey}, shiftsByDate has:`, Array.from(shiftsByDate.keys()));
+        const shiftsForDay = shiftsByDate.get(dateKey) || [];
+        console.log(`🔍 DEBUG - Found ${shiftsForDay.length} shifts for ${dateKey}`);
+        return shiftsForDay;
+    };
+
+    // Check if date is today
+    const isToday = (day: number): boolean => {
         const today = new Date();
-        const currentMonth = today.getMonth();
-        const currentYear = today.getFullYear();
+        return (
+            day === today.getDate() &&
+            month === today.getMonth() &&
+            year === today.getFullYear()
+        );
+    };
 
-        const firstDay = new Date(currentYear, currentMonth, 1);
+    // Generate calendar days
+    const calendarDays = useMemo(() => {
+        const days: Array<{ day: number | null; date: Date | null }> = [];
 
-        const calendar = [];
-        const startDate = new Date(firstDay);
-
-        // Adjust to start from Sunday
-        startDate.setDate(startDate.getDate() - startDate.getDay());
-
-        const todayString = getTodayLocal();
-
-        for (let week = 0; week < 6; week++) {
-            const weekDays = [];
-            for (let day = 0; day < 7; day++) {
-                const date = new Date(startDate);
-                date.setDate(startDate.getDate() + (week * 7) + day);
-
-                const dateString = toLocalDateString(date);
-                const hasShift = datesWithShifts.has(dateString);
-                const isCurrentMonth = date.getMonth() === currentMonth;
-                const isToday = dateString === todayString;
-
-                weekDays.push({
-                    date,
-                    dateString,
-                    hasShift,
-                    isCurrentMonth,
-                    isToday,
-                });
-            }
-            calendar.push(weekDays);
+        // Empty cells for days before month starts
+        for (let i = 0; i < startingDayOfWeek; i++) {
+            days.push({ day: null, date: null });
         }
 
-        return calendar;
-    }, [datesWithShifts]);
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            days.push({ day, date: new Date(year, month, day) });
+        }
 
-    const weekdays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+        return days;
+    }, [year, month, daysInMonth, startingDayOfWeek]);
+
+    const monthNames = [
+        'Tháng 1',
+        'Tháng 2',
+        'Tháng 3',
+        'Tháng 4',
+        'Tháng 5',
+        'Tháng 6',
+        'Tháng 7',
+        'Tháng 8',
+        'Tháng 9',
+        'Tháng 10',
+        'Tháng 11',
+        'Tháng 12',
+    ];
+
+    const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-96 bg-white rounded-lg border border-gray-200">
+                <div className="text-gray-500">Đang tải dữ liệu...</div>
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen bg-white rounded-lg shadow-lg p-6">
-            <div className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                    Lịch làm việc tháng {new Date().toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' })}
-                </h2>
-                <div className="flex gap-2">
-                    <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                        <span className="text-sm text-gray-600">Có lịch làm việc</span>
-                    </div>
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm max-w-6xl mx-auto">
+            {/* Calendar Header */}
+            <div className="flex items-center justify-between p-3 border-b border-gray-200">
+                <div className="flex items-center gap-3">
+                    <CalendarIcon className="w-4 h-4 text-indigo-600" />
+                    <h2 className="text-base font-semibold text-gray-900">
+                        {monthNames[month]} {year}
+                    </h2>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={goToPreviousMonth}
+                        className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                        aria-label="Tháng trước"
+                    >
+                        <ChevronLeft className="w-4 h-4 text-gray-600" />
+                    </button>
+                    <button
+                        onClick={goToToday}
+                        className="px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                        Hôm nay
+                    </button>
+                    <button
+                        onClick={goToNextMonth}
+                        className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                        aria-label="Tháng sau"
+                    >
+                        <ChevronRight className="w-4 h-4 text-gray-600" />
+                    </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 mb-4">
-                {weekdays.map(day => (
-                    <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
-                        {day}
-                    </div>
-                ))}
-            </div>
-
-            <div className="grid grid-cols-7 gap-1">
-                {calendarData.map((week, weekIndex) =>
-                    week.map((day, dayIndex) => (
+            {/* Calendar Grid */}
+            <div className="p-3">
+                {/* Day names header */}
+                <div className="grid grid-cols-7 gap-1 mb-1">
+                    {dayNames.map((dayName, idx) => (
                         <div
-                            key={`${weekIndex}-${dayIndex}`}
-                            className={`
-                                relative p-2 text-center text-sm cursor-pointer rounded-lg transition-all
-                                ${day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400'}
-                                ${day.isToday ? 'bg-blue-100 border border-blue-300' : ''}
-                                ${day.hasShift ? 'bg-blue-100 hover:bg-blue-200 border border-blue-300' : 'hover:bg-gray-100'}
-                                ${selectedDate === day.dateString ? 'ring-2 ring-blue-500' : ''}
-                            `}
-                            onClick={() => onDateSelect?.(day.dateString)}
+                            key={idx}
+                            className="text-center text-xs font-semibold text-gray-600 py-1"
                         >
-                            {day.date.getDate()}
-                            {day.hasShift && (
-                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"></div>
-                            )}
+                            {dayName}
                         </div>
-                    ))
-                )}
-            </div>
+                    ))}
+                </div>
 
-            {selectedDate && (
-                <div className="min-h-screen mt-6 p-4 rounded-lg">
-                    <h3 className="font-medium text-gray-900 mb-2">
-                        Lịch làm việc ngày {workshiftService.formatDate(selectedDate)}
-                    </h3>
-                    {(() => {
-                        const dayShifts = workshiftService.getShiftsForDate(shifts, selectedDate);
-                        if (dayShifts.length === 0) {
-                            return <p className="text-gray-500">Không có lịch làm việc</p>;
+                {/* Calendar days */}
+                <div className="grid grid-cols-7 gap-1">
+                    {calendarDays.map(({ day, date }, idx) => {
+                        if (day === null) {
+                            return (
+                                <div
+                                    key={`empty-${idx}`}
+                                    className="h-32 bg-gray-50 rounded border border-transparent"
+                                />
+                            );
                         }
+
+                        const shiftsForDay = getShiftsForDate(day);
+                        const today = isToday(day);
+
                         return (
-                            <div className="space-y-2">
-                                {dayShifts.map(shift => (
-                                    <div key={shift.id} className="flex items-center justify-between p-3 bg-white rounded border">
-                                        <div>
-                                            <div className="font-medium text-gray-900">
-                                                Ca làm việc: {workshiftService.formatTime(shift.startTime)} - {workshiftService.formatTime(shift.endTime)}
+                            <div
+                                key={day}
+                                className={`h-32 border rounded p-1 overflow-y-auto transition-colors ${
+                                    today
+                                        ? 'border-indigo-500 bg-indigo-50'
+                                        : 'border-gray-200 bg-white hover:border-gray-300'
+                                }`}
+                            >
+                                <div
+                                    className={`text-xs font-medium mb-1 ${
+                                        today ? 'text-indigo-700' : 'text-gray-700'
+                                    }`}
+                                >
+                                    {day}
+                                </div>
+                                <div className="space-y-1">
+                                    {shiftsForDay.map((shift) => {
+                                        const colors = getShiftTypeColors(shift.shiftType);
+                                        return (
+                                            <div
+                                                key={shift.id}
+                                                onClick={() => {
+                                                    onShiftClick?.(shift);
+                                                }}
+                                                className={`text-xs px-1.5 py-1 rounded ${colors.bg} ${colors.text} cursor-pointer ${colors.hover} transition-colors truncate`}
+                                                title={`${shift.shiftType} - ${shift.startTime} - ${shift.endTime}`}
+                                            >
+                                                <div className="font-medium truncate text-xs">{shift.shiftType}</div>
+                                                <div className={`text-[10px] ${colors.textLight} truncate`}>
+                                                    {shift.startTime} - {shift.endTime}
+                                                </div>
                                             </div>
-                                            <div className="text-sm text-gray-500">
-                                                Loại: {shift.shiftType}
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                        );
+                                    })}
+                                </div>
                             </div>
                         );
-                    })()}
+                    })}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
