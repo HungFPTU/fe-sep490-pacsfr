@@ -24,11 +24,11 @@ export interface ServiceFilters {
   page: number;
   size: number;
 
-  // Additional UI filters (for future API integration)
-  implementingAgency?: string;
+  // Additional UI filters
+  serviceType?: string;
   field?: string;
-  implementationLevel?: string;
-  targetAudience?: string;
+  executionLevel?: string;
+  onlineAvailable?: boolean | null;
   searchBy?: 'department' | 'province';
 }
 

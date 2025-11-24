@@ -69,6 +69,11 @@ export const ServiceListPage: React.FC = () => {
         setDetailModalOpen(true);
     };
 
+    const handleCloseDetailModal = () => {
+        setDetailModalOpen(false);
+        setDetailData(null);
+    };
+
     const handleDelete = (service: Service) => {
         setDeletingService(service);
         setDeletingId(service.id);
@@ -96,6 +101,7 @@ export const ServiceListPage: React.FC = () => {
         setServiceGroupId('');
         setIsActive(true);
         setPage(DEFAULT_PAGE);
+        refetch();
     };
 
     const handlePageChange = (newPage: number) => {
@@ -153,7 +159,7 @@ export const ServiceListPage: React.FC = () => {
 
             <ServiceDetailModal
                 open={detailModalOpen}
-                onClose={() => setDetailModalOpen(false)}
+                onClose={handleCloseDetailModal}
                 service={detailData}
             />
 
