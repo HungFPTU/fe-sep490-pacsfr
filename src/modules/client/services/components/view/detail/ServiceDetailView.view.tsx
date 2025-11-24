@@ -97,34 +97,34 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
     };
 
     return (
-        <div className={`space-y-6 ${className}`}>
+        <div className={`space-y-4 sm:space-y-6 ${className}`}>
             {/* Header Section */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-3">
-                            <h1 className="text-2xl font-bold text-gray-900">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row items-start justify-between mb-4 gap-4">
+                    <div className="flex-1 w-full">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
+                            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                                 {service.serviceName}
                             </h1>
                             {service.serviceType && (
                                 <Chip
-                                    className="bg-blue-100 text-blue-800 border-blue-200 text-sm font-medium"
+                                    className="bg-blue-100 text-blue-800 border-blue-200 text-xs sm:text-sm font-medium shrink-0"
                                     size="sm"
                                 >
                                     {formatServiceType(service.serviceType)}
                                 </Chip>
                             )}
                         </div>
-                        <div className="flex items-center gap-4 flex-wrap">
-                            <span className="text-lg text-red-600 font-semibold">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 flex-wrap">
+                            <span className="text-base sm:text-lg text-red-600 font-semibold">
                                 Mã dịch vụ: {service.serviceCode}
                             </span>
                             {service.isOnlineAvailable && (
                                 <Chip
-                                    className="bg-green-100 text-green-800 border-green-300"
+                                    className="bg-green-100 text-green-800 border-green-300 shrink-0"
                                     size="sm"
                                     startContent={
-                                        <CheckCircle2 className="w-4 h-4" />
+                                        <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                     }
                                 >
                                     Có thể làm online
@@ -134,14 +134,15 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                     </div>
                     <Button
                         variant="red"
-                        size="lg"
+                        size="default"
+                        className="w-full sm:w-auto shrink-0"
                         onClick={() => setIsDetailModalOpen(true)}
                     >
                         Xem chi tiết đầy đủ
                     </Button>
                 </div>
                 {service.description && (
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                         {service.description}
                     </p>
                 )}
@@ -149,24 +150,24 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
 
             {/* Cách thức thực hiện - Table Format */}
             {service.submissionMethods?.$values && service.submissionMethods.$values.length > 0 && (
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
                         Cách thức thực hiện
                     </h2>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-r border-gray-300">
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300">
                                         Hình thức nộp
                                     </th>
-                                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-r border-gray-300">
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300">
                                         Thời hạn giải quyết
                                     </th>
-                                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-r border-gray-300">
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300">
                                         Phí, lệ phí
                                     </th>
-                                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700">
                                         Mô tả
                                     </th>
                                 </tr>
@@ -174,20 +175,20 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {service.submissionMethods.$values.map((method, index) => (
                                     <tr key={method.id || index} className="hover:bg-gray-50">
-                                        <td className="px-4 py-3 text-sm font-medium text-gray-900 border-r border-gray-300">
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-gray-900 border-r border-gray-300">
                                             {method.submissionMethodName}
                                         </td>
-                                        <td className="px-4 py-3 text-sm text-gray-700 border-r border-gray-300">
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 border-r border-gray-300">
                                             {method.processingTime ? formatProcessingTime(method.processingTime) : service.processingTime || '-'}
                                         </td>
-                                        <td className="px-4 py-3 text-sm text-gray-700 border-r border-gray-300">
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 border-r border-gray-300">
                                             {method.fee !== undefined && method.fee !== null
                                                 ? `Phí: ${formatCurrency(method.fee)}`
                                                 : service.feeAmount !== undefined && service.feeAmount !== null
                                                     ? `Phí: ${formatCurrency(service.feeAmount)}`
                                                     : '-'}
                                         </td>
-                                        <td className="px-4 py-3 text-sm text-gray-700">
+                                        <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700">
                                             {method.description || service.description || '-'}
                                         </td>
                                     </tr>
@@ -203,34 +204,34 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                     <button
                         onClick={() => toggleSection('requiredDocuments')}
-                        className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
+                        className="w-full flex items-center justify-between p-4 sm:p-6 hover:bg-gray-50 transition-colors"
                     >
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                             Thành phần hồ sơ
                         </h2>
                         {expandedSections.requiredDocuments ? (
-                            <ChevronUp className="w-5 h-5 text-gray-500" />
+                            <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
                         ) : (
-                            <ChevronDown className="w-5 h-5 text-gray-500" />
+                            <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
                         )}
                     </button>
                     {expandedSections.requiredDocuments && (
-                        <div className="px-6 pb-6 border-t border-gray-200">
-                            <p className="text-sm font-medium text-gray-700 mb-4 pt-4">Bao gồm:</p>
+                        <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-200">
+                            <p className="text-xs sm:text-sm font-medium text-gray-700 mb-3 sm:mb-4 pt-3 sm:pt-4">Bao gồm:</p>
                             <div className="overflow-x-auto">
                                 <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-r border-gray-300">
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300">
                                                 Loại giấy tờ
                                             </th>
-                                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-r border-gray-300 w-24">
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300 w-20 sm:w-24">
                                                 Bản chính
                                             </th>
-                                            <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-r border-gray-300 w-24">
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300 w-20 sm:w-24">
                                                 Bản sao
                                             </th>
-                                            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 w-48">
+                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 w-32 sm:w-48">
                                                 Mẫu đơn, tờ khai
                                             </th>
                                         </tr>
@@ -241,7 +242,7 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                                                 key={doc.id}
                                                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                                             >
-                                                <td className="px-4 py-3 text-sm text-gray-900 border-r border-gray-300">
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 border-r border-gray-300">
                                                     <div>
                                                         <p className="font-medium">{doc.docTypeName}</p>
                                                         {doc.description && (
@@ -249,13 +250,13 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-700 text-center border-r border-gray-300">
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 text-center border-r border-gray-300">
                                                     1
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-700 text-center border-r border-gray-300">
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 text-center border-r border-gray-300">
                                                     0
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-700">
+                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700">
                                                     -
                                                 </td>
                                             </tr>
@@ -270,35 +271,35 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
 
             {/* Trình tự thực hiện */}
             {service.serviceProcedures?.$values && service.serviceProcedures.$values.length > 0 && (
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
                         Trình tự thực hiện
                     </h2>
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                         {service.serviceProcedures.$values
                             .sort((a, b) => a.stepNumber - b.stepNumber)
                             .map((procedure) => (
-                                <div key={procedure.id} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                                    <div className="shrink-0 w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-sm font-medium">
+                                <div key={procedure.id} className="flex items-start gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                    <div className="shrink-0 w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium">
                                         {procedure.stepNumber}
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm text-gray-700 leading-relaxed">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
                                             <strong>Bước {procedure.stepNumber}: {procedure.stepName}</strong>
                                             {procedure.stepDescription && (
                                                 <>: {procedure.stepDescription}</>
                                             )}
                                         </p>
                                         {(procedure.responsibleUnit || procedure.processingTime || procedure.notes) && (
-                                            <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-gray-600">
+                                            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-gray-600">
                                                 {procedure.responsibleUnit && (
-                                                    <span>Đơn vị: {procedure.responsibleUnit}</span>
+                                                    <span className="break-words">Đơn vị: {procedure.responsibleUnit}</span>
                                                 )}
                                                 {procedure.processingTime && (
                                                     <span>Thời gian: {procedure.processingTime}</span>
                                                 )}
                                                 {procedure.notes && (
-                                                    <span>Ghi chú: {procedure.notes}</span>
+                                                    <span className="break-words">Ghi chú: {procedure.notes}</span>
                                                 )}
                                             </div>
                                         )}
@@ -314,27 +315,27 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                     <button
                         onClick={() => toggleSection('serviceAgencies')}
-                        className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
+                        className="w-full flex items-center justify-between p-4 sm:p-6 hover:bg-gray-50 transition-colors"
                     >
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                             Cơ quan thực hiện
                         </h2>
                         {expandedSections.serviceAgencies ? (
-                            <ChevronUp className="w-5 h-5 text-gray-500" />
+                            <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
                         ) : (
-                            <ChevronDown className="w-5 h-5 text-gray-500" />
+                            <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
                         )}
                     </button>
                     {expandedSections.serviceAgencies && (
-                        <div className="px-6 pb-6 border-t border-gray-200">
-                            <div className="pt-4 space-y-3">
+                        <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-200">
+                            <div className="pt-3 sm:pt-4 space-y-2 sm:space-y-3">
                                 {service.serviceAgencies.$values.map((agency) => (
-                                    <div key={agency.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                        <h3 className="font-medium text-gray-900 mb-1">
+                                    <div key={agency.id} className="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                        <h3 className="text-sm sm:text-base font-medium text-gray-900 mb-1">
                                             {agency.agencyName}
                                         </h3>
                                         {agency.description && (
-                                            <p className="text-sm text-gray-600">
+                                            <p className="text-xs sm:text-sm text-gray-600">
                                                 {agency.description}
                                             </p>
                                         )}
@@ -350,21 +351,21 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                 <button
                     onClick={() => toggleSection('requirements')}
-                    className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between p-4 sm:p-6 hover:bg-gray-50 transition-colors"
                 >
-                    <h2 className="text-xl font-bold text-gray-900">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                         Yêu cầu, điều kiện
                     </h2>
                     {expandedSections.requirements ? (
-                        <ChevronUp className="w-5 h-5 text-gray-500" />
+                        <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
                     ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                        <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
                     )}
                 </button>
                 {expandedSections.requirements && (
-                    <div className="px-6 pb-6 border-t border-gray-200">
-                        <div className="pt-4">
-                            <p className="text-sm text-gray-700 leading-relaxed">
+                    <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-200">
+                        <div className="pt-3 sm:pt-4">
+                            <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
                                 {service.description || 'Không có thông tin'}
                             </p>
                         </div>
@@ -374,16 +375,16 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
 
             {/* Căn cứ pháp lý */}
             {service.legalBases?.$values && service.legalBases.$values.length > 0 && (
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <Scale className="w-5 h-5 text-blue-600" />
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                        <Scale className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
                         Căn cứ pháp lý
                     </h2>
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                         {service.legalBases.$values.map((legalBasis, index) => (
-                            <div key={index} className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                <h3 className="font-semibold text-gray-900 mb-3">{legalBasis.name}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                            <div key={index} className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">{legalBasis.name}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
                                     <div>
                                         <span className="text-gray-600">Số văn bản:</span>
                                         <span className="font-semibold text-gray-900 ml-2">{legalBasis.documentNumber}</span>
@@ -416,9 +417,9 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                                         href={legalBasis.fileUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                                        className="inline-flex items-center gap-2 mt-2 sm:mt-3 px-3 sm:px-4 py-1.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium"
                                     >
-                                        <Download className="w-4 h-4" />
+                                        <Download className="w-3 h-3 sm:w-4 sm:h-4" />
                                         Tải tài liệu
                                     </a>
                                 )}
@@ -429,11 +430,11 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
             )}
 
             {/* Thủ tục hành chính liên quan */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
                     Thủ tục hành chính liên quan
                 </h2>
-                <p className="text-sm text-gray-600">Không có thông tin</p>
+                <p className="text-xs sm:text-sm text-gray-600">Không có thông tin</p>
             </div>
 
             {/* Detail Modal */}

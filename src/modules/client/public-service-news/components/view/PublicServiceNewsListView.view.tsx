@@ -90,10 +90,10 @@ export const PublicServiceNewsListView: React.FC = () => {
     };
 
     return (
-        <section className="space-y-6">
+        <section className="space-y-4 sm:space-y-6">
             <div>
-                <h1 className="text-3xl font-bold text-gray-900">Tin tức dịch vụ công</h1>
-                <p className="mt-2 text-gray-600">Cập nhật thông tin mới nhất về dịch vụ công và thủ tục hành chính.</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Tin tức dịch vụ công</h1>
+                <p className="mt-2 text-sm sm:text-base text-gray-600">Cập nhật thông tin mới nhất về dịch vụ công và thủ tục hành chính.</p>
             </div>
 
             <PublicServiceNewsFilter

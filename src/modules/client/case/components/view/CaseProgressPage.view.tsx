@@ -150,17 +150,17 @@ export const CaseProgressPageView: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <main className="container mx-auto px-4 py-8">
+            <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
                 <div className="mx-auto max-w-5xl">
-                    <div className="mb-8 text-center">
-                        <div className="inline-flex items-center gap-3 rounded-full border border-red-100 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700">
-                            <span className="h-2 w-2 rounded-full bg-red-500" />
-                            Tra cứu tiến độ hồ sơ trực tuyến
+                    <div className="mb-6 sm:mb-8 text-center">
+                        <div className="inline-flex items-center gap-2 sm:gap-3 rounded-full border border-red-100 bg-red-50 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-red-700">
+                            <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
+                            <span className="whitespace-nowrap">Tra cứu tiến độ hồ sơ trực tuyến</span>
                         </div>
-                        <h1 className="mt-4 text-3xl font-bold text-blue-900">
+                        <h1 className="mt-3 sm:mt-4 text-2xl sm:text-3xl font-bold text-blue-900 px-2">
                             Theo dõi trạng thái hồ sơ của bạn
                         </h1>
-                        <p className="mt-2 text-base text-gray-600">
+                        <p className="mt-2 text-sm sm:text-base text-gray-600 px-2">
                             Nhập mã hồ sơ đã được cấp để nhận thông tin xử lý mới nhất và đảm bảo vượt CAPTCHA bảo mật từ Google.
                         </p>
                     </div>

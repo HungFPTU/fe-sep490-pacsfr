@@ -72,25 +72,27 @@ export const ServicePageView: React.FC = () => {
     const isLoading = isAllServicesLoading || isServiceGroupsLoading;
 
     return (
-        <section className="py-12 bg-white">
-            <div className="container mx-auto px-4">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-4">
+        <section className="py-8 sm:py-12 bg-white">
+            <div className="container mx-auto px-4 sm:px-6">
+                <div className="text-center mb-6 sm:mb-8">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
                         Dịch vụ công trực tuyến
                     </h2>
-                    <p className="text-gray-600">
+                    <p className="text-sm sm:text-base text-gray-600">
                         Chọn loại dịch vụ phù hợp với nhu cầu của bạn
                     </p>
                 </div>
 
                 {/* Type Filter */}
-                <ServiceTypeFilter
-                    selectedType={selectedType}
-                    onTypeChange={setSelectedType}
-                />
+                <div className="mb-6 sm:mb-8">
+                    <ServiceTypeFilter
+                        selectedType={selectedType}
+                        onTypeChange={setSelectedType}
+                    />
+                </div>
 
                 {/* Service Groups Grid - 2 columns */}
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
                     {/* Công dân Column */}
                     {(selectedType === null || selectedType === ServiceType.CITIZEN) && (
                         <ServiceTypeSection
