@@ -1,8 +1,6 @@
 // Main WorkShift entity type
 export type WorkShift = {
     id: string;
-    counterId: string;
-    staffId: string;
     shiftDate: string | Date;
     startTime: string;
     endTime: string;
@@ -14,10 +12,8 @@ export type WorkShift = {
     $id?: string;
 };
 
-// Request types
+
 export type CreateWorkShiftRequest = {
-    counterId: string;
-    staffId: string;
     shiftDate: string | Date;
     startTime: string;
     endTime: string;
@@ -27,8 +23,6 @@ export type CreateWorkShiftRequest = {
 
 export type UpdateWorkShiftRequest = {
     id: string;
-    counterId: string;
-    staffId: string;
     shiftDate: string | Date;
     startTime: string;
     endTime: string;
@@ -36,11 +30,9 @@ export type UpdateWorkShiftRequest = {
     description?: string;
 };
 
-// Work Shift Assignment type (for assigned shifts)
+// Work Shift Assignment 
 export type WorkShiftAssignment = {
     id: string;
-    counterId: string;
-    staffId: string;
     shiftDate: string;
     startTime: string;
     endTime: string;
@@ -49,14 +41,12 @@ export type WorkShiftAssignment = {
     $id?: string;
 };
 
-// Filter types
+
 export type WorkShiftFilters = {
     keyword?: string;
-    counterId?: string; // ← thêm
-    staffId?: string;
     shiftType?: string;
-    shiftDate?: string; // ISO 'YYYY-MM-DD' hoặc ISODate
-    fromTime?: string; // 'HH:mm' hoặc 'HH:mm:ss'
+    shiftDate?: string; 
+    fromTime?: string; 
     toTime?: string;
     isActive?: boolean;
     page?: number;
@@ -82,19 +72,49 @@ export type ServiceGroup = {
     status: string;
 };
 
-// Staff types
-export type Staff = {
-    id: string;
-    staffCode: string;
-    fullName: string;
-    username?: string;
-    email?: string;
-    phone?: string;
-    position?: string;
-    roleType?: string;
-    specialization?: string;
-    isActive: boolean;
-    orgUnitName?: string;
-    createdAt?: string | Date;
+
+export type AssignStaffWorkShiftRequest = {
+    workShiftId: string;
+    staffId: string;
+    counterId: string;
+    workDate: string | Date;
+    status?: string;
+    checkInTime?: string | Date;
+    checkOutTime?: string | Date;
+    notes?: string;
 };
+
+
+export type CounterOption = {
+    id: string;
+    counterName: string;
+};
+
+export type StaffOption = {
+    id: string;
+    fullName: string;
+};
+
+// Staff WorkShift 
+export type StaffWorkShift = {
+    id: string;
+    workShiftId: string;
+    staffId: string;
+    counterId?: string; 
+    workDate: string | Date;
+    status: string;
+    checkInTime?: string | Date;
+    checkOutTime?: string | Date;
+    isDeleted: boolean;
+    staffName: string;
+    shiftType: string;
+    startTime: string;
+    endTime: string;
+    counterName: string;
+    createdAt: string | Date;
+    createdBy?: string;
+    notes?: string;
+    $id?: string;
+};
+
 

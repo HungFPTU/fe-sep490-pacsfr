@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { CreateCaseRequest } from "../../../../dashboard/types";
+import { useSubmissionMethods } from "../../../hooks/useSubmissionMethods";
 
 interface PriorityLevel {
     value: number;
@@ -11,16 +12,16 @@ interface PriorityLevel {
 interface CaseFormFieldsProps {
     caseData: CreateCaseRequest;
     priorityLevels: PriorityLevel[];
-    submissionMethods: string[];
     onDataChange: (data: CreateCaseRequest) => void;
 }
 
 export function CaseFormFields({
     caseData,
     priorityLevels,
-    submissionMethods,
     onDataChange,
 }: CaseFormFieldsProps) {
+    const { data: submissionMethods = [], isLoading } = useSubmissionMethods();
+
     return (
         <div className="space-y-6">
             {/* Priority Level */}
@@ -42,17 +43,26 @@ export function CaseFormFields({
             {/* Submission Method */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phương thức nộp
+                    Phương thức nộp <span className="text-red-500">*</span>
                 </label>
                 <select
-                    value={caseData.submissionMethod}
-                    onChange={(e) => onDataChange({ ...caseData, submissionMethod: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={caseData.submissionMethodId}
+                    onChange={(e) => onDataChange({ ...caseData, submissionMethodId: e.target.value })}
+                    disabled={isLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
+                    <option value="">{isLoading ? "Đang tải..." : "-- Chọn phương thức nộp --"}</option>
                     {submissionMethods.map(method => (
-                        <option key={method} value={method}>{method}</option>
+                        <option key={method.id} value={method.id}>
+                            {method.submissionMethodName} {method.fee > 0 ? `(${method.fee.toLocaleString()}đ)` : "(Miễn phí)"}
+                        </option>
                     ))}
                 </select>
+                {submissionMethods.find(m => m.id === caseData.submissionMethodId) && (
+                    <p className="text-xs text-gray-500 mt-1">
+                        {submissionMethods.find(m => m.id === caseData.submissionMethodId)?.description}
+                    </p>
+                )}
             </div>
 
             {/* Notes */}
@@ -61,7 +71,7 @@ export function CaseFormFields({
                     Ghi chú
                 </label>
                 <textarea
-                    value={caseData.notes}
+                    value={caseData.notes || ""}
                     onChange={(e) => onDataChange({ ...caseData, notes: e.target.value })}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"

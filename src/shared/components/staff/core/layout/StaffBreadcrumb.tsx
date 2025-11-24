@@ -44,6 +44,12 @@ export function StaffBreadcrumb() {
         let currentPath = '';
         paths.forEach((path, index) => {
             currentPath += `/${path}`;
+            
+            // Skip the "staff" segment - don't display it in breadcrumb
+            if (path === 'staff') {
+                return;
+            }
+            
             const label = pathLabels[path] || path.charAt(0).toUpperCase() + path.slice(1);
 
             // Don't add link for the last item
@@ -59,9 +65,19 @@ export function StaffBreadcrumb() {
 
     const breadcrumbs = generateBreadcrumbs();
 
-    // Don't show breadcrumb on homepage
+    // On dashboard, only show home icon without breadcrumbs
     if (pathname === '/staff/dashboard' || pathname === '/staff/dashboard/') {
-        return null;
+        return (
+            <nav className="flex items-center gap-2 px-4 py-3 text-sm" aria-label="Breadcrumb">
+                <Link
+                    href="/staff/dashboard"
+                    className="flex items-center gap-1 text-slate-600 transition-colors hover:text-slate-900"
+                >
+                    <Home className="h-4 w-4" />
+                    <span className="hidden sm:inline">Trang chủ</span>
+                </Link>
+            </nav>
+        );
     }
 
     return (

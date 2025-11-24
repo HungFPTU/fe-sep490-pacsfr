@@ -57,7 +57,7 @@ export function CreateCasePageView() {
         guestId: "",
         serviceId: "",
         priorityLevel: 0,
-        submissionMethod: "Trực tiếp",
+        submissionMethodId: "",
         notes: "",
         createdBy: "system",
     });
@@ -79,7 +79,6 @@ export function CreateCasePageView() {
     const idTypes = ["CCCD", "CMND", "Hộ chiếu"];
     const genders = ["Nam", "Nữ", "Khác"];
     const guestTypes = ["Cá nhân", "Tổ chức"];
-    const submissionMethods = ["Trực tiếp", "Online", "Qua điện thoại", "Qua email"];
     const priorityLevels = [
         { value: 0, label: "Bình thường" },
         { value: 2, label: "Ưu tiên thấp" },
@@ -363,7 +362,6 @@ export function CreateCasePageView() {
                             <CaseFormFields
                                 caseData={caseData}
                                 priorityLevels={priorityLevels}
-                                submissionMethods={submissionMethods}
                                 onDataChange={setCaseData}
                             />
 

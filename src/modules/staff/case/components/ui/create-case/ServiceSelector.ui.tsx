@@ -52,9 +52,9 @@ export function ServiceSelector({
                     type="button"
                     onClick={onSearch}
                     disabled={isSearching}
-                    className="bg-indigo-600 hover:bg-indigo-700"
+                    className="bg-indigo-600 hover:bg-indigo-700 flex items-center gap-2"
                 >
-                    <Search className="w-4 h-4 mr-2" />
+                    <Search className="w-4 h-4" />
                     {isSearching ? "Đang tìm..." : "Tìm kiếm"}
                 </Button>
             </div>
