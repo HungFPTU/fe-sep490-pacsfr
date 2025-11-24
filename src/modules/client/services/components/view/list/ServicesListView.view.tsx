@@ -76,13 +76,13 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
     };
 
     return (
-        <div className={`space-y-6 ${className}`}>
+        <div className={`space-y-4 sm:space-y-6 ${className}`}>
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                     Thủ tục hành chính
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-sm sm:text-base text-gray-600 mt-1">
                     Tìm kiếm và tra cứu các thủ tục hành chính
                 </p>
             </div>
@@ -106,21 +106,23 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
             {/* Results Summary */}
             {pagination && (
                 <Card className="bg-gray-50 border-gray-200">
-                    <CardBody className="p-4">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                            <p className="text-gray-700">
+                    <CardBody className="p-3 sm:p-4">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-sm sm:text-base text-gray-700">
                                 <span className="font-semibold">{pagination.total}</span> thủ tục trong hệ thống
                                 {activeFilters.keyword && (
-                                    <span> cho từ khóa <strong>&quot;{activeFilters.keyword}&quot;</strong></span>
+                                    <span className="block sm:inline"> cho từ khóa <strong>&quot;{activeFilters.keyword}&quot;</strong></span>
                                 )}
                             </p>
-                            {isUsingAdvancedFilters && (
-                                <p className="text-sm text-emerald-600">
-                                    {filteredServices.length} kết quả phù hợp bộ lọc nâng cao trên trang hiện tại
-                                </p>
-                            )}
-                            <div className="text-sm text-gray-600">
-                                Trang {pagination.page} / {pagination.totalPages}
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                {isUsingAdvancedFilters && (
+                                    <p className="text-xs sm:text-sm text-emerald-600">
+                                        {filteredServices.length} kết quả phù hợp bộ lọc nâng cao
+                                    </p>
+                                )}
+                                <div className="text-xs sm:text-sm text-gray-600">
+                                    Trang {pagination.page} / {pagination.totalPages}
+                                </div>
                             </div>
                         </div>
                     </CardBody>
@@ -137,7 +139,7 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
 
             {/* Pagination */}
             {pagination && pagination.totalPages > 1 && (
-                <div className="mt-8">
+                <div className="mt-4 sm:mt-8">
                     <ServicePagination
                         pagination={pagination}
                         onPageChange={handlePageChange}

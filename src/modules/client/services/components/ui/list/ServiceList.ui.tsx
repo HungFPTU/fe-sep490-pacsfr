@@ -61,19 +61,19 @@ export const ServiceList: React.FC<ServiceListProps> = ({
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Mã số
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="px-3 sm:px-4 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Tên
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="hidden md:table-cell px-4 md:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Số quyết định
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="hidden lg:table-cell px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Cấp thực hiện
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="hidden lg:table-cell px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Lĩnh vực
                             </th>
                         </tr>
@@ -81,33 +81,45 @@ export const ServiceList: React.FC<ServiceListProps> = ({
                     <tbody className="bg-white divide-y divide-gray-200">
                         {services.map((service) => (
                             <tr key={service.id} className="hover:bg-gray-50 transition-colors">
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4">
                                     <Link
                                         href={`/thu-tuc-hanh-chinh/${service.id}`}
-                                        className="text-sm font-medium text-red-600 hover:text-red-800 transition-colors cursor-pointer"
+                                        className="text-xs sm:text-sm font-medium text-red-600 hover:text-red-800 transition-colors cursor-pointer"
                                     >
                                         {service.serviceCode}
                                     </Link>
                                 </td>
-                                <td className="px-6 py-4">
+                                <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4">
                                     <div>
-                                        <div className="text-sm font-medium text-gray-900">
+                                        <div className="text-xs sm:text-sm font-medium text-gray-900">
                                             {service.serviceName}
                                         </div>
                                         {showDescription && (
-                                            <div className="text-sm text-gray-500 line-clamp-2 mt-1">
+                                            <div className="text-xs sm:text-sm text-gray-500 line-clamp-2 mt-1">
                                                 {service.description}
                                             </div>
                                         )}
+                                        {/* Mobile: Show additional info */}
+                                        <div className="md:hidden mt-2 space-y-1 text-xs text-gray-600">
+                                            {service.decisionNumber && (
+                                                <div><strong>Số QĐ:</strong> {service.decisionNumber}</div>
+                                            )}
+                                            {service.executionLevel && (
+                                                <div><strong>Cấp:</strong> {service.executionLevel}</div>
+                                            )}
+                                            {service.field && (
+                                                <div><strong>Lĩnh vực:</strong> {service.field}</div>
+                                            )}
+                                        </div>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <td className="hidden md:table-cell px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                                     {service.decisionNumber || '-'}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <td className="hidden lg:table-cell px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                                     {service.executionLevel || '-'}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <td className="hidden lg:table-cell px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900">
                                     {service.field || '-'}
                                 </td>
                             </tr>
