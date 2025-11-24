@@ -1,11 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Card } from "@/shared/components/ui/card.ui";
 import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/ui/input.ui";
+import { Select } from "@/shared/components/ui/select.ui";
 import { User, Calendar, Check, FileText } from "lucide-react";
 import type { CreateGuestRequest } from "../../../../dashboard/types";
+import { useProvinces, useDistricts, useWards } from "../../../hooks";
+import { getProvinceById, getDistrictById, getWardById } from "../../../constants/vietnam-address";
 
 interface GuestFormProps {
     guestData: CreateGuestRequest;
@@ -38,6 +41,65 @@ export function GuestForm({
     onContinueToCase,
     onFinish,
 }: GuestFormProps) {
+    // Store IDs for cascading lookup in state-like refs
+    // We need to track selected IDs separately to properly cascade
+    const [selectedProvinceId, setSelectedProvinceId] = React.useState<string>("");
+    const [selectedDistrictId, setSelectedDistrictId] = React.useState<string>("");
+
+    // Fetch Vietnam address data
+    const { data: provinces } = useProvinces();
+    const { data: districts } = useDistricts(selectedProvinceId || undefined);
+    const { data: wards } = useWards(selectedDistrictId || undefined);
+
+    // Convert to select options
+    const provinceOptions = useMemo(
+        () => provinces.map((p: any) => ({ value: p.id, label: p.name })),
+        [provinces]
+    );
+
+    const districtOptions = useMemo(
+        () => districts.map((d: any) => ({ value: d.id, label: d.name })),
+        [districts]
+    );
+
+    const wardOptions = useMemo(
+        () => wards.map((w: any) => ({ value: w.id, label: w.name })),
+        [wards]
+    );
+
+    // Handle province change
+    const handleProvinceChange = (proId: string) => {
+        const selectedProvince = provinces.find((p: any) => p.id === proId);
+        setSelectedProvinceId(proId);
+        setSelectedDistrictId(""); // Reset district ID
+        onDataChange({
+            ...guestData,
+            city: selectedProvince?.name || "", // Store province name for display
+            ward: "", // Reset district name
+            country: "", // Reset ward name
+        });
+    };
+
+    // Handle district change
+    const handleDistrictChange = (distId: string) => {
+        const selectedDistrict = districts.find((d: any) => d.id === distId);
+        setSelectedDistrictId(distId);
+        onDataChange({
+            ...guestData,
+            ward: selectedDistrict?.name || "", // Store district name for display
+            country: "", // Reset ward name
+        });
+    };
+
+    // Handle ward change
+    const handleWardChange = (wId: string) => {
+        const selectedWard = wards.find((w: any) => w.id === wId);
+        onDataChange({
+            ...guestData,
+            country: selectedWard?.name || "", // Store ward name for display
+        });
+    };
+
     return (
         <div className="space-y-6">
             {/* Success State */}
@@ -308,41 +370,62 @@ export function GuestForm({
                         />
                     </div>
 
-                    {/* Row 9: Ward, City, Country */}
+                    {/* Row 9: Province, District, Ward */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Phường/Xã
-                            </label>
-                            <Input
-                                value={guestData.ward}
-                                onChange={(e) => onDataChange({ ...guestData, ward: e.target.value })}
-                                placeholder="VD: Phường Đông Thọ"
-                                disabled={isSuccess}
-                            />
-                        </div>
-
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Tỉnh/Thành phố
                             </label>
-                            <Input
-                                value={guestData.city}
-                                onChange={(e) => onDataChange({ ...guestData, city: e.target.value })}
-                                placeholder="VD: Thanh Hóa"
+                            <Select
+                                value={
+                                    provinces.find((p: any) => p.name === guestData.city)?.id || ""
+                                }
+                                onChange={(e) => handleProvinceChange(e.target.value)}
+                                options={provinceOptions}
+                                placeholder="Chọn tỉnh/thành phố"
                                 disabled={isSuccess}
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Quốc gia
+                                Quận/Huyện
                             </label>
-                            <Input
-                                value={guestData.country}
-                                onChange={(e) => onDataChange({ ...guestData, country: e.target.value })}
-                                placeholder="VD: Việt Nam"
-                                disabled={isSuccess}
+                            <Select
+                                value={
+                                    districts.find((d: any) => d.name === guestData.ward)?.id || ""
+                                }
+                                onChange={(e) => handleDistrictChange(e.target.value)}
+                                options={districtOptions}
+                                placeholder={
+                                    !guestData.city
+                                        ? "Chọn tỉnh/thành phố trước"
+                                        : districtOptions.length > 0
+                                          ? `Chọn quận/huyện (${districtOptions.length})`
+                                          : "Không có dữ liệu"
+                                }
+                                disabled={isSuccess || !guestData.city || districtOptions.length === 0}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Phường/Xã
+                            </label>
+                            <Select
+                                value={
+                                    wards.find((w: any) => w.name === guestData.country)?.id || ""
+                                }
+                                onChange={(e) => handleWardChange(e.target.value)}
+                                options={wardOptions}
+                                placeholder={
+                                    !guestData.ward
+                                        ? "Chọn quận/huyện trước"
+                                        : wardOptions.length > 0
+                                          ? `Chọn phường/xã (${wardOptions.length})`
+                                          : "Không có dữ liệu"
+                                }
+                                disabled={isSuccess || !guestData.ward || wardOptions.length === 0}
                             />
                         </div>
                     </div>
