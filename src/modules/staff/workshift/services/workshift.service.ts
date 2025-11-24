@@ -5,7 +5,18 @@ import { formatLocalDate, parseLocalDate } from "@/core/utils/date";
 export const workshiftService = {
     async getMyShifts() {
         const response = await workshiftApi.getMyShifts();
-        return response.data;
+        console.log('🔍 DEBUG - API Response:', response);
+        console.log('🔍 DEBUG - data.items:', response.data?.items);
+        console.log('🔍 DEBUG - data.items.$values:', response.data?.items?.$values);
+        return response;
+    },
+
+    /**
+     * Validate if shift is not a placeholder
+     * Filter out shifts with date 0001-01-01 (placeholder date)
+     */
+    isValidShift(shift: WorkShift): boolean {
+        return !shift.shiftDate.startsWith('0001-01-01');
     },
 
     /**
@@ -14,8 +25,13 @@ export const workshiftService = {
     transformShiftsForCalendar(shifts: WorkShift[]): CalendarShift[] {
         const calendarShifts = new Map<string, WorkShift[]>();
 
-        // Group shifts by date
+        // Filter out placeholder shifts and group by date
         shifts.forEach(shift => {
+            // Only include valid shifts (exclude placeholder shifts with 0001-01-01 date)
+            if (!this.isValidShift(shift)) {
+                return;
+            }
+
             const date = shift.shiftDate.split('T')[0]; // Get YYYY-MM-DD part
             if (!calendarShifts.has(date)) {
                 calendarShifts.set(date, []);
@@ -33,7 +49,9 @@ export const workshiftService = {
      * Get shifts for a specific date
      */
     getShiftsForDate(shifts: WorkShift[], date: string): WorkShift[] {
-        return shifts.filter(shift => shift.shiftDate.startsWith(date));
+        return shifts.filter(shift => 
+            this.isValidShift(shift) && shift.shiftDate.startsWith(date)
+        );
     },
 
     /**

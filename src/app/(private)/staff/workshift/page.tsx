@@ -1,14 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { WorkShiftCalendar, workshiftService } from "@/modules/staff/workshift";
 import { LoadingSpinner } from "@/shared/components/common/LoadingSpinner.com";
-import { parseLocalDate } from "@/core/utils/date";
 
 export default function WorkShiftPage() {
-    const [selectedDate, setSelectedDate] = useState<string | undefined>();
-
     const { data: workshiftResponse, isLoading, error } = useQuery({
         queryKey: ["workshift", "my-shifts"],
         queryFn: workshiftService.getMyShifts,
@@ -34,7 +31,14 @@ export default function WorkShiftPage() {
         );
     }
 
-    const shifts = workshiftResponse?.$values || [];
+    const allShifts = workshiftResponse?.data?.items?.$values || [];
+    // Filter out placeholder shifts before passing to calendar and display
+    const shifts = allShifts.filter(shift => workshiftService.isValidShift(shift));
+    console.log('🔍 DEBUG - Page: allShifts:', allShifts.length, 'filtered shifts:', shifts.length);
+    console.log('🔍 DEBUG - Page: First shift:', shifts[0]);
+    if (shifts.length > 0) {
+        console.log('🔍 DEBUG - Page: All shifts:', shifts.map(s => ({ date: s.shiftDate, time: s.startTime + '-' + s.endTime })));
+    }
 
     return (
         <div className="min-h-screen py-8">
@@ -44,73 +48,19 @@ export default function WorkShiftPage() {
                         Lịch làm việc
                     </h1>
                     <p className="text-gray-600">
-                        Xem lịch làm việc của bạn trong tháng
+                        Xem lịch làm việc của bạn. Click vào ngày để xem chi tiết các ca làm việc.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Calendar */}
-                    <div className="lg:col-span-2">
-                        <WorkShiftCalendar
-                            shifts={shifts}
-                            selectedDate={selectedDate}
-                            onDateSelect={setSelectedDate}
-                        />
-                    </div>
-
-                    {/* Summary */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-white rounded-lg shadow p-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                                Tổng quan tháng này
-                            </h3>
-
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-600">Tổng số ca làm việc:</span>
-                                    <span className="font-semibold text-gray-900">{shifts.length}</span>
-                                </div>
-
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-600">Số ngày có lịch:</span>
-                                    <span className="font-semibold text-gray-900">
-                                        {new Set(shifts.map(s => s.shiftDate.split('T')[0])).size}
-                                    </span>
-                                </div>
-
-                                {selectedDate && (
-                                    <>
-                                        <div className="border-t pt-4">
-                                            <h4 className="font-medium text-gray-900 mb-2">
-                                                Chi tiết ngày {parseLocalDate(selectedDate).getDate()}
-                                            </h4>
-                                            {(() => {
-                                                const dayShifts = workshiftService.getShiftsForDate(shifts, selectedDate);
-                                                if (dayShifts.length === 0) {
-                                                    return <p className="text-gray-500">Không có lịch làm việc</p>;
-                                                }
-                                                return (
-                                                    <div className="space-y-2">
-                                                        {dayShifts.map(shift => (
-                                                            <div key={shift.id} className="text-sm">
-                                                                <div className="font-medium">
-                                                                    {workshiftService.formatTime(shift.startTime)} - {workshiftService.formatTime(shift.endTime)}
-                                                                </div>
-                                                                <div className="text-gray-500">
-                                                                    {shift.shiftType}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                );
-                                            })()}
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {/* Calendar */}
+                <WorkShiftCalendar
+                    shifts={shifts}
+                    isLoading={isLoading}
+                    onShiftClick={(shift) => {
+                        // Could open a modal here in the future
+                        console.log('Shift clicked:', shift);
+                    }}
+                />
             </div>
         </div>
     );
