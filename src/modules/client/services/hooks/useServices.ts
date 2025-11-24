@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ServiceService } from "../services/service.service";
 import { extractServiceFromDetail } from "../mappers";
@@ -57,20 +57,32 @@ export const useSearchServices = (keyword: string, page: number = 1, size: numbe
 
 // Hook for service filters state management
 export const useServiceFilters = (initialFilters: Partial<ServiceFilters> = {}) => {
-    const [filters, setFilters] = useState<ServiceFilters>({
+    const baseFilters: ServiceFilters = {
         keyword: "",
         serviceGroupId: "",
         legalBasisId: "",
         isActive: null,
         page: 1,
         size: 10,
-        implementingAgency: "",
+        serviceType: "",
         field: "",
-        implementationLevel: "",
-        targetAudience: "",
+        executionLevel: "",
+        onlineAvailable: null,
         searchBy: "department",
+    };
+
+    const [filters, setFilters] = useState<ServiceFilters>({
+        ...baseFilters,
         ...initialFilters,
     });
+
+    useEffect(() => {
+        setFilters((prev) => ({
+            ...prev,
+            ...initialFilters,
+            page: initialFilters.page ?? prev.page,
+        }));
+    }, [JSON.stringify(initialFilters)]);
 
     const updateFilter = useCallback((key: keyof ServiceFilters, value: string | boolean | null) => {
         setFilters(prev => ({
@@ -88,10 +100,10 @@ export const useServiceFilters = (initialFilters: Partial<ServiceFilters> = {}) 
             isActive: null,
             page: 1,
             size: 10,
-            implementingAgency: "",
+            serviceType: "",
             field: "",
-            implementationLevel: "",
-            targetAudience: "",
+            executionLevel: "",
+            onlineAvailable: null,
             searchBy: "department",
         });
     }, []);
