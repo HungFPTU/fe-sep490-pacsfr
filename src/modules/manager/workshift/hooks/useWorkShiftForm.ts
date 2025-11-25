@@ -2,6 +2,12 @@ import { useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import type { WorkShift, CreateWorkShiftRequest } from '../types';
+import {
+  validateShiftTypeNotEmpty,
+  validateStartTimeNotEmpty,
+  validateEndTimeNotEmpty,
+  validateShiftDateNotPast,
+} from '../utils/validation';
 
 export interface WorkShiftFormValues {
   shiftDate: string;
@@ -51,16 +57,27 @@ export const useWorkShiftForm = ({
     defaultValues: toFormValues(initData),
     onSubmit: async ({ value }) => {
       // Final validation before submit
-      if (!value.shiftType?.trim()) {
-        addToast({ message: 'Vui lòng nhập tên ca', type: 'error' });
+      const shiftDateError = validateShiftDateNotPast(value.shiftDate);
+      if (shiftDateError) {
+        addToast({ message: shiftDateError, type: 'error' });
         return;
       }
-      if (!value.startTime?.trim()) {
-        addToast({ message: 'Vui lòng nhập giờ bắt đầu', type: 'error' });
+
+      const shiftTypeError = validateShiftTypeNotEmpty(value.shiftType);
+      if (shiftTypeError) {
+        addToast({ message: shiftTypeError, type: 'error' });
         return;
       }
-      if (!value.endTime?.trim()) {
-        addToast({ message: 'Vui lòng nhập giờ kết thúc', type: 'error' });
+
+      const startTimeError = validateStartTimeNotEmpty(value.startTime);
+      if (startTimeError) {
+        addToast({ message: startTimeError, type: 'error' });
+        return;
+      }
+
+      const endTimeError = validateEndTimeNotEmpty(value.endTime);
+      if (endTimeError) {
+        addToast({ message: endTimeError, type: 'error' });
         return;
       }
 

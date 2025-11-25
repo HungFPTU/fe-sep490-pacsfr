@@ -9,6 +9,12 @@ import {
 import { FormApiOf } from '@/types/types';
 import { WorkShiftFormValues } from '../../../hooks/useWorkShiftForm';
 import { WORKSHIFT_TYPE_OPTIONS } from '../../../constants';
+import {
+  validateShiftDate,
+  validateStartTimeRequired,
+  validateEndTimeRequired,
+  validateShiftTypeRequired,
+} from '../../../utils/validation';
 
 interface FormProps {
   form: FormApiOf<WorkShiftFormValues>;
@@ -23,7 +29,7 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
       <form.Field
         name="shiftDate"
         validators={{
-          onChange: ({ value }) => (!value ? 'Ngày làm việc là bắt buộc' : undefined),
+          onChange: ({ value }) => validateShiftDate(value),
         }}
       >
         {() => (
@@ -43,7 +49,7 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
         <form.Field
           name="startTime"
           validators={{
-            onChange: ({ value }) => (!value ? 'Giờ bắt đầu là bắt buộc' : undefined),
+            onChange: ({ value }) => validateStartTimeRequired(value),
           }}
         >
           {() => (
@@ -61,7 +67,7 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
         <form.Field
           name="endTime"
           validators={{
-            onChange: ({ value }) => (!value ? 'Giờ kết thúc là bắt buộc' : undefined),
+            onChange: ({ value }) => validateEndTimeRequired(value),
           }}
         >
           {() => (
@@ -81,7 +87,7 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
       <form.Field
         name="shiftType"
         validators={{
-          onChange: ({ value }) => (!value ? 'Loại ca là bắt buộc' : undefined),
+          onChange: ({ value }) => validateShiftTypeRequired(value),
         }}
       >
         {() => (
