@@ -38,6 +38,20 @@ export const API_PATH = {
                 `/PublicServiceNew?keyword=${keyword}&serviceId=${serviceId}&newsCategoryId=${newsCategoryId}&isPublished=${isPublished}&Page=${page}&Size=${size}`,
             BY_ID: (id: string) => `/PublicServiceNew/${id}`,
         },
+        PAKN: {
+            LIST: (keyword: string, status: string, categoryId: string, page: number, size: number) =>
+                `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
+            SUBMIT: '/PAKN/submit',
+            FILES: (paknCode: string) => `/PAKN/files/${paknCode}`,
+        },
+        PAKN_CATEGORY: {
+            LIST: (keyword: string, isActive: boolean | null, page: number, size: number) =>
+                `/PAKNCategory?keyword=${keyword}&isActive=${isActive ?? ''}&Page=${page}&Size=${size}`,
+        },
+        ORG_UNIT: {
+            LIST: (keyword: string, isActive: boolean, page: number, size: number) =>
+                `/OrgUnit/get-all?keyword=${keyword}&isActive=${isActive}&Page=${page}&Size=${size}`,
+        },
         QUEUE: {
             COUNTERS: "/queue/counters",
             OVERVIEW: "/queue/overview",
