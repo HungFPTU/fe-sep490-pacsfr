@@ -26,14 +26,30 @@ interface UseWorkShiftFormProps {
   onClose: () => void;
 }
 
-const toFormValues = (data?: WorkShift | null): WorkShiftFormValues => ({
-  shiftDate: data?.shiftDate ? new Date(data.shiftDate).toISOString().split('T')[0] : '',
-  shiftType: data?.shiftType ?? '',
-  startTime: data?.startTime ?? '',
-  endTime: data?.endTime ?? '',
-  description: data?.description ?? '',
-  isActive: data?.isActive ?? true,
-});
+const toFormValues = (data?: WorkShift | null): WorkShiftFormValues => {
+  // If creating new (no data), set shiftDate to today
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Handle shiftDate conversion - avoid timezone issues
+  let shiftDate = today;
+  if (data?.shiftDate) {
+    const date = new Date(data.shiftDate);
+    // Use local date to avoid timezone conversion issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    shiftDate = `${year}-${month}-${day}`;
+  }
+  
+  return {
+    shiftDate,
+    shiftType: data?.shiftType ?? '',
+    startTime: data?.startTime ?? '',
+    endTime: data?.endTime ?? '',
+    description: data?.description ?? '',
+    isActive: data?.isActive ?? true,
+  };
+};
 
 function toRequest(values: WorkShiftFormValues): CreateWorkShiftRequest {
   return {
