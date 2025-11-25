@@ -18,6 +18,9 @@ import type {
     CaseProgressRequest,
     CaseProgressResult,
     CaseProgressApiResponse,
+    CaseFeedbackRequest,
+    CaseFeedbackResponse,
+    CaseFeedback,
 } from '../types';
 
 /**
@@ -98,6 +101,30 @@ const normalizeError = (error: unknown): Error => {
     return error;
 };
 
+const validateFeedbackRequest = (payload: CaseFeedbackRequest): void => {
+    if (!payload.caseId || typeof payload.caseId !== "string" || payload.caseId.trim().length === 0) {
+        throw new Error("Không xác định được hồ sơ cần đánh giá.");
+    }
+
+    if (!Number.isFinite(payload.rating) || payload.rating < 1 || payload.rating > 5) {
+        throw new Error("Vui lòng chọn mức đánh giá hợp lệ (1-5 sao).");
+    }
+
+    if (!payload.comment || payload.comment.trim().length < 10) {
+        throw new Error("Nội dung góp ý cần tối thiểu 10 ký tự.");
+    }
+
+    if (!payload.isAnonymous) {
+        if (!payload.guestName || payload.guestName.trim().length === 0) {
+            throw new Error("Vui lòng nhập họ và tên.");
+        }
+
+        if (payload.guestPhone && payload.guestPhone.trim().length < 9) {
+            throw new Error("Số điện thoại không hợp lệ.");
+        }
+    }
+};
+
 /**
  * Case Client Service
  * Main service class following Service Layer pattern
@@ -141,6 +168,43 @@ export class CaseClientService {
         } catch (error) {
             console.error("[CaseService] Error details:", error);
             throw normalizeError(error);
+        }
+    }
+
+    async submitFeedback(payload: CaseFeedbackRequest): Promise<CaseFeedbackResponse> {
+        validateFeedbackRequest(payload);
+
+        try {
+            const normalizedPayload: CaseFeedbackRequest = {
+                caseId: payload.caseId.trim(),
+                rating: Math.round(payload.rating),
+                comment: payload.comment.trim(),
+                isAnonymous: payload.isAnonymous,
+                guestName: payload.isAnonymous ? undefined : payload.guestName?.trim(),
+                guestPhone: payload.isAnonymous ? undefined : payload.guestPhone?.trim(),
+            };
+
+            const response = await caseRepository.submitFeedback(normalizedPayload);
+
+            if (response?.success === false) {
+                throw new Error(response?.message || "Không thể gửi phản hồi. Vui lòng thử lại.");
+            }
+
+            return response ?? { success: true };
+        } catch (error) {
+            throw normalizeError(error);
+        }
+    }
+
+    async getFeedbackByCase(caseId: string): Promise<CaseFeedback | null> {
+        if (!caseId) {
+            return null;
+        }
+        try {
+            return await caseRepository.getFeedbackByCase(caseId);
+        } catch (error) {
+            console.error("[CaseService] Failed to fetch feedback by case:", error);
+            return null;
         }
     }
 }

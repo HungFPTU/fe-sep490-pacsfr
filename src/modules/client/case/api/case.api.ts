@@ -1,7 +1,7 @@
 import { http } from "@core/http/client";
 import { API_PATH } from "@core/config/api.path";
-import type { CaseProgressApiResponse } from "../types";
-import type { CaseProgressRequest } from "../types";
+import type { CaseProgressApiResponse, CaseFeedback } from "../types";
+import type { CaseProgressRequest, CaseFeedbackRequest } from "../types";
 
 export const caseClientApi = {
     progress: (payload: CaseProgressRequest) => {
@@ -15,6 +15,19 @@ export const caseClientApi = {
         return http.post<CaseProgressApiResponse>(API_PATH.CLIENT.CASE.PROGRESS, payload, {
             auth: false,
         });
+    },
+    feedback: (payload: CaseFeedbackRequest) => {
+        return http.post(API_PATH.CLIENT.FEEDBACK.SUBMIT, payload, {
+            auth: false,
+        });
+    },
+    getFeedbackByCase: (caseId: string) => {
+        return http.get<{ success?: boolean; message?: string; data?: CaseFeedback }>(
+            API_PATH.CLIENT.FEEDBACK.BY_CASE(caseId),
+            {
+                auth: false,
+            },
+        );
     },
 };
 

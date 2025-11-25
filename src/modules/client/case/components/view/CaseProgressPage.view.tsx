@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
-import { useCaseProgress } from "../../hooks";
+import { useCaseProgress, useCaseFeedbackByCase } from "../../hooks";
 import { CaseLookupForm, type CaseLookupFormValues } from "../ui/form";
-import { CaseProgressResultView } from "../ui";
+import { CaseProgressResultView, CaseFeedbackCard, CaseFeedbackViewer } from "../ui";
 import { executeRecaptcha, verifyRecaptchaToken } from "@/shared/lib";
 import { CASE_RECAPTCHA_ACTION } from "../../constants";
 import { ENV } from "@/core/config/env";
@@ -15,6 +15,7 @@ export const CaseProgressPageView: React.FC = () => {
     const [hasSearched, setHasSearched] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { addToast } = useGlobalToast();
+    const feedbackQuery = useCaseFeedbackByCase(result?.rawData?.id ?? undefined);
 
     const recaptchaSiteKey = useMemo(() => ENV.RECAPTCHA_SITE_KEY, []);
 
@@ -177,6 +178,19 @@ export const CaseProgressPageView: React.FC = () => {
                         isLoading={isPending}
                         hasSearched={hasSearched}
                     />
+
+                    {result?.success && (
+                        <div className="mt-8 space-y-6">
+                            {!feedbackQuery.data && (
+                                <CaseFeedbackCard
+                                    caseId={result.rawData?.id}
+                                    caseCode={result.summary?.caseCode}
+                                    serviceName={result.summary?.serviceName}
+                                />
+                            )}
+                            <CaseFeedbackViewer feedback={feedbackQuery.data} isLoading={feedbackQuery.isPending} />
+                        </div>
+                    )}
                 </div>
             </main>
         </div>
