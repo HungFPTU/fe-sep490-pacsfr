@@ -1,5 +1,5 @@
 import * as workshiftApi from '../api/workshift.api';
-import type { WorkShift, CreateWorkShiftRequest, AssignStaffWorkShiftRequest, CounterOption, StaffOption, StaffWorkShift } from '../types';
+import type { WorkShift, CreateWorkShiftRequest, UpdateWorkShiftRequest, AssignStaffWorkShiftRequest, CounterOption, StaffOption, StaffWorkShift } from '../types';
 import type { RestResponse, RestPaged } from '@/types/rest';
 
 // ==================== WorkShift Service ====================
@@ -31,7 +31,7 @@ export class WorkShiftService {
    */
   static async updateWorkShift(
     id: string,
-    data: CreateWorkShiftRequest,
+    data: UpdateWorkShiftRequest,
   ): Promise<RestResponse<WorkShift>> {
     return workshiftApi.updateWorkShift(id, data);
   }

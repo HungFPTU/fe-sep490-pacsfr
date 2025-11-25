@@ -2,13 +2,47 @@
 
 import React from 'react';
 import {
-  SelectField,
   DateField,
   TimeField,
 } from '@/shared/components/layout/manager/form/BaseForm';
 import { FormApiOf } from '@/types/types';
 import { WorkShiftFormValues } from '../../../hooks/useWorkShiftForm';
-import { WORKSHIFT_TYPE_OPTIONS } from '../../../constants';
+import { SHIFT_TYPE_TIMES } from '../../../constants';
+import {
+  validateShiftDate,
+  validateStartTimeRequired,
+  validateEndTimeRequired,
+  validateShiftTypeRequired,
+} from '../../../utils/validation';
+import { ShiftTypeSelect } from './ShiftTypeSelect.ui';
+
+// Helper to get first error from field
+function getFirstError(field: {
+  state: {
+    meta: {
+      touchedErrors?: Array<string | undefined>;
+      errors?: Array<string | undefined>;
+      isTouched?: boolean;
+    };
+  };
+}): string | null {
+  const te = field.state.meta.touchedErrors;
+  const e = field.state.meta.errors;
+  const isTouched = field.state.meta.isTouched;
+
+  const arr = isTouched
+    ? Array.isArray(e) && e.length
+      ? e
+      : []
+    : Array.isArray(te) && te.length
+    ? te
+    : [];
+
+  const first = (arr as Array<string | undefined>).find(
+    (m): m is string => typeof m === 'string' && m.length > 0,
+  );
+  return first ?? null;
+}
 
 interface FormProps {
   form: FormApiOf<WorkShiftFormValues>;
@@ -23,7 +57,7 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
       <form.Field
         name="shiftDate"
         validators={{
-          onChange: ({ value }) => (!value ? 'Ngày làm việc là bắt buộc' : undefined),
+          onChange: ({ value }) => validateShiftDate(value),
         }}
       >
         {() => (
@@ -38,12 +72,12 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
         )}
       </form.Field>
 
-      {/* Start / End Time */}
+      {/* Start / End Time - Disabled */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <form.Field
           name="startTime"
           validators={{
-            onChange: ({ value }) => (!value ? 'Giờ bắt đầu là bắt buộc' : undefined),
+            onChange: ({ value }) => validateStartTimeRequired(value),
           }}
         >
           {() => (
@@ -53,7 +87,7 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
               label="Giờ bắt đầu"
               required
               placeholder="Chọn giờ bắt đầu"
-              disabled={isLoading}
+              disabled={true}
             />
           )}
         </form.Field>
@@ -61,7 +95,7 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
         <form.Field
           name="endTime"
           validators={{
-            onChange: ({ value }) => (!value ? 'Giờ kết thúc là bắt buộc' : undefined),
+            onChange: ({ value }) => validateEndTimeRequired(value),
           }}
         >
           {() => (
@@ -71,30 +105,43 @@ export function WorkShiftForm({ form, isLoading }: FormProps) {
               label="Giờ kết thúc"
               required
               placeholder="Chọn giờ kết thúc"
-              disabled={isLoading}
+              disabled={true}
             />
           )}
         </form.Field>
       </div>
 
-      {/* Shift Type */}
+      {/* Shift Type - Custom Select */}
       <form.Field
         name="shiftType"
         validators={{
-          onChange: ({ value }) => (!value ? 'Loại ca là bắt buộc' : undefined),
+          onChange: ({ value }) => validateShiftTypeRequired(value),
         }}
       >
-        {() => (
-          <SelectField<WorkShiftFormValues>
-            form={form}
-            name="shiftType"
-            label="Loại ca"
-            required
-            options={WORKSHIFT_TYPE_OPTIONS}
-            placeholder="Chọn loại ca làm việc"
-            disabled={isLoading}
-          />
-        )}
+        {(field) => {
+          const error = getFirstError(field);
+
+          const handleShiftTypeChange = (shiftType: string) => {
+            field.handleChange(shiftType);
+            const times = SHIFT_TYPE_TIMES[shiftType];
+            if (times) {
+              form.setFieldValue('startTime', times.startTime);
+              form.setFieldValue('endTime', times.endTime);
+            }
+          };
+
+          return (
+            <ShiftTypeSelect
+              value={field.state.value}
+              onChange={handleShiftTypeChange}
+              disabled={isLoading}
+              placeholder="Chọn loại ca làm việc"
+              error={error}
+              label="Loại ca"
+              required
+            />
+          );
+        }}
       </form.Field>
     </div>
   );

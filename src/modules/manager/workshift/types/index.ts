@@ -23,6 +23,7 @@ export type CreateWorkShiftRequest = {
 
 export type UpdateWorkShiftRequest = {
     id: string;
+    counterId: string;
     shiftDate: string | Date;
     startTime: string;
     endTime: string;

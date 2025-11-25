@@ -2,6 +2,12 @@ import { useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import type { WorkShift, CreateWorkShiftRequest } from '../types';
+import {
+  validateShiftTypeNotEmpty,
+  validateStartTimeNotEmpty,
+  validateEndTimeNotEmpty,
+  validateShiftDateNotPast,
+} from '../utils/validation';
 
 export interface WorkShiftFormValues {
   shiftDate: string;
@@ -20,14 +26,30 @@ interface UseWorkShiftFormProps {
   onClose: () => void;
 }
 
-const toFormValues = (data?: WorkShift | null): WorkShiftFormValues => ({
-  shiftDate: data?.shiftDate ? new Date(data.shiftDate).toISOString().split('T')[0] : '',
-  shiftType: data?.shiftType ?? '',
-  startTime: data?.startTime ?? '',
-  endTime: data?.endTime ?? '',
-  description: data?.description ?? '',
-  isActive: data?.isActive ?? true,
-});
+const toFormValues = (data?: WorkShift | null): WorkShiftFormValues => {
+  // If creating new (no data), set shiftDate to today
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Handle shiftDate conversion - avoid timezone issues
+  let shiftDate = today;
+  if (data?.shiftDate) {
+    const date = new Date(data.shiftDate);
+    // Use local date to avoid timezone conversion issues
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    shiftDate = `${year}-${month}-${day}`;
+  }
+  
+  return {
+    shiftDate,
+    shiftType: data?.shiftType ?? '',
+    startTime: data?.startTime ?? '',
+    endTime: data?.endTime ?? '',
+    description: data?.description ?? '',
+    isActive: data?.isActive ?? true,
+  };
+};
 
 function toRequest(values: WorkShiftFormValues): CreateWorkShiftRequest {
   return {
@@ -51,16 +73,27 @@ export const useWorkShiftForm = ({
     defaultValues: toFormValues(initData),
     onSubmit: async ({ value }) => {
       // Final validation before submit
-      if (!value.shiftType?.trim()) {
-        addToast({ message: 'Vui lòng nhập tên ca', type: 'error' });
+      const shiftDateError = validateShiftDateNotPast(value.shiftDate);
+      if (shiftDateError) {
+        addToast({ message: shiftDateError, type: 'error' });
         return;
       }
-      if (!value.startTime?.trim()) {
-        addToast({ message: 'Vui lòng nhập giờ bắt đầu', type: 'error' });
+
+      const shiftTypeError = validateShiftTypeNotEmpty(value.shiftType);
+      if (shiftTypeError) {
+        addToast({ message: shiftTypeError, type: 'error' });
         return;
       }
-      if (!value.endTime?.trim()) {
-        addToast({ message: 'Vui lòng nhập giờ kết thúc', type: 'error' });
+
+      const startTimeError = validateStartTimeNotEmpty(value.startTime);
+      if (startTimeError) {
+        addToast({ message: startTimeError, type: 'error' });
+        return;
+      }
+
+      const endTimeError = validateEndTimeNotEmpty(value.endTime);
+      if (endTimeError) {
+        addToast({ message: endTimeError, type: 'error' });
         return;
       }
 

@@ -1,7 +1,7 @@
 import { http } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
 import type { RestResponse, RestMany, RestPaged } from '@/types/rest';
-import type { WorkShift, CreateWorkShiftRequest, AssignStaffWorkShiftRequest, CounterOption, StaffOption, StaffWorkShift } from '../types';
+import type { WorkShift, CreateWorkShiftRequest, UpdateWorkShiftRequest, AssignStaffWorkShiftRequest, CounterOption, StaffOption, StaffWorkShift } from '../types';
 
 /**
  * Lấy danh sách ca làm việc (không có filter)
@@ -27,7 +27,7 @@ export const createWorkShift = async (
 
 export const updateWorkShift = async (
   id: string,
-  data: CreateWorkShiftRequest,
+  data: UpdateWorkShiftRequest,
 ): Promise<RestResponse<WorkShift>> => {
   const response = await http.put<RestResponse<WorkShift>>(
     API_PATH.MANAGER.WORKSHIFT.PUT(id),
