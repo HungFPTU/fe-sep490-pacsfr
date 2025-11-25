@@ -45,6 +45,15 @@ export const HOME_NAVIGATION_ITEMS: HomeNavigationItem[] = [
         type: 'link',
     },
     {
+        key: 'pakn',
+        label: 'Phản ánh kiến nghị',
+        type: 'dropdown',
+        subItems: [
+            { key: 'pakn-send', label: 'Gửi PAKN', href: '/gui-pakn' },
+            { key: 'pakn-list', label: 'Danh sách PAKN', href: '/pakn' },
+        ],
+    },
+    {
         key: 'feedback',
         label: 'Phản ánh - Kiến nghị',
         href: '/feedback',
@@ -95,6 +104,10 @@ export const HOME_BREADCRUMB_MAP: Record<string, HomeBreadcrumbItem[]> = {
         { label: 'Trang chủ', href: '/' },
         { label: 'Tra cứu hồ sơ', href: '/tra-cuu-ho-so' },
     ],
+    pakn: [
+        { label: 'Trang chủ', href: '/' },
+        { label: 'Phản ánh kiến nghị', href: '/pakn' },
+    ],
     feedback: [
         { label: 'Trang chủ', href: '/' },
         { label: 'Phản ánh - Kiến nghị' },
@@ -124,6 +137,8 @@ export const HOME_PATH_KEY_MAP: Record<string, string> = {
     '/thu-tuc-hanh-chinh/': 'procedures',
     '/submit': 'submit',
     '/tra-cuu-ho-so': 'lookup',
+    '/pakn': 'pakn',
+    '/gui-pakn': 'pakn',
     '/feedback': 'feedback',
     '/evaluation': 'evaluation',
     '/statistics': 'statistics',
@@ -158,6 +173,7 @@ export function getHomeNavigationKeyByPath(pathname: string): string {
 const HOME_DETAIL_BREADCRUMB_LABEL: Partial<Record<string, string>> = {
     procedures: 'Chi tiết thủ tục hành chính',
     news: 'Chi tiết bài viết',
+    pakn: 'Chi tiết PAKN',
     'service-group': 'Chi tiết nhóm dịch vụ',
 };
 
@@ -167,6 +183,22 @@ export function getHomeBreadcrumbsByPath(pathname: string): HomeBreadcrumbItem[]
 
     if (normalizedPath === '/') {
         return [];
+    }
+
+    if (normalizedPath === '/pakn') {
+        return [
+            { label: 'Trang chủ', href: '/' },
+            { label: 'Phản ánh kiến nghị', href: '/pakn' },
+            { label: 'Danh sách PAKN' },
+        ];
+    }
+
+    if (normalizedPath === '/gui-pakn') {
+        return [
+            { label: 'Trang chủ', href: '/' },
+            { label: 'Phản ánh kiến nghị', href: '/pakn' },
+            { label: 'Gửi PAKN' },
+        ];
     }
 
     // Special handling for service group detail page

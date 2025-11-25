@@ -15,6 +15,10 @@ export const API_PATH = {
         CASE: {
             PROGRESS: '/Case/progress',
         },
+        FEEDBACK: {
+            SUBMIT: '/Feedback',
+            BY_CASE: (caseId: string) => `/Feedback/case/${caseId}`,
+        },
         FAQ: {
             ALL: (keyword: string, serviceId: string, faqCategoryId: string, isActive: boolean, page: number, size: number) =>
                 `/FAQ?keyword=${keyword}&serviceId=${serviceId}&faqCategoryId=${faqCategoryId}&isActive=${isActive}&Page=${page}&Size=${size}`,
@@ -37,6 +41,20 @@ export const API_PATH = {
             ALL: (keyword: string, serviceId: string, newsCategoryId: string, isPublished: boolean, page: number, size: number) =>
                 `/PublicServiceNew?keyword=${keyword}&serviceId=${serviceId}&newsCategoryId=${newsCategoryId}&isPublished=${isPublished}&Page=${page}&Size=${size}`,
             BY_ID: (id: string) => `/PublicServiceNew/${id}`,
+        },
+        PAKN: {
+            LIST: (keyword: string, status: string, categoryId: string, page: number, size: number) =>
+                `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
+            SUBMIT: '/PAKN/submit',
+            FILES: (paknCode: string) => `/PAKN/files/${paknCode}`,
+        },
+        PAKN_CATEGORY: {
+            LIST: (keyword: string, isActive: boolean | null, page: number, size: number) =>
+                `/PAKNCategory?keyword=${keyword}&isActive=${isActive ?? ''}&Page=${page}&Size=${size}`,
+        },
+        ORG_UNIT: {
+            LIST: (keyword: string, isActive: boolean, page: number, size: number) =>
+                `/OrgUnit/get-all?keyword=${keyword}&isActive=${isActive}&Page=${page}&Size=${size}`,
         },
         QUEUE: {
             COUNTERS: "/queue/counters",
