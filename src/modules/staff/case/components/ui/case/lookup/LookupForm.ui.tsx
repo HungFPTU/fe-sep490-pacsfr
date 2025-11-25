@@ -1,10 +1,14 @@
 'use client';
 
 import React from 'react';
+import type { ServiceItem } from '../../../../api/service.api';
+import { useServices } from '../../../../hooks/useServices';
 
 interface LookupFormProps {
   caseId: string;
+  serviceId?: string;
   onCaseIdChange: (value: string) => void;
+  onServiceIdChange?: (value: string | undefined) => void;
   onSearch: () => void;
   onReset: () => void;
   onKeyPress: (e: React.KeyboardEvent) => void;
@@ -14,19 +18,22 @@ interface LookupFormProps {
 
 export const LookupForm: React.FC<LookupFormProps> = ({
   caseId,
+  serviceId,
   onCaseIdChange,
+  onServiceIdChange,
   onSearch,
   onReset,
   onKeyPress,
   isLoading,
   error,
 }) => {
+  const { data: services = [] } = useServices();
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">Tra cứu hồ sơ</h3>
 
-      <div className="flex gap-4">
-        <div className="flex-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div>
           <label htmlFor="caseId" className="block text-sm font-medium text-gray-700 mb-2">
             Mã hồ sơ
           </label>
@@ -41,18 +48,37 @@ export const LookupForm: React.FC<LookupFormProps> = ({
           />
         </div>
 
+        <div>
+          <label htmlFor="serviceId" className="block text-sm font-medium text-gray-700 mb-2">
+            Dịch vụ
+          </label>
+          <select
+            id="serviceId"
+            value={serviceId || ''}
+            onChange={(e) => onServiceIdChange?.(e.target.value || undefined)}
+            className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option value="">Tất cả</option>
+            {services.map((service: ServiceItem) => (
+              <option key={service.id} value={service.id}>
+                {service.serviceName}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex items-end gap-2">
           <button
             onClick={onSearch}
             disabled={!caseId.trim() || isLoading}
-            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex-1"
           >
             {isLoading ? 'Đang tìm...' : 'Tìm kiếm'}
           </button>
 
           <button
             onClick={onReset}
-            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex-1"
           >
             Làm mới
           </button>
