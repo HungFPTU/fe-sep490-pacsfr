@@ -58,6 +58,7 @@ export interface CaseListResponse {
 export interface CaseSearchFilters {
   caseCode?: string;
   guestId?: string;
+  guestName?: string;
   serviceId?: string;
   staffId?: string;
   priorityLevel?: number;
