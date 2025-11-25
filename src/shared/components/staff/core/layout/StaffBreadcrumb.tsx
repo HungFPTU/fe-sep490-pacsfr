@@ -21,6 +21,8 @@ const pathLabels: Record<string, string> = {
     'create-case': 'Tạo hồ sơ mới',
     workshift: 'Lịch làm việc',
     payment: 'Thanh toán',
+    'pakn-category': 'Danh mục phản ánh kiến nghị',
+    pakn: 'Phản ánh kiến nghị',
 };
 
 /**
@@ -44,12 +46,12 @@ export function StaffBreadcrumb() {
         let currentPath = '';
         paths.forEach((path, index) => {
             currentPath += `/${path}`;
-            
+
             // Skip the "staff" segment - don't display it in breadcrumb
             if (path === 'staff') {
                 return;
             }
-            
+
             const label = pathLabels[path] || path.charAt(0).toUpperCase() + path.slice(1);
 
             // Don't add link for the last item
