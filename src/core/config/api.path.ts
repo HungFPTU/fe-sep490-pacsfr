@@ -275,9 +275,10 @@ export const API_PATH = {
             GET_ALL_ACTIVE: () => `/Counter/active`,
             GET_BY_ID: (id: string) => `/Counter/${id}`,
             POST: '/Counter',
+            PUT: (id: string) => `/Counter/${id}`,
+            DELETE: (id: string) => `/Counter/${id}`,
             GET_ALL_SERVICE_GROUPS: '/ServiceGroup',
-            GET_ALL_STAFF: '/Staff',
-            ASSIGN_STAFF: (counterId: string) => `/Counter/${counterId}/assign-staff`,
+            ASSIGN_SERVICE_GROUP: (counterId: string) => `/Counter/${counterId}/assign-service-group`,
         },
         DOCS_TYPE_GROUP: {
             GET_ALL: (Keyword: string, IsActive: boolean, Page: number, PageSize: number) =>

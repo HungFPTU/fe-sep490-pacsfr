@@ -29,16 +29,38 @@ export type CreateCounterRequest = {
     maxCapacity: number;
 };
 
+export type UpdateCounterRequest = {
+    counterCode: string;
+    counterName: string;
+    location: string;
+    counterType: string;
+    maxCapacity: number;
+    isActive: boolean;
+};
+
+// Common form values type (fields that are editable in the form)
+export type CounterFormValues = {
+    counterCode: string;
+    counterName: string;
+    location: string;
+    counterType: string;
+    maxCapacity: number;
+};
+
 export type ServiceGroupOption = {
     id: string;
-    name: string;
+    groupCode?: string;
+    groupName: string;
+    description?: string;
+    iconUrl?: string;
+    displayOrder?: number;
+    isActive?: boolean;
+    createdAt?: string;
+    createdBy?: string;
 };
 
-export type StaffOption = {
-    id: string;
-    name: string;
-};
-
-export type AssignStaffRequest = {
-    staffId: string;
+export type AssignServiceGroupRequest = {
+    serviceGroupId: string;
+    serviceType?: string;
+    priorityLevel?: number;
 };

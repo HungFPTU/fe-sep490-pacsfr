@@ -1,47 +1,103 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useForm } from '@tanstack/react-form';
 import { BaseModal } from '@/shared/components/manager/features/modal/BaseModal';
-import { useCounterById } from '../../../hooks';
+import { CounterForm } from '../form/CounterForm.ui';
+import { useCounterById, useUpdateCounter } from '../../../hooks';
 import { EyeIcon } from '@heroicons/react/24/outline';
+import type { UpdateCounterRequest, CounterFormValues, Counter } from '../../../types';
+import type { FormApiOf } from '@/types/types';
 
 interface Props {
     open: boolean;
     onClose: () => void;
     counterId: string | null;
+    onSuccess?: () => void;
 }
 
-export const CounterDetailModal: React.FC<Props> = ({ open, onClose, counterId }) => {
+export const CounterDetailModal: React.FC<Props> = ({ open, onClose, counterId, onSuccess }) => {
     const { data: counter, isLoading } = useCounterById(counterId);
+    const updateMutation = useUpdateCounter();
 
-    const getStatusBadge = (isActive: boolean) => {
-        if (isActive) {
-            return (
-                <span className="inline-flex rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-800">
-                    Hoạt động
-                </span>
-            );
+    const form = useForm({
+        defaultValues: {
+            counterCode: '',
+            counterName: '',
+            location: '',
+            counterType: '',
+            maxCapacity: 0,
+        } as CounterFormValues,
+        onSubmit: async ({ value }: { value: CounterFormValues }) => {
+            if (!counterId || !counter) return;
+            try {
+                const updateData: UpdateCounterRequest = {
+                    ...value,
+                    isActive: counter.isActive ?? true,
+                };
+                await updateMutation.mutateAsync({
+                    id: counterId,
+                    data: updateData,
+                });
+                onSuccess?.();
+            } catch (error) {
+                console.error('Error updating counter:', error);
+            }
+        },
+    });
+
+    useEffect(() => {
+        if (open && counter) {
+            form.reset({
+                counterCode: counter.counterCode || '',
+                counterName: counter.counterName || '',
+                location: counter.location || '',
+                counterType: counter.counterType || '',
+                maxCapacity: counter.maxCapacity || 0,
+            });
         }
-        return (
-            <span className="inline-flex rounded-full bg-red-100 px-3 py-1 text-sm font-semibold text-red-800">
-                Ngừng hoạt động
-            </span>
-        );
+    }, [open, counter]);
+
+    const handleOk = async () => {
+        if (updateMutation.isPending) {
+            return;
+        }
+        await form.handleSubmit();
     };
+
+    const handleCancel = () => {
+        if (counter) {
+            form.reset({
+                counterCode: counter.counterCode || '',
+                counterName: counter.counterName || '',
+                location: counter.location || '',
+                counterType: counter.counterType || '',
+                maxCapacity: counter.maxCapacity || 0,
+            });
+        }
+        onClose();
+    };
+
 
     return (
         <BaseModal
             open={open}
-            onClose={onClose}
+            onClose={handleCancel}
             title={
                 <div className="flex items-center gap-2">
                     <EyeIcon className="h-5 w-5 text-indigo-600" />
                     <span>Chi tiết quầy</span>
                 </div>
             }
-            footer={null}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            okText="Lưu"
+            cancelText="Hủy"
             centered
             size="large"
+            maskClosable={!updateMutation.isPending}
+            keyboard={!updateMutation.isPending}
+            confirmLoading={updateMutation.isPending}
         >
             {isLoading ? (
                 <div className="flex items-center justify-center py-12">
@@ -52,79 +108,10 @@ export const CounterDetailModal: React.FC<Props> = ({ open, onClose, counterId }
                 </div>
             ) : counter ? (
                 <div className="space-y-6">
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Mã quầy
-                            </label>
-                            <p className="text-sm text-slate-900 bg-slate-50 rounded-lg px-4 py-2">
-                                {counter.counterCode || '-'}
-                            </p>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Tên quầy
-                            </label>
-                            <p className="text-sm text-slate-900 bg-slate-50 rounded-lg px-4 py-2">
-                                {counter.counterName || '-'}
-                            </p>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Vị trí
-                            </label>
-                            <p className="text-sm text-slate-900 bg-slate-50 rounded-lg px-4 py-2">
-                                {counter.location || '-'}
-                            </p>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Loại quầy
-                            </label>
-                            <p className="text-sm text-slate-900 bg-slate-50 rounded-lg px-4 py-2">
-                                {counter.counterType || '-'}
-                            </p>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Sức chứa tối đa
-                            </label>
-                            <p className="text-sm text-slate-900 bg-slate-50 rounded-lg px-4 py-2">
-                                {counter.maxCapacity ? `${counter.maxCapacity} người` : '-'}
-                            </p>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Trạng thái
-                            </label>
-                            <div className="bg-slate-50 rounded-lg px-4 py-2">
-                                {getStatusBadge(counter.isActive)}
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Nhân viên phụ trách
-                            </label>
-                            <p className="text-sm text-slate-900 bg-slate-50 rounded-lg px-4 py-2">
-                                {counter.staffName || '-'}
-                            </p>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                ID Nhân viên
-                            </label>
-                            <p className="text-sm text-slate-500 bg-slate-50 rounded-lg px-4 py-2 font-mono">
-                                {counter.staffId || '-'}
-                            </p>
-                        </div>
-                    </div>
+                    <CounterForm 
+                        form={form} 
+                        isLoading={updateMutation.isPending} 
+                    />
 
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">

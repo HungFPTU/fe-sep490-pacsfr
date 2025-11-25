@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useCounterList } from '../../hooks';
-import { CounterHeader, CounterTable, CounterDetailModal, CreateCounterModal, AssignStaffModal } from '../ui';
+import { useCounterList, useDeleteCounter } from '../../hooks';
+import { CounterHeader, CounterTable, CounterDetailModal, CreateCounterModal, AssignServiceGroupModal } from '../ui';
 
 export const CounterListPage: React.FC = () => {
     const { data, isLoading, error, refetch } = useCounterList();
+    const deleteMutation = useDeleteCounter();
     const [selectedCounterId, setSelectedCounterId] = useState<string | null>(null);
     const [detailModalOpen, setDetailModalOpen] = useState(false);
     const [createModalOpen, setCreateModalOpen] = useState(false);
-    const [assignStaffModalOpen, setAssignStaffModalOpen] = useState(false);
+    const [assignServiceGroupModalOpen, setAssignServiceGroupModalOpen] = useState(false);
     const [assignCounterId, setAssignCounterId] = useState<string | null>(null);
 
     const handleView = (counterId: string) => {
@@ -34,18 +35,27 @@ export const CounterListPage: React.FC = () => {
         refetch();
     };
 
-    const handleAssignStaff = (counterId: string) => {
+    const handleAssignServiceGroup = (counterId: string) => {
         setAssignCounterId(counterId);
-        setAssignStaffModalOpen(true);
+        setAssignServiceGroupModalOpen(true);
     };
 
-    const handleCloseAssignStaffModal = () => {
-        setAssignStaffModalOpen(false);
+    const handleCloseAssignServiceGroupModal = () => {
+        setAssignServiceGroupModalOpen(false);
         setAssignCounterId(null);
     };
 
-    const handleAssignStaffSuccess = () => {
+    const handleAssignServiceGroupSuccess = () => {
         refetch();
+    };
+
+    const handleDelete = async (counterId: string) => {
+        try {
+            await deleteMutation.mutateAsync(counterId);
+            refetch();
+        } catch (error) {
+            console.error('Error deleting counter:', error);
+        }
     };
 
     if (error) {
@@ -93,7 +103,9 @@ export const CounterListPage: React.FC = () => {
                     counters={data || []} 
                     isLoading={isLoading}
                     onView={handleView}
-                    onAssignStaff={handleAssignStaff}
+                    onAssignServiceGroup={handleAssignServiceGroup}
+                    onDelete={handleDelete}
+                    isDeleting={deleteMutation.isPending}
                 />
             </div>
 
@@ -101,6 +113,7 @@ export const CounterListPage: React.FC = () => {
                 open={detailModalOpen}
                 onClose={handleCloseDetailModal}
                 counterId={selectedCounterId}
+                onSuccess={handleCloseDetailModal}
             />
 
             <CreateCounterModal
@@ -109,11 +122,11 @@ export const CounterListPage: React.FC = () => {
                 onSuccess={handleCreateSuccess}
             />
 
-            <AssignStaffModal
-                open={assignStaffModalOpen}
-                onClose={handleCloseAssignStaffModal}
+            <AssignServiceGroupModal
+                open={assignServiceGroupModalOpen}
+                onClose={handleCloseAssignServiceGroupModal}
                 counterId={assignCounterId}
-                onSuccess={handleAssignStaffSuccess}
+                onSuccess={handleAssignServiceGroupSuccess}
             />
         </div>
     );
