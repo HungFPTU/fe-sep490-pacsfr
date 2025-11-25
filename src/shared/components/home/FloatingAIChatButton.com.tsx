@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Bot } from 'lucide-react';
 
-export default function FloatingAIChatButton() {
+export  function FloatingAIChatButton() {
   return (
     <Link
       href="/chatBot"
