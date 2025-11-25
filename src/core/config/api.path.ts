@@ -15,6 +15,10 @@ export const API_PATH = {
         CASE: {
             PROGRESS: '/Case/progress',
         },
+        FEEDBACK: {
+            SUBMIT: '/Feedback',
+            BY_CASE: (caseId: string) => `/Feedback/case/${caseId}`,
+        },
         FAQ: {
             ALL: (keyword: string, serviceId: string, faqCategoryId: string, isActive: boolean, page: number, size: number) =>
                 `/FAQ?keyword=${keyword}&serviceId=${serviceId}&faqCategoryId=${faqCategoryId}&isActive=${isActive}&Page=${page}&Size=${size}`,
