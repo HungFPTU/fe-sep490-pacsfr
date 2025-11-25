@@ -78,6 +78,19 @@ export function CaseFormFields({
                     placeholder="Thêm ghi chú cho hồ sơ..."
                 />
             </div>
+
+            {/* Estimated Completion Date */}
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ngày hoàn thành dự kiến
+                </label>
+                <input
+                    type="date"
+                    value={caseData.estimatedCompletionDate || ""}
+                    onChange={(e) => onDataChange({ ...caseData, estimatedCompletionDate: e.target.value || undefined })}
+                    className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                />
+            </div>
         </div>
     );
 }
