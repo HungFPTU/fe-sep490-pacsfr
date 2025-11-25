@@ -67,6 +67,23 @@ export function formatDateVN(date: Date | string): string {
 }
 
 /**
+ * Format date with time in Vietnamese format (dd/mm/yyyy hh:mm:ss)
+ */
+export function formatDateTimeVN(date: Date | string): string {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(dateObj.getTime())) return '';
+
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const year = dateObj.getFullYear();
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+/**
  * Get today's date in YYYY-MM-DD format
  */
 export function getTodayISO(): string {

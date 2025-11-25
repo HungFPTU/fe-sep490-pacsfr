@@ -446,6 +446,11 @@ export const API_PATH = {
         GET_ALL: '/Case',
     },
 
+    PAYMENT: {
+        CREATE: '/Payment/create',
+        GET_BY_CASE_CODE: (caseCode: string) => `/Payment/by-case-code/${caseCode}`,
+    },
+
     FILE: {
         UPLOAD_IMAGE: '/FileUpload/image',
     },

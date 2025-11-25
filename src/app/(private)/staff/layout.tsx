@@ -21,7 +21,7 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
                     <StaffBreadcrumb />
 
                     {/* Main Content Area */}
-                    <main className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-slate-50/50">
+                    <main style={{ flex: 1, overflow: "auto", minHeight: 0 }} className="flex flex-col gap-4 p-4 pt-0 bg-slate-50/50">
                         <div className="rounded-lg bg-white shadow-sm border border-slate-200 p-6">
                             {children}
                         </div>

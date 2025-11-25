@@ -81,6 +81,7 @@ export interface CaseDetailResponse {
   estimatedCompletionDate: string;
   totalFee: number;
   isPayment: boolean;
+  payment_qr_url?: string;
   receivedBy: {
     $values: Array<{
       id: string;

@@ -30,6 +30,7 @@ export const CaseDetailView: React.FC<CaseDetailViewProps> = ({ caseData, onStat
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
           <CaseMetadata
             caseId={caseData.id}
+            caseCode={caseData.caseCode}
             submissionMethod={caseData.submissionMethod}
             isPayment={caseData.isPayment}
             guestId={caseData.guestId}

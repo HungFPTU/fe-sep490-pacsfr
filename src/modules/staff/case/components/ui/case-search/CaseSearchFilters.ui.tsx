@@ -73,7 +73,7 @@ export const CaseSearchFilters: React.FC<CaseSearchFiltersProps> = ({
           id="priorityLevel"
           value={filters.priorityLevel ?? ''}
           onChange={(e) => onFilterChange('priorityLevel', e.target.value ? parseInt(e.target.value) : undefined)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+          className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="">Tất cả</option>
           <option value="0">Bình thường</option>
@@ -91,7 +91,7 @@ export const CaseSearchFilters: React.FC<CaseSearchFiltersProps> = ({
           id="caseStatus"
           value={filters.caseStatus || ''}
           onChange={(e) => onFilterChange('caseStatus', e.target.value || undefined)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+          className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="">Tất cả</option>
           <option value="Mới tiếp nhận">Mới tiếp nhận</option>
@@ -155,7 +155,7 @@ export const CaseSearchFilters: React.FC<CaseSearchFiltersProps> = ({
           id="size"
           value={filters.size || 20}
           onChange={(e) => onFilterChange('size', parseInt(e.target.value))}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+          className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="10">10</option>
           <option value="20">20</option>

@@ -43,7 +43,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
           onChange={(e) =>
             onFilterChange('priorityLevel', e.target.value ? parseInt(e.target.value) : undefined)
           }
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+          className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="">Tất cả</option>
           <option value="0">Bình thường</option>
@@ -61,7 +61,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
           id="caseStatus"
           value={filters.caseStatus || ''}
           onChange={(e) => onFilterChange('caseStatus', e.target.value || undefined)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+          className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="">Tất cả</option>
           <option value="Mới tiếp nhận">Mới tiếp nhận</option>
