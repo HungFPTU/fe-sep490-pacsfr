@@ -7,6 +7,8 @@ import {
     Calendar,
     FilePlus,
     CreditCard,
+    Megaphone,
+    MessageSquare,
 } from "lucide-react"
 
 import {
@@ -49,6 +51,21 @@ const data = {
             title: "Thanh toán",
             url: "/staff/payment",
             icon: CreditCard,
+        },
+        {
+            title: "Phản ánh kiến nghị",
+            url: "/staff/pakn-category",
+            icon: Megaphone,
+            items: [
+                {
+                    title: "Danh mục phản ánh kiến nghị",
+                    url: "/staff/pakn-category",
+                },
+                {
+                    title: "Phản ánh kiến nghị",
+                    url: "/staff/pakn",
+                },
+            ],
         },
     ],
 }
