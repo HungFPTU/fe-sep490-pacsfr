@@ -19,17 +19,19 @@ export const useAdvancedFilters = ({
     useEffect(() => {
         // Only reset if searchBy actually changed and filters have values
         if (
-            filters.implementingAgency ||
+            filters.serviceType ||
             filters.field ||
-            filters.implementationLevel ||
-            filters.targetAudience
+            filters.executionLevel ||
+            typeof filters.onlineAvailable === "boolean" ||
+            typeof filters.isActive === "boolean"
         ) {
             onFiltersChange({
                 ...filters,
-                implementingAgency: "",
+                serviceType: "",
                 field: "",
-                implementationLevel: "",
-                targetAudience: "",
+                executionLevel: "",
+                onlineAvailable: null,
+                isActive: null,
                 page: 1,
             });
         }

@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, CardBody } from "@heroui/react";
 import { ServiceFilters } from "../../ui/filter/ServiceFilters.ui";
 import { ServiceList } from "../../ui/list/ServiceList.ui";
 import { ServicePagination } from "../../ui/pagination/ServicePagination.ui";
 import { useServices, useServiceFilters } from "../../../hooks/useServices";
 import type { ServiceFilters as ServiceFiltersType } from "../../../types/req";
+import { useDerivedFilterOptions } from "../../../hooks/useDerivedFilterOptions";
+import { filterServicesByAdvancedFilters, hasAdvancedFilters } from "../../../utils/service-filtering";
 
 interface ServicesListViewProps {
     className?: string;
@@ -32,6 +34,12 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
 
     const { data: response, isLoading, error, refetch } = useServices(activeFilters);
     const services = response?.data?.items?.$values || [];
+    const filterOptions = useDerivedFilterOptions(services);
+    const filteredServices = useMemo(
+        () => filterServicesByAdvancedFilters(services, activeFilters),
+        [services, activeFilters]
+    );
+    const isUsingAdvancedFilters = hasAdvancedFilters(activeFilters);
     const pagination = response?.data;
 
     // Handle search - apply filters and refetch
@@ -52,10 +60,10 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
             isActive: null,
             page: 1,
             size: 10,
-            implementingAgency: "",
+            serviceType: "",
             field: "",
-            implementationLevel: "",
-            targetAudience: "",
+            executionLevel: "",
+            onlineAvailable: null,
             searchBy: "department",
         };
         resetFilters();
@@ -68,13 +76,13 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
     };
 
     return (
-        <div className={`space-y-6 ${className}`}>
+        <div className={`space-y-4 sm:space-y-6 ${className}`}>
             {/* Header */}
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                     Thủ tục hành chính
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-sm sm:text-base text-gray-600 mt-1">
                     Tìm kiếm và tra cứu các thủ tục hành chính
                 </p>
             </div>
@@ -92,21 +100,29 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
                 onSearch={handleSearch}
                 onReset={handleReset}
                 isLoading={isLoading}
+                options={filterOptions}
             />
 
             {/* Results Summary */}
             {pagination && (
                 <Card className="bg-gray-50 border-gray-200">
-                    <CardBody className="p-4">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                            <p className="text-gray-700">
-                                <span className="font-semibold">{pagination.total}</span> thủ tục được tìm thấy
+                    <CardBody className="p-3 sm:p-4">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="text-sm sm:text-base text-gray-700">
+                                <span className="font-semibold">{pagination.total}</span> thủ tục trong hệ thống
                                 {activeFilters.keyword && (
-                                    <span> cho từ khóa <strong>&quot;{activeFilters.keyword}&quot;</strong></span>
+                                    <span className="block sm:inline"> cho từ khóa <strong>&quot;{activeFilters.keyword}&quot;</strong></span>
                                 )}
                             </p>
-                            <div className="text-sm text-gray-600">
-                                Trang {pagination.page} / {pagination.totalPages}
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                {isUsingAdvancedFilters && (
+                                    <p className="text-xs sm:text-sm text-emerald-600">
+                                        {filteredServices.length} kết quả phù hợp bộ lọc nâng cao
+                                    </p>
+                                )}
+                                <div className="text-xs sm:text-sm text-gray-600">
+                                    Trang {pagination.page} / {pagination.totalPages}
+                                </div>
                             </div>
                         </div>
                     </CardBody>
@@ -115,7 +131,7 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
 
             {/* Services List */}
             <ServiceList
-                services={services}
+                services={filteredServices}
                 loading={isLoading}
                 error={error}
                 showDescription={true}
@@ -123,7 +139,7 @@ export const ServicesListView: React.FC<ServicesListViewProps> = ({
 
             {/* Pagination */}
             {pagination && pagination.totalPages > 1 && (
-                <div className="mt-8">
+                <div className="mt-4 sm:mt-8">
                     <ServicePagination
                         pagination={pagination}
                         onPageChange={handlePageChange}

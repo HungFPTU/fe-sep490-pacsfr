@@ -39,7 +39,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
                     type="button"
                     onClick={handleToggle}
                     className={cn(
-                        "flex w-full items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-700 shadow-inner transition-all duration-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-0",
+                        "flex w-full items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-700 shadow-inner transition-all duration-200 hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-0",
                         selectedOption ? "text-gray-900" : "text-gray-400",
                     )}
                     aria-expanded={open}
@@ -72,7 +72,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)}
                                 placeholder={`Tìm kiếm ${label.toLowerCase()}...`}
                                 autoFocus
-                                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-8 py-2 text-sm text-gray-700 transition-all duration-150 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-red-500"
+                                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-8 py-2 text-sm text-gray-700 transition-all duration-150 focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300"
                             />
                         </div>
                         <div className="max-h-64 overflow-y-auto py-2">

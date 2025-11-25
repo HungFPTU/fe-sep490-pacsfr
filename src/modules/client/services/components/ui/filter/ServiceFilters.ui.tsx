@@ -1,9 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ManagerFilterBar } from "@/shared/components/manager/ui";
+import { Search, SlidersHorizontal } from "lucide-react";
+import { Button } from "@/shared/components/ui/button.ui";
+import { Input } from "@/shared/components/ui/input.ui";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/shared/components/ui/dialog.ui";
 import { AdvancedSearchFilters } from "./AdvancedSearchFilters.ui";
 import type { ServiceFilters as ServiceFiltersType } from "@/modules/client/services/types/req";
+import type { OptionItem } from "@/modules/client/services/types/filter.types";
+
+interface ServiceFilterOptions {
+    serviceTypes: OptionItem[];
+    fields: OptionItem[];
+    executionLevels: OptionItem[];
+}
 
 interface ServiceFiltersProps {
     filters: ServiceFiltersType; // Local filter state (not applied yet)
@@ -11,6 +28,7 @@ interface ServiceFiltersProps {
     onFiltersChange: (filters: ServiceFiltersType) => void; // Update local state
     onSearch: (filters: ServiceFiltersType) => void; // Apply filters and search
     onReset: () => void; // Reset and clear filters
+    options: ServiceFilterOptions;
     isLoading?: boolean;
     className?: string;
 }
@@ -21,77 +39,135 @@ export const ServiceFilters: React.FC<ServiceFiltersProps> = ({
     onFiltersChange,
     onSearch,
     onReset,
+    options,
     isLoading = false,
     className = "",
 }) => {
-    const [showAdvanced, setShowAdvanced] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [keyword, setKeyword] = useState(filters.keyword || "");
 
-    // Sync local keyword when activeFilters change (e.g., after reset)
+    // Sync local keyword when filters.keyword changes (e.g., from URL params or reset)
     useEffect(() => {
-        if (activeFilters.keyword !== filters.keyword) {
-            onFiltersChange({
-                ...filters,
-                keyword: activeFilters.keyword,
-            });
+        if (filters.keyword !== keyword) {
+            setKeyword(filters.keyword || "");
         }
-    }, [activeFilters.keyword]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filters.keyword]);
 
-    // Handle search button click - apply all filters
-    const handleSearch = () => {
-        onSearch({
+    const handleSearchClick = () => {
+        const nextFilters = {
             ...filters,
-            page: 1, // Reset to first page on search
-        });
+            keyword: keyword.trim(),
+            page: 1,
+        };
+        onSearch(nextFilters);
     };
 
-    // Handle reset button click
-    const handleReset = () => {
-        setShowAdvanced(false);
-        onReset();
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleSearchClick();
+        }
     };
 
-    // Handle filter changes (local state only, not triggering API)
     const handleFilterChange = (newFilters: ServiceFiltersType) => {
         onFiltersChange(newFilters);
     };
 
+    const handleApplyAdvanced = () => {
+        setDialogOpen(false);
+        const nextFilters = {
+            ...filters,
+            page: 1,
+        };
+        onSearch(nextFilters);
+    };
+
+    const handleReset = () => {
+        setDialogOpen(false);
+        setKeyword("");
+        onReset();
+    };
+
     return (
         <div className={`w-full space-y-4 ${className}`}>
-            {/* Main Filter Bar */}
-            <div>
-                <ManagerFilterBar
-                    searchValue={filters.keyword || ""}
-                    onSearchChange={(value: string) => {
-                        onFiltersChange({
-                            ...filters,
-                            keyword: value,
-                        });
-                    }}
-                    onSubmit={handleSearch}
-                    onReset={handleReset}
-                    searchPlaceholder="Tìm kiếm thủ tục hành chính..."
-                    isSubmitting={isLoading}
-                    searchButtonVariant="red"
-                >
-                    {/* Additional filters can be added here as children */}
-                    <button
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors whitespace-nowrap"
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-red-300 p-2">
+                <div className="flex-1 flex items-center gap-2">
+                    <Input
+                        type="text"
+                        placeholder="Nhập từ khoá tìm kiếm"
+                        value={keyword}
+                        onChange={(e) => {
+                            setKeyword(e.target.value);
+                            onFiltersChange({
+                                ...filters,
+                                keyword: e.target.value,
+                            });
+                        }}
+                        onKeyDown={handleKeyPress}
+                        className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-2 focus-visible:ring-red-600 text-base"
+                        disabled={isLoading}
+                    />
+                    <Button
+                        onClick={handleSearchClick}
+                        variant="red"
+                        size="default"
+                        className="rounded-lg shrink-0"
+                        aria-label="Tìm kiếm"
+                        disabled={isLoading}
                     >
-                        {showAdvanced ? "Ẩn bộ lọc" : "Bộ lọc nâng cao"}
-                    </button>
-                </ManagerFilterBar>
+                        {isLoading ? (
+                            <span className="flex items-center gap-2">
+                                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                Đang tìm...
+                            </span>
+                        ) : (
+                            <Search className="h-5 w-5" />
+                        )}
+                    </Button>
+                </div>
+                <Button
+                    onClick={() => setDialogOpen(true)}
+                    variant="red"
+                    size="default"
+                    className="rounded-lg whitespace-nowrap w-full sm:w-auto"
+                >
+                    <SlidersHorizontal className="h-4 w-4" />
+                    <span>Tìm kiếm nâng cao</span>
+                </Button>
             </div>
 
-            {/* Advanced Search Section */}
-            {showAdvanced && (
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
-                    <AdvancedSearchFilters
-                        filters={filters}
-                        onFiltersChange={handleFilterChange}
-                    />
-                </div>
-            )}
+            {/* Advanced Search Dialog - Shadcn */}
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+                    <DialogHeader>
+                        <DialogTitle>Tìm kiếm nâng cao</DialogTitle>
+                        <DialogDescription>
+                            Sử dụng các bộ lọc bên dưới để tìm kiếm thủ tục hành chính một cách chính xác hơn
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex-1 overflow-y-auto py-4 pr-2">
+                        <AdvancedSearchFilters
+                            filters={filters}
+                            onFiltersChange={handleFilterChange}
+                            options={options}
+                        />
+                    </div>
+                    <DialogFooter className="flex-shrink-0">
+                        <Button
+                            variant="outline"
+                            onClick={handleReset}
+                        >
+                            Đặt lại
+                        </Button>
+                        <Button
+                            variant="red"
+                            onClick={handleApplyAdvanced}
+                        >
+                            Áp dụng
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

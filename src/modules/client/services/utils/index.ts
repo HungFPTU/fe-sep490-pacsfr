@@ -13,3 +13,6 @@ export * from '../helpers';
 
 // Colors - UI color utilities
 export * from './colors';
+
+// Filtering helpers
+export * from './service-filtering';
