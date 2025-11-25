@@ -3,6 +3,7 @@ import { NewProceduresCarousel } from "@/shared/components/home/NewProceduresCar
 import { ServicePageView } from "@/modules/client/service";
 import { OnlineServices } from "@/shared/components/home/OnlineServices.com";
 import { StatisticsSection } from "@/shared/components/home/StatisticsSection.com";
+import { FloatingAIChatButton } from "@/shared/components/home";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <ServicePageView />
       <OnlineServices />
       <StatisticsSection />
+      <FloatingAIChatButton />
     </div>
   );
 }

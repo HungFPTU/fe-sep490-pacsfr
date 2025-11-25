@@ -44,7 +44,7 @@ export function SearchFilters({
                     <select
                         value={selectedServiceType}
                         onChange={(e) => onServiceTypeChange(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                        className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <option value="">Tất cả loại dịch vụ</option>
                         {serviceTypes.map((service) => (

@@ -87,7 +87,7 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
                   value={field.state.value}
                   onChange={(e) => field.handleChange(Number(e.target.value) as never)}
                   disabled={isLoading}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value={1}>Thấp (1)</option>
                   <option value={2}>Trung bình (2)</option>

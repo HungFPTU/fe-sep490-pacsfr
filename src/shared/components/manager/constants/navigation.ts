@@ -123,7 +123,7 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             },
             {
                 title: 'Quầy phục vụ',
-                url: '/manager/operation/counter',
+                url: '/manager/quan-li-quay',
             },
         ],
     },
