@@ -4,6 +4,6 @@ export * from './table/CounterTableHeader.ui';
 export * from './table/CounterTableRow.ui';
 export * from './modal/CounterDetailModal.ui';
 export * from './modal/CreateCounterModal.ui';
-export * from './modal/AssignStaffModal.ui';
+export * from './modal/AssignServiceGroupModal.ui';
 export * from './form/CounterForm.ui';
 

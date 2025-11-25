@@ -1,5 +1,6 @@
 import { counterApi } from '../api/counter.api';
-import type { Counter, CounterServiceGroup, CreateCounterRequest, ServiceGroupOption, StaffOption, AssignStaffRequest } from '../types';
+import type { Counter, CounterServiceGroup, CreateCounterRequest, UpdateCounterRequest, ServiceGroupOption, AssignServiceGroupRequest } from '../types';
+import { getValuesPage } from '@/types/rest';
 
 const parseArray = <T>(data: { $values?: T[] } | T[] | undefined): T[] => {
     if (!data) return [];
@@ -92,45 +93,41 @@ export const counterService = {
         return response.data.data as Counter;
     },
 
+    async update(id: string, data: UpdateCounterRequest): Promise<Counter | null> {
+        const response = await counterApi.update(id, data);
+        if (!response.data?.success || !response.data?.data) {
+            return null;
+        }
+        return response.data.data as Counter;
+    },
+
     async getAllServiceGroups(): Promise<ServiceGroupOption[]> {
         const response = await counterApi.getAllServiceGroups();
         if (!response.data?.success || !response.data?.data) {
             return [];
         }
 
-        const rawData = response.data.data as Record<string, unknown>;
-        const itemsData = rawData.items as { $values?: unknown[] } | unknown[] | undefined;
-        const itemsArray = parseArray(itemsData);
-
-        return itemsArray.map((item: unknown) => {
-            const itemData = item as Record<string, unknown>;
-            return {
-                id: (itemData.id as string) || '',
-                name: (itemData.groupName as string) || '',
-            } as ServiceGroupOption;
-        });
+        const pageResult = getValuesPage(response.data);
+        return pageResult.items.map((item) => ({
+            id: item.id,
+            groupCode: item.groupCode,
+            groupName: item.groupName,
+            description: item.description,
+            iconUrl: item.iconUrl,
+            displayOrder: item.displayOrder,
+            isActive: item.isActive,
+            createdAt: item.createdAt,
+            createdBy: item.createdBy,
+        }));
     },
 
-    async getAllStaff(): Promise<StaffOption[]> {
-        const response = await counterApi.getAllStaff();
-        if (!response.data?.success || !response.data?.data) {
-            return [];
-        }
-
-        const rawData = response.data.data as { $values?: unknown[] } | unknown[];
-        const itemsData = parseArray(rawData);
-
-        return itemsData.map((item: unknown) => {
-            const itemData = item as Record<string, unknown>;
-            return {
-                id: (itemData.id as string) || '',
-                name: (itemData.fullName as string) || '',
-            } as StaffOption;
-        });
+    async assignServiceGroup(counterId: string, data: AssignServiceGroupRequest): Promise<boolean> {
+        const response = await counterApi.assignServiceGroup(counterId, data);
+        return response.data?.success ?? false;
     },
 
-    async assignStaff(counterId: string, data: AssignStaffRequest): Promise<boolean> {
-        const response = await counterApi.assignStaff(counterId, data);
+    async delete(id: string): Promise<boolean> {
+        const response = await counterApi.delete(id);
         return response.data?.success ?? false;
     },
 };
