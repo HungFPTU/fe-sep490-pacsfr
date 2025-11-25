@@ -32,7 +32,7 @@ export function CaseFormFields({
                 <select
                     value={caseData.priorityLevel}
                     onChange={(e) => onDataChange({ ...caseData, priorityLevel: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {priorityLevels.map(level => (
                         <option key={level.value} value={level.value}>{level.label}</option>
@@ -49,7 +49,7 @@ export function CaseFormFields({
                     value={caseData.submissionMethodId}
                     onChange={(e) => onDataChange({ ...caseData, submissionMethodId: e.target.value })}
                     disabled={isLoading}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     <option value="">{isLoading ? "Đang tải..." : "-- Chọn phương thức nộp --"}</option>
                     {submissionMethods.map(method => (
@@ -76,6 +76,19 @@ export function CaseFormFields({
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Thêm ghi chú cho hồ sơ..."
+                />
+            </div>
+
+            {/* Estimated Completion Date */}
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ngày hoàn thành dự kiến
+                </label>
+                <input
+                    type="date"
+                    value={caseData.estimatedCompletionDate || ""}
+                    onChange={(e) => onDataChange({ ...caseData, estimatedCompletionDate: e.target.value || undefined })}
+                    className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
             </div>
         </div>

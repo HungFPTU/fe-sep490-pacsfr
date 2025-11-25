@@ -3,9 +3,12 @@
 import React from 'react';
 import { PaymentBadge, StatusBadge } from '../badges';
 import { PaymentConfirmButton } from './PaymentConfirmButton.ui';
+import { CreatePaymentInvoiceButton } from './CreatePaymentInvoiceButton.ui';
+import { PaymentBillInfo } from './PaymentBillInfo.ui';
 
 interface CaseMetadataProps {
   caseId: string;
+  caseCode: string;
   submissionMethod: string;
   isPayment: boolean;
   guestId: string;
@@ -16,6 +19,7 @@ interface CaseMetadataProps {
 
 export const CaseMetadata: React.FC<CaseMetadataProps> = ({
   caseId,
+  caseCode,
   submissionMethod,
   isPayment,
   guestId,
@@ -89,21 +93,23 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
         </div>
         
         {!isPayment && (
+          <div className="space-y-2 pt-2">
+            <div>
+              <CreatePaymentInvoiceButton caseId={caseId} isPayment={isPayment} />
+            </div>
+            <div>
+              <PaymentConfirmButton caseId={caseId} isPayment={isPayment} />
+            </div>
+          </div>
+        )}
+
+        {isPayment && (
           <div className="pt-2">
-            <PaymentConfirmButton caseId={caseId} isPayment={isPayment} />
+            <PaymentBillInfo caseCode={caseCode} />
           </div>
         )}
       </div>
 
-      <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-        <label className="block text-xs font-medium text-gray-500 mb-2">ID Công dân</label>
-        <p className="text-xs font-mono text-gray-700 break-all">{guestId}</p>
-      </div>
-
-      <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-        <label className="block text-xs font-medium text-gray-500 mb-2">ID Dịch vụ</label>
-        <p className="text-xs font-mono text-gray-700 break-all">{serviceId}</p>
-      </div>
     </div>
   );
 };

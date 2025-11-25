@@ -187,7 +187,7 @@ export function GuestForm({
                             <select
                                 value={guestData.idType}
                                 onChange={(e) => onDataChange({ ...guestData, idType: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                 disabled={isSuccess}
                             >
                                 {idTypes.map(type => (
@@ -271,7 +271,7 @@ export function GuestForm({
                             <select
                                 value={guestData.gender}
                                 onChange={(e) => onDataChange({ ...guestData, gender: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                 disabled={isSuccess}
                             >
                                 {genders.map(gender => (
@@ -348,7 +348,7 @@ export function GuestForm({
                         <select
                             value={guestData.guestType}
                             onChange={(e) => onDataChange({ ...guestData, guestType: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                             disabled={isSuccess}
                         >
                             {guestTypes.map(type => (

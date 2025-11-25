@@ -111,6 +111,7 @@ export type CreateCaseRequest = {
     priorityLevel: number;
     submissionMethodId: string;
     notes?: string;
+    estimatedCompletionDate?: string; // yyyy-mm-dd
     createdBy: string;
 };
 
