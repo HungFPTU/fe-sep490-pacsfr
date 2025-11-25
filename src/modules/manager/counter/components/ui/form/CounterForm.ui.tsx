@@ -4,17 +4,17 @@ import React from 'react';
 import { useForm } from '@tanstack/react-form';
 import { InputField } from '@/shared/components/manager/features/form/BaseForm';
 import type { FormApiOf } from '@/types/types';
-import type { CreateCounterRequest } from '../../../types';
+import type { CounterFormValues } from '../../../types';
 
 interface Props {
-    form: FormApiOf<CreateCounterRequest>;
+    form: FormApiOf<CounterFormValues>;
     isLoading?: boolean;
 }
 
 export const CounterForm: React.FC<Props> = ({ form, isLoading = false }) => {
     return (
         <div className="space-y-4">
-            <InputField<CreateCounterRequest>
+            <InputField<CounterFormValues>
                 form={form}
                 name="counterCode"
                 label="Mã quầy"
@@ -23,7 +23,7 @@ export const CounterForm: React.FC<Props> = ({ form, isLoading = false }) => {
                 disabled={isLoading}
             />
 
-            <InputField<CreateCounterRequest>
+            <InputField<CounterFormValues>
                 form={form}
                 name="counterName"
                 label="Tên quầy"
@@ -32,7 +32,7 @@ export const CounterForm: React.FC<Props> = ({ form, isLoading = false }) => {
                 disabled={isLoading}
             />
 
-            <InputField<CreateCounterRequest>
+            <InputField<CounterFormValues>
                 form={form}
                 name="location"
                 label="Vị trí"
@@ -41,7 +41,7 @@ export const CounterForm: React.FC<Props> = ({ form, isLoading = false }) => {
                 disabled={isLoading}
             />
 
-            <InputField<CreateCounterRequest>
+            <InputField<CounterFormValues>
                 form={form}
                 name="counterType"
                 label="Loại quầy"
@@ -50,7 +50,7 @@ export const CounterForm: React.FC<Props> = ({ form, isLoading = false }) => {
                 disabled={isLoading}
             />
 
-            <InputField<CreateCounterRequest>
+            <InputField<CounterFormValues>
                 form={form}
                 name="maxCapacity"
                 label="Sức chứa tối đa"

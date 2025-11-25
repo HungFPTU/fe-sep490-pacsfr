@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient, useQueries } from '@tanstack/rea
 import { counterService } from '../services/counter.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
-import type { CreateCounterRequest, AssignStaffRequest, Counter } from '../types';
+import type { CreateCounterRequest, UpdateCounterRequest, AssignServiceGroupRequest, Counter } from '../types';
 
 export const useCounterList = () => {
     return useQuery({
@@ -45,6 +45,26 @@ export const useCreateCounter = () => {
     });
 };
 
+export const useUpdateCounter = () => {
+    const queryClient = useQueryClient();
+    const { addToast } = useGlobalToast();
+
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: UpdateCounterRequest }) =>
+            counterService.update(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COUNTER_BASE });
+            addToast({ message: 'Cập nhật quầy thành công', type: 'success' });
+        },
+        onError: (error) => {
+            addToast({
+                message: error instanceof Error ? error.message : 'Cập nhật quầy thất bại',
+                type: 'error',
+            });
+        },
+    });
+};
+
 export const useServiceGroupOptions = () => {
     return useQuery({
         queryKey: ['counter', 'service-group-options'],
@@ -54,29 +74,39 @@ export const useServiceGroupOptions = () => {
     });
 };
 
-export const useStaffOptions = () => {
-    return useQuery({
-        queryKey: ['counter', 'staff-options'],
-        queryFn: () => counterService.getAllStaff(),
-        gcTime: CACHE_TIME,
-        staleTime: STALE_TIME,
-    });
-};
-
-export const useAssignStaff = () => {
+export const useAssignServiceGroup = () => {
     const queryClient = useQueryClient();
     const { addToast } = useGlobalToast();
 
     return useMutation({
-        mutationFn: ({ counterId, data }: { counterId: string; data: AssignStaffRequest }) =>
-            counterService.assignStaff(counterId, data),
+        mutationFn: ({ counterId, data }: { counterId: string; data: AssignServiceGroupRequest }) =>
+            counterService.assignServiceGroup(counterId, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COUNTER_BASE });
-            addToast({ message: 'Gán nhân viên thành công', type: 'success' });
+            addToast({ message: 'Gán nhóm dịch vụ thành công', type: 'success' });
         },
         onError: (error) => {
             addToast({
-                message: error instanceof Error ? error.message : 'Gán nhân viên thất bại',
+                message: error instanceof Error ? error.message : 'Gán nhóm dịch vụ thất bại',
+                type: 'error',
+            });
+        },
+    });
+};
+
+export const useDeleteCounter = () => {
+    const queryClient = useQueryClient();
+    const { addToast } = useGlobalToast();
+
+    return useMutation({
+        mutationFn: (id: string) => counterService.delete(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COUNTER_BASE });
+            addToast({ message: 'Xóa quầy thành công', type: 'success' });
+        },
+        onError: (error) => {
+            addToast({
+                message: error instanceof Error ? error.message : 'Xóa quầy thất bại',
                 type: 'error',
             });
         },

@@ -1,16 +1,33 @@
 'use client';
 
-import React from 'react';
-import { EyeIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import React, { useState } from 'react';
+import { EyeIcon, FolderPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ConfirmDialog } from '@/shared/components/common';
 import type { Counter } from '../../../types';
 
 interface Props {
     counter: Counter;
     onView?: (counterId: string) => void;
-    onAssignStaff?: (counterId: string) => void;
+    onAssignServiceGroup?: (counterId: string) => void;
+    onDelete?: (counterId: string) => void;
+    isDeleting?: boolean;
 }
 
-export const CounterTableRow: React.FC<Props> = ({ counter, onView, onAssignStaff }) => {
+export const CounterTableRow: React.FC<Props> = ({ counter, onView, onAssignServiceGroup, onDelete, isDeleting }) => {
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+    const handleDeleteClick = () => {
+        setConfirmDeleteOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        onDelete?.(counter.id);
+        setConfirmDeleteOpen(false);
+    };
+
+    const handleCancelDelete = () => {
+        setConfirmDeleteOpen(false);
+    };
     const getStatusBadge = (isActive: boolean) => {
         if (isActive) {
             return (
@@ -47,9 +64,6 @@ export const CounterTableRow: React.FC<Props> = ({ counter, onView, onAssignStaf
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
                 {counter.maxCapacity ? `${counter.maxCapacity} người` : '-'}
-            </td>
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
-                {counter.staffName || '-'}
             </td>
             <td className="px-6 py-4 text-sm text-slate-600">
                 <div className="max-w-xs">
@@ -93,14 +107,32 @@ export const CounterTableRow: React.FC<Props> = ({ counter, onView, onAssignStaf
                         <EyeIcon className="h-5 w-5" />
                     </button>
                     <button
-                        onClick={() => onAssignStaff?.(counter.id)}
+                        onClick={() => onAssignServiceGroup?.(counter.id)}
                         className="inline-flex items-center justify-center rounded-lg p-2 text-green-600 transition-colors hover:bg-green-50"
-                        title="Gán nhân viên cho quầy"
+                        title="Gán Nhóm Dịch Vụ"
                     >
-                        <UserPlusIcon className="h-5 w-5" />
+                        <FolderPlusIcon className="h-5 w-5" />
+                    </button>
+                    <button
+                        onClick={handleDeleteClick}
+                        disabled={isDeleting}
+                        className="inline-flex items-center justify-center rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Xóa quầy"
+                    >
+                        <TrashIcon className="h-5 w-5" />
                     </button>
                 </div>
             </td>
+            <ConfirmDialog
+                open={confirmDeleteOpen}
+                message="Bạn chắc chắn muốn xóa quầy này ?"
+                confirmText="Xác nhận"
+                cancelText="Hủy"
+                type="danger"
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+                loading={isDeleting}
+            />
         </tr>
     );
 };

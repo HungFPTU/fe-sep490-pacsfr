@@ -1,7 +1,7 @@
 import { http } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
-import type { RestResponse } from '@/types/rest';
-import type { Counter, CreateCounterRequest, ServiceGroupOption, StaffOption, AssignStaffRequest } from '../types';
+import type { RestResponse, RestPaged } from '@/types/rest';
+import type { Counter, CreateCounterRequest, UpdateCounterRequest, ServiceGroupOption, AssignServiceGroupRequest } from '../types';
 
 export const counterApi = {
     getAllActive: () => {
@@ -23,22 +23,29 @@ export const counterApi = {
         );
     },
 
+    update: (id: string, data: UpdateCounterRequest) => {
+        return http.put<RestResponse<Counter>>(
+            API_PATH.MANAGER.COUNTER.PUT(id),
+            data
+        );
+    },
+
     getAllServiceGroups: () => {
-        return http.get<RestResponse<{ $values?: ServiceGroupOption[] }>>(
+        return http.get<RestPaged<ServiceGroupOption>>(
             API_PATH.MANAGER.COUNTER.GET_ALL_SERVICE_GROUPS
         );
     },
 
-    getAllStaff: () => {
-        return http.get<RestResponse<{ $values?: StaffOption[] }>>(
-            API_PATH.MANAGER.COUNTER.GET_ALL_STAFF
+    assignServiceGroup: (counterId: string, data: AssignServiceGroupRequest) => {
+        return http.post<RestResponse<Record<string, never>>>(
+            API_PATH.MANAGER.COUNTER.ASSIGN_SERVICE_GROUP(counterId),
+            data
         );
     },
 
-    assignStaff: (counterId: string, data: AssignStaffRequest) => {
-        return http.put<RestResponse<Record<string, never>>>(
-            API_PATH.MANAGER.COUNTER.ASSIGN_STAFF(counterId),
-            data
+    delete: (id: string) => {
+        return http.delete<RestResponse<Record<string, never>>>(
+            API_PATH.MANAGER.COUNTER.DELETE(id)
         );
     },
 };
