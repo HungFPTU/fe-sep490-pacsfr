@@ -90,3 +90,24 @@ export interface CaseProgressApiResponse {
     [key: string]: unknown;
 }
 
+export interface CaseFeedbackResponse {
+    success?: boolean;
+    message?: string;
+    data?: unknown;
+    [key: string]: unknown;
+}
+
+export interface CaseFeedback {
+    id: string;
+    caseId: string;
+    caseCode: string;
+    rating: number;
+    comment: string;
+    guestName?: string;
+    guestPhone?: string;
+    isAnonymous: boolean;
+    status?: string;
+    serviceName?: string;
+    createdAt?: string;
+}
+

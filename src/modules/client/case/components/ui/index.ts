@@ -15,3 +15,7 @@ export { CaseProgressDetailTable } from './detail/CaseProgressDetailTable.ui';
 // Result View (orchestrator)
 export { CaseProgressResultView } from './result/CaseProgressResult.ui';
 
+// Feedback
+export { CaseFeedbackCard } from './feedback/CaseFeedbackCard.ui';
+export { CaseFeedbackViewer } from './feedback/CaseFeedbackViewer.ui';
+

@@ -5,6 +5,7 @@ export * from "./lib";
 export * from "./hooks/useDisclosure";
 export * from "./hooks/useFormValidation";
 export * from "./hooks/useHttpLoading";
+export * from "./hooks/useVietnamAddress";
 
 // Components
 export { Container } from "./components/layout/Container";

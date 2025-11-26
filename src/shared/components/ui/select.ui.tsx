@@ -16,13 +16,19 @@ export interface SelectProps
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-    ({ className, options, placeholder, ...props }, ref) => {
+    ({ className, options, placeholder, disabled, ...props }, ref) => {
         return (
-            <div className="relative">
+            <div className="relative w-full">
                 <select
                     ref={ref}
+                    disabled={disabled}
                     className={cn(
-                        "flex h-9 w-full appearance-none rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                        "flex h-9 w-full appearance-none rounded-md border border-input bg-white px-3 py-1 pr-8 text-sm shadow-sm transition-all",
+                        "placeholder:text-muted-foreground",
+                        "hover:border-input/80 hover:bg-slate-50 hover:shadow-md",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                        "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:shadow-sm",
+                        "cursor-pointer",
                         className
                     )}
                     {...props}
@@ -38,7 +44,10 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         </option>
                     ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none opacity-50" />
+                <ChevronDown className={cn(
+                    "absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-opacity",
+                    disabled ? "opacity-30" : "opacity-50"
+                )} />
             </div>
         );
     }
