@@ -338,3 +338,23 @@ export type GuestSearchFilters = {
     page?: number;
     size?: number;
 };
+
+export type SubmissionMethod = {
+    $id?: string;
+    id: string;
+    submissionMethodName: string;
+    processingTime: string;
+    fee: number;
+    description: string;
+};
+
+export type SubmissionMethodsResponse = {
+    $id?: string;
+    success: boolean;
+    message?: string;
+    data: {
+        $id?: string;
+        $values: SubmissionMethod[];
+    };
+    timestamp?: string;
+};

@@ -24,7 +24,9 @@ import type {
     UpdateTicketStatusRequest,
     UpdateTicketStatusResponse,
     GetTicketDetailResponse,
-    TicketDetail
+    TicketDetail,
+    SubmissionMethodsResponse,
+    SubmissionMethod
 } from "../types";
 
 export const staffDashboardApi = {
@@ -187,6 +189,12 @@ export const staffDashboardApi = {
 
         const response = await http.get<ServiceGroupListResponse>(url);
         return response.data;
+    },
+
+    // Get submission methods for a service
+    async getSubmissionMethodsForService(serviceId: string): Promise<SubmissionMethod[]> {
+        const response = await http.get<SubmissionMethodsResponse>(API_PATH.STAFF.DASHBOARD.GET_SERVICE_SUBMISSION_METHODS(serviceId));
+        return response.data.data?.$values || [];
     },
 
     // Create Guest
