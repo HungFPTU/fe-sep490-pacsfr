@@ -111,9 +111,7 @@ export function GuestForm({
                             <h3 className="text-lg font-bold text-blue-900 mb-2">
                                 Tạo khách hàng thành công!
                             </h3>
-                            <p className="text-sm text-blue-700 mb-4">
-                                Guest ID: <span className="font-mono font-semibold">{guestId}</span>
-                            </p>
+                           
                             <div className="flex gap-3">
                                 <Button
                                     onClick={onContinueToCase}

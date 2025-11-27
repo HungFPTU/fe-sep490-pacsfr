@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import type { CreateCaseRequest } from "../../../../dashboard/types";
-import { useSubmissionMethods } from "../../../hooks/useSubmissionMethods";
+import type { CreateCaseRequest, SubmissionMethod } from "../../../../dashboard/types";
 
 interface PriorityLevel {
     value: number;
@@ -12,15 +11,18 @@ interface PriorityLevel {
 interface CaseFormFieldsProps {
     caseData: CreateCaseRequest;
     priorityLevels: PriorityLevel[];
+    submissionMethods?: SubmissionMethod[];
+    isLoadingSubmissionMethods?: boolean;
     onDataChange: (data: CreateCaseRequest) => void;
 }
 
 export function CaseFormFields({
     caseData,
     priorityLevels,
+    submissionMethods = [],
+    isLoadingSubmissionMethods = false,
     onDataChange,
 }: CaseFormFieldsProps) {
-    const { data: submissionMethods = [], isLoading } = useSubmissionMethods();
 
     return (
         <div className="space-y-6">
@@ -48,10 +50,10 @@ export function CaseFormFields({
                 <select
                     value={caseData.submissionMethodId}
                     onChange={(e) => onDataChange({ ...caseData, submissionMethodId: e.target.value })}
-                    disabled={isLoading}
+                    disabled={isLoadingSubmissionMethods}
                     className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    <option value="">{isLoading ? "Đang tải..." : "-- Chọn phương thức nộp --"}</option>
+                    <option value="">{isLoadingSubmissionMethods ? "Đang tải..." : "-- Chọn phương thức nộp --"}</option>
                     {submissionMethods.map(method => (
                         <option key={method.id} value={method.id}>
                             {method.submissionMethodName} {method.fee > 0 ? `(${method.fee.toLocaleString()}đ)` : "(Miễn phí)"}

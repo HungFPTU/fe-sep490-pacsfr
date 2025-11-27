@@ -20,7 +20,13 @@ import type {
     CreateGuestRequest,
     CreateGuestResponse,
     GetGuestsResponse,
-    GuestSearchFilters
+    GuestSearchFilters,
+    UpdateTicketStatusRequest,
+    UpdateTicketStatusResponse,
+    GetTicketDetailResponse,
+    TicketDetail,
+    SubmissionMethodsResponse,
+    SubmissionMethod
 } from "../types";
 
 export const staffDashboardApi = {
@@ -129,6 +135,21 @@ export const staffDashboardApi = {
         return response.data;
     },
 
+    // Get ticket detail by ticket number
+    async getTicketDetail(ticketNumber: string): Promise<TicketDetail> {
+        const response = await http.get<GetTicketDetailResponse>(API_PATH.STAFF.DASHBOARD.GET_TICKET_DETAIL(ticketNumber));
+        return response.data.data;
+    },
+
+    // Update ticket status
+    async updateTicketStatus(ticketNumber: string, status: string, request: UpdateTicketStatusRequest): Promise<UpdateTicketStatusResponse> {
+        const response = await http.put<UpdateTicketStatusResponse>(
+            `${API_PATH.STAFF.DASHBOARD.UPDATE_TICKET_STATUS(ticketNumber, status)}`,
+            request
+        );
+        return response.data;
+    },
+
     // Create new case
     async createCase(request: CreateCaseRequest): Promise<CreateCaseApiResponse> {
         const response = await http.post<CreateCaseApiResponse>(API_PATH.STAFF.DASHBOARD.CREATE_CASE, request);
@@ -168,6 +189,12 @@ export const staffDashboardApi = {
 
         const response = await http.get<ServiceGroupListResponse>(url);
         return response.data;
+    },
+
+    // Get submission methods for a service
+    async getSubmissionMethodsForService(serviceId: string): Promise<SubmissionMethod[]> {
+        const response = await http.get<SubmissionMethodsResponse>(API_PATH.STAFF.DASHBOARD.GET_SERVICE_SUBMISSION_METHODS(serviceId));
+        return response.data.data?.$values || [];
     },
 
     // Create Guest
