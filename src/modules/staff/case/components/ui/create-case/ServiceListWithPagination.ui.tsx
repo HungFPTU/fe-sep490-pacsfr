@@ -110,10 +110,7 @@ export function ServiceListWithPagination({
                                 Đã chọn: {selectedService.serviceName}
                             </p>
                             <p className="text-xs text-blue-700 mt-1">
-                                Mã: {selectedService.serviceCode} • Service ID: {selectedService.id}
-                            </p>
-                            <p className="text-xs text-blue-700">
-                                Phí: {selectedService.feeAmount?.toLocaleString('vi-VN') ?? '0'}đ • Thời gian xử lý: {selectedService.processingTime}
+                                Mã: {selectedService.serviceCode}
                             </p>
                         </div>
                     </div>

@@ -89,7 +89,7 @@ export function GuestSearchForm({
                                 Đã chọn: {selectedGuest.fullName}
                             </p>
                             <p className="text-xs text-blue-700 mt-1">
-                                CMND/CCCD: {selectedGuest.idNumber} • Guest ID: {selectedGuest.id}
+                                CMND/CCCD: {selectedGuest.idNumber}
                             </p>
                         </div>
                     </div>
