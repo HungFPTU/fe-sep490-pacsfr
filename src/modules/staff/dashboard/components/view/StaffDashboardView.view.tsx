@@ -10,6 +10,7 @@ import type { CitizenProfile, ServiceGroup } from "../../types";
 import { Plus } from "lucide-react";
 import { useMinimumLoadingTime } from "@/shared/hooks";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
+import { useQueueWebSocket } from "../../hooks/useQueueWebSocket";
 
 // UI Components
 import {
@@ -57,10 +58,10 @@ export function StaffDashboardView() {
     // Queue management states
     const [currentServing, setCurrentServing] = useState<{
         id: string;
-        number: string;
+        ticketNumber: string;
         fullName: string;
-        serviceType: string;
-        status: 'waiting' | 'serving' | 'completed';
+        status: string;
+        calledAt?: string;
     } | null>(null);
 
     // Load service groups with optional keyword
@@ -163,19 +164,21 @@ export function StaffDashboardView() {
             await withMinimumLoadingTime(async () => {
                 const response = await staffDashboardService.callNext(serviceGroupId);
                 
-                if (response.success && response.data) {
-                    // Update current serving with API data
+                if (response.success && response.data?.ticketNumber) {
+                    // Get ticket detail using the ticketNumber from call next response
+                    const ticketDetail = await staffDashboardService.getTicketDetail(response.data.ticketNumber);
+                    
+                    // Update current serving with detailed ticket data
                     setCurrentServing({
-                        id: response.data.ticketNumber || '',
-                        number: response.data.ticketNumber || '',
-                        fullName: response.data.citizenName || 'Chưa có thông tin',
-                        serviceType: response.data.serviceType || 'Dịch vụ',
-                        status: 'serving'
+                        id: ticketDetail.ticketNumber,
+                        ticketNumber: ticketDetail.ticketNumber,
+                        fullName: ticketDetail.fullName,
+                        status: ticketDetail.status,
+                        calledAt: ticketDetail.servedAt
                     });
 
-                    const citizenName = response.data.citizenName || 'Chưa có thông tin';
                     addToast({ 
-                        message: `Mời số ${response.data.ticketNumber} - ${citizenName} vào phục vụ`, 
+                        message: `Mời số ${ticketDetail.ticketNumber} - ${ticketDetail.fullName} vào phục vụ`, 
                         type: 'info' 
                     });
                     
@@ -198,35 +201,6 @@ export function StaffDashboardView() {
         }
     };
 
-    // Complete current serving
-    const completeCurrentServing = async () => {
-        if (!currentServing) return;
-
-        try {
-            // Update current serving status
-            setCurrentServing(prev => prev ? { ...prev, status: 'completed' } : null);
-
-            // Update in waiting list
-            const currentList = getMockWaitingList();
-            const updatedList = currentList.map(c =>
-                c.id === currentServing.id
-                    ? { ...c, status: 'completed' as const }
-                    : c
-            );
-            setWaitingList(updatedList);
-
-            // Clear current serving after a delay
-            setTimeout(() => {
-                setCurrentServing(null);
-            }, 2000);
-
-            addToast({ message: `Đã hoàn thành phục vụ số ${currentServing.number}`, type: 'info' });
-        } catch (error) {
-            console.error('Error completing current serving:', error);
-            addToast({ message: 'Có lỗi xảy ra khi hoàn thành phục vụ', type: 'info' });
-        }
-    };
-
     // Load service groups on mount
     useEffect(() => {
         loadServiceGroups();
@@ -237,16 +211,59 @@ export function StaffDashboardView() {
         loadDashboardData();
     }, [loadDashboardData]);
 
-    // Auto-refresh queue status every 10 seconds
-    useEffect(() => {
-        if (!serviceGroupId) return;
-        
-        const interval = setInterval(() => {
-            loadQueueStatus();
-        }, 10000); // 10 seconds
+    // WebSocket for real-time queue updates
+    const handleQueueUpdate = useCallback((status: any) => {
+        setQueueStatus(status);
+    }, [setQueueStatus]);
 
-        return () => clearInterval(interval);
-    }, [serviceGroupId, loadQueueStatus]);
+    const handleTicketCalled = useCallback((data: any) => {
+        // Update current serving when a ticket is called
+        if (data.ticketNumber) {
+            setCurrentServing({
+                id: data.ticketNumber,
+                ticketNumber: data.ticketNumber,
+                fullName: data.fullName || 'Chưa có thông tin',
+                status: data.status || 'Calling',
+                calledAt: data.calledAt
+            });
+        }
+    }, []);
+
+    const handleTicketCompleted = useCallback((ticketNumber: string) => {
+        // Update current serving when a ticket is completed
+        setCurrentServing(null);
+        // Reload queue status
+        loadQueueStatus();
+    }, [loadQueueStatus]);
+
+    const handleStatusChanged = useCallback((ticketNumber: string, status: string) => {
+        // Update current serving status when it changes
+        setCurrentServing(prev => 
+            prev && prev.ticketNumber === ticketNumber
+                ? { ...prev, status }
+                : prev
+        );
+    }, []);
+
+    const handleStatusUpdated = useCallback((ticketData: {
+        id: string;
+        ticketNumber: string;
+        fullName: string;
+        status: string;
+        calledAt?: string;
+    }) => {
+        // Update current serving with new ticket data from API
+        setCurrentServing(ticketData);
+    }, []);
+
+    useQueueWebSocket({
+        serviceGroupId,
+        onQueueUpdate: handleQueueUpdate,
+        onTicketCalled: handleTicketCalled,
+        onTicketCompleted: handleTicketCompleted,
+        onStatusChanged: handleStatusChanged,
+        enabled: !!serviceGroupId,
+    });
 
     // Handle service group selection
     const handleServiceGroupSelect = (group: ServiceGroup) => {
@@ -367,8 +384,9 @@ export function StaffDashboardView() {
                     currentServing={currentServing}
                     isCallingNext={isCallingNext}
                     onCallNext={callNextNumber}
-                    onComplete={completeCurrentServing}
+                    onRefresh={loadQueueStatus}
                     onChangeQueue={() => setShowQueueSetup(true)}
+                    onStatusUpdated={handleStatusUpdated}
                 />
 
                 {/* Stats Cards */}

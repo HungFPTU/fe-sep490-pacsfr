@@ -20,7 +20,11 @@ import type {
     CreateGuestRequest,
     CreateGuestResponse,
     GetGuestsResponse,
-    GuestSearchFilters
+    GuestSearchFilters,
+    UpdateTicketStatusRequest,
+    UpdateTicketStatusResponse,
+    GetTicketDetailResponse,
+    TicketDetail
 } from "../types";
 
 export const staffDashboardApi = {
@@ -126,6 +130,21 @@ export const staffDashboardApi = {
     // Call next ticket in queue
     async callNext(serviceGroupId: string): Promise<CallNextResponse> {
         const response = await http.post<CallNextResponse>(API_PATH.STAFF.DASHBOARD.CALL_NEXT(serviceGroupId), {});
+        return response.data;
+    },
+
+    // Get ticket detail by ticket number
+    async getTicketDetail(ticketNumber: string): Promise<TicketDetail> {
+        const response = await http.get<GetTicketDetailResponse>(API_PATH.STAFF.DASHBOARD.GET_TICKET_DETAIL(ticketNumber));
+        return response.data.data;
+    },
+
+    // Update ticket status
+    async updateTicketStatus(ticketNumber: string, status: string, request: UpdateTicketStatusRequest): Promise<UpdateTicketStatusResponse> {
+        const response = await http.put<UpdateTicketStatusResponse>(
+            `${API_PATH.STAFF.DASHBOARD.UPDATE_TICKET_STATUS(ticketNumber, status)}`,
+            request
+        );
         return response.data;
     },
 

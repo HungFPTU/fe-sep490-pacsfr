@@ -260,6 +260,16 @@ export const staffDashboardService = {
         }
     },
 
+    // Get ticket detail
+    async getTicketDetail(ticketNumber: string): Promise<import('../types').TicketDetail> {
+        try {
+            return await staffDashboardApi.getTicketDetail(ticketNumber);
+        } catch (error) {
+            console.error('Error fetching ticket detail:', error);
+            throw error;
+        }
+    },
+
     // Create new case with validation
     async createCase(request: CreateCaseRequest): Promise<CaseResponse> {
         try {
@@ -330,4 +340,52 @@ export const staffDashboardService = {
             throw error;
         }
     },
+
+    // Update ticket status
+    async updateTicketStatus(ticketNumber: string, status: string): Promise<import('../types').TicketDetail> {
+        try {
+            const response = await staffDashboardApi.updateTicketStatus(ticketNumber, status, { 
+                status: status as 'Waiting' | 'Processing' | 'Calling' | 'Completed' | 'Skipped' | 'Cancelled' | 'NoShow'
+            });
+            
+            if (!response.success) {
+                throw new Error(response.message || 'Failed to update ticket status');
+            }
+
+            // Fetch updated ticket details
+            return await this.getTicketDetail(ticketNumber);
+        } catch (error) {
+            console.error('Error updating ticket status:', error);
+            throw error;
+        }
+    },
+
+    // Get ticket status text in Vietnamese
+    getTicketStatusText(status: string): string {
+        const statusMap: Record<string, string> = {
+            'Waiting': 'Đang chờ',
+            'Processing': 'Đang xử lý',
+            'Calling': 'Đang gọi',
+            'Completed': 'Hoàn thành',
+            'Skipped': 'Bỏ qua',
+            'Cancelled': 'Đã hủy',
+            'NoShow': 'Vắng mặt'
+        };
+        return statusMap[status] || status;
+    },
+
+    // Get ticket status color for UI
+    getTicketStatusColor(status: string): string {
+        const colorMap: Record<string, string> = {
+            'Waiting': 'bg-yellow-100 text-yellow-800',
+            'Processing': 'bg-blue-100 text-blue-800',
+            'Calling': 'bg-purple-100 text-purple-800',
+            'Completed': 'bg-green-100 text-green-800',
+            'Skipped': 'bg-gray-100 text-gray-800',
+            'Cancelled': 'bg-red-100 text-red-800',
+            'NoShow': 'bg-orange-100 text-orange-800'
+        };
+        return colorMap[status] || 'bg-gray-100 text-gray-800';
+    },
 };
+   
