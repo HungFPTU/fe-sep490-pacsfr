@@ -12,18 +12,8 @@ export const useCreatePayment = () => {
 
   return useMutation({
     mutationFn: async (request: CreatePaymentRequest) => {
-      // Step 1: Create payment invoice
+      // Create payment invoice only
       const paymentData = await caseCreatePaymentService.createPayment(request);
-      
-      // Step 2: Auto-confirm payment status
-      try {
-        await casePaymentService.confirmPayment(request.caseId);
-      } catch (confirmError) {
-        console.error('Warning: Failed to auto-confirm payment, but invoice was created:', confirmError);
-        // Don't throw error here - invoice was created successfully
-        // Staff can manually confirm if needed
-      }
-      
       return paymentData;
     },
     onSuccess: (data, request) => {
@@ -33,8 +23,11 @@ export const useCreatePayment = () => {
       // Invalidate and refetch case search list
       queryClient.invalidateQueries({ queryKey: ['case-search'] });
       
+      // Invalidate and refetch payment bill query
+      queryClient.invalidateQueries({ queryKey: ['payment-bill'] });
+      
       addToast({
-        message: 'Tạo hóa đơn và cập nhật trạng thái thanh toán thành công!',
+        message: 'Tạo hóa đơn thành công!',
         type: 'success',
       });
     },

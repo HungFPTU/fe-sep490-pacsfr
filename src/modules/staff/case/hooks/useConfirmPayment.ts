@@ -17,6 +17,9 @@ export const useConfirmPayment = () => {
       // Invalidate and refetch case search list to refresh all search results
       queryClient.invalidateQueries({ queryKey: ['case-search'] });
       
+      // Invalidate and refetch payment bill query
+      queryClient.invalidateQueries({ queryKey: ['payment-bill'] });
+      
       addToast({
         message: 'Xác nhận thanh toán thành công!',
         type: 'success',
