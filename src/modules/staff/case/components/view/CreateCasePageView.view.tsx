@@ -237,7 +237,7 @@ export function CreateCasePageView() {
 
             if (response.success && response.data) {
                 addToast({ message: "Tạo hồ sơ thành công!", type: "success" });
-                router.push("/staff/dashboard");
+                router.push("/staff/case");
             } else {
                 addToast({ message: "Lỗi: " + (response.message || "Không thể tạo hồ sơ"), type: "error" });
             }

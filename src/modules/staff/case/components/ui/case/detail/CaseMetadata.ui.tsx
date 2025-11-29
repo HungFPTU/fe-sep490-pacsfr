@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { usePaymentBill } from '../../../../hooks/usePaymentBill';
 import { PaymentBadge, StatusBadge } from '../badges';
 import { PaymentConfirmButton } from './PaymentConfirmButton.ui';
 import { CreatePaymentInvoiceButton } from './CreatePaymentInvoiceButton.ui';
@@ -27,6 +28,7 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
   currentStatus,
   onStatusClick,
 }) => {
+  const { data: bill } = usePaymentBill(caseCode, true);
   return (
     <div className="space-y-4">
       <div className="flex items-start space-x-3">
@@ -92,7 +94,8 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
           </div>
         </div>
         
-        {!isPayment && (
+        {/* Show create payment button and confirm button when payment is not required (chưa thanh toán) and no bill exists */}
+        {!isPayment && !bill && (
           <div className="space-y-2 pt-2">
             <div>
               <CreatePaymentInvoiceButton caseId={caseId} isPayment={isPayment} />
@@ -103,7 +106,16 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
           </div>
         )}
 
-        {isPayment && (
+        {/* Show invoice info and confirm button when bill exists and payment is not complete */}
+        {bill && !isPayment && (
+          <div className="space-y-2 pt-2">
+            <PaymentBillInfo caseCode={caseCode} />
+            <PaymentConfirmButton caseId={caseId} isPayment={false} />
+          </div>
+        )}
+
+        {/* Show only invoice info when payment is already completed */}
+        {isPayment && bill && (
           <div className="pt-2">
             <PaymentBillInfo caseCode={caseCode} />
           </div>
