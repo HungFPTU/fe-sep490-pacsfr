@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCaseSearch } from '../../hooks/useCaseSearch';
 import type { CaseSearchFilters, CaseData } from '../../types/case-search';
 import { SearchFilters, SearchActions, SearchStatus, EmptySearchState, CaseDetailModal } from '../ui/case';
@@ -23,6 +23,11 @@ export const CaseSearchView: React.FC = () => {
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
 
   const { data, isLoading, error, refetch } = useCaseSearch(searchFilters, searchEnabled);
+
+  // Auto-search on component mount
+  useEffect(() => {
+    setSearchEnabled(true);
+  }, []);
 
   const hasFilterChanges = JSON.stringify(filters) !== JSON.stringify(searchFilters);
 
