@@ -6,7 +6,8 @@ import {
   StaffDetail,
   CreateStaffRequest,
   AssignDepartmentRequest,
-  AssignWorkShiftRequest,
+  AssignServiceGroupsRequest,
+  ServiceGroupOption,
   StaffFilters,
 } from '../types';
 import { RestResponse } from '@/types/rest';
@@ -81,12 +82,32 @@ export const useAssignDepartment = () => {
   });
 };
 
-export const useAssignWorkShift = () => {
+export const useServiceGroups = () => {
+  return useQuery({
+    queryKey: ['serviceGroups', 'all'],
+    queryFn: () => StaffService.getServiceGroups(),
+  });
+};
+
+export const useAssignServiceGroups = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ staffId, data }: { staffId: string; data: AssignWorkShiftRequest }) =>
-      StaffService.assignWorkShift(staffId, data),
+    mutationFn: ({ staffId, data }: { staffId: string; data: AssignServiceGroupsRequest }) =>
+      StaffService.assignServiceGroups(staffId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STAFF_ALL() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STAFF_DETAIL(variables.staffId) });
+    },
+  });
+};
+
+export const useUploadAvatar = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ staffId, file }: { staffId: string; file: File }) =>
+      StaffService.uploadAvatar(staffId, file),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STAFF_ALL() });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STAFF_DETAIL(variables.staffId) });

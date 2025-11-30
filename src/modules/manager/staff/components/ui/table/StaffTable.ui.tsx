@@ -6,7 +6,7 @@ import {
 } from '@heroui/react';
 import { Button } from '@/shared/components/ui/button.ui';
 import { TableRow, TableCell } from '@/shared/components/manager/ui/table';
-import { Trash2, Eye, UserPlus, Calendar, Clock } from 'lucide-react';
+import { Trash2, Eye, UserPlus, Image as ImageIcon } from 'lucide-react';
 import { Badge } from '@/shared/components/ui/badge.ui';
 import { Staff } from '../../../types';
 import { formatDateVN } from '@core/utils/date';
@@ -17,15 +17,13 @@ import {
     getTableColumns,
 } from '../../../utils';
 import { getRoleTypeStyle, getStatusStyle } from '../../../utils';
-import { AssignWorkShiftModal, StaffWorkShiftAssignmentsModal } from '../modal';
+import { UploadAvatarModal } from '../modal';
 
 interface StaffTableProps {
     data: Staff[]; // Changed from RestMany<Staff> to Staff[]
     onView: (staff: Staff) => void;
     onDelete: (staff: Staff) => void;
     onAssignDepartment: (staff: Staff) => void;
-    onAssignWorkShift: (staff: Staff) => void;
-    onViewWorkShifts?: (staff: Staff) => void;
     onRefresh?: () => void;
     isLoading?: boolean;
 }
@@ -38,24 +36,14 @@ export function StaffTable({
     onRefresh,
     isLoading = false,
 }: StaffTableProps) {
-    const [assignWorkShiftModalOpen, setAssignWorkShiftModalOpen] = React.useState(false);
-    const [viewWorkShiftsModalOpen, setViewWorkShiftsModalOpen] = React.useState(false);
+    const [uploadAvatarModalOpen, setUploadAvatarModalOpen] = React.useState(false);
     const [selectedStaff, setSelectedStaff] = React.useState<Staff | null>(null);
 
     const columns = getTableColumns();
 
-    const handleAssignWorkShift = (staff: Staff) => {
+    const handleUploadAvatar = (staff: Staff) => {
         setSelectedStaff(staff);
-        setAssignWorkShiftModalOpen(true);
-    };
-
-    const handleAssignWorkShiftSuccess = () => {
-        onRefresh?.();
-    };
-
-    const handleViewWorkShifts = (staff: Staff) => {
-        setSelectedStaff(staff);
-        setViewWorkShiftsModalOpen(true);
+        setUploadAvatarModalOpen(true);
     };
 
     const renderCell = (staff: Staff, columnKey: React.Key) => {
@@ -121,25 +109,13 @@ export function StaffTable({
                             </Button>
                         </Tooltip>
 
-                        <Tooltip content="Gán ca làm việc">
+                        <Tooltip content="Cập nhật ảnh đại diện cho nhân viên">
                             <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() => handleAssignWorkShift(staff)}
-                            // className={`p-2 rounded-lg transition-colors ${actionColors.assignWorkShift}`}
+                                onClick={() => handleUploadAvatar(staff)}
                             >
-                                <Calendar className="w-4 h-4" />
-                            </Button>
-                        </Tooltip>
-
-                        <Tooltip content="Xem ca làm việc">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => handleViewWorkShifts(staff)}
-                            //className={`p-2 rounded-lg transition-colors ${actionColors.view}`}
-                            >
-                                <Clock className="w-4 h-4" />
+                                <ImageIcon className="w-4 h-4" />
                             </Button>
                         </Tooltip>
 
@@ -205,19 +181,15 @@ export function StaffTable({
                 </tbody>
             </table>
 
-            {/* Assign Work Shift Modal */}
-            <AssignWorkShiftModal
-                open={assignWorkShiftModalOpen}
-                onClose={() => setAssignWorkShiftModalOpen(false)}
+            {/* Upload Avatar Modal */}
+            <UploadAvatarModal
+                open={uploadAvatarModalOpen}
+                onClose={() => {
+                    setUploadAvatarModalOpen(false);
+                    setSelectedStaff(null);
+                }}
                 staff={selectedStaff}
-                onSuccess={handleAssignWorkShiftSuccess}
-            />
-
-            {/* View Work Shifts Modal */}
-            <StaffWorkShiftAssignmentsModal
-                open={viewWorkShiftsModalOpen}
-                onClose={() => setViewWorkShiftsModalOpen(false)}
-                staff={selectedStaff}
+                onSuccess={onRefresh}
             />
         </div>
     );

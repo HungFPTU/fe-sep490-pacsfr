@@ -6,8 +6,10 @@ import {
   StaffDetail,
   CreateStaffRequest,
   AssignDepartmentRequest,
-  AssignWorkShiftRequest,
+  AssignServiceGroupsRequest,
+  ServiceGroupOption,
   StaffFilters,
+  UploadAvatarResponse,
 } from '../types';
 import { Counter } from '../../workshift';
 
@@ -100,15 +102,66 @@ export const assignDepartment = async (
 };
 
 /**
- * STAFF-07: Gán nhân viên vào ca làm việc
+ * Lấy danh sách Service Groups (không filter)
  */
-export const assignWorkShift = async (
+export const getServiceGroups = async (): Promise<ServiceGroupOption[]> => {
+  const response = await http.get<RestMany<{ id: string; groupName: string; groupCode?: string; [key: string]: unknown }>>(
+    API_PATH.MANAGER.STAFF_MANAGEMENT.GET_SERVICE_GROUPS,
+  );
+  const data = response.data;
+  if (!data?.success || !data.data) return [];
+  
+  // Handle different response structures
+  let items: Array<{ id: string; groupName: string; groupCode?: string }> = [];
+  
+  if (Array.isArray(data.data)) {
+    items = data.data;
+  } else if (data.data && '$values' in data.data && Array.isArray(data.data.$values)) {
+    items = data.data.$values;
+  } else if (data.data && 'items' in data.data) {
+    const itemsData = data.data.items;
+    if (Array.isArray(itemsData)) {
+      items = itemsData;
+    } else if (itemsData && '$values' in itemsData && Array.isArray(itemsData.$values)) {
+      items = itemsData.$values;
+    }
+  }
+  
+  // Map to only id and groupName
+  return items.map((item) => ({
+    id: item.id,
+    groupName: item.groupName || '',
+    groupCode: item.groupCode,
+  }));
+};
+
+/**
+ * STAFF-10: Gán nhiều service groups cho staff (batch assignment)
+ */
+export const assignServiceGroups = async (
   staffId: string,
-  data: AssignWorkShiftRequest,
+  data: AssignServiceGroupsRequest,
 ): Promise<RestResponse<Staff>> => {
   const response = await http.post<RestResponse<Staff>>(
-    API_PATH.MANAGER.STAFF_MANAGEMENT.ASSIGN_WORKSHIFT(staffId),
+    API_PATH.MANAGER.STAFF_MANAGEMENT.ASSIGN_SERVICE_GROUPS(staffId),
     data,
+  );
+  return response.data;
+};
+
+/**
+ * STAFF-07: Upload avatar cho nhân viên
+ */
+export const uploadAvatar = async (
+  staffId: string,
+  file: File,
+): Promise<RestResponse<UploadAvatarResponse>> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await http.post<RestResponse<UploadAvatarResponse>>(
+    API_PATH.MANAGER.STAFF_MANAGEMENT.UPLOAD_AVATAR(staffId),
+    formData,
   );
   return response.data;
 };
