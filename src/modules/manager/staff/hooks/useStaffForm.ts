@@ -17,6 +17,7 @@ export interface StaffFormValues {
     roleType: string;
     specialization?: string;
     isActive?: boolean;
+    serviceGroupIds?: string[];
 }
 
 interface UseStaffFormProps {
@@ -43,6 +44,7 @@ function toFormValues(data: Staff | null): StaffFormValues {
             roleType: 'STAFF',
             specialization: '',
             isActive: true,
+            serviceGroupIds: [],
         };
     }
 
@@ -57,6 +59,7 @@ function toFormValues(data: Staff | null): StaffFormValues {
         roleType: data.roleType,
         specialization: data.specialization || '',
         isActive: data.isActive,
+        serviceGroupIds: [],
     };
 }
 

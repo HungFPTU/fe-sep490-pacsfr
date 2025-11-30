@@ -4,7 +4,7 @@ import React from 'react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { StaffForm } from './StaffForm.ui';
 import { useStaffForm } from '../../../hooks/useStaffForm';
-import { useCreateStaff } from '../../../hooks';
+import { useCreateStaff, useAssignServiceGroups } from '../../../hooks';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { CreateStaffRequest, Staff } from '../../../types';
 
@@ -18,34 +18,52 @@ interface CreateStaffModalProps {
 export function CreateStaffModal({ open, onClose, initData, onSuccess }: CreateStaffModalProps) {
   const { addToast } = useGlobalToast();
   const createMutation = useCreateStaff();
+  const assignServiceGroupsMutation = useAssignServiceGroups();
 
-  const isLoading = createMutation.isPending;
+  const isLoading = createMutation.isPending || assignServiceGroupsMutation.isPending;
 
-  const handleSubmit = async (data: CreateStaffRequest) => {
-    try {
-      const res = await createMutation.mutateAsync(data);
-      if (res?.success) {
-        addToast({ message: 'Tạo nhân viên mới thành công', type: 'success' });
-      } else {
-        addToast({ message: 'Tạo nhân viên mới thất bại', type: 'error' });
-        return;
-      }
-      onClose();
-    } catch (error) {
-      console.error('Submit error:', error);
-      // Extract error message from exception
-      const errorMessage = error instanceof Error
-        ? error.message
-        : 'Có lỗi xảy ra khi lưu nhân viên';
-
-      addToast({ message: errorMessage, type: 'error' });
-    }
-  };
 
   const { form } = useStaffForm({
     open,
     initData: initData || null,
-    onSubmit: handleSubmit,
+    onSubmit: async (data: CreateStaffRequest) => {
+      // Create staff first
+      const res = await createMutation.mutateAsync(data);
+      if (res?.success && res.data) {
+        const createdStaffId = (res.data as Staff).id;
+
+        // Get serviceGroupIds from form state
+        const serviceGroupIds = (form.state.values.serviceGroupIds || []) as string[];
+
+        // If service groups are selected, assign them
+        if (serviceGroupIds.length > 0 && createdStaffId) {
+          try {
+            await assignServiceGroupsMutation.mutateAsync({
+              staffId: createdStaffId,
+              data: {
+                serviceGroups: serviceGroupIds.map((id: string) => ({
+                  serviceGroupId: id,
+                  isActive: true,
+                })),
+              },
+            });
+          } catch (assignError) {
+            console.error('Error assigning service groups:', assignError);
+            // Staff is created but service groups assignment failed
+            addToast({
+              message: 'Nhân viên đã được tạo nhưng gán chuyên môn thất bại',
+              type: 'warning',
+            });
+          }
+        }
+
+        addToast({ message: 'Tạo nhân viên mới thành công', type: 'success' });
+        onClose();
+        onSuccess?.();
+      } else {
+        addToast({ message: 'Tạo nhân viên mới thất bại', type: 'error' });
+      }
+    },
     onClose,
     onSuccess,
   });

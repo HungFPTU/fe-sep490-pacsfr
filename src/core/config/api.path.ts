@@ -132,7 +132,8 @@ export const API_PATH = {
                 UPDATE: (id: string) => `/Staff/${id}`,
                 DELETE: (id: string) => `/Staff/${id}`,
                 ASSIGN_DEPARTMENT: (staffId: string) => `/Staff/${staffId}/assign-department`,
-                ASSIGN_WORKSHIFT: (staffId: string) => `/Staff/${staffId}/assign-workshift`,
+                GET_SERVICE_GROUPS: '/ServiceGroup',
+                ASSIGN_SERVICE_GROUPS: (staffId: string) => `/Staff/${staffId}/service-groups`,
             },
             WORKSHIFT: {
                 GET_ALL: (keyword: string, isActive: boolean, Page: number, Size: number, staffId?: string) => `/WorkShift?keyword=${keyword}&isActive=${isActive}&Page=${Page}&Size=${Size}${staffId ? `&staffId=${staffId}` : ''}`,
@@ -276,7 +277,9 @@ export const API_PATH = {
             UPDATE: (id: string) => `/Staff/${id}`,
             DELETE: (id: string) => `/Staff/${id}`,
             ASSIGN_DEPARTMENT: (staffId: string) => `/Staff/${staffId}/assign-department`,
-            ASSIGN_WORKSHIFT: (staffId: string) => `/Staff/${staffId}/assign-workshift`,
+            GET_SERVICE_GROUPS: '/ServiceGroup',
+            ASSIGN_SERVICE_GROUPS: (staffId: string) => `/Staff/${staffId}/service-groups`,
+            UPLOAD_AVATAR: (staffId: string) => `/Staff/${staffId}/upload-avatar`,
         },
         WORKSHIFT: {
             GET_ALL: (keyword: string, isActive: boolean, Page: number, Size: number) =>
