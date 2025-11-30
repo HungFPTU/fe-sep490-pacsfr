@@ -231,6 +231,11 @@ export function CreateCasePageView() {
             return;
         }
 
+        if (!caseData.submissionMethodId.trim()) {
+            addToast({ message: "Vui lòng chọn phương thức nộp!", type: "warning" });
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             const response = await staffDashboardApi.createCase(caseData);
