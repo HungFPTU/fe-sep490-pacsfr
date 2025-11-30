@@ -7,7 +7,6 @@ import { StaffTable } from '../ui/table/StaffTable.ui';
 import { StaffPagination } from '../ui/pagination/StaffPagination.ui';
 import { CreateStaffModal } from '../ui/modal/CreateStaffModal.ui';
 import { AssignDepartmentModal } from '../ui/modal/AssignDepartmentModal.ui';
-import { AssignWorkShiftModal } from '../ui/modal/AssignWorkShiftModal.ui';
 import { StaffDetailModal } from '../ui/detail/StaffDetailModal.ui';
 import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
 import { useStaffs, useDeleteStaff } from '../../hooks';
@@ -29,7 +28,6 @@ export function StaffListPage() {
     // Modals state
     const [createModalOpen, setCreateModalOpen] = useState(false);
     const [assignDeptModalOpen, setAssignDeptModalOpen] = useState(false);
-    const [assignShiftModalOpen, setAssignShiftModalOpen] = useState(false);
     const [detailModalOpen, setDetailModalOpen] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
@@ -113,10 +111,6 @@ export function StaffListPage() {
         setAssignDeptModalOpen(true);
     };
 
-    const handleAssignWorkShift = (staff: Staff) => {
-        setSelectedStaff(staff);
-        setAssignShiftModalOpen(true);
-    };
 
     const handleModalSuccess = () => {
         refetch();
@@ -136,7 +130,6 @@ export function StaffListPage() {
                 onView={handleView}
                 onDelete={handleDelete}
                 onAssignDepartment={handleAssignDepartment}
-                onAssignWorkShift={handleAssignWorkShift}
                 onRefresh={refetch}
                 isLoading={isLoading}
             />
@@ -166,16 +159,6 @@ export function StaffListPage() {
                 open={assignDeptModalOpen}
                 onClose={() => {
                     setAssignDeptModalOpen(false);
-                    setSelectedStaff(null);
-                }}
-                staff={selectedStaff}
-                onSuccess={handleModalSuccess}
-            />
-
-            <AssignWorkShiftModal
-                open={assignShiftModalOpen}
-                onClose={() => {
-                    setAssignShiftModalOpen(false);
                     setSelectedStaff(null);
                 }}
                 staff={selectedStaff}

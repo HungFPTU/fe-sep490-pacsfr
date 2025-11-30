@@ -5,6 +5,5 @@ export { StaffPagination } from './pagination/StaffPagination.ui';
 export { CreateStaffModal } from './modal/CreateStaffModal.ui';
 export { StaffForm } from './modal/StaffForm.ui';
 export { AssignDepartmentModal } from './modal/AssignDepartmentModal.ui';
-export { AssignWorkShiftModal } from './modal/AssignWorkShiftModal.ui';
 export { StaffDetailModal } from './detail/StaffDetailModal.ui';
 
