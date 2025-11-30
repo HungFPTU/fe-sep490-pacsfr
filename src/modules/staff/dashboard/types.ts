@@ -341,7 +341,7 @@ export type GuestSearchFilters = {
 
 export type SubmissionMethod = {
     $id?: string;
-    id: string;
+    submissionMethodId: string;
     submissionMethodName: string;
     processingTime: string;
     fee: number;

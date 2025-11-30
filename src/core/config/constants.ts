@@ -37,6 +37,7 @@ export const STORAGE_KEYS = {
     LANGUAGE: "language",
     PAYMENT_QR_URL: "payment_qr_url",
     PAYMENT_QR_DATA: "payment_qr_data",
+    CURRENT_SERVING_TICKET: "current_serving_ticket",
 } as const;
 
 export const HTTP_STATUS = {
