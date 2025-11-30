@@ -212,3 +212,25 @@ export const PaymentQRStorage = {
         return LocalStorage.remove(STORAGE_KEYS.PAYMENT_QR_DATA);
     },
 };
+
+/**
+ * Current Serving Ticket Storage utilities (SessionStorage)
+ * Persists the currently serving ticket information across page navigation
+ */
+export const CurrentServingStorage = {
+    setCurrentServing: (data: any): boolean => {
+        return SessionStorage.set(STORAGE_KEYS.CURRENT_SERVING_TICKET, data);
+    },
+
+    getCurrentServing: (): any | null => {
+        return SessionStorage.get(STORAGE_KEYS.CURRENT_SERVING_TICKET);
+    },
+
+    removeCurrentServing: (): boolean => {
+        return SessionStorage.remove(STORAGE_KEYS.CURRENT_SERVING_TICKET);
+    },
+
+    clearCurrentServing: (): boolean => {
+        return SessionStorage.remove(STORAGE_KEYS.CURRENT_SERVING_TICKET);
+    },
+};

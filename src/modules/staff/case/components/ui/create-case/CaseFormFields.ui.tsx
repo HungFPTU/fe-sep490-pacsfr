@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import type { CreateCaseRequest, SubmissionMethod } from "../../../../dashboard/types";
 
 interface PriorityLevel {
@@ -23,6 +23,17 @@ export function CaseFormFields({
     isLoadingSubmissionMethods = false,
     onDataChange,
 }: CaseFormFieldsProps) {
+    // Deduplicate submission methods by submissionMethodId
+    const uniqueSubmissionMethods = useMemo(() => {
+        const seen = new Set<string>();
+        return submissionMethods.filter(method => {
+            if (seen.has(method.submissionMethodId)) {
+                return false;
+            }
+            seen.add(method.submissionMethodId);
+            return true;
+        });
+    }, [submissionMethods]);
 
     return (
         <div className="space-y-6">
@@ -54,15 +65,15 @@ export function CaseFormFields({
                     className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     <option value="">{isLoadingSubmissionMethods ? "Đang tải..." : "-- Chọn phương thức nộp --"}</option>
-                    {submissionMethods.map(method => (
-                        <option key={method.id} value={method.id}>
+                    {uniqueSubmissionMethods.map(method => (
+                        <option key={method.submissionMethodId} value={method.submissionMethodId}>
                             {method.submissionMethodName} {method.fee > 0 ? `(${method.fee.toLocaleString()}đ)` : "(Miễn phí)"}
                         </option>
                     ))}
                 </select>
-                {submissionMethods.find(m => m.id === caseData.submissionMethodId) && (
+                {uniqueSubmissionMethods.find(m => m.submissionMethodId === caseData.submissionMethodId) && (
                     <p className="text-xs text-gray-500 mt-1">
-                        {submissionMethods.find(m => m.id === caseData.submissionMethodId)?.description}
+                        {uniqueSubmissionMethods.find(m => m.submissionMethodId === caseData.submissionMethodId)?.description}
                     </p>
                 )}
             </div>

@@ -10,6 +10,7 @@ import type { CitizenProfile, ServiceGroup } from "../../types";
 import { Plus } from "lucide-react";
 import { useMinimumLoadingTime } from "@/shared/hooks";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
+import { CurrentServingStorage } from "@core/utils/storage";
 import { useQueueWebSocket } from "../../hooks/useQueueWebSocket";
 
 // UI Components
@@ -210,6 +211,21 @@ export function StaffDashboardView() {
     useEffect(() => {
         loadDashboardData();
     }, [loadDashboardData]);
+
+    // Restore current serving from storage on mount
+    useEffect(() => {
+        const savedServing = CurrentServingStorage.getCurrentServing();
+        if (savedServing) {
+            setCurrentServing(savedServing);
+        }
+    }, []);
+
+    // Save current serving to storage whenever it changes
+    useEffect(() => {
+        if (currentServing) {
+            CurrentServingStorage.setCurrentServing(currentServing);
+        }
+    }, [currentServing]);
 
     // WebSocket for real-time queue updates
     const handleQueueUpdate = useCallback((status: any) => {
