@@ -76,6 +76,10 @@ export function CreateCasePageView() {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
     const [servicePage, setServicePage] = useState(1);
 
+    // Submission Methods
+    const [submissionMethods, setSubmissionMethods] = useState<import("../../../dashboard/types").SubmissionMethod[]>([]);
+    const [isLoadingSubmissionMethods, setIsLoadingSubmissionMethods] = useState(false);
+
     const idTypes = ["CCCD", "CMND", "Hộ chiếu"];
     const genders = ["Nam", "Nữ", "Khác"];
     const guestTypes = ["Cá nhân", "Tổ chức"];
@@ -166,9 +170,25 @@ export function CreateCasePageView() {
         handleSearchServices(page);
     };
 
-    const handleSelectService = (service: Service) => {
+    const handleSelectService = async (service: Service) => {
         setSelectedService(service);
-        setCaseData({ ...caseData, serviceId: service.id });
+        setCaseData({ ...caseData, serviceId: service.id, submissionMethodId: "" }); // Reset submission method
+        
+        // Fetch submission methods for the selected service
+        setIsLoadingSubmissionMethods(true);
+        try {
+            const methods = await staffDashboardApi.getSubmissionMethodsForService(service.id);
+            setSubmissionMethods(methods);
+        } catch (error) {
+            console.error("Error fetching submission methods:", error);
+            addToast({ 
+                message: "Lỗi khi tải phương thức nộp: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), 
+                type: "error" 
+            });
+            setSubmissionMethods([]);
+        } finally {
+            setIsLoadingSubmissionMethods(false);
+        }
     };
 
     const handleCreateGuest = async (e: React.FormEvent) => {
@@ -217,7 +237,7 @@ export function CreateCasePageView() {
 
             if (response.success && response.data) {
                 addToast({ message: "Tạo hồ sơ thành công!", type: "success" });
-                router.push("/staff/dashboard");
+                router.push("/staff/case");
             } else {
                 addToast({ message: "Lỗi: " + (response.message || "Không thể tạo hồ sơ"), type: "error" });
             }
@@ -230,9 +250,34 @@ export function CreateCasePageView() {
     };
 
     const handleContinueToCreateCase = () => {
+        // Set guest data in case form
         setCaseData({ ...caseData, guestId: guestId });
+        
+        // Set a mock selected guest to display in the form (showing the guestId)
+        setSelectedGuest({
+            id: guestId,
+            guestCode: guestData.guestCode,
+            fullName: guestData.fullName,
+            idNumber: guestData.idNumber,
+            idType: guestData.idType,
+            idIssueDate: guestData.idIssueDate,
+            idIssuePlace: guestData.idIssuePlace,
+            phone: guestData.phone,
+            email: guestData.email,
+            birthDate: guestData.birthDate,
+            gender: guestData.gender,
+            occupation: guestData.occupation,
+            organization: guestData.organization,
+            guestType: guestData.guestType,
+            notes: guestData.notes,
+            isActive: true,
+            address: guestData.address,
+            ward: guestData.ward,
+            city: guestData.city,
+            country: guestData.country,
+        } as Guest);
+        
         setMode("create-case");
-        setGuestCreatedSuccess(false);
     };
 
     const handleFinish = () => {
@@ -285,6 +330,7 @@ export function CreateCasePageView() {
                             onClick={() => {
                                 setMode("select");
                                 setGuestCreatedSuccess(false);
+                                setGuestId(""); // Reset guestId khi quay lại
                             }}
                             className="flex items-center gap-2"
                         >
@@ -304,7 +350,11 @@ export function CreateCasePageView() {
                         guestTypes={guestTypes}
                         onDataChange={setGuestData}
                         onSubmit={handleCreateGuest}
-                        onCancel={() => setMode("select")}
+                        onCancel={() => {
+                            setMode("select");
+                            setGuestCreatedSuccess(false);
+                            setGuestId("");
+                        }}
                         onContinueToCase={handleContinueToCreateCase}
                         onFinish={handleFinish}
                     />
@@ -362,6 +412,8 @@ export function CreateCasePageView() {
                             <CaseFormFields
                                 caseData={caseData}
                                 priorityLevels={priorityLevels}
+                                submissionMethods={submissionMethods}
+                                isLoadingSubmissionMethods={isLoadingSubmissionMethods}
                                 onDataChange={setCaseData}
                             />
 
@@ -370,7 +422,16 @@ export function CreateCasePageView() {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    onClick={() => setMode("select")}
+                                    onClick={() => {
+                                        setMode("select");
+                                        // Reset form data
+                                        setGuestSearchKeyword("");
+                                        setGuestSearchResults([]);
+                                        setSelectedGuest(null);
+                                        setServiceSearchKeyword("");
+                                        setServiceData(null);
+                                        setSelectedService(null);
+                                    }}
                                     disabled={isSubmitting}
                                 >
                                     Hủy
