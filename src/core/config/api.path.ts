@@ -292,6 +292,7 @@ export const API_PATH = {
             MY_SHIFTS: '/WorkShift',
             GET_ACTIVE_COUNTERS: '/Counter/active',
             GET_STAFF_LIST: '/Staff',
+            GET_AVAILABLE_STAFF: '/StaffWorkShift/available-staff',
             ASSIGN_STAFF: '/StaffWorkShift',
             GET_STAFF_WORKSHIFTS: '/StaffWorkShift',
             DELETE_STAFF_WORKSHIFT: (id: string) => `/StaffWorkShift/${id}`,
