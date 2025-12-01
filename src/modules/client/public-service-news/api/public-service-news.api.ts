@@ -12,7 +12,7 @@ export const publicServiceNewsClientApi = {
                 filters.newsCategoryId ?? '',
                 filters.isPublished ?? true,
                 filters.page ?? 1,
-                filters.size ?? 6
+                filters.size ?? 6,
             )
         );
         return response.data;
