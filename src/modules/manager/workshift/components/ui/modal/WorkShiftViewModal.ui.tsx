@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { formatDateVN } from '@core/utils/date';
-import { WorkShift, StaffWorkShift } from '../../../types';
+import { WorkShift, StaffWorkShift, CounterOption } from '../../../types';
 import { getOne, getValuesPage, RestPaged } from '@/types/rest';
 import { useWorkShiftDetail, useDeleteWorkShift, useActiveCounters, useStaffList, useAssignStaffWorkShift, useStaffWorkShifts, useDeleteStaffWorkShift } from '../../../hooks';
 import { LoadingSpinner } from '@/shared/components';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { ConfirmDialog } from '@/shared/components/common/ConfirmDialog';
+import { AssignStaffModal } from './AssignStaffModal.ui';
 
 interface WorkShiftViewModalProps {
   open: boolean;
@@ -49,10 +50,13 @@ export const WorkShiftViewModal: React.FC<WorkShiftViewModalProps> = ({
   const staffWorkShiftMap = React.useMemo(() => {
     const map = new Map<string, StaffWorkShift>();
     staffWorkShifts.forEach((assignment) => {
-      // Only include assignments for the current work shift
       if (assignment.workShiftId === initData.id) {
-        // Find counterId by matching counterName
-        const counter = counters.find(c => c.counterName === assignment.counterName);
+        if (assignment.counterId) {
+          map.set(assignment.counterId, assignment);
+          return;
+        }
+
+        const counter = counters.find((c) => c.counterName === assignment.counterName);
         if (counter) {
           map.set(counter.id, assignment);
         }
@@ -298,8 +302,7 @@ export const WorkShiftViewModal: React.FC<WorkShiftViewModalProps> = ({
                         return (
                           <AssignmentRow
                             key={counter.id}
-                            counterId={counter.id}
-                            counterName={counter.counterName || counter.id}
+                            counter={counter}
                             staffs={staffs}
                             workShiftId={initData.id}
                             workDate={initData.shiftDate}
@@ -369,8 +372,7 @@ const getShiftTypeBadgeClass = (shiftType: string): string => {
 
 // Assignment Row Component
 interface AssignmentRowProps {
-  counterId: string;
-  counterName: string;
+  counter: CounterOption;
   staffs: Array<{ id: string; fullName: string }>;
   workShiftId: string;
   workDate: string | Date;
@@ -379,37 +381,36 @@ interface AssignmentRowProps {
 }
 
 const AssignmentRow: React.FC<AssignmentRowProps> = ({
-  counterId,
-  counterName,
+  counter,
   staffs,
   workShiftId,
   workDate,
   existingAssignment,
   onSuccess,
 }) => {
-  const [selectedStaffId, setSelectedStaffId] = useState<string>('');
-  const [notes, setNotes] = useState<string>('');
+  const [selectedStaffId, setSelectedStaffId] = useState<string>(existingAssignment?.staffId || '');
+  const [notes, setNotes] = useState<string>(existingAssignment?.notes || '');
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState<boolean>(false);
+  const [assignModalOpen, setAssignModalOpen] = useState<boolean>(false);
   const assignMutation = useAssignStaffWorkShift();
   const deleteMutation = useDeleteStaffWorkShift();
   const { addToast } = useGlobalToast();
 
-  // Initialize selectedStaffId from existing assignment
   React.useEffect(() => {
     if (existingAssignment && !isEditing) {
       setSelectedStaffId(existingAssignment.staffId);
       setNotes(existingAssignment.notes || '');
-    } else if (!existingAssignment) {
+    }
+
+    if (!existingAssignment) {
+      setIsEditing(false);
       setSelectedStaffId('');
       setNotes('');
     }
   }, [existingAssignment, isEditing]);
 
-  const isAssigned = !!existingAssignment && !isEditing;
-  const isInEditMode = isEditing && !!existingAssignment;
-
-  const handleAssign = async () => {
+  const handleUpdateAssignment = async () => {
     if (!selectedStaffId) {
       addToast({
         message: 'Vui lòng chọn nhân viên',
@@ -419,43 +420,35 @@ const AssignmentRow: React.FC<AssignmentRowProps> = ({
     }
 
     try {
-      const workDateStr = workDate instanceof Date
-        ? workDate.toISOString()
-        : new Date(workDate).toISOString();
+      const workDateStr =
+        workDate instanceof Date ? workDate.toISOString() : new Date(workDate).toISOString();
 
       await assignMutation.mutateAsync({
-        workShiftId: workShiftId,
+        workShiftId,
         staffId: selectedStaffId,
-        counterId: counterId,
+        counterId: counter.id,
         workDate: workDateStr,
         status: 'Scheduled',
         notes: notes || undefined,
       });
 
       addToast({
-        message: 'Phân công nhân viên thành công',
+        message: 'Cập nhật phân công thành công',
         type: 'success',
       });
-
-      // Reset form
-      if (!existingAssignment) {
-        setSelectedStaffId('');
-        setNotes('');
-      }
       setIsEditing(false);
       onSuccess?.();
     } catch (error) {
       console.error('Error assigning staff:', error);
-      
-      // Check if error message indicates staff already assigned
       const errorMessage = error instanceof Error ? error.message : String(error);
-      const isAlreadyAssigned = errorMessage.toLowerCase().includes('already has a work shift') ||
-                                 errorMessage.toLowerCase().includes('đã được phân công');
-      
+      const isAlreadyAssigned =
+        errorMessage.toLowerCase().includes('already has a work shift') ||
+        errorMessage.toLowerCase().includes('đã được phân công');
+
       addToast({
-        message: isAlreadyAssigned 
-          ? 'Nhân viên đã được phân công vào một ca làm việc trước đó !!!'
-          : 'Phân công nhân viên thất bại',
+        message: isAlreadyAssigned
+          ? 'Nhân viên đã được phân công vào ca khác'
+          : 'Cập nhật phân công thất bại',
         type: 'error',
       });
     }
@@ -491,6 +484,9 @@ const AssignmentRow: React.FC<AssignmentRowProps> = ({
     setConfirmDeleteOpen(false);
   };
 
+  const counterGroups = counter.serviceGroups?.$values || [];
+  const isAssigned = !!existingAssignment;
+
   return (
     <>
       <tr className="hover:bg-gray-50 transition-colors">
@@ -502,12 +498,25 @@ const AssignmentRow: React.FC<AssignmentRowProps> = ({
               </svg>
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-900">{counterName}</div>
+              <div className="text-sm font-semibold text-gray-900">{counter.counterName || counter.id}</div>
+              <div className="text-xs text-gray-500">{counter.location || 'Chưa cập nhật vị trí'}</div>
+              {counterGroups.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {counterGroups.map((group) => (
+                    <span
+                      key={`${counter.id}-${group.id}`}
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-orange-50 text-orange-700"
+                    >
+                      {group.groupName}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </td>
         <td className="px-6 py-4">
-          {isAssigned || isInEditMode ? (
+          {isAssigned && !isEditing ? (
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -515,10 +524,10 @@ const AssignmentRow: React.FC<AssignmentRowProps> = ({
                 </svg>
               </div>
               <span className="text-sm font-medium text-gray-900">
-                {existingAssignment?.staffName || 'N/A'}
+                {existingAssignment?.staffName || counter.staffName || 'N/A'}
               </span>
             </div>
-          ) : (
+          ) : isAssigned && isEditing ? (
             <select
               value={selectedStaffId}
               onChange={(e) => setSelectedStaffId(e.target.value)}
@@ -532,10 +541,12 @@ const AssignmentRow: React.FC<AssignmentRowProps> = ({
                 </option>
               ))}
             </select>
+          ) : (
+            <span className="text-sm text-gray-500 italic">Chưa có nhân sự</span>
           )}
         </td>
         <td className="px-6 py-4">
-          {isAssigned || isInEditMode ? (
+          {isAssigned && !isEditing ? (
             <div className="text-sm text-gray-600 max-w-md">
               {existingAssignment?.notes ? (
                 <span className="inline-flex items-center gap-1">
@@ -548,7 +559,7 @@ const AssignmentRow: React.FC<AssignmentRowProps> = ({
                 <span className="text-gray-400 italic">Không có ghi chú</span>
               )}
             </div>
-          ) : (
+          ) : isAssigned && isEditing ? (
             <input
               type="text"
               value={notes}
@@ -557,64 +568,59 @@ const AssignmentRow: React.FC<AssignmentRowProps> = ({
               className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               disabled={assignMutation.isPending}
             />
+          ) : (
+            <span className="text-sm text-gray-400 italic">Không có ghi chú</span>
           )}
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          {isAssigned ? (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white text-sm font-semibold rounded-lg hover:bg-yellow-600 transition-all shadow-sm hover:shadow"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Chỉnh sửa
-            </button>
-          ) : isInEditMode ? (
-            <button
-              onClick={handleDeleteClick}
-              disabled={deleteMutation.isPending}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {deleteMutation.isPending ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Đang xử lý...
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                  Xóa
-                </>
-              )}
-            </button>
+          {isAssigned && !isEditing ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white text-sm font-semibold rounded-lg hover:bg-yellow-600 transition-all shadow-sm hover:shadow"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Chỉnh sửa
+              </button>
+              <button
+                onClick={handleDeleteClick}
+                disabled={deleteMutation.isPending}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {deleteMutation.isPending ? 'Đang xóa...' : 'Xóa'}
+              </button>
+            </div>
+          ) : isAssigned && isEditing ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleUpdateAssignment}
+                disabled={assignMutation.isPending || !selectedStaffId}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {assignMutation.isPending ? 'Đang lưu...' : 'Lưu'}
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditing(false);
+                  setSelectedStaffId(existingAssignment?.staffId || '');
+                  setNotes(existingAssignment?.notes || '');
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-300 transition-all"
+              >
+                Hủy
+              </button>
+            </div>
           ) : (
             <button
-              onClick={handleAssign}
-              disabled={assignMutation.isPending || !selectedStaffId}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-all shadow-sm hover:shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setAssignModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-all shadow-sm hover:shadow"
             >
-              {assignMutation.isPending ? (
-                <>
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Đang xử lý...
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  Phân Công
-                </>
-              )}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Phân Công
             </button>
           )}
         </td>
@@ -632,6 +638,18 @@ const AssignmentRow: React.FC<AssignmentRowProps> = ({
           loading={deleteMutation.isPending}
         />
       )}
+      <AssignStaffModal
+        open={assignModalOpen}
+        onClose={() => setAssignModalOpen(false)}
+        counterId={counter.id}
+        counterName={counter.counterName || counter.id}
+        workShiftId={workShiftId}
+        workDate={workDate}
+        onSuccess={() => {
+          setAssignModalOpen(false);
+          onSuccess?.();
+        }}
+      />
     </>
   );
 };

@@ -150,6 +150,18 @@ export const assignServiceGroups = async (
 };
 
 /**
+ * STAFF-11: Xóa một service group khỏi staff
+ */
+export const deleteServiceGroup = async (
+  staffServiceGroupId: string,
+): Promise<RestResponse<{ success: boolean }>> => {
+  const response = await http.delete<RestResponse<{ success: boolean }>>(
+    API_PATH.MANAGER.STAFF_MANAGEMENT.DELETE_SERVICE_GROUP(staffServiceGroupId),
+  );
+  return response.data;
+};
+
+/**
  * STAFF-07: Upload avatar cho nhân viên
  */
 export const uploadAvatar = async (
