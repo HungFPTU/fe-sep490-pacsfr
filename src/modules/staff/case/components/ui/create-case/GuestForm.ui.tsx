@@ -10,6 +10,13 @@ import type { CreateGuestRequest } from "../../../../dashboard/types";
 import { useProvinces, useDistricts, useWards } from "../../../hooks";
 import { getProvinceById, getDistrictById, getWardById } from "../../../constants/vietnam-address";
 
+// Helper function to format date from yyyy-mm-dd to dd/mm/yyyy
+const formatDateDisplay = (dateString: string): string => {
+    if (!dateString) return "";
+    const [year, month, day] = dateString.split("-");
+    return `${day}/${month}/${year}`;
+};
+
 interface GuestFormProps {
     guestData: CreateGuestRequest;
     errors: Record<string, string>;
@@ -196,7 +203,7 @@ export function GuestForm({
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Số CMND/CCCD <span className="text-red-500">*</span>
+                                Số CCCD <span className="text-red-500">*</span>
                             </label>
                             <Input
                                 value={guestData.idNumber}
@@ -209,23 +216,26 @@ export function GuestForm({
                         </div>
                     </div>
 
-                    {/* Row 3: ID Issue Date, ID Issue Place */}
+                    {/* Row 3: Birth Date, ID Issue Place */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Calendar className="w-4 h-4 inline mr-1" />
-                                Ngày cấp <span className="text-red-500">*</span>
+                                Ngày sinh <span className="text-red-500">*</span>
                             </label>
+                            {guestData.birthDate && (
+                                <p className="text-xs text-gray-600 mb-1">Giá trị: {formatDateDisplay(guestData.birthDate)}</p>
+                            )}
                             <input
                                 type="date"
-                                value={guestData.idIssueDate}
-                                onChange={(e) => onDataChange({ ...guestData, idIssueDate: e.target.value })}
+                                value={guestData.birthDate}
+                                onChange={(e) => onDataChange({ ...guestData, birthDate: e.target.value })}
                                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                    errors.idIssueDate ? "border-red-500" : "border-gray-300"
+                                    errors.birthDate ? "border-red-500" : "border-gray-300"
                                 }`}
                                 disabled={isSuccess}
                             />
-                            {errors.idIssueDate && <p className="text-xs text-red-500 mt-1">{errors.idIssueDate}</p>}
+                            {errors.birthDate && <p className="text-xs text-red-500 mt-1">{errors.birthDate}</p>}
                         </div>
 
                         <div>
@@ -243,23 +253,26 @@ export function GuestForm({
                         </div>
                     </div>
 
-                    {/* Row 4: Birth Date, Gender */}
+                    {/* Row 4: ID Issue Date, Gender */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Calendar className="w-4 h-4 inline mr-1" />
-                                Ngày sinh <span className="text-red-500">*</span>
+                                Ngày cấp <span className="text-red-500">*</span>
                             </label>
+                            {guestData.idIssueDate && (
+                                <p className="text-xs text-gray-600 mb-1">Giá trị: {formatDateDisplay(guestData.idIssueDate)}</p>
+                            )}
                             <input
                                 type="date"
-                                value={guestData.birthDate}
-                                onChange={(e) => onDataChange({ ...guestData, birthDate: e.target.value })}
+                                value={guestData.idIssueDate}
+                                onChange={(e) => onDataChange({ ...guestData, idIssueDate: e.target.value })}
                                 className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                    errors.birthDate ? "border-red-500" : "border-gray-300"
+                                    errors.idIssueDate ? "border-red-500" : "border-gray-300"
                                 }`}
                                 disabled={isSuccess}
                             />
-                            {errors.birthDate && <p className="text-xs text-red-500 mt-1">{errors.birthDate}</p>}
+                            {errors.idIssueDate && <p className="text-xs text-red-500 mt-1">{errors.idIssueDate}</p>}
                         </div>
 
                         <div>
