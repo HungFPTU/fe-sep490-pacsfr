@@ -359,6 +359,7 @@ export const API_PATH = {
       GET_SERVICE_GROUPS: "/ServiceGroup",
       ASSIGN_SERVICE_GROUPS: (staffId: string) =>
         `/Staff/${staffId}/service-groups`,
+      DELETE_SERVICE_GROUP: (staffServiceGroupId: string) => `/Staff/service-groups/${staffServiceGroupId}`,
       UPLOAD_AVATAR: (staffId: string) => `/Staff/${staffId}/upload-avatar`,
     },
     WORKSHIFT: {
@@ -376,7 +377,9 @@ export const API_PATH = {
       MY_SHIFTS: "/WorkShift",
       GET_ACTIVE_COUNTERS: "/Counter/active",
       GET_STAFF_LIST: "/Staff",
+      GET_AVAILABLE_STAFF: (counterId: string, workShiftId: string) => `/StaffWorkShift/available-staff?counterId=${counterId}&workShiftId=${workShiftId}`,
       ASSIGN_STAFF: "/StaffWorkShift",
+      UPDATE_STAFF_WORKSHIFT: '/StaffWorkShift',
       GET_STAFF_WORKSHIFTS: "/StaffWorkShift",
       DELETE_STAFF_WORKSHIFT: (id: string) => `/StaffWorkShift/${id}`,
     },
