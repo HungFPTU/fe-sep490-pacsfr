@@ -1,4 +1,4 @@
-import * as workshiftApi from '../api/workshift.api';
+import { workshiftApi, UpdateStaffWorkShiftRequest } from '../api/workshift.api';
 import type {
   WorkShift,
   CreateWorkShiftRequest,
@@ -8,6 +8,7 @@ import type {
   StaffOption,
   StaffWorkShift,
   AvailableStaff,
+  WorkShiftFilters,
 } from '../types';
 import type { RestResponse, RestPaged } from '@/types/rest';
 
@@ -15,24 +16,24 @@ import type { RestResponse, RestPaged } from '@/types/rest';
 
 export class WorkShiftService {
   /**
-   * Lấy danh sách ca làm việc (không có filter)
+   * Lấy danh sách ca làm việc
    */
-  static async getWorkShifts(): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.getWorkShifts();
+  static async getWorkShifts(filters: WorkShiftFilters = {}): Promise<RestPaged<WorkShift>> {
+    return workshiftApi.getAll(filters);
   }
 
   /**
    * Lấy thông tin chi tiết ca làm việc
    */
   static async getWorkShiftDetail(id: string): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.getWorkShiftDetail(id);
+    return workshiftApi.getById(id);
   }
 
   /**
    * Tạo ca làm việc mới
    */
   static async createWorkShift(data: CreateWorkShiftRequest): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.createWorkShift(data);
+    return workshiftApi.create(data);
   }
 
   /**
@@ -42,14 +43,14 @@ export class WorkShiftService {
     id: string,
     data: UpdateWorkShiftRequest,
   ): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.updateWorkShift(id, data);
+    return workshiftApi.update(id, data);
   }
 
   /**
    * Xóa ca làm việc
    */
   static async deleteWorkShift(id: string): Promise<RestResponse<object>> {
-    return workshiftApi.deleteWorkShift(id);
+    return workshiftApi.delete(id);
   }
 
   /**
@@ -78,6 +79,13 @@ export class WorkShiftService {
    */
   static async assignStaffWorkShift(data: AssignStaffWorkShiftRequest): Promise<RestResponse<object>> {
     return workshiftApi.assignStaffWorkShift(data);
+  }
+
+  /**
+   * Cập nhật phân công nhân viên
+   */
+  static async updateStaffWorkShift(data: UpdateStaffWorkShiftRequest): Promise<RestResponse<object>> {
+    return workshiftApi.updateStaffWorkShift(data);
   }
 
   /**
