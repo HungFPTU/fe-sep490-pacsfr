@@ -46,8 +46,8 @@ export type WorkShiftAssignment = {
 export type WorkShiftFilters = {
     keyword?: string;
     shiftType?: string;
-    shiftDate?: string; 
-    fromTime?: string; 
+    shiftDate?: string;
+    fromTime?: string;
     toTime?: string;
     isActive?: boolean;
     page?: number;
@@ -92,6 +92,18 @@ export type AssignStaffWorkShiftRequest = {
     notes?: string;
 };
 
+export type UpdateStaffWorkShiftRequest = {
+    id: string;
+    workShiftId: string;
+    staffId: string;
+    counterId: string;
+    workDate: string;
+    status: string;
+    checkInTime?: string;
+    checkOutTime?: string;
+    notes?: string;
+};
+
 
 export type StaffOption = {
     id: string;
@@ -103,7 +115,7 @@ export type StaffWorkShift = {
     id: string;
     workShiftId: string;
     staffId: string;
-    counterId?: string; 
+    counterId?: string;
     workDate: string | Date;
     status: string;
     checkInTime?: string | Date;

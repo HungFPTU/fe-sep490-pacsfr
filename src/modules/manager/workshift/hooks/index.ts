@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { WorkShiftService } from '../services/workshift.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
-import type { CreateWorkShiftRequest, UpdateWorkShiftRequest, AssignStaffWorkShiftRequest } from '../types';
+import type { CreateWorkShiftRequest, UpdateWorkShiftRequest, AssignStaffWorkShiftRequest, UpdateStaffWorkShiftRequest } from '../types';
 
 // Export hooks first
 // Re-export custom hooks at the end
@@ -128,6 +128,23 @@ export const useAssignStaffWorkShift = () => {
   });
 };
 
+// UPDATE staff work shift mutation
+export const useUpdateStaffWorkShift = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateStaffWorkShiftRequest) => WorkShiftService.updateStaffWorkShift(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['workshift', 'staff-work-shifts'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.WORKSHIFT_BASE,
+      });
+    },
+  });
+};
+
 // GET staff work shifts hook
 export const useStaffWorkShifts = () => {
   return useQuery({
@@ -154,4 +171,3 @@ export const useDeleteStaffWorkShift = () => {
     },
   });
 };
-

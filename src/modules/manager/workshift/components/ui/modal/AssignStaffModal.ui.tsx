@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { LoadingSpinner } from '@/shared/components';
-import { useAvailableStaff, useAssignStaffWorkShift } from '../../../hooks';
+import { useAvailableStaff, useAssignStaffWorkShift, useUpdateStaffWorkShift } from '../../../hooks';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import type { AvailableStaff } from '../../../types';
 
@@ -16,6 +16,11 @@ interface AssignStaffModalProps {
   workShiftId: string;
   workDate: string | Date;
   onSuccess?: () => void;
+  currentStaffId?: string;
+  currentAssignmentId?: string;
+  currentShiftType?: string;
+  currentStartTime?: string;
+  currentEndTime?: string;
 }
 
 export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
@@ -26,11 +31,19 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
   workShiftId,
   workDate,
   onSuccess,
+  currentStaffId,
+  currentAssignmentId,
+  currentShiftType,
+  currentStartTime,
+  currentEndTime,
 }) => {
   const { data, isLoading } = useAvailableStaff(counterId, workShiftId, open);
   const assignMutation = useAssignStaffWorkShift();
+  const updateMutation = useUpdateStaffWorkShift();
   const { addToast } = useGlobalToast();
   const [note, setNote] = useState('');
+
+  const isEditMode = !!currentStaffId;
 
   const staffList = useMemo(() => data ?? [], [data]);
 
@@ -59,6 +72,38 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
       console.error('Error assigning staff:', error);
       addToast({
         message: 'Phân công nhân sự thất bại',
+        type: 'error',
+      });
+    }
+  };
+
+  const handleUpdate = async (staff: AvailableStaff) => {
+    try {
+      // Keep the date string as is if it's a string to avoid timezone shifts
+      const workDateString =
+        workDate instanceof Date ? workDate.toISOString() : workDate;
+
+      await updateMutation.mutateAsync({
+        id: currentAssignmentId || '',
+        workShiftId: workShiftId,
+        staffId: staff.staffId,
+        counterId: counterId,
+        workDate: workDateString,
+        status: 'Scheduled',
+        notes: note,
+      });
+
+      addToast({
+        message: `Đã cập nhật phân công ${staff.fullName} cho ${counterName}`,
+        type: 'success',
+      });
+      setNote('');
+      onSuccess?.();
+      onClose();
+    } catch (error) {
+      console.error('Error updating assignment:', error);
+      addToast({
+        message: 'Cập nhật phân công thất bại',
         type: 'error',
       });
     }
@@ -96,7 +141,7 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             rows={2}
             placeholder="Nhập ghi chú cho lần phân công này (nếu có)"
-            disabled={assignMutation.isPending}
+            disabled={assignMutation.isPending || updateMutation.isPending}
           />
         </div>
 
@@ -206,11 +251,11 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
                         <td className="px-4 py-4 text-right">
                           <button
                             type="button"
-                            onClick={() => handleAssign(staff)}
-                            disabled={staff.isAssignedToOtherCounter || assignMutation.isPending}
+                            onClick={() => isEditMode ? handleUpdate(staff) : handleAssign(staff)}
+                            disabled={staff.isAssignedToOtherCounter || assignMutation.isPending || updateMutation.isPending}
                             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            {assignMutation.isPending ? 'Đang xử lý...' : 'Phân công'}
+                            {assignMutation.isPending || updateMutation.isPending ? 'Đang xử lý...' : (isEditMode ? 'Cập nhật' : 'Phân công')}
                           </button>
                         </td>
                       </tr>
@@ -225,4 +270,3 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
     </BaseModal>
   );
 };
-
