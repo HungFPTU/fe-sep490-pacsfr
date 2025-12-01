@@ -46,8 +46,8 @@ export type WorkShiftAssignment = {
 export type WorkShiftFilters = {
     keyword?: string;
     shiftType?: string;
-    shiftDate?: string; 
-    fromTime?: string; 
+    shiftDate?: string;
+    fromTime?: string;
     toTime?: string;
     isActive?: boolean;
     page?: number;
@@ -57,9 +57,14 @@ export type WorkShiftFilters = {
 // Counter types
 export type Counter = {
     id: string;
-    counterCode: string;
+    counterCode?: string;
     counterName: string;
+    location?: string;
+    counterType?: string;
+    maxCapacity?: number;
     isActive: boolean;
+    staffId?: string;
+    staffName?: string;
     serviceGroups?: {
         $id?: string;
         $values?: ServiceGroup[];
@@ -73,6 +78,8 @@ export type ServiceGroup = {
     status: string;
 };
 
+export type CounterOption = Counter;
+
 
 export type AssignStaffWorkShiftRequest = {
     workShiftId: string;
@@ -85,11 +92,18 @@ export type AssignStaffWorkShiftRequest = {
     notes?: string;
 };
 
-
-export type CounterOption = {
+export type UpdateStaffWorkShiftRequest = {
     id: string;
-    counterName: string;
+    workShiftId: string;
+    staffId: string;
+    counterId: string;
+    workDate: string;
+    status: string;
+    checkInTime?: string;
+    checkOutTime?: string;
+    notes?: string;
 };
+
 
 export type StaffOption = {
     id: string;
@@ -101,7 +115,7 @@ export type StaffWorkShift = {
     id: string;
     workShiftId: string;
     staffId: string;
-    counterId?: string; 
+    counterId?: string;
     workDate: string | Date;
     status: string;
     checkInTime?: string | Date;
@@ -116,6 +130,28 @@ export type StaffWorkShift = {
     createdBy?: string;
     notes?: string;
     $id?: string;
+};
+
+export type AvailableStaff = {
+    staffId: string;
+    staffCode: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    position: string;
+    avatarUrl?: string;
+    serviceGroups?: {
+        $id?: string;
+        $values?: StaffServiceGroup[];
+    };
+    isAssignedToOtherCounter: boolean;
+};
+
+export type StaffServiceGroup = {
+    serviceGroupId: string;
+    groupCode: string;
+    groupName: string;
+    proficiencyLevel?: string;
 };
 
 

@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
-import { useStaffDetail, useServiceGroups, useAssignServiceGroups } from '../../../hooks';
+import { useStaffDetail, useServiceGroups, useAssignServiceGroups, useDeleteServiceGroup } from '../../../hooks';
 import { formatDateVN } from '@core/utils/date';
-import { LoadingSpinner } from '@/shared/components/common';
+import { LoadingSpinner, ConfirmDialog } from '@/shared/components/common';
 import { getOne } from '@/types/rest';
 import { StaffDetail } from '../../../types';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button.ui';
 import {
     getRoleTypeLabel,
@@ -34,8 +34,11 @@ export function StaffDetailModal({ open, onClose, staffId }: StaffDetailModalPro
     });
     const { data: serviceGroupsData, isLoading: isLoadingServiceGroups } = useServiceGroups();
     const assignServiceGroupsMutation = useAssignServiceGroups();
+    const deleteServiceGroupMutation = useDeleteServiceGroup();
     const { addToast } = useGlobalToast();
     const [selectedServiceGroupId, setSelectedServiceGroupId] = useState<string>('');
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [serviceGroupToDelete, setServiceGroupToDelete] = useState<{ id: string; name: string } | null>(null);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const staff = getOne(data as any) as StaffDetail | undefined;
@@ -76,6 +79,35 @@ export function StaffDetailModal({ open, onClose, staffId }: StaffDetailModalPro
             console.error('Error assigning service group:', error);
             addToast({
                 message: 'Thêm chuyên môn thất bại',
+                type: 'error',
+            });
+        }
+    };
+
+    const handleDeleteServiceGroup = (serviceGroup: { id: string; serviceGroupName: string }) => {
+        setServiceGroupToDelete({
+            id: serviceGroup.id,
+            name: serviceGroup.serviceGroupName,
+        });
+        setConfirmDeleteOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!serviceGroupToDelete) return;
+
+        try {
+            await deleteServiceGroupMutation.mutateAsync(serviceGroupToDelete.id);
+            addToast({
+                message: 'Xóa chuyên môn thành công',
+                type: 'success',
+            });
+            setConfirmDeleteOpen(false);
+            setServiceGroupToDelete(null);
+            // Refetch staff detail to show updated service groups
+        } catch (error) {
+            console.error('Error deleting service group:', error);
+            addToast({
+                message: 'Xóa chuyên môn thất bại',
                 type: 'error',
             });
         }
@@ -283,19 +315,30 @@ export function StaffDetailModal({ open, onClose, staffId }: StaffDetailModalPro
                                                     ({sg.serviceGroupCode})
                                                 </span>
                                             </div>
-                                            <span
-                                                className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
-                                                    sg.proficiencyLevel === 'Expert'
-                                                        ? 'bg-purple-100 text-purple-800'
-                                                        : sg.proficiencyLevel === 'Advanced'
-                                                        ? 'bg-blue-100 text-blue-800'
-                                                        : sg.proficiencyLevel === 'Intermediate'
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-gray-100 text-gray-800'
-                                                }`}
-                                            >
-                                                {sg.proficiencyLevel}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <span
+                                                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+                                                        sg.proficiencyLevel === 'Expert'
+                                                            ? 'bg-purple-100 text-purple-800'
+                                                            : sg.proficiencyLevel === 'Advanced'
+                                                            ? 'bg-blue-100 text-blue-800'
+                                                            : sg.proficiencyLevel === 'Intermediate'
+                                                            ? 'bg-green-100 text-green-800'
+                                                            : 'bg-gray-100 text-gray-800'
+                                                    }`}
+                                                >
+                                                    {sg.proficiencyLevel}
+                                                </span>
+                                                <Button
+                                                    variant="outline"
+                                                    size="icon"
+                                                    onClick={() => handleDeleteServiceGroup(sg)}
+                                                    disabled={deleteServiceGroupMutation.isPending}
+                                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         </div>
                                         {sg.notes && (
                                             <div className="pt-2 border-t border-orange-100">
@@ -338,6 +381,22 @@ export function StaffDetailModal({ open, onClose, staffId }: StaffDetailModalPro
                     <p className="text-gray-500">Không tìm thấy thông tin nhân viên</p>
                 </div>
             )}
+            
+            {/* Confirm Delete Dialog */}
+            <ConfirmDialog
+                open={confirmDeleteOpen}
+                title="Xác nhận xóa"
+                message={`Bạn chắc chắn muốn xóa chuyên môn này ?`}
+                confirmText="Xóa"
+                cancelText="Hủy"
+                type="danger"
+                onConfirm={handleConfirmDelete}
+                onCancel={() => {
+                    setConfirmDeleteOpen(false);
+                    setServiceGroupToDelete(null);
+                }}
+                loading={deleteServiceGroupMutation.isPending}
+            />
         </BaseModal>
     );
 }
