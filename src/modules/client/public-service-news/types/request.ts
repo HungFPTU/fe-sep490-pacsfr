@@ -7,6 +7,7 @@ export type PublicServiceNewsFilters = {
     serviceId?: string;
     newsCategoryId?: string;
     isPublished?: boolean;
+    isActive?: boolean;
     page?: number;
     size?: number;
 };
