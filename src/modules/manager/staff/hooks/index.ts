@@ -102,6 +102,19 @@ export const useAssignServiceGroups = () => {
   });
 };
 
+export const useDeleteServiceGroup = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (staffServiceGroupId: string) =>
+      StaffService.deleteServiceGroup(staffServiceGroupId),
+    onSuccess: () => {
+      // Invalidate all staff queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['staffs'] });
+    },
+  });
+};
+
 export const useUploadAvatar = () => {
   const queryClient = useQueryClient();
 

@@ -279,6 +279,7 @@ export const API_PATH = {
             ASSIGN_DEPARTMENT: (staffId: string) => `/Staff/${staffId}/assign-department`,
             GET_SERVICE_GROUPS: '/ServiceGroup',
             ASSIGN_SERVICE_GROUPS: (staffId: string) => `/Staff/${staffId}/service-groups`,
+            DELETE_SERVICE_GROUP: (staffServiceGroupId: string) => `/Staff/service-groups/${staffServiceGroupId}`,
             UPLOAD_AVATAR: (staffId: string) => `/Staff/${staffId}/upload-avatar`,
         },
         WORKSHIFT: {
