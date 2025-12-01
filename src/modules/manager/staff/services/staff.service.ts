@@ -85,6 +85,15 @@ export class StaffService {
   }
 
   /**
+   * Xóa một service group khỏi staff
+   */
+  static async deleteServiceGroup(
+    staffServiceGroupId: string,
+  ): Promise<RestResponse<{ success: boolean }>> {
+    return staffApi.deleteServiceGroup(staffServiceGroupId);
+  }
+
+  /**
    * Upload avatar cho nhân viên
    */
   static async uploadAvatar(

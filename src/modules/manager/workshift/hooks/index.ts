@@ -90,6 +90,26 @@ export const useStaffList = () => {
   });
 };
 
+// GET available staff for counter + work shift
+export const useAvailableStaff = (
+  counterId?: string,
+  workShiftId?: string,
+  enabled = true,
+) => {
+  return useQuery({
+    queryKey: ['workshift', 'available-staff', counterId, workShiftId],
+    queryFn: () => {
+      if (!counterId || !workShiftId) {
+        return Promise.resolve([]);
+      }
+      return WorkShiftService.getAvailableStaff(counterId, workShiftId);
+    },
+    enabled: enabled && !!counterId && !!workShiftId,
+    gcTime: CACHE_TIME.SHORT,
+    staleTime: STALE_TIME.SHORT,
+  });
+};
+
 // ASSIGN staff to workshift mutation
 export const useAssignStaffWorkShift = () => {
   const queryClient = useQueryClient();
