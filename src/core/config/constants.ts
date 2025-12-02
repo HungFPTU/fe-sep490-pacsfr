@@ -55,7 +55,7 @@ export const HTTP_STATUS = {
 export const VALIDATION_RULES = {
     PASSWORD_MIN_LENGTH: 5,
     USERNAME_MIN_LENGTH: 3,
-    PHONE_PATTERN: /^[0-9]{10,11}$/,
+    PHONE_PATTERN: /^[0-9]{10}$/,
     EMAIL_PATTERN: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     ID_CARD_PATTERN: /^[0-9]{12}$/,
 } as const;

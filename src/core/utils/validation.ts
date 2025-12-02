@@ -84,7 +84,7 @@ export function validatePhone(phone: string): ValidationResult {
 
     const cleanPhone = phone.replace(/\s/g, "");
     if (!VALIDATION_RULES.PHONE_PATTERN.test(cleanPhone)) {
-        return { isValid: false, error: "Số điện thoại không hợp lệ (10-11 chữ số)" };
+        return { isValid: false, error: "Số điện thoại không hợp lệ (10 chữ số)" };
     }
 
     return { isValid: true };
