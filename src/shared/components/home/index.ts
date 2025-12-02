@@ -10,3 +10,4 @@ export { AdministrativeProcedures } from "./AdministrativeProcedures.com";
 export { OnlineServices } from "./OnlineServices.com";
 export { StatisticsSection } from "./StatisticsSection.com";
 export { GovernmentFooter } from "./GovernmentFooter.com";
+export { FloatingAIChatButton } from "./FloatingAIChatButton.com";

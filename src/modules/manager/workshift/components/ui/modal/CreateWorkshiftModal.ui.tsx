@@ -4,7 +4,7 @@ import React from 'react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useCreateWorkShift, useUpdateWorkShift, useWorkShiftForm } from '../../../hooks';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
-import { CreateWorkShiftRequest, WorkShift } from '../../../types';
+import { CreateWorkShiftRequest, UpdateWorkShiftRequest, WorkShift } from '../../../types';
 import { WorkShiftForm } from './WorkShitfForm.ui';
 
 interface CreateWorkShiftModalProps {
@@ -29,7 +29,25 @@ export function CreateWorkShiftModal({
   const handleSubmit = async (data: CreateWorkShiftRequest) => {
     if (initData && initData.id) {
       try {
-        const request = { ...data, id: initData.id };
+        // Lấy ngày giờ tử WS hiện tại 
+        const dateStr = typeof data.shiftDate === 'string' 
+          ? data.shiftDate 
+          : new Date(data.shiftDate).toISOString().split('T')[0]; 
+        const [year, month, day] = dateStr.split('-');
+        const dateObj = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
+        const shiftDateISO = dateObj.toISOString();
+
+        
+        const request: UpdateWorkShiftRequest = {
+          id: initData.id,
+          counterId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', //Cái này fix cứng nha thầy Tài
+          shiftDate: shiftDateISO,
+          startTime: data.startTime,
+          endTime: data.endTime,
+          shiftType: data.shiftType,
+          description: data.description,
+        };
+
         const res = await updateMutation.mutateAsync({ id: initData.id, request });
         if (res?.success) {
           addToast({ message: 'Cập nhật ca mới thành công', type: 'success' });

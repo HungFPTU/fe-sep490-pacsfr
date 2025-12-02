@@ -4,4 +4,6 @@ export { CaseNotes } from './CaseNotes.ui';
 export { CaseReceivers } from './CaseReceivers.ui';
 export { CaseAdditionalInfo } from './CaseAdditionalInfo.ui';
 export { PaymentConfirmButton } from './PaymentConfirmButton.ui';
+export { CreatePaymentInvoiceButton } from './CreatePaymentInvoiceButton.ui';
+export { PaymentBillInfo } from './PaymentBillInfo.ui';
 

@@ -7,7 +7,17 @@ export interface CaseStatus {
   color: string;
 }
 
-// Danh sách trạng thái hồ sơ
+// API Response Type
+export interface CaseStatusApiItem {
+  $id?: string;
+  id: string;
+  name: string;
+  code: string;
+  isActive: boolean;
+  note?: string;
+}
+
+// Danh sách trạng thái hồ sơ (fallback for when API is not available)
 export const CASE_STATUSES: CaseStatus[] = [
   {
     id: '0bf01fb9-433f-466e-95bb-78cac85a607e',
@@ -28,6 +38,16 @@ export const CASE_STATUSES: CaseStatus[] = [
     color: 'green',
   },
 ];
+
+// Convert API response to CaseStatus format
+export const convertApiStatusToCaseStatus = (apiStatus: CaseStatusApiItem): CaseStatus => {
+  return {
+    id: apiStatus.id,
+    name: apiStatus.name,
+    description: apiStatus.note || apiStatus.name,
+    color: 'gray',
+  };
+};
 
 // Helper function to get status by ID
 export const getStatusById = (id: string): CaseStatus | undefined => {

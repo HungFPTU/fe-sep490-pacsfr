@@ -5,8 +5,10 @@ import {
   StaffDetail,
   CreateStaffRequest,
   AssignDepartmentRequest,
-  AssignWorkShiftRequest,
+  AssignServiceGroupsRequest,
+  ServiceGroupOption,
   StaffFilters,
+  UploadAvatarResponse,
 } from '../types';
 import { RestResponse } from '@/types/rest';
 
@@ -66,12 +68,38 @@ export class StaffService {
   }
 
   /**
-   * Gán nhân viên vào ca làm việc
+   * Lấy danh sách Service Groups
    */
-  static async assignWorkShift(
+  static async getServiceGroups(): Promise<ServiceGroupOption[]> {
+    return staffApi.getServiceGroups();
+  }
+
+  /**
+   * Gán nhiều service groups cho staff (batch assignment)
+   */
+  static async assignServiceGroups(
     staffId: string,
-    data: AssignWorkShiftRequest,
+    data: AssignServiceGroupsRequest,
   ): Promise<RestResponse<Staff>> {
-    return staffApi.assignWorkShift(staffId, data);
+    return staffApi.assignServiceGroups(staffId, data);
+  }
+
+  /**
+   * Xóa một service group khỏi staff
+   */
+  static async deleteServiceGroup(
+    staffServiceGroupId: string,
+  ): Promise<RestResponse<{ success: boolean }>> {
+    return staffApi.deleteServiceGroup(staffServiceGroupId);
+  }
+
+  /**
+   * Upload avatar cho nhân viên
+   */
+  static async uploadAvatar(
+    staffId: string,
+    file: File,
+  ): Promise<RestResponse<UploadAvatarResponse>> {
+    return staffApi.uploadAvatar(staffId, file);
   }
 }

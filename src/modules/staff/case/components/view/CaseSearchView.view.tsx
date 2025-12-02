@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCaseSearch } from '../../hooks/useCaseSearch';
 import type { CaseSearchFilters, CaseData } from '../../types/case-search';
 import { SearchFilters, SearchActions, SearchStatus, EmptySearchState, CaseDetailModal } from '../ui/case';
@@ -24,6 +24,11 @@ export const CaseSearchView: React.FC = () => {
 
   const { data, isLoading, error, refetch } = useCaseSearch(searchFilters, searchEnabled);
 
+  // Auto-search on component mount
+  useEffect(() => {
+    setSearchEnabled(true);
+  }, []);
+
   const hasFilterChanges = JSON.stringify(filters) !== JSON.stringify(searchFilters);
 
   const handleSearch = () => {
@@ -33,7 +38,7 @@ export const CaseSearchView: React.FC = () => {
     };
 
     if (filters.caseCode?.trim()) cleanFilters.caseCode = filters.caseCode.trim();
-    if (filters.guestId?.trim()) cleanFilters.guestId = filters.guestId.trim();
+    if (filters.guestName?.trim()) cleanFilters.guestName = filters.guestName.trim();
     if (filters.serviceId?.trim()) cleanFilters.serviceId = filters.serviceId.trim();
     if (filters.staffId?.trim()) cleanFilters.staffId = filters.staffId.trim();
     if (filters.priorityLevel !== undefined && filters.priorityLevel !== null) {
@@ -46,6 +51,11 @@ export const CaseSearchView: React.FC = () => {
     setSearchFilters(cleanFilters);
     setSearchEnabled(true);
     setFilters((prev) => ({ ...prev, page: 1 }));
+    
+    // Force refetch with new filters
+    setTimeout(() => {
+      refetch();
+    }, 0);
   };
 
   const handleReset = () => {
@@ -53,6 +63,11 @@ export const CaseSearchView: React.FC = () => {
     setFilters(resetFilters);
     setSearchFilters(resetFilters);
     setSearchEnabled(false);
+    
+    // Force refetch with reset filters
+    setTimeout(() => {
+      refetch();
+    }, 0);
   };
 
   const handleFilterChange = (key: keyof CaseSearchFilters, value: string | number | undefined) => {

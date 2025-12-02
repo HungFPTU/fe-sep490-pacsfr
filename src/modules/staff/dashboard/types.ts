@@ -99,9 +99,48 @@ export type CallNextResponse = {
     message?: string;
     data?: {
         ticketNumber?: string;
+        fullName?: string;
+        status?: string;
+        calledAt?: string;
         citizenName?: string;
         serviceType?: string;
     };
+    timestamp?: string;
+};
+
+export type TicketDetail = {
+    $id?: string;
+    ticketNumber: string;
+    caseId: string;
+    counterId: string;
+    counterName: string;
+    serviceGroupId: string;
+    fullName: string;
+    status: 'Waiting' | 'Processing' | 'Calling' | 'Completed' | 'Skipped' | 'Cancelled' | 'NoShow';
+    estimatedWaitTime: number;
+    createdAt: string;
+    updatedAt: string;
+    servedAt?: string;
+    completedAt?: string;
+};
+
+export type GetTicketDetailResponse = {
+    $id?: string;
+    success: boolean;
+    message?: string;
+    data: TicketDetail;
+    timestamp?: string;
+};
+
+export type UpdateTicketStatusRequest = {
+    status: 'Waiting' | 'Processing' | 'Calling' | 'Completed' | 'Skipped' | 'Cancelled' | 'NoShow';
+};
+
+export type UpdateTicketStatusResponse = {
+    $id?: string;
+    success: boolean;
+    message?: string;
+    timestamp?: string;
 };
 
 // Case management types
@@ -111,6 +150,7 @@ export type CreateCaseRequest = {
     priorityLevel: number;
     submissionMethodId: string;
     notes?: string;
+    estimatedCompletionDate?: string; // yyyy-mm-dd
     createdBy: string;
 };
 
@@ -297,4 +337,24 @@ export type GuestSearchFilters = {
     isActive?: boolean;
     page?: number;
     size?: number;
+};
+
+export type SubmissionMethod = {
+    $id?: string;
+    submissionMethodId: string;
+    submissionMethodName: string;
+    processingTime: string;
+    fee: number;
+    description: string;
+};
+
+export type SubmissionMethodsResponse = {
+    $id?: string;
+    success: boolean;
+    message?: string;
+    data: {
+        $id?: string;
+        $values: SubmissionMethod[];
+    };
+    timestamp?: string;
 };

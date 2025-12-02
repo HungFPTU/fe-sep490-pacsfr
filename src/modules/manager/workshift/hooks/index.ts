@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { WorkShiftService } from '../services/workshift.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
-import type { CreateWorkShiftRequest, AssignStaffWorkShiftRequest } from '../types';
+import type { CreateWorkShiftRequest, UpdateWorkShiftRequest, AssignStaffWorkShiftRequest, UpdateStaffWorkShiftRequest } from '../types';
 
 // Export hooks first
 // Re-export custom hooks at the end
@@ -46,7 +46,7 @@ export const useUpdateWorkShift = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, request }: { id: string; request: CreateWorkShiftRequest }) =>
+    mutationFn: ({ id, request }: { id: string; request: UpdateWorkShiftRequest }) =>
       WorkShiftService.updateWorkShift(id, request),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -90,6 +90,26 @@ export const useStaffList = () => {
   });
 };
 
+// GET available staff for counter + work shift
+export const useAvailableStaff = (
+  counterId?: string,
+  workShiftId?: string,
+  enabled = true,
+) => {
+  return useQuery({
+    queryKey: ['workshift', 'available-staff', counterId, workShiftId],
+    queryFn: () => {
+      if (!counterId || !workShiftId) {
+        return Promise.resolve([]);
+      }
+      return WorkShiftService.getAvailableStaff(counterId, workShiftId);
+    },
+    enabled: enabled && !!counterId && !!workShiftId,
+    gcTime: CACHE_TIME.SHORT,
+    staleTime: STALE_TIME.SHORT,
+  });
+};
+
 // ASSIGN staff to workshift mutation
 export const useAssignStaffWorkShift = () => {
   const queryClient = useQueryClient();
@@ -103,6 +123,23 @@ export const useAssignStaffWorkShift = () => {
       // Also invalidate staff work shifts
       queryClient.invalidateQueries({
         queryKey: ['workshift', 'staff-work-shifts'],
+      });
+    },
+  });
+};
+
+// UPDATE staff work shift mutation
+export const useUpdateStaffWorkShift = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateStaffWorkShiftRequest) => WorkShiftService.updateStaffWorkShift(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['workshift', 'staff-work-shifts'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.WORKSHIFT_BASE,
       });
     },
   });
@@ -134,4 +171,3 @@ export const useDeleteStaffWorkShift = () => {
     },
   });
 };
-

@@ -58,6 +58,7 @@ export interface CaseListResponse {
 export interface CaseSearchFilters {
   caseCode?: string;
   guestId?: string;
+  guestName?: string;
   serviceId?: string;
   staffId?: string;
   priorityLevel?: number;
@@ -81,6 +82,7 @@ export interface CaseDetailResponse {
   estimatedCompletionDate: string;
   totalFee: number;
   isPayment: boolean;
+  payment_qr_url?: string;
   receivedBy: {
     $values: Array<{
       id: string;

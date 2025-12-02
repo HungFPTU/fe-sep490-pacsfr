@@ -1,29 +1,39 @@
-import * as workshiftApi from '../api/workshift.api';
-import type { WorkShift, CreateWorkShiftRequest, AssignStaffWorkShiftRequest, CounterOption, StaffOption, StaffWorkShift } from '../types';
+import { workshiftApi, UpdateStaffWorkShiftRequest } from '../api/workshift.api';
+import type {
+  WorkShift,
+  CreateWorkShiftRequest,
+  UpdateWorkShiftRequest,
+  AssignStaffWorkShiftRequest,
+  CounterOption,
+  StaffOption,
+  StaffWorkShift,
+  AvailableStaff,
+  WorkShiftFilters,
+} from '../types';
 import type { RestResponse, RestPaged } from '@/types/rest';
 
 // ==================== WorkShift Service ====================
 
 export class WorkShiftService {
   /**
-   * Lấy danh sách ca làm việc (không có filter)
+   * Lấy danh sách ca làm việc
    */
-  static async getWorkShifts(): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.getWorkShifts();
+  static async getWorkShifts(filters: WorkShiftFilters = {}): Promise<RestPaged<WorkShift>> {
+    return workshiftApi.getAll(filters);
   }
 
   /**
    * Lấy thông tin chi tiết ca làm việc
    */
   static async getWorkShiftDetail(id: string): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.getWorkShiftDetail(id);
+    return workshiftApi.getById(id);
   }
 
   /**
    * Tạo ca làm việc mới
    */
   static async createWorkShift(data: CreateWorkShiftRequest): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.createWorkShift(data);
+    return workshiftApi.create(data);
   }
 
   /**
@@ -31,16 +41,16 @@ export class WorkShiftService {
    */
   static async updateWorkShift(
     id: string,
-    data: CreateWorkShiftRequest,
+    data: UpdateWorkShiftRequest,
   ): Promise<RestResponse<WorkShift>> {
-    return workshiftApi.updateWorkShift(id, data);
+    return workshiftApi.update(id, data);
   }
 
   /**
    * Xóa ca làm việc
    */
   static async deleteWorkShift(id: string): Promise<RestResponse<object>> {
-    return workshiftApi.deleteWorkShift(id);
+    return workshiftApi.delete(id);
   }
 
   /**
@@ -58,10 +68,24 @@ export class WorkShiftService {
   }
 
   /**
+   * Lấy danh sách nhân viên phù hợp với quầy & ca làm việc
+   */
+  static async getAvailableStaff(counterId: string, workShiftId: string): Promise<AvailableStaff[]> {
+    return workshiftApi.getAvailableStaff(counterId, workShiftId);
+  }
+
+  /**
    * Phân công nhân viên vào ca làm việc
    */
   static async assignStaffWorkShift(data: AssignStaffWorkShiftRequest): Promise<RestResponse<object>> {
     return workshiftApi.assignStaffWorkShift(data);
+  }
+
+  /**
+   * Cập nhật phân công nhân viên
+   */
+  static async updateStaffWorkShift(data: UpdateStaffWorkShiftRequest): Promise<RestResponse<object>> {
+    return workshiftApi.updateStaffWorkShift(data);
   }
 
   /**

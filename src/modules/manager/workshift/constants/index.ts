@@ -8,7 +8,38 @@ export { CACHE_TIME, STALE_TIME } from '@/shared/constants/react-query';
 
 export const DEFAULT_PAGE_SIZE = 10;
 
+// Shift type time configurations
+export const SHIFT_TYPE_TIMES: Record<string, { startTime: string; endTime: string }> = {
+  'Sáng': {
+    startTime: '07:00',
+    endTime: '11:30',
+  },
+  'Chiều': {
+    startTime: '13:00',
+    endTime: '17:30',
+  },
+  'Cả ngày': {
+    startTime: '07:00',
+    endTime: '17:30',
+  },
+};
+
+// Shift type color dots
+export const SHIFT_TYPE_DOT_COLORS: Record<string, string> = {
+  'Sáng': 'bg-green-500',
+  'Chiều': 'bg-yellow-500',
+  'Cả ngày': 'bg-blue-500',
+};
+
+// WorkShift type options with text labels (for native select)
 export const WORKSHIFT_TYPE_OPTIONS = [
+  { value: 'Sáng', label: '🟢 Ca Sáng: 7:00 - 11:30' },
+  { value: 'Chiều', label: '🟡 Ca Chiều: 13:00 - 17:30' },
+  { value: 'Cả ngày', label: '🔵 Cả Ngày: 7:00 - 17:30' },
+];
+
+// Simple options for places that need plain text (like filters)
+export const WORKSHIFT_TYPE_SIMPLE_OPTIONS = [
   { value: 'Sáng', label: 'Sáng' },
   { value: 'Chiều', label: 'Chiều' },
   { value: 'Cả ngày', label: 'Cả ngày' },

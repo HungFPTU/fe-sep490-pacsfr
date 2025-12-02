@@ -1,11 +1,14 @@
 'use client';
 
 import React from 'react';
+import { usePaymentBill } from '../../../../hooks/usePaymentBill';
 import { PaymentBadge, StatusBadge } from '../badges';
 import { PaymentConfirmButton } from './PaymentConfirmButton.ui';
+import { PaymentBillInfo } from './PaymentBillInfo.ui';
 
 interface CaseMetadataProps {
   caseId: string;
+  caseCode: string;
   submissionMethod: string;
   isPayment: boolean;
   guestId: string;
@@ -16,6 +19,7 @@ interface CaseMetadataProps {
 
 export const CaseMetadata: React.FC<CaseMetadataProps> = ({
   caseId,
+  caseCode,
   submissionMethod,
   isPayment,
   guestId,
@@ -23,6 +27,7 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
   currentStatus,
   onStatusClick,
 }) => {
+  const { data: bill } = usePaymentBill(caseCode, true);
   return (
     <div className="space-y-4">
       <div className="flex items-start space-x-3">
@@ -88,22 +93,31 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
           </div>
         </div>
         
-        {!isPayment && (
+        {/* Show confirm button (disabled) when payment is not required and no bill exists */}
+        {!isPayment && !bill && (
+          <div className="space-y-2 pt-2">
+            <div>
+              <PaymentConfirmButton caseId={caseId} isPayment={isPayment} hasBill={false} />
+            </div>
+          </div>
+        )}
+
+        {/* Show invoice info and confirm button when bill exists and payment is not complete */}
+        {bill && !isPayment && (
+          <div className="space-y-2 pt-2">
+            <PaymentBillInfo caseCode={caseCode} caseId={caseId} />
+            <PaymentConfirmButton caseId={caseId} isPayment={false} hasBill={true} hasBillUrl={!!bill.billUrl} />
+          </div>
+        )}
+
+        {/* Show only invoice info when payment is already completed */}
+        {isPayment && bill && (
           <div className="pt-2">
-            <PaymentConfirmButton caseId={caseId} isPayment={isPayment} />
+            <PaymentBillInfo caseCode={caseCode} caseId={caseId} />
           </div>
         )}
       </div>
 
-      <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-        <label className="block text-xs font-medium text-gray-500 mb-2">ID Công dân</label>
-        <p className="text-xs font-mono text-gray-700 break-all">{guestId}</p>
-      </div>
-
-      <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-        <label className="block text-xs font-medium text-gray-500 mb-2">ID Dịch vụ</label>
-        <p className="text-xs font-mono text-gray-700 break-all">{serviceId}</p>
-      </div>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { CaseDetailView } from './CaseDetailView.view';
 
 export const CaseLookupView: React.FC = () => {
   const [caseId, setCaseId] = useState('');
+  const [serviceId, setServiceId] = useState<string | undefined>(undefined);
   const [searchEnabled, setSearchEnabled] = useState(false);
 
   const { data, isLoading, error, refetch } = useCaseLookup(caseId, searchEnabled);
@@ -20,6 +21,7 @@ export const CaseLookupView: React.FC = () => {
 
   const handleReset = () => {
     setCaseId('');
+    setServiceId(undefined);
     setSearchEnabled(false);
   };
 
@@ -33,7 +35,9 @@ export const CaseLookupView: React.FC = () => {
     <div className="space-y-6">
       <LookupForm
         caseId={caseId}
+        serviceId={serviceId}
         onCaseIdChange={setCaseId}
+        onServiceIdChange={setServiceId}
         onSearch={handleSearch}
         onReset={handleReset}
         onKeyPress={handleKeyPress}

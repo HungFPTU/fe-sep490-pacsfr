@@ -8,6 +8,8 @@ import { getValuesPage, RestPaged } from '@/types/rest';
 import { FormApiOf } from '@/types/types';
 import { OrgUnit } from '@/modules/manager/org-unit';
 import { validateOrgUnit, validateStaffCode, validateFullName, validateUsername, validatePassword, validateEmail, validatePhone, validatePosition, validateRoleType, validateSpecialization } from '../../../utils';
+import { useServiceGroups } from '../../../hooks';
+import { X } from 'lucide-react';
 
 interface StaffFormProps {
     form: FormApiOf<StaffFormValues>;
@@ -28,6 +30,10 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
         value: unit.id as string,
         label: unit.unitName,
     })) as { value: string; label: string }[];
+
+    // Fetch service groups for dropdown
+    const { data: serviceGroupsData, isLoading: isLoadingServiceGroups } = useServiceGroups();
+    const serviceGroups = serviceGroupsData || [];
 
     return (
         <div className="space-y-4">
@@ -375,6 +381,76 @@ export function StaffForm({ form, isLoading, isEdit }: StaffFormProps) {
                     );
                 }}
             </form.Field>
+
+            {/* Service Groups (only for create) */}
+            {!isEdit && (
+                <form.Field name="serviceGroupIds">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const selectedIds = (field.state.value as string[]) || [];
+                        const selectedServiceGroups = serviceGroups.filter((sg) => selectedIds.includes(sg.id));
+                        const availableServiceGroups = serviceGroups.filter((sg) => !selectedIds.includes(sg.id));
+
+                        const handleAddServiceGroup = (serviceGroupId: string) => {
+                            if (!selectedIds.includes(serviceGroupId)) {
+                                field.handleChange([...selectedIds, serviceGroupId] as never);
+                            }
+                        };
+
+                        const handleRemoveServiceGroup = (serviceGroupId: string) => {
+                            field.handleChange(selectedIds.filter((id: string) => id !== serviceGroupId) as never);
+                        };
+
+                        return (
+                            <div className="w-full">
+                                <label className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Nhóm dịch vụ (Chuyên môn)
+                                </label>
+                                <div className="space-y-2">
+                                    <select
+                                        className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${isLoading || isLoadingServiceGroups ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                        value=""
+                                        onChange={(e) => {
+                                            if (e.target.value) {
+                                                handleAddServiceGroup(e.target.value);
+                                                e.target.value = '';
+                                            }
+                                        }}
+                                        disabled={isLoading || isLoadingServiceGroups}
+                                    >
+                                        <option value="">Chọn nhóm dịch vụ để thêm</option>
+                                        {availableServiceGroups.map((sg) => (
+                                            <option key={sg.id} value={sg.id}>
+                                                {sg.groupName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {selectedServiceGroups.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {selectedServiceGroups.map((sg) => (
+                                                <span
+                                                    key={sg.id}
+                                                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800 border border-orange-200"
+                                                >
+                                                    {sg.groupName}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveServiceGroup(sg.id)}
+                                                        className="hover:text-orange-900 focus:outline-none"
+                                                        disabled={isLoading}
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    }}
+                </form.Field>
+            )}
 
             {/* Is Active (only for edit) */}
             {isEdit && (

@@ -9,10 +9,12 @@ interface Props {
     counters: Counter[];
     isLoading: boolean;
     onView?: (counterId: string) => void;
-    onAssignStaff?: (counterId: string) => void;
+    onAssignServiceGroup?: (counterId: string) => void;
+    onDelete?: (counterId: string) => void;
+    isDeleting?: boolean;
 }
 
-export const CounterTable: React.FC<Props> = ({ counters, isLoading, onView, onAssignStaff }) => {
+export const CounterTable: React.FC<Props> = ({ counters, isLoading, onView, onAssignServiceGroup, onDelete, isDeleting }) => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center py-12">
@@ -49,7 +51,9 @@ export const CounterTable: React.FC<Props> = ({ counters, isLoading, onView, onA
                             key={counter.id} 
                             counter={counter} 
                             onView={onView}
-                            onAssignStaff={onAssignStaff}
+                            onAssignServiceGroup={onAssignServiceGroup}
+                            onDelete={onDelete}
+                            isDeleting={isDeleting}
                         />
                     ))}
                 </tbody>

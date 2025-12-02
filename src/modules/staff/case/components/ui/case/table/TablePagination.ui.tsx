@@ -127,7 +127,7 @@ export const TablePagination: React.FC<TablePaginationProps> = ({ pagination, on
             id="pageSize"
             value={size}
             onChange={(e) => onSizeChange?.(parseInt(e.target.value))}
-            className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            className="flex h-10 rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
           >
             <option value="10">10</option>
             <option value="20">20</option>

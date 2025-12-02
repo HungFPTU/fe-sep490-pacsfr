@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { ChatMessage } from '../../../types';
+import { TypingIndicator } from './TypingIndicator.ui';
 
 interface ChatMessageBubbleProps {
     message: ChatMessage;
@@ -40,7 +41,7 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({ message })
                 {message.content ? (
                     <ReactMarkdown>{message.content}</ReactMarkdown>
                 ) : (
-                    <span className="w-1 h-4 bg-red-300 inline-block animate-pulse rounded-sm" />
+                    <TypingIndicator />
                 )}
             </div>
             {isUser && (

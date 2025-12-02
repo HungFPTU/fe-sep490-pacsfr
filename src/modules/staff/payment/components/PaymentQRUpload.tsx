@@ -187,46 +187,6 @@ export function PaymentQRUpload() {
                 <p className="text-gray-600 mt-1">Upload mã QR thanh toán cho dịch vụ</p>
             </div>
 
-            {/* Saved QR Code Display */}
-            {savedQRUrl && !uploadedData && (
-                <Card className="p-6 bg-green-50 border-green-200">
-                    <div className="flex items-start gap-4">
-                        <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                        <div className="flex-1">
-                            <h3 className="text-lg font-bold text-green-900 mb-2">
-                                Mã thanh toán đã lưu
-                            </h3>
-                            <div className="mt-3">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={savedQRUrl}
-                                    alt="Saved QR Code"
-                                    className="w-64 h-64 object-contain border rounded-lg bg-white"
-                                />
-                            </div>
-                            <Button
-                                onClick={handleRemoveSaved}
-                                disabled={isDeleting}
-                                variant="outline"
-                                className="mt-4 text-red-600 border-red-300 hover:bg-red-50"
-                            >
-                                {isDeleting ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                        Đang xóa...
-                                    </>
-                                ) : (
-                                    <>
-                                        <X className="w-4 h-4 mr-2" />
-                                        Xóa mã đã lưu
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-                    </div>
-                </Card>
-            )}
-
             {/* Upload Card */}
             <Card className="p-6">
                 <div className="space-y-6">
@@ -246,8 +206,8 @@ export function PaymentQRUpload() {
                         className="hidden"
                     />
 
-                    {/* Upload Area */}
-                    {!previewUrl ? (
+                    {/* Upload Area - Only show if no preview or (preview but not uploaded yet) */}
+                    {!uploadedData && !previewUrl && (
                         <div
                             onClick={handleClickUpload}
                             className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-colors"
@@ -260,7 +220,10 @@ export function PaymentQRUpload() {
                                 Hỗ trợ: JPG, PNG, WEBP (tối đa 5MB)
                             </p>
                         </div>
-                    ) : (
+                    )}
+
+                    {/* Preview Section - Only show if preview exists but not uploaded yet */}
+                    {!uploadedData && previewUrl && (
                         <div className="space-y-4">
                             {/* Preview */}
                             <div className="border rounded-lg p-4 bg-gray-50">
@@ -326,38 +289,75 @@ export function PaymentQRUpload() {
                     {/* Upload Success */}
                     {uploadedData && (
                         <Card className="p-6 bg-green-50 border-green-200">
-                            <div className="flex items-start gap-4">
-                                <Check className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
-                                <div className="flex-1">
-                                    <h3 className="text-lg font-bold text-green-900 mb-2">
-                                        Upload thành công!
-                                    </h3>
-                                    <div className="space-y-2 text-sm">
-                                        <p className="text-green-800">
-                                            <span className="font-semibold">File:</span> {uploadedData.originalFileName}
-                                        </p>
-                                        <p className="text-green-800">
-                                            <span className="font-semibold">Kích thước:</span>{" "}
-                                            {(uploadedData.fileSize / 1024).toFixed(2)} KB
-                                        </p>
-                                        <p className="text-green-800 break-all">
-                                            <span className="font-semibold">URL:</span>{" "}
-                                            <a
-                                                href={uploadedData.fileUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-blue-600 hover:underline"
-                                            >
-                                                {uploadedData.fileUrl}
-                                            </a>
-                                        </p>
+                            <div className="space-y-4">
+                                <div className="flex items-start gap-4">
+                                    <Check className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
+                                    <div className="flex-1">
+                                        <h3 className="text-lg font-bold text-green-900 mb-2">
+                                            Mã đã lưu
+                                        </h3>
+                                        <div className="space-y-2 text-sm">
+                                            <p className="text-green-800">
+                                                <span className="font-semibold">File:</span> {uploadedData.originalFileName}
+                                            </p>
+                                            <p className="text-green-800">
+                                                <span className="font-semibold">Kích thước:</span>{" "}
+                                                {(uploadedData.fileSize / 1024).toFixed(2)} KB
+                                            </p>
+                                            <p className="text-green-800 break-all">
+                                                <span className="font-semibold">URL:</span>{" "}
+                                                <a
+                                                    href={uploadedData.fileUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:underline"
+                                                >
+                                                    {uploadedData.fileUrl}
+                                                </a>
+                                            </p>
+                                        </div>
                                     </div>
+                                </div>
+
+                                {/* Saved QR Image */}
+                                <div className="mt-4 pt-4 border-t border-green-200">
+                                    <p className="text-sm font-semibold text-green-900 mb-3">Mã thanh toán:</p>
+                                    <div className="flex justify-center mb-4">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={uploadedData.fileUrl}
+                                            alt="Saved QR Code"
+                                            className="max-w-sm max-h-96 object-contain border rounded-lg bg-white"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex gap-3">
                                     <Button
                                         onClick={handleClear}
                                         variant="outline"
-                                        className="mt-4 border-green-300 text-green-700 hover:bg-green-100"
+                                        className="flex-1 border-green-300 text-green-700 hover:bg-green-100"
                                     >
                                         Upload ảnh khác
+                                    </Button>
+                                    <Button
+                                        onClick={handleRemoveSaved}
+                                        disabled={isDeleting}
+                                        variant="outline"
+                                        className="text-red-600 border-red-300 hover:bg-red-50"
+                                    >
+                                        {isDeleting ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                Đang xóa...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <X className="w-4 h-4 mr-2" />
+                                                Xóa mã
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </div>
