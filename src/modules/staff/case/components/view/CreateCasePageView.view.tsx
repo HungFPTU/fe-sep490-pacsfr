@@ -32,7 +32,6 @@ export function CreateCasePageView() {
 
     // Guest Form Data
     const [guestData, setGuestData] = useState<CreateGuestRequest>({
-        guestCode: "",
         fullName: "",
         idNumber: "",
         idType: "CCCD",
@@ -94,7 +93,6 @@ export function CreateCasePageView() {
     const validateGuestForm = (): boolean => {
         const newErrors: Record<string, string> = {};
 
-        if (!guestData.guestCode.trim()) newErrors.guestCode = "Mã khách hàng là bắt buộc";
         if (!guestData.fullName.trim()) newErrors.fullName = "Họ tên là bắt buộc";
         
         // Validate ID Number (CCCD/Passport)
@@ -289,7 +287,6 @@ export function CreateCasePageView() {
         // Set a mock selected guest to display in the form (showing the guestId)
         setSelectedGuest({
             id: guestId,
-            guestCode: guestData.guestCode,
             fullName: guestData.fullName,
             idNumber: guestData.idNumber,
             idType: guestData.idType,

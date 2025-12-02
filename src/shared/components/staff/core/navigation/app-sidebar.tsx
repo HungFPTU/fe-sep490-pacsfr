@@ -47,11 +47,11 @@ const data = {
             url: "/staff/workshift",
             icon: Calendar,
         },
-        {
-            title: "Thanh toán",
-            url: "/staff/payment",
-            icon: CreditCard,
-        },
+        // {
+        //     title: "Thanh toán",
+        //     url: "/staff/payment",
+        //     icon: CreditCard,
+        // },
         {
             title: "Phản ánh kiến nghị",
             url: "/staff/pakn-category",
