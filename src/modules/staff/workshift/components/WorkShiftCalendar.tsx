@@ -36,10 +36,10 @@ export function WorkShiftCalendar({
         shifts.forEach((shift) => {
             // Only include valid shifts (not placeholder dates)
             if (!workshiftService.isValidShift(shift)) {
-                console.log('🔍 DEBUG - Skipping invalid shift:', shift.shiftDate);
+                console.log('🔍 DEBUG - Skipping invalid shift:', shift.workDate);
                 return;
             }
-            const dateKey = shift.shiftDate.split('T')[0];
+            const dateKey = shift.workDate.split('T')[0];
             console.log('🔍 DEBUG - Adding shift for dateKey:', dateKey, 'time:', shift.startTime, '-', shift.endTime);
             if (!map.has(dateKey)) {
                 map.set(dateKey, []);
