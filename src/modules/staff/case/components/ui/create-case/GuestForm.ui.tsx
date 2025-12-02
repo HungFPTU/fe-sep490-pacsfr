@@ -375,35 +375,19 @@ export function GuestForm({
                 </div>
 
                 <form onSubmit={onSubmit} className="space-y-6">
-                    {/* Row 1: Guest Code, Full Name */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Mã khách hàng <span className="text-red-500">*</span>
-                            </label>
-                            <Input
-                                value={guestData.guestCode}
-                                onChange={(e) => onDataChange({ ...guestData, guestCode: e.target.value })}
-                                placeholder="VD: KH003"
-                                className={errors.guestCode ? "border-red-500" : ""}
-                                disabled={isSuccess}
-                            />
-                            {errors.guestCode && <p className="text-xs text-red-500 mt-1">{errors.guestCode}</p>}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Họ và tên <span className="text-red-500">*</span>
-                            </label>
-                            <Input
-                                value={guestData.fullName}
-                                onChange={(e) => onDataChange({ ...guestData, fullName: e.target.value })}
-                                placeholder="Nhập họ tên đầy đủ"
-                                className={errors.fullName ? "border-red-500" : ""}
-                                disabled={isSuccess}
-                            />
-                            {errors.fullName && <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>}
-                        </div>
+                    {/* Row 1: Full Name */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Họ và tên <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                            value={guestData.fullName}
+                            onChange={(e) => onDataChange({ ...guestData, fullName: e.target.value })}
+                            placeholder="Nhập họ tên đầy đủ"
+                            className={errors.fullName ? "border-red-500" : ""}
+                            disabled={isSuccess}
+                        />
+                        {errors.fullName && <p className="text-xs text-red-500 mt-1">{errors.fullName}</p>}
                     </div>
 
                     {/* Row 2: ID Type, ID Number */}
