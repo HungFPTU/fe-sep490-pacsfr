@@ -1,7 +1,7 @@
 import { dashboardApi } from '../api/dashboard.api';
-import type { 
-    ComprehensiveReport, 
-    DashboardFilters, 
+import type {
+    ComprehensiveReport,
+    DashboardFilters,
     LineChartData,
     PieChartData,
     BarChartData
@@ -22,18 +22,18 @@ export const dashboardService = {
         if (!response.data?.success || !response.data?.data) {
             return null;
         }
-        
+
         const rawData = response.data.data as Record<string, unknown>;
         const systemStats = rawData.systemStatistics as Record<string, unknown>;
         const feedbackStats = rawData.feedbackStatistics as Record<string, unknown>;
-        
+
         const parsedData: ComprehensiveReport = {
             systemStatistics: {
                 totalCases: (systemStats?.totalCases as number) || 0,
                 pendingCases: (systemStats?.pendingCases as number) || 0,
                 inProgressCases: (systemStats?.inProgressCases as number) || 0,
                 completedCases: (systemStats?.completedCases as number) || 0,
-                rejectedCases: (systemStats?.rejectedCases as number) || 0,
+                canceledCases: (systemStats?.canceledCases as number) || 0,
                 averageProcessingTime: (systemStats?.averageProcessingTime as number) || 0,
                 todayCases: (systemStats?.todayCases as number) || 0,
                 thisWeekCases: (systemStats?.thisWeekCases as number) || 0,
@@ -58,7 +58,7 @@ export const dashboardService = {
                 rating5Count: (feedbackStats?.rating5Count as number) || 0,
                 pendingCount: (feedbackStats?.pendingCount as number) || 0,
                 approvedCount: (feedbackStats?.approvedCount as number) || 0,
-                rejectedCount: (feedbackStats?.rejectedCount as number) || 0,
+                canceledCount: (feedbackStats?.canceledCount as number) || 0,
                 serviceRatings: parseArray(feedbackStats?.serviceRatings as never) as never,
             },
             serviceStatistics: parseArray(rawData.serviceStatistics as never) as never,
@@ -66,7 +66,7 @@ export const dashboardService = {
             fromDate: (rawData.fromDate as string) || '',
             toDate: (rawData.toDate as string) || '',
         };
-        
+
         return parsedData;
     },
 
