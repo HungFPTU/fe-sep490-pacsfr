@@ -30,7 +30,28 @@ export function CreateCasePageView() {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [guestCreatedSuccess, setGuestCreatedSuccess] = useState(false);
 
-    // Guest Form Data
+// Guest Form Data
+    // const [guestData, setGuestData] = useState<CreateGuestRequest>({
+    //     fullName: "",
+    //     idNumber: "",
+    //     idType: "CCCD",
+    //     idIssueDate: "",
+    //     idIssuePlace: "",
+    //     phone: "",
+    //     email: "",
+    //     birthDate: "",
+    //     gender: "Nam",
+    //     occupation: "",
+    //     organization: "",
+    //     guestType: "Cá nhân",
+    //     notes: "",
+    //     address: "",
+    //     ward: "",
+    //     city: "",
+    //     country: "Việt Nam",
+    // });
+
+      // Guest Form Data
     const [guestData, setGuestData] = useState<CreateGuestRequest>({
         fullName: "",
         idNumber: "",
