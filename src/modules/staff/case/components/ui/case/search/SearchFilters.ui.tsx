@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import type { CaseSearchFilters } from '../../../../types/case-search';
 import { useCaseStatuses } from '../../../../hooks/useCaseStatuses';
 import { useServices } from '../../../../hooks/useServices';
-import { useGuests } from '../../../../hooks/useGuests';
-import type { GuestItem } from '../../../../api/guest.api';
 
 interface SearchFiltersProps {
   filters: CaseSearchFilters;
@@ -122,25 +120,8 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
 }) => {
   const { data: caseStatuses = [] } = useCaseStatuses();
   const { data: services = [] } = useServices();
-  const [guestSearchKeyword, setGuestSearchKeyword] = useState('');
-  const [shouldFetchGuests, setShouldFetchGuests] = useState(false);
-  const [showGuestDropdown, setShowGuestDropdown] = useState(false);
   const [showFromDatePicker, setShowFromDatePicker] = useState(false);
   const [showToDatePicker, setShowToDatePicker] = useState(false);
-  const { data: guests = [] } = useGuests(shouldFetchGuests ? guestSearchKeyword : undefined);
-
-  const handleGuestSearch = () => {
-    setShouldFetchGuests(true);
-    setShowGuestDropdown(true);
-  };
-
-  const handleGuestSelect = (guest: GuestItem) => {
-    onFilterChange('guestId', guest.id);
-    setGuestSearchKeyword(guest.fullName);
-    setShowGuestDropdown(false);
-  };
-
-  const selectedGuest = guests.find((g) => g.id === filters.guestId);
 
   const formatDateToISO = (dateValue: string, timeValue: string = '00:00'): string => {
     if (!dateValue) return '';
@@ -228,192 +209,131 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
         </div>
       </div>
 
-      {/* Second Row: Guest Name Search with Dropdown */}
-      <div className="pt-2">
-        <label htmlFor="guestSearch" className="block text-sm font-medium text-gray-700 mb-2">
-          Tên khách hàng
-        </label>
-        <div className="relative">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 relative">
+      {/* Second Row: Guest Name, From Date, To Date */}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Guest Name */}
+        <div>
+          <label htmlFor="guestName" className="block text-sm font-medium text-gray-700 mb-2">
+            Tên khách hàng
+          </label>
+          <input
+            id="guestName"
+            type="text"
+            value={filters.guestName || ''}
+            onChange={(e) => onFilterChange('guestName', e.target.value || undefined)}
+            onKeyPress={onKeyPress}
+            placeholder="Nhập tên khách hàng..."
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+          />
+        </div>
+
+        {/* From Date */}
+        <div>
+          <label htmlFor="fromDate" className="block text-sm font-medium text-gray-700 mb-2">
+            Từ ngày
+          </label>
+          <div className="relative">
+            <div className="flex items-center gap-2">
               <input
-                id="guestSearch"
+                id="fromDate"
                 type="text"
-                value={guestSearchKeyword || (selectedGuest?.fullName ?? '')}
+                value={formatISOToDate(filters.fromDate || '')}
                 onChange={(e) => {
-                  setGuestSearchKeyword(e.target.value);
-                  setShouldFetchGuests(false);
-                  if (filters.guestId) {
-                    onFilterChange('guestId', undefined);
+                  const value = e.target.value;
+                  // Allow typing numbers and slashes
+                  if (/^[0-9/]*$/.test(value)) {
+                    // Auto-format to dd/mm/yyyy
+                    let formatted = value.replace(/\D/g, '');
+                    if (formatted.length >= 2) {
+                      formatted = formatted.substring(0, 2) + '/' + formatted.substring(2);
+                    }
+                    if (formatted.length >= 5) {
+                      formatted = formatted.substring(0, 5) + '/' + formatted.substring(5, 9);
+                    }
+                    
+                    // When complete (dd/mm/yyyy), convert to ISO
+                    if (formatted.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(formatted)) {
+                      handleDateChange('fromDate', formatted);
+                    }
                   }
                 }}
-                placeholder="Nhập tên khách hàng..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                placeholder="dd/mm/yyyy"
+                maxLength={10}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
               <button
                 type="button"
-                onClick={() => setShowGuestDropdown(!showGuestDropdown)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-gray-600 hover:text-gray-900 focus:outline-none"
+                onClick={() => setShowFromDatePicker(!showFromDatePicker)}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Chọn từ lịch"
               >
-                <svg
-                  className={`w-5 h-5 transition-transform ${
-                    showGuestDropdown ? 'rotate-180' : ''
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                  />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </button>
-
-              {/* Dropdown List */}
-              {showGuestDropdown && guests.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 border border-gray-300 bg-white rounded-lg shadow-lg z-10">
-                  <div className="max-h-48 overflow-y-auto">
-                    {guests.map((guest: GuestItem) => (
-                      <button
-                        key={guest.id}
-                        onClick={() => handleGuestSelect(guest)}
-                        className="w-full text-left px-3 py-2 hover:bg-gray-100 transition-colors flex flex-col border-b border-gray-100 last:border-0"
-                      >
-                        <span className="font-medium text-gray-900">{guest.fullName}</span>
-                        <span className="text-xs text-gray-500">
-                          {guest.phoneNumber}
-                          {guest.idNumber && ` • ${guest.idNumber}`}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
-
-            <button
-              onClick={handleGuestSearch}
-              disabled={!guestSearchKeyword.trim()}
-              className="px-4 h-10 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors text-sm font-medium"
-            >
-              Tìm kiếm
-            </button>
+            {showFromDatePicker && (
+              <DatePickerCalendar
+                value={formatISOToDate(filters.fromDate || '')}
+                onChange={(date) => handleDateChange('fromDate', date)}
+                onClose={() => setShowFromDatePicker(false)}
+              />
+            )}
           </div>
         </div>
 
-        {/* Third Row: From Date and To Date */}
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* From Date */}
-          <div>
-            <label htmlFor="fromDate" className="block text-sm font-medium text-gray-700 mb-2">
-              Từ ngày
-            </label>
-            <div className="relative">
-              <div className="flex items-center gap-2">
-                <input
-                  id="fromDate"
-                  type="text"
-                  value={formatISOToDate(filters.fromDate || '')}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // Allow typing numbers and slashes
-                    if (/^[0-9/]*$/.test(value)) {
-                      // Auto-format to dd/mm/yyyy
-                      let formatted = value.replace(/\D/g, '');
-                      if (formatted.length >= 2) {
-                        formatted = formatted.substring(0, 2) + '/' + formatted.substring(2);
-                      }
-                      if (formatted.length >= 5) {
-                        formatted = formatted.substring(0, 5) + '/' + formatted.substring(5, 9);
-                      }
-                      
-                      // When complete (dd/mm/yyyy), convert to ISO
-                      if (formatted.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(formatted)) {
-                        handleDateChange('fromDate', formatted);
-                      }
+        {/* To Date */}
+        <div>
+          <label htmlFor="toDate" className="block text-sm font-medium text-gray-700 mb-2">
+            Đến ngày
+          </label>
+          <div className="relative">
+            <div className="flex items-center gap-2">
+              <input
+                id="toDate"
+                type="text"
+                value={formatISOToDate(filters.toDate || '')}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Allow typing numbers and slashes
+                  if (/^[0-9/]*$/.test(value)) {
+                    // Auto-format to dd/mm/yyyy
+                    let formatted = value.replace(/\D/g, '');
+                    if (formatted.length >= 2) {
+                      formatted = formatted.substring(0, 2) + '/' + formatted.substring(2);
                     }
-                  }}
-                  placeholder="dd/mm/yyyy"
-                  maxLength={10}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowFromDatePicker(!showFromDatePicker)}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                  title="Chọn từ lịch"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </button>
-              </div>
-              {showFromDatePicker && (
-                <DatePickerCalendar
-                  value={formatISOToDate(filters.fromDate || '')}
-                  onChange={(date) => handleDateChange('fromDate', date)}
-                  onClose={() => setShowFromDatePicker(false)}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* To Date */}
-          <div>
-            <label htmlFor="toDate" className="block text-sm font-medium text-gray-700 mb-2">
-              Đến ngày
-            </label>
-            <div className="relative">
-              <div className="flex items-center gap-2">
-                <input
-                  id="toDate"
-                  type="text"
-                  value={formatISOToDate(filters.toDate || '')}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    // Allow typing numbers and slashes
-                    if (/^[0-9/]*$/.test(value)) {
-                      // Auto-format to dd/mm/yyyy
-                      let formatted = value.replace(/\D/g, '');
-                      if (formatted.length >= 2) {
-                        formatted = formatted.substring(0, 2) + '/' + formatted.substring(2);
-                      }
-                      if (formatted.length >= 5) {
-                        formatted = formatted.substring(0, 5) + '/' + formatted.substring(5, 9);
-                      }
-                      
-                      // When complete (dd/mm/yyyy), convert to ISO
-                      if (formatted.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(formatted)) {
-                        handleDateChange('toDate', formatted);
-                      }
+                    if (formatted.length >= 5) {
+                      formatted = formatted.substring(0, 5) + '/' + formatted.substring(5, 9);
                     }
-                  }}
-                  placeholder="dd/mm/yyyy"
-                  maxLength={10}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowToDatePicker(!showToDatePicker)}
-                  className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                  title="Chọn từ lịch"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </button>
-              </div>
-              {showToDatePicker && (
-                <DatePickerCalendar
-                  value={formatISOToDate(filters.toDate || '')}
-                  onChange={(date) => handleDateChange('toDate', date)}
-                  onClose={() => setShowToDatePicker(false)}
-                />
-              )}
+                    
+                    // When complete (dd/mm/yyyy), convert to ISO
+                    if (formatted.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(formatted)) {
+                      handleDateChange('toDate', formatted);
+                    }
+                  }
+                }}
+                placeholder="dd/mm/yyyy"
+                maxLength={10}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowToDatePicker(!showToDatePicker)}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Chọn từ lịch"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </button>
             </div>
+            {showToDatePicker && (
+              <DatePickerCalendar
+                value={formatISOToDate(filters.toDate || '')}
+                onChange={(date) => handleDateChange('toDate', date)}
+                onClose={() => setShowToDatePicker(false)}
+              />
+            )}
           </div>
         </div>
       </div>
