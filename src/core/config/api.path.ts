@@ -665,6 +665,7 @@ export const API_PATH = {
   PAYMENT: {
     CREATE: "/Payment/create",
     GET_BY_CASE_CODE: (caseCode: string) => `/Payment/by-case-code/${caseCode}`,
+    PRINT_BILL: "/Payment/print-bill",
   },
 
   FILE: {

@@ -11,14 +11,20 @@ export const useUpdateCaseStatus = () => {
     mutationFn: ({ id, data }: { id: string; data: UpdateCaseStatusRequest }) =>
       caseDetailService.updateCaseStatus(id, data),
     onSuccess: (response, variables) => {
-      // Invalidate case detail queries
+      // Invalidate case detail queries - refetch detailed case info
       queryClient.invalidateQueries({ queryKey: ['case-detail', variables.id] });
       
-      // Invalidate case search queries (to refresh the search table)
+      // Invalidate payment bill queries - fetch updated bill if status change generates one
+      queryClient.invalidateQueries({ queryKey: ['payment-bill'] });
+      
+      // Invalidate case search queries - refresh the search table
       queryClient.invalidateQueries({ queryKey: ['case-search'] });
       
-      // Invalidate case lookup queries
+      // Invalidate case lookup queries - update lookup results
       queryClient.invalidateQueries({ queryKey: ['case-lookup'] });
+      
+      // Invalidate case statuses - ensure latest status list
+      queryClient.invalidateQueries({ queryKey: ['case-statuses'] });
       
       console.log('✅ Case status updated successfully:', response);
     },
