@@ -54,7 +54,7 @@ export type FeedbackStatistics = {
     rating5Count: number;
     pendingCount: number;
     approvedCount: number;
-    rejectedCount: number;
+    canceledCount: number;
     serviceRatings: ServiceRating[];
 };
 
@@ -63,7 +63,7 @@ export type SystemStatistics = {
     pendingCases: number;
     inProgressCases: number;
     completedCases: number;
-    rejectedCases: number;
+    canceledCases: number;
     averageProcessingTime: number;
     todayCases: number;
     thisWeekCases: number;
