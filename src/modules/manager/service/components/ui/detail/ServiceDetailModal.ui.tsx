@@ -2,15 +2,15 @@
 
 import React from 'react';
 import { Loader2 } from 'lucide-react';
-import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
+import { LargeServiceModal } from '@/shared/components/layout/manager/modal/ServiceDetailModal';
 import { ServiceInfo } from './ServiceInfo.ui';
 import { ServiceSubmissionMethods } from './ServiceSubmissionMethods.ui';
+import { SubmissionMethodsDisplay } from './SubmissionMethodsDisplay.ui';
 import {
     ServiceAgenciesTable,
     ServiceLegalBasesTable,
     ServiceProceduresTable,
     ServiceRequiredDocumentsTable,
-    ServiceSubmissionMethodsTable,
 } from './detail-tables';
 import { useServiceDetail } from '../../../hooks';
 import type { Service } from '../../../types';
@@ -50,19 +50,19 @@ export const ServiceDetailModal: React.FC<Props> = ({
     const agencies = serviceDetail?.serviceAgencies?.$values ?? [];
 
     return (
-        <BaseModal
+        <LargeServiceModal
             open={open}
             onClose={onClose}
             title={`Chi tiết dịch vụ: ${resolvedService.serviceName}`}
             onOk={onClose}
             okText="Đóng"
             centered
-            size="xl"
+            width="95vw"
             footer={
                 <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+                    className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
                 >
                     Đóng
                 </button>
@@ -72,7 +72,7 @@ export const ServiceDetailModal: React.FC<Props> = ({
                 <div className="flex items-center gap-4 border-b border-slate-200 pb-4">
                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100">
                         <svg
-                            className="h-8 w-8 text-primary"
+                            className="h-8 w-8 text-indigo-600"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -86,7 +86,7 @@ export const ServiceDetailModal: React.FC<Props> = ({
                         </svg>
                     </div>
                     <div>
-                        <h3 className="text-lg font-semibold text-foreground">
+                        <h3 className="text-lg font-semibold text-slate-900">
                             {resolvedService.serviceName}
                         </h3>
                         <p className="text-sm text-slate-500">Mã: {resolvedService.serviceCode}</p>
@@ -115,7 +115,10 @@ export const ServiceDetailModal: React.FC<Props> = ({
                         <ServiceRequiredDocumentsTable documents={requiredDocuments} />
                         <ServiceProceduresTable procedures={procedures} />
                         <ServiceLegalBasesTable legalBases={legalBases} />
-                        <ServiceSubmissionMethodsTable methods={submissionMethods} />
+
+                        {/* New beautiful submission methods display */}
+                        <SubmissionMethodsDisplay methods={submissionMethods} />
+
                         <ServiceAgenciesTable agencies={agencies} />
                     </div>
                 )}
@@ -129,7 +132,7 @@ export const ServiceDetailModal: React.FC<Props> = ({
                     </div>
                 )}
             </div>
-        </BaseModal>
+        </LargeServiceModal>
     );
 };
 

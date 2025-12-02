@@ -16,3 +16,17 @@ export type SubmissionMethod = {
     $id?: string;
 };
 
+export type CreateSubmissionMethodResponse = {
+    id: string;
+    submissionMethodName: string;
+    processingTime: string;
+    fee: number;
+    description?: string;
+    isActive: boolean;
+};
+
+export type AssignSubmissionMethodsResponse = {
+    success: boolean;
+    message: string;
+};
+

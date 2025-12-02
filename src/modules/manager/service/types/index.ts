@@ -121,8 +121,6 @@ export type ServiceFilters = {
     size: number;
 };
 
-export type AssignSubmissionMethodsRequest = {
-    serviceId: string;
-    submissionMethodIds: string[];
-};
+// Re-export from submission-method module
+export type { AssignSubmissionMethodsRequest } from '@/modules/manager/submission-method/types';
 
