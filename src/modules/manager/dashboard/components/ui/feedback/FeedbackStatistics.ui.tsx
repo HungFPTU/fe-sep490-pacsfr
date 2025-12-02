@@ -46,7 +46,7 @@ export const FeedbackStatisticsSection: React.FC<Props> = ({ data }) => {
                             Đánh giá trung bình
                         </h3>
                     </div>
-                    
+
                     <div className="flex items-end gap-4">
                         <div className="text-5xl font-bold text-amber-600">
                             {data.averageRating.toFixed(1)}
@@ -55,11 +55,10 @@ export const FeedbackStatisticsSection: React.FC<Props> = ({ data }) => {
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <StarIcon
                                     key={star}
-                                    className={`h-6 w-6 ${
-                                        star <= Math.round(data.averageRating)
+                                    className={`h-6 w-6 ${star <= Math.round(data.averageRating)
                                             ? 'text-amber-400'
                                             : 'text-slate-300'
-                                    }`}
+                                        }`}
                                 />
                             ))}
                         </div>
@@ -112,7 +111,7 @@ export const FeedbackStatisticsSection: React.FC<Props> = ({ data }) => {
                             </div>
                             <div className="text-center">
                                 <div className="mb-1 text-2xl font-bold text-red-600">
-                                    {data.rejectedCount}
+                                    {data.canceledCount}
                                 </div>
                                 <div className="text-xs text-slate-600">Từ chối</div>
                             </div>

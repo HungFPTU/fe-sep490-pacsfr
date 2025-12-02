@@ -57,7 +57,7 @@ export const DashboardStatsCards: React.FC<Props> = ({ data }) => {
         },
         {
             label: 'Từ chối',
-            value: data.rejectedCases,
+            value: data.canceledCases,
             Icon: XCircleIcon,
             bgGradient: 'from-red-500 to-red-600',
             textColor: 'text-red-600',
@@ -120,7 +120,7 @@ export const DashboardStatsCards: React.FC<Props> = ({ data }) => {
                                     {stat.label}
                                 </p>
                                 <p className={`text-2xl font-bold ${stat.textColor}`}>
-                                    {stat.value.toLocaleString('vi-VN')}
+                                    {stat.value?.toLocaleString('vi-VN')}
                                 </p>
                             </div>
                         </div>
