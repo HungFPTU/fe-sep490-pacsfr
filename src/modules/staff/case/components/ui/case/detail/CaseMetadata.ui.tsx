@@ -4,7 +4,6 @@ import React from 'react';
 import { usePaymentBill } from '../../../../hooks/usePaymentBill';
 import { PaymentBadge, StatusBadge } from '../badges';
 import { PaymentConfirmButton } from './PaymentConfirmButton.ui';
-import { CreatePaymentInvoiceButton } from './CreatePaymentInvoiceButton.ui';
 import { PaymentBillInfo } from './PaymentBillInfo.ui';
 
 interface CaseMetadataProps {
@@ -94,14 +93,11 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
           </div>
         </div>
         
-        {/* Show create payment button and confirm button when payment is not required (chưa thanh toán) and no bill exists */}
+        {/* Show confirm button (disabled) when payment is not required and no bill exists */}
         {!isPayment && !bill && (
           <div className="space-y-2 pt-2">
             <div>
-              <CreatePaymentInvoiceButton caseId={caseId} isPayment={isPayment} />
-            </div>
-            <div>
-              <PaymentConfirmButton caseId={caseId} isPayment={isPayment} />
+              <PaymentConfirmButton caseId={caseId} isPayment={isPayment} hasBill={false} />
             </div>
           </div>
         )}
@@ -109,15 +105,15 @@ export const CaseMetadata: React.FC<CaseMetadataProps> = ({
         {/* Show invoice info and confirm button when bill exists and payment is not complete */}
         {bill && !isPayment && (
           <div className="space-y-2 pt-2">
-            <PaymentBillInfo caseCode={caseCode} />
-            <PaymentConfirmButton caseId={caseId} isPayment={false} />
+            <PaymentBillInfo caseCode={caseCode} caseId={caseId} />
+            <PaymentConfirmButton caseId={caseId} isPayment={false} hasBill={true} hasBillUrl={!!bill.billUrl} />
           </div>
         )}
 
         {/* Show only invoice info when payment is already completed */}
         {isPayment && bill && (
           <div className="pt-2">
-            <PaymentBillInfo caseCode={caseCode} />
+            <PaymentBillInfo caseCode={caseCode} caseId={caseId} />
           </div>
         )}
       </div>

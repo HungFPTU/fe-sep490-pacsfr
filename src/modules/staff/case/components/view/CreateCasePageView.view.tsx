@@ -80,7 +80,7 @@ export function CreateCasePageView() {
     const [submissionMethods, setSubmissionMethods] = useState<import("../../../dashboard/types").SubmissionMethod[]>([]);
     const [isLoadingSubmissionMethods, setIsLoadingSubmissionMethods] = useState(false);
 
-    const idTypes = ["CCCD", "CMND", "Hộ chiếu"];
+    const idTypes = ["CCCD", "Hộ chiếu"];
     const genders = ["Nam", "Nữ", "Khác"];
     const guestTypes = ["Cá nhân", "Tổ chức"];
     const priorityLevels = [
@@ -96,12 +96,40 @@ export function CreateCasePageView() {
 
         if (!guestData.guestCode.trim()) newErrors.guestCode = "Mã khách hàng là bắt buộc";
         if (!guestData.fullName.trim()) newErrors.fullName = "Họ tên là bắt buộc";
-        if (!guestData.idNumber.trim()) newErrors.idNumber = "Số CMND/CCCD là bắt buộc";
-        if (!guestData.idIssueDate) newErrors.idIssueDate = "Ngày cấp là bắt buộc";
-        if (!guestData.idIssuePlace.trim()) newErrors.idIssuePlace = "Nơi cấp là bắt buộc";
-        if (!guestData.phone.trim()) newErrors.phone = "Số điện thoại là bắt buộc";
-        if (!guestData.email.trim()) newErrors.email = "Email là bắt buộc";
+        
+        // Validate ID Number (CCCD/Passport)
+        if (!guestData.idNumber.trim()) {
+            newErrors.idNumber = "Số CCCD là bắt buộc";
+        } else if (!/^\d{12}$/.test(guestData.idNumber.trim())) {
+            newErrors.idNumber = "Số CCCD phải là 12 chữ số không có ký tự";
+        }
+        
+        // Validate Birth Date
         if (!guestData.birthDate) newErrors.birthDate = "Ngày sinh là bắt buộc";
+        
+        // Validate ID Issue Date (must be >= birthDate + 14 years)
+        if (!guestData.idIssueDate) {
+            newErrors.idIssueDate = "Ngày cấp là bắt buộc";
+        } else if (guestData.birthDate) {
+            const birthDate = new Date(guestData.birthDate);
+            const issueDate = new Date(guestData.idIssueDate);
+            const minIssueDate = new Date(birthDate.getFullYear() + 14, birthDate.getMonth(), birthDate.getDate());
+            
+            if (issueDate < minIssueDate) {
+                newErrors.idIssueDate = "Ngày cấp phải cách 14 năm kể từ ngày sinh";
+            }
+        }
+        
+        if (!guestData.idIssuePlace.trim()) newErrors.idIssuePlace = "Nơi cấp là bắt buộc";
+        
+        // Validate Phone Number (11 digits)
+        if (!guestData.phone.trim()) {
+            newErrors.phone = "Số điện thoại là bắt buộc";
+        } else if (!/^\d{11}$/.test(guestData.phone.trim())) {
+            newErrors.phone = "Số điện thoại phải là 11 chữ số";
+        }
+        
+        if (!guestData.email.trim()) newErrors.email = "Email là bắt buộc";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
