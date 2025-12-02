@@ -10,6 +10,7 @@ export { useUpdateCaseStatus } from './useUpdateCaseStatus';
 export { useConfirmPayment } from './useConfirmPayment';
 export { useCreatePayment } from './useCreatePayment';
 export { usePaymentBill } from './usePaymentBill';
+export { usePrintBill } from './usePrintBill';
 export { useGetCaseStatuses } from './useGetCaseStatuses';
 export { useProvinces, useDistricts, useWards } from './useVietnamAddress';
 

@@ -227,6 +227,17 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             },
         ],
     },
+    {
+        title: 'Quản lý PAKN',
+        url: '',
+        icon: ListChecks,
+        items: [
+            {
+                title: 'Danh sách PAKN',
+                url: '/manager/pakn',
+            },
+        ],
+    },
 ];
 
 export const MANAGER_PATH_LABELS: Record<string, string> = {
@@ -282,6 +293,9 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
     // Quản lý tin tức
     'danh-muc-tin-tuc': 'Danh mục tin tức',
     'tin-tuc-dich-vu': 'Tin tức dịch vụ công',
+
+    // Quản lý PAKN
+    pakn: 'Danh sách PAKN',
 };
 
 
