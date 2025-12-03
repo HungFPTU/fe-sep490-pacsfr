@@ -18,9 +18,8 @@ export const CounterForm: React.FC<Props> = ({ form, isLoading = false }) => {
                 form={form}
                 name="counterCode"
                 label="Mã quầy"
-                required
-                placeholder="Nhập mã quầy"
-                disabled={isLoading}
+                placeholder="Mã sẽ được tự động sinh"
+                disabled={true}
             />
 
             <InputField<CounterFormValues>

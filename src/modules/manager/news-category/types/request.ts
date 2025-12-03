@@ -3,7 +3,7 @@
  */
 
 export type CreateNewsCategoryRequest = {
-    categoryCode: string;
+    categoryCode?: string;
     categoryName: string;
     categoryDescription: string;
     isActive: boolean;
@@ -11,7 +11,7 @@ export type CreateNewsCategoryRequest = {
 
 export type UpdateNewsCategoryRequest = {
     id: string;
-    categoryCode: string;
+    categoryCode?: string;
     categoryName: string;
     categoryDescription: string;
     isActive: boolean;

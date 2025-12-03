@@ -56,7 +56,7 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             {
                 title: 'Đơn xin nghỉ',
                 url: '/manager/don-xin-nghi',
-            },
+            }
         ],
     },
     {
@@ -75,6 +75,10 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             {
                 title: 'Tài liệu yêu cầu',
                 url: '/manager/tai-lieu-yeu-cau',
+            },
+            {
+                title: 'Phân loại dịch vụ',
+                url: '/manager/service/list',
             },
             {
                 title: 'Phương thức nộp hồ sơ',
@@ -112,12 +116,23 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
         items: [
             {
                 title: 'Tình trạng hàng chờ',
-                url: '/manager/queue/status',
+                url: '/manager/monitoring/queue',
             },
             {
                 title: 'Quản lý hồ sơ & Ưu tiên',
                 url: '/manager/monitoring/special',
             },
+        ],
+    },
+    {
+        title: 'Quản lý hàng đợi',
+        url: '',
+        icon: ListChecks,
+        items: [
+            {
+                title: 'Tình trạng hàng chờ',
+                url: '/manager/queue/status',
+            }
         ],
     },
     {
@@ -140,15 +155,7 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             {
                 title: 'Mẫu văn bản',
                 url: '/manager/van-ban-phap-luat/mau-van-ban',
-            },
-            {
-                title: 'Phân loại văn bản',
-                url: '/manager/van-ban-phap-luat/phan-loai',
-            },
-            {
-                title: 'Báo cáo văn bản',
-                url: '/manager/van-ban-phap-luat/bao-cao',
-            },
+            }
         ],
     },
     {
@@ -203,15 +210,12 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
     'phan-cong-ca': 'Phân công ca làm việc',
     'don-xin-nghi': 'Đơn xin nghỉ',
     account: 'Tài khoản',
-    roles: 'Phân quyền & Vai trò',
-    performance: 'Hiệu suất làm việc',
 
     // Quản lý dịch vụ
     'dich-vu': 'Danh sách dịch vụ',
     'nhom-dich-vu': 'Nhóm dịch vụ',
     service: 'Dịch vụ',
     list: 'Phân loại dịch vụ',
-    config: 'Cấu hình quy trình phục vụ',
     'phuong-thuc-nop-ho-so': 'Phương thức nộp hồ sơ',
     'quy-trinh-dich-vu': 'Quy trình dịch vụ',
     'tai-lieu-yeu-cau': 'Tài liệu yêu cầu',
@@ -220,9 +224,6 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
     // Quản lý phòng ban
     'phong-ban': 'Quản lý phòng ban',
     'co-quan': 'Quản lý cơ quan',
-    operation: 'Vận hành',
-    hours: 'Giờ làm việc',
-    limits: 'Giới hạn số lượng hàng chờ',
     counter: 'Quầy phục vụ',
 
     // Giám sát thời gian thực
@@ -231,16 +232,11 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
     status: 'Tình trạng hàng chờ',
     statistics: 'Thống kê hàng đợi',
 
-    // Thống kê & Báo cáo
-    reporting: 'Thống kê & Báo cáo',
-
     // Quản lý văn bản pháp luật
     'van-ban-phap-luat': 'Danh sách văn bản',
     'nhom-van-ban': 'Nhóm văn bản',
     'loai-van-ban': 'Loại văn bản',
     'mau-van-ban': 'Mẫu văn bản',
-    'phan-loai': 'Phân loại văn bản',
-    'bao-cao': 'Báo cáo văn bản',
 
     // Quản lý FAQ
     'danh-muc-cau-hoi': 'Danh mục câu hỏi thường gặp',

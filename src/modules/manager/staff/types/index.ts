@@ -60,7 +60,7 @@ export type StaffDetail = Staff & {
 
 export type CreateStaffRequest = {
   orgUnitId: string;
-  staffCode: string;
+  staffCode?: string;
   fullName: string;
   username: string;
   password: string;

@@ -3,7 +3,7 @@
  */
 
 export type CreateServiceGroupRequest = {
-    groupCode: string;
+    groupCode?: string;
     groupName: string;
     description: string;
     iconUrl: string;
@@ -13,7 +13,7 @@ export type CreateServiceGroupRequest = {
 
 export type UpdateServiceGroupRequest = {
     id: string;
-    groupCode: string;
+    groupCode?: string;
     groupName: string;
     description: string;
     iconUrl: string;

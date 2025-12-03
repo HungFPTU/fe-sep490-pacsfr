@@ -3,7 +3,7 @@
  */
 
 export type CreateFaqCategoryRequest = {
-    categoryCode: string;
+    categoryCode?: string;
     categoryName: string;
     description: string;
     isActive: boolean;
@@ -11,7 +11,7 @@ export type CreateFaqCategoryRequest = {
 
 export type UpdateFaqCategoryRequest = {
     id: string;
-    categoryCode: string;
+    categoryCode?: string;
     categoryName: string;
     description: string;
     isActive: boolean;

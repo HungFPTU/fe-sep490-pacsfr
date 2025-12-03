@@ -18,7 +18,7 @@ export type Department = {
 // Request types
 export type CreateDepartmentRequest = {
     serviceGroupId: string;
-    code: string;
+    code?: string;
     name: string;
     description: string;
     levelOrder: number;
@@ -28,7 +28,7 @@ export type CreateDepartmentRequest = {
 export type UpdateDepartmentRequest = {
     id: string;
     serviceGroupId: string;
-    code: string;
+    code?: string;
     name: string;
     description: string;
     levelOrder: number;
