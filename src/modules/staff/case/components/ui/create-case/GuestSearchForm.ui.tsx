@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/ui/input.ui";
-import { Search, User, Check } from "lucide-react";
+import { Button } from "@/shared/components/ui/button.ui";
+import { User, Plus } from "lucide-react";
 import type { Guest } from "../../../../dashboard/types";
 
 interface GuestSearchFormProps {
@@ -12,8 +12,8 @@ interface GuestSearchFormProps {
     selectedGuest: Guest | null;
     showDropdown: boolean;
     onSearchKeywordChange: (keyword: string) => void;
-    onSearch: () => void;
     onSelectGuest: (guest: Guest) => void;
+    onCreateNewGuest?: () => void;
     onToggleDropdown?: () => void;
 }
 
@@ -24,39 +24,39 @@ export function GuestSearchForm({
     selectedGuest,
     showDropdown,
     onSearchKeywordChange,
-    onSearch,
     onSelectGuest,
+    onCreateNewGuest,
 }: GuestSearchFormProps) {
     return (
         <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-                <User className="w-4 h-4 inline mr-1" />
-                Tìm kiếm khách hàng <span className="text-red-500">*</span>
-            </label>
-            <div className="flex gap-2">
-                <div className="relative flex-1">
-                    <Input
-                        value={searchKeyword}
-                        onChange={(e) => onSearchKeywordChange(e.target.value)}
-                        placeholder="Nhập tên hoặc số CMND/CCCD (để trống để xem tất cả)..."
-                        disabled={isSearching}
-                        onKeyDown={(e) => { 
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                onSearch();
-                            }
-                        }}
-                    />
-                </div>
-                <Button
-                    type="button"
-                    onClick={onSearch}
-                    disabled={isSearching}
-                    className="bg-indigo-600 hover:bg-indigo-700"
-                >
-                    <Search className="w-4 h-4 mr-2" />
-                    {isSearching ? "Đang tìm..." : "Tìm kiếm"}
-                </Button>
+            <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                    <User className="w-4 h-4 inline mr-1" />
+                    Tìm kiếm khách hàng <span className="text-red-500">*</span>
+                </label>
+                {onCreateNewGuest && (
+                    <Button
+                        type="button"
+                        onClick={onCreateNewGuest}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700 flex items-center gap-1"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Tạo mới
+                    </Button>
+                )}
+            </div>
+            <div className="relative">
+                <Input
+                    value={searchKeyword}
+                    onChange={(e) => onSearchKeywordChange(e.target.value)}
+                    placeholder="Nhập tên hoặc số CMND/CCCD..."
+                />
+                {isSearching && (
+                    <div className="absolute right-3 top-3 pointer-events-none">
+                        <div className="animate-spin h-5 w-5 text-indigo-600">⟳</div>
+                    </div>
+                )}
             </div>
 
             {/* Search Results Dropdown */}
@@ -76,23 +76,6 @@ export function GuestSearchForm({
                             </div>
                         </button>
                     ))}
-                </div>
-            )}
-
-            {/* Selected Guest Display */}
-            {selectedGuest && (
-                <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <div>
-                            <p className="text-sm font-medium text-blue-900">
-                                Đã chọn: {selectedGuest.fullName}
-                            </p>
-                            <p className="text-xs text-blue-700 mt-1">
-                                CMND/CCCD: {selectedGuest.idNumber}
-                            </p>
-                        </div>
-                    </div>
                 </div>
             )}
         </div>

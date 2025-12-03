@@ -11,7 +11,8 @@ import type {
     QueueStatus,
     CallNextResponse,
     CreateCaseRequest,
-    CaseResponse
+    CaseResponse,
+    CreateCaseApiResponse
 } from "../types";
 
 export const staffDashboardService = {
@@ -271,7 +272,7 @@ export const staffDashboardService = {
     },
 
     // Create new case with validation
-    async createCase(request: CreateCaseRequest): Promise<CaseResponse> {
+    async createCase(request: CreateCaseRequest) {
         try {
             // Validate required fields
             if (!request.guestId || !request.guestId.trim()) {
@@ -294,8 +295,8 @@ export const staffDashboardService = {
 
             const response = await staffDashboardApi.createCase(request);
             
-            if (response.success && response.data) {
-                return response.data;
+            if (response.success && response.data?.data) {
+                return response.data.data;
             }
             
             throw new Error(response.message || 'Failed to create case');
