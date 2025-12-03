@@ -84,10 +84,8 @@ export const PriorityFilter: React.FC<Props> = ({ onFilter }) => {
                         className="w-full rounded-lg border border-slate-300 py-2 px-4 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     >
                         <option value="">Tất cả</option>
-                        <option value="Mới tiếp nhận">Mới tiếp nhận</option>
                         <option value="Đang xử lý">Đang xử lý</option>
-                        <option value="Hoàn thành">Hoàn thành</option>
-                        <option value="Từ chối">Từ chối</option>
+                        <option value="Đã hoàn thành">Đã hoàn thành</option>
                     </select>
                 </div>
 
