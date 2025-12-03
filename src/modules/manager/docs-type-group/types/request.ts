@@ -3,7 +3,7 @@
  */
 
 export type CreateDocsTypeGroupRequest = {
-    groupCode: string;
+    groupCode?: string;
     groupName: string;
     description: string;
     isActive: boolean;
@@ -11,7 +11,7 @@ export type CreateDocsTypeGroupRequest = {
 
 export type UpdateDocsTypeGroupRequest = {
     id: string;
-    groupCode: string;
+    groupCode?: string;
     groupName: string;
     description: string;
     isActive: boolean;

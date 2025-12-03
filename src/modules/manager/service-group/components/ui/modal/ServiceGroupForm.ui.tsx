@@ -124,7 +124,26 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit, ini
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {/* groupCode removed (auto-generated) */}
+            <form.Field name="groupCode">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {(field: any) => {
+                    return (
+                        <div className="w-full">
+                            <label htmlFor="groupCode" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                Mã nhóm
+                            </label>
+                            <input
+                                id="groupCode"
+                                type="text"
+                                disabled={true}
+                                value={isEdit ? (field.state.value as string) ?? '' : ''}
+                                placeholder={isEdit ? '' : 'Mã sẽ được tự động sinh'}
+                                className="w-full rounded-xl border bg-slate-100 outline-none transition h-10 px-3 text-sm border-slate-300 cursor-not-allowed"
+                            />
+                        </div>
+                    );
+                }}
+            </form.Field>
 
             <form.Field
                 name="groupName"

@@ -29,25 +29,7 @@ export const SubmissionMethodInfo: React.FC<Props> = ({ submissionMethod }) => {
                 </p>
             </div>
 
-            {/* Processing Time */}
-            <div>
-                <label className="block text-sm font-medium text-foreground">
-                    Thời gian xử lý
-                </label>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    {formatProcessingTime(submissionMethod.processingTime)}
-                </p>
-            </div>
 
-            {/* Fee */}
-            <div>
-                <label className="block text-sm font-medium text-foreground">
-                    Phí
-                </label>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    {formatCurrency(submissionMethod.fee)}
-                </p>
-            </div>
 
             {/* Status */}
             <div>

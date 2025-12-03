@@ -13,9 +13,11 @@ export class WorkShiftModel {
   }
 
   get shiftDate(): Date {
-    return typeof this.data.shiftDate === 'string'
-      ? new Date(this.data.shiftDate)
-      : this.data.shiftDate;
+    const date = (this.data.shiftDate || this.data.workDate) as unknown as string | Date;
+    if (!date) return new Date();
+    
+    const parsedDate = typeof date === 'string' ? new Date(date) : date;
+    return isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
   }
 
   get shiftType(): string {

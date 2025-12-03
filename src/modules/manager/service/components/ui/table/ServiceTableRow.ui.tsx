@@ -29,6 +29,11 @@ export const ServiceTableRow: React.FC<Props> = ({ service, onView, onEdit, onDe
                 {service.serviceName}
             </TableCell>
 
+            {/* Service Group Name */}
+            <TableCell>
+                {service.serviceGroupName}
+            </TableCell>
+
             {/* Service Type */}
             <TableCell>
                 <Badge variant="outline">

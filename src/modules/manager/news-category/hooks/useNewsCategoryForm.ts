@@ -52,10 +52,7 @@ export const useNewsCategoryForm = ({
             }
 
             // Final validation before submit
-            if (!value.categoryCode?.trim()) {
-                addToast({ message: 'Vui lòng nhập mã danh mục', type: 'error' });
-                return;
-            }
+
             if (!value.categoryName?.trim()) {
                 addToast({ message: 'Vui lòng nhập tên danh mục', type: 'error' });
                 return;
@@ -63,7 +60,7 @@ export const useNewsCategoryForm = ({
 
             try {
                 const request: CreateNewsCategoryRequest = {
-                    categoryCode: value.categoryCode.trim(),
+                    categoryCode: value.categoryCode?.trim() || undefined,
                     categoryName: value.categoryName.trim(),
                     categoryDescription: value.categoryDescription?.trim() || '',
                     isActive: value.isActive,

@@ -68,7 +68,7 @@ function toRequest(
 ): CreateStaffRequest {
     return {
         orgUnitId: values.orgUnitId,
-        staffCode: values.staffCode,
+        staffCode: values.staffCode || undefined,
         fullName: values.fullName,
         username: values.username,
         password: values.password || '',
@@ -94,10 +94,7 @@ export function useStaffForm({ open, initData, onSubmit, onSuccess }: UseStaffFo
                 addToast({ message: 'Vui lòng chọn cơ quan', type: 'error' });
                 return;
             }
-            if (!value.staffCode?.trim()) {
-                addToast({ message: 'Vui lòng nhập mã nhân viên', type: 'error' });
-                return;
-            }
+
             if (!value.fullName?.trim()) {
                 addToast({ message: 'Vui lòng nhập họ tên', type: 'error' });
                 return;
