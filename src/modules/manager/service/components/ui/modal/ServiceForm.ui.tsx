@@ -22,6 +22,7 @@ type FormValues = {
     decisionNumber: string;
     executionLevel: string;
     field: string;
+    condition: string;
     legislationDocumentIds: string[];
 };
 
@@ -333,6 +334,44 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                 placeholder="Nhập kết quả giải quyết"
                 disabled={isLoading}
             />
+
+            {/* Condition */}
+            <div className="md:col-span-2">
+                <form.Field
+                    name="condition"
+                    validators={{
+                        onBlur: ({ value }: { value: string }) => {
+                            if (value && value.trim().length > 1000) {
+                                return 'Điều kiện thực hiện không được vượt quá 1000 ký tự';
+                            }
+                            return undefined;
+                        },
+                    }}
+                >
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    {(field: any) => {
+                        const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
+                        return (
+                            <div className="w-full">
+                                <label htmlFor="condition" className="mb-1 inline-block text-sm font-medium text-slate-700">
+                                    Điều kiện thực hiện
+                                </label>
+                                <textarea
+                                    id="condition"
+                                    className={`w-full rounded-xl border bg-white outline-none transition p-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                    value={(field.state.value as string) || ''}
+                                    onChange={(e) => field.handleChange(e.target.value as never)}
+                                    onBlur={field.handleBlur}
+                                    placeholder="Nhập điều kiện thực hiện dịch vụ"
+                                    rows={3}
+                                    disabled={isLoading}
+                                />
+                                {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
+                            </div>
+                        );
+                    }}
+                </form.Field>
+            </div>
 
             {/* Description */}
             <div className="md:col-span-2">

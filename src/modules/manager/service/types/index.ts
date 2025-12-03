@@ -74,6 +74,7 @@ export type Service = {
 
     // Populated fields (optional)
     serviceGroupName?: string;
+    condition?: string;
     requiredDocuments?: DotNetCollection<ServiceRequiredDocument>;
     serviceProcedures?: DotNetCollection<ServiceProcedureStep>;
     legalBases?: DotNetCollection<ServiceLegalBasis>;
@@ -86,6 +87,7 @@ export type CreateServiceRequest = {
     serviceName: string;
     serviceCode: string;
     description: string;
+    condition?: string;
     serviceType: string;
     resultDocument: string;
     isOnlineAvailable: boolean;
@@ -102,6 +104,7 @@ export type UpdateServiceRequest = {
     serviceName: string;
     serviceCode: string;
     description: string;
+    condition?: string;
     serviceType: string;
     resultDocument: string;
     isOnlineAvailable: boolean;

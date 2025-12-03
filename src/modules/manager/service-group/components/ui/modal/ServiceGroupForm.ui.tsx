@@ -9,7 +9,7 @@ import { FormApiOf } from '@/types/types';
 import Image from 'next/image';
 
 type FormValues = {
-    groupCode: string;
+    // groupCode removed (auto-generated)
     groupName: string;
     description: string;
     iconUrl: string;

@@ -11,7 +11,7 @@ import type { ServiceGroup } from '../types/response';
 import type { CreateServiceGroupRequest, UpdateServiceGroupRequest } from '../types/request';
 
 type FormValues = {
-    groupCode: string;
+    // groupCode removed (auto-generated)
     groupName: string;
     description: string;
     iconUrl: string;
@@ -37,7 +37,7 @@ export const useServiceGroupForm = ({
     const { addToast } = useGlobalToast();
 
     const toFormValues = (data?: Partial<ServiceGroup> | null): FormValues => ({
-        groupCode: data?.groupCode ?? '',
+        // groupCode removed (auto-generated)
         groupName: data?.groupName ?? '',
         description: data?.description ?? '',
         iconUrl: data?.iconUrl ?? '',
@@ -54,6 +54,7 @@ export const useServiceGroupForm = ({
             }
 
             // Final validation before submit
+            // groupCode validation removed
             if (!value.groupName?.trim()) {
                 addToast({ message: 'Vui lòng nhập tên nhóm', type: 'error' });
                 return;
@@ -61,7 +62,7 @@ export const useServiceGroupForm = ({
 
             try {
                 const request: CreateServiceGroupRequest = {
-                    groupCode: value.groupCode?.trim() || undefined,
+                    // groupCode removed (auto-generated)
                     groupName: value.groupName.trim(),
                     description: value.description?.trim() || '',
                     iconUrl: value.iconUrl.trim(),
