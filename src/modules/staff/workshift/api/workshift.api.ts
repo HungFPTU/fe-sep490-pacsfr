@@ -10,4 +10,14 @@ export const workshiftApi = {
         });
         return response.data;
     },
+
+    async getShiftsByStaffId(staffId: string) {
+        const response = await http.get<RestMany<WorkShift>>(
+            `/StaffWorkShift?StaffId=${staffId}&Size=366`,
+            {
+                loadingKey: "workshift-staff"
+            }
+        );
+        return response.data;
+    },
 };

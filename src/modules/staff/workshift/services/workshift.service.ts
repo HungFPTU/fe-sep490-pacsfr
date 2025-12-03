@@ -11,12 +11,21 @@ export const workshiftService = {
         return response;
     },
 
+    async getShiftsByStaffId(staffId: string) {
+        const response = await workshiftApi.getShiftsByStaffId(staffId);
+        console.log('🔍 DEBUG - Staff Shifts API Response:', response);
+        return response;
+    },
+
     /**
      * Validate if shift is not a placeholder
      * Filter out shifts with date 0001-01-01 (placeholder date)
      */
     isValidShift(shift: WorkShift): boolean {
-        return !shift.shiftDate.startsWith('0001-01-01');
+        if (!shift || !shift.workDate) {
+            return false;
+        }
+        return !shift.workDate.startsWith('0001-01-01');
     },
 
     /**
@@ -32,7 +41,7 @@ export const workshiftService = {
                 return;
             }
 
-            const date = shift.shiftDate.split('T')[0]; // Get YYYY-MM-DD part
+            const date = shift.workDate.split('T')[0]; // Get YYYY-MM-DD part
             if (!calendarShifts.has(date)) {
                 calendarShifts.set(date, []);
             }
@@ -50,7 +59,7 @@ export const workshiftService = {
      */
     getShiftsForDate(shifts: WorkShift[], date: string): WorkShift[] {
         return shifts.filter(shift => 
-            this.isValidShift(shift) && shift.shiftDate.startsWith(date)
+            this.isValidShift(shift) && shift.workDate.startsWith(date)
         );
     },
 

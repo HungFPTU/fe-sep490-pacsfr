@@ -2,13 +2,20 @@
 
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/modules/auth/hooks";
 import { WorkShiftCalendar, workshiftService } from "@/modules/staff/workshift";
 import { LoadingSpinner } from "@/shared/components/common/LoadingSpinner.com";
 
 export default function WorkShiftPage() {
+    // Get user profile with staffId
+    const { user } = useAuth();
+    const staffId = user?.id;
+
+    // Only query shifts after we have staffId
     const { data: workshiftResponse, isLoading, error } = useQuery({
-        queryKey: ["workshift", "my-shifts"],
-        queryFn: workshiftService.getMyShifts,
+        queryKey: ["workshift", "my-shifts", staffId],
+        queryFn: () => staffId ? workshiftService.getShiftsByStaffId(staffId) : Promise.reject("No staffId"),
+        enabled: !!staffId, // Only run when staffId is available
         staleTime: 5 * 60 * 1000, // 5 minutes
     });
 
@@ -37,7 +44,7 @@ export default function WorkShiftPage() {
     console.log('🔍 DEBUG - Page: allShifts:', allShifts.length, 'filtered shifts:', shifts.length);
     console.log('🔍 DEBUG - Page: First shift:', shifts[0]);
     if (shifts.length > 0) {
-        console.log('🔍 DEBUG - Page: All shifts:', shifts.map(s => ({ date: s.shiftDate, time: s.startTime + '-' + s.endTime })));
+        console.log('🔍 DEBUG - Page: All shifts:', shifts.map(s => ({ date: s.workDate, time: s.startTime + '-' + s.endTime })));
     }
 
     return (
