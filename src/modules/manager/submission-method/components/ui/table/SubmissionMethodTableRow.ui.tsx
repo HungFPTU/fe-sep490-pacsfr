@@ -37,15 +37,7 @@ export const SubmissionMethodTableRow: React.FC<Props> = ({
                 {submissionMethod.submissionMethodName || '-'}
             </TableCell>
 
-            {/* Processing Time */}
-            <TableCell className="text-muted-foreground">
-                {formatProcessingTime(submissionMethod.processingTime)}
-            </TableCell>
 
-            {/* Fee */}
-            <TableCell className="text-muted-foreground">
-                {formatCurrency(submissionMethod.fee)}
-            </TableCell>
 
             {/* Description */}
             <TableCell className="text-muted-foreground">
@@ -53,18 +45,6 @@ export const SubmissionMethodTableRow: React.FC<Props> = ({
                     {submissionMethod.description || '-'}
                 </div>
             </TableCell>
-
-            {/* Status */}
-            <TableCell>
-                <Badge variant={submissionMethod.isActive ? 'outline' : 'secondary'}>
-                    {submissionMethod.isActive ? 'Đang kích hoạt' : 'Ngừng kích hoạt'}
-                </Badge>
-            </TableCell>
-
-            {/* Created At */}
-            {/* <TableCell className="text-muted-foreground">
-                {submissionMethod.createdAt ? formatDate(submissionMethod.createdAt) : '-'}
-            </TableCell> */}
 
             {/* Actions */}
             <TableCell className="text-right">
