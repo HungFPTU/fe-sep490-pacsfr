@@ -141,11 +141,11 @@ export function CreateCasePageView() {
         
         if (!guestData.idIssuePlace.trim()) newErrors.idIssuePlace = "Nơi cấp là bắt buộc";
         
-        // Validate Phone Number (11 digits)
+        // Validate Phone Number (10 digits)
         if (!guestData.phone.trim()) {
             newErrors.phone = "Số điện thoại là bắt buộc";
-        } else if (!/^\d{11}$/.test(guestData.phone.trim())) {
-            newErrors.phone = "Số điện thoại phải là 11 chữ số";
+        } else if (!/^\d{10}$/.test(guestData.phone.trim())) {
+            newErrors.phone = "Số điện thoại phải là 10 chữ số";
         }
         
         if (!guestData.email.trim()) newErrors.email = "Email là bắt buộc";
@@ -294,6 +294,8 @@ export function CreateCasePageView() {
 
             if (response.success && response.data) {
                 addToast({ message: "Tạo hồ sơ thành công!", type: "success" });
+                // Save caseId to sessionStorage to open detail popup after navigation
+                sessionStorage.setItem('newCaseId', String(response.data.data?.id));
                 router.push("/staff/case");
             } else {
                 addToast({ message: "Lỗi: " + (response.message || "Không thể tạo hồ sơ"), type: "error" });
