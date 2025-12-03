@@ -1,4 +1,4 @@
-import { http } from "@core/http/client";
+import { http, httpNoLoading } from "@core/http/client";
 import { API_PATH } from "@core/config/api.path";
 import type {
     CitizenProfile,
@@ -170,7 +170,7 @@ export const staffDashboardApi = {
         const query = params.toString();
         const url = `${API_PATH.STAFF.DASHBOARD.GET_SERVICES}${query ? '?' + query : ''}`;
 
-        const response = await http.get<ServiceListResponse>(url);
+        const response = await httpNoLoading.get<ServiceListResponse>(url);
         return response.data;
     },
 
@@ -217,7 +217,7 @@ export const staffDashboardApi = {
         const query = params.toString();
         const url = `${API_PATH.STAFF.DASHBOARD.GET_GUESTS}${query ? '?' + query : ''}`;
 
-        const response = await http.get<GetGuestsResponse>(url);
+        const response = await httpNoLoading.get<GetGuestsResponse>(url);
         return response.data;
     },
 };

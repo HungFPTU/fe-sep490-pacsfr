@@ -13,7 +13,6 @@ interface ServiceListWithPaginationProps {
     selectedService: Service | null;
     currentPage: number;
     onSearchKeywordChange: (keyword: string) => void;
-    onSearch: () => void;
     onSelectService: (service: Service) => void;
     onPageChange: (page: number) => void;
 }
@@ -25,7 +24,6 @@ export function ServiceListWithPagination({
     selectedService,
     currentPage,
     onSearchKeywordChange,
-    onSearch,
     onSelectService,
     onPageChange,
 }: ServiceListWithPaginationProps) {
@@ -74,48 +72,18 @@ export function ServiceListWithPagination({
             </label>
 
             {/* Search Bar */}
-            <div className="flex gap-2">
-                <div className="relative flex-1">
-                    <Input
-                        value={searchKeyword}
-                        onChange={(e) => onSearchKeywordChange(e.target.value)}
-                        placeholder="Nhập tên hoặc mã dịch vụ (để trống để xem tất cả)..."
-                        disabled={isSearching}
-                        onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                onSearch();
-                            }
-                        }}
-                    />
-                </div>
-                <Button
-                    type="button"
-                    onClick={onSearch}
-                    disabled={isSearching}
-                    className="bg-indigo-600 hover:bg-indigo-700 flex items-center gap-2"
-                >
-                    <FileText className="w-4 h-4 mr-2" />
-                    {isSearching ? "Đang tìm..." : "Tìm kiếm"}
-                </Button>
-            </div>
-
-            {/* Selected Service Display */}
-            {selectedService && (
-                <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <div>
-                            <p className="text-sm font-medium text-blue-900">
-                                Đã chọn: {selectedService.serviceName}
-                            </p>
-                            <p className="text-xs text-blue-700 mt-1">
-                                Mã: {selectedService.serviceCode}
-                            </p>
-                        </div>
+            <div className="relative">
+                <Input
+                    value={searchKeyword}
+                    onChange={(e) => onSearchKeywordChange(e.target.value)}
+                    placeholder="Nhập tên hoặc mã dịch vụ..."
+                />
+                {isSearching && (
+                    <div className="absolute right-3 top-3 pointer-events-none">
+                        <div className="animate-spin h-5 w-5 text-indigo-600">⟳</div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
 
             {/* Service List */}
             {serviceData && services.length > 0 && (
