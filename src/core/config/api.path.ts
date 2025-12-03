@@ -430,6 +430,22 @@ export const API_PATH = {
       DELETE_SERVICE_GROUP: (staffServiceGroupId: string) => `/Staff/service-groups/${staffServiceGroupId}`,
       UPLOAD_AVATAR: (staffId: string) => `/Staff/${staffId}/upload-avatar`,
     },
+    LEAVE_REQUEST: {
+      BASE: "/LeaveRequest",
+      GET_BY_ID: (id: string) => `/LeaveRequest/${id}`,
+      CREATE: "/LeaveRequest",
+      APPROVE: "/LeaveRequest/approve",
+      REJECT: "/LeaveRequest/reject",
+      GET_AVAILABLE_REPLACEMENTS: (leaveRequestId: string) => `/LeaveRequest/${leaveRequestId}/available-replacements`,
+    },
+    STAFF_WORKSHIFT: {
+      BASE: "/StaffWorkShift",
+      GET_BY_ID: (id: string) => `/StaffWorkShift/${id}`,
+      CREATE: "/StaffWorkShift",
+      BY_STAFF: (staffId: string) => `/StaffWorkShift/by-staff/${staffId}`,
+      CHECK_IN: (id: string) => `/StaffWorkShift/${id}/check-in`,
+      CHECK_OUT: (id: string) => `/StaffWorkShift/${id}/check-out`,
+    },
     WORKSHIFT: {
       GET_ALL: (
         keyword: string,
@@ -619,6 +635,16 @@ export const API_PATH = {
     },
   },
   STAFF: {
+    LEAVE_REQUEST: {
+      MY: "/LeaveRequest/my",
+      CREATE: "/LeaveRequest",
+      GET_BY_ID: (id: string) => `/LeaveRequest/${id}`,
+    },
+    STAFF_WORKSHIFT: {
+      MY: "/StaffWorkShift/my",
+      CHECK_IN: (id: string) => `/StaffWorkShift/${id}/check-in`,
+      CHECK_OUT: (id: string) => `/StaffWorkShift/${id}/check-out`,
+    },
     DASHBOARD: {
       WAITING_LIST: "/staff/dashboard/waiting",
       CITIZEN_PROFILE: (id: string) => `/staff/dashboard/citizen/${id}`,
