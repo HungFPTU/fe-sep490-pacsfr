@@ -29,6 +29,17 @@ export const CaseSearchView: React.FC = () => {
     setSearchEnabled(true);
   }, []);
 
+  // Auto-open detail modal if newCaseId is in sessionStorage
+  useEffect(() => {
+    const newCaseId = sessionStorage.getItem('newCaseId');
+    if (newCaseId) {
+      setSelectedCaseId(newCaseId);
+      setDetailModalOpen(true);
+      // Remove from sessionStorage after reading
+      sessionStorage.removeItem('newCaseId');
+    }
+  }, []);
+
   const hasFilterChanges = JSON.stringify(filters) !== JSON.stringify(searchFilters);
 
   const handleSearch = () => {
