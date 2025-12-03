@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { Layers } from 'lucide-react';
 import { useServiceGroup } from '@/modules/manager/service-group/hooks';
 import { getOne } from '@/types/rest';
 import type { ServiceGroup } from '@/modules/manager/service-group/types';
@@ -25,8 +26,7 @@ export const ServiceGroupDetail: React.FC<Props> = ({ serviceGroupId }) => {
         return <p className="text-sm text-slate-500">-</p>;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const serviceGroup = getOne<ServiceGroup>(serviceGroupData as any);
+    const serviceGroup = serviceGroupData as ServiceGroup;
 
     if (!serviceGroup) {
         return <p className="text-sm text-slate-500">-</p>;
@@ -34,23 +34,28 @@ export const ServiceGroupDetail: React.FC<Props> = ({ serviceGroupId }) => {
 
     return (
         <div className="flex items-center gap-3">
-            {serviceGroup.iconUrl && (
-                <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-border">
+            {/* <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-slate-50 flex items-center justify-center">
+                {serviceGroup.iconUrl ? (
                     <Image
                         src={serviceGroup.iconUrl}
-                        alt={serviceGroup.groupName}
+                        alt={serviceGroup.groupCode}
                         width={40}
                         height={40}
                         className="object-cover"
                     />
-                </div>
-            )}
+                ) : (
+                    <Layers className="h-5 w-5 text-slate-400" />
+                )}
+            </div> */}
             <div>
                 <p className="text-sm font-medium text-slate-900">
                     {serviceGroup.groupName}
                 </p>
+                <p className="text-xs text-slate-500 font-mono">
+                    {serviceGroup.groupCode}
+                </p>
                 {serviceGroup.description && (
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 mt-0.5">
                         {serviceGroup.description.length > 50
                             ? `${serviceGroup.description.substring(0, 50)}...`
                             : serviceGroup.description}

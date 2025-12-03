@@ -94,6 +94,14 @@ export const ServiceInfo: React.FC<Props> = ({ service }) => {
                 <p className="mt-1 text-sm text-slate-900">{service.resultDocument || '-'}</p>
             </div>
 
+            {/* Condition */}
+            <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-700">
+                    Điều kiện thực hiện
+                </label>
+                <p className="mt-1 text-sm text-slate-900 whitespace-pre-line">{service.condition || '-'}</p>
+            </div>
+
             {/* Online Available */}
             <div>
                 <label className="block text-sm font-medium text-slate-700">
