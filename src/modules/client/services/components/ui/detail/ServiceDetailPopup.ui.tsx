@@ -306,10 +306,10 @@ export const ServiceDetailPopup: React.FC<ServiceDetailPopupProps> = ({
                                                             -
                                                         </td>
                                                         <td className="px-4 py-3 text-sm text-gray-700 text-center border-r border-gray-300">
-                                                            1
+                                                            {doc.quantityOriginal ?? 0}
                                                         </td>
                                                         <td className="px-4 py-3 text-sm text-gray-700 text-center">
-                                                            0
+                                                            {doc.quantityCopy ?? 0}
                                                         </td>
                                                     </tr>
                                                 ))}

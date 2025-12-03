@@ -77,10 +77,6 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
                 url: '/manager/tai-lieu-yeu-cau',
             },
             {
-                title: 'Phân loại dịch vụ',
-                url: '/manager/service/list',
-            },
-            {
                 title: 'Phương thức nộp hồ sơ',
                 url: '/manager/phuong-thuc-nop-ho-so',
             },
@@ -116,23 +112,12 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
         items: [
             {
                 title: 'Tình trạng hàng chờ',
-                url: '/manager/monitoring/queue',
+                url: '/manager/queue/status',
             },
             {
                 title: 'Quản lý hồ sơ & Ưu tiên',
                 url: '/manager/monitoring/special',
             },
-        ],
-    },
-    {
-        title: 'Quản lý hàng đợi',
-        url: '',
-        icon: ListChecks,
-        items: [
-            {
-                title: 'Tình trạng hàng chờ',
-                url: '/manager/queue/status',
-            }
         ],
     },
     {
@@ -155,7 +140,7 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             {
                 title: 'Mẫu văn bản',
                 url: '/manager/van-ban-phap-luat/mau-van-ban',
-            }
+            },
         ],
     },
     {

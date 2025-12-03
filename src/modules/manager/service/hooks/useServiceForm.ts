@@ -20,6 +20,7 @@ type FormValues = {
     decisionNumber: string;
     executionLevel: string;
     field: string;
+    condition: string;
     legislationDocumentIds: string[];
 };
 
@@ -41,6 +42,7 @@ const toFormValues = (data?: Service | null): FormValues => ({
     decisionNumber: data?.decisionNumber ?? '',
     executionLevel: data?.executionLevel ?? '',
     field: data?.field ?? '',
+    condition: data?.condition ?? '',
     legislationDocumentIds: [], // Will be populated from API if needed
 });
 
@@ -99,6 +101,11 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
                     errors.description = 'Mô tả không được vượt quá 1000 ký tự';
                 }
 
+                // Condition length validation (optional but has max length)
+                if (value.condition && value.condition.trim().length > 1000) {
+                    errors.condition = 'Điều kiện thực hiện không được vượt quá 1000 ký tự';
+                }
+
                 return Object.keys(errors).length > 0 ? errors : undefined;
             },
         },
@@ -143,6 +150,7 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
                     decisionNumber: value.decisionNumber?.trim() || '',
                     executionLevel: value.executionLevel.trim(),
                     field: value.field.trim(),
+                    condition: value.condition?.trim() || '',
                     legislationDocumentIds: value.legislationDocumentIds && value.legislationDocumentIds.length > 0
                         ? value.legislationDocumentIds
                         : undefined,
@@ -159,6 +167,7 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
                     decisionNumber: value.decisionNumber?.trim() || '',
                     executionLevel: value.executionLevel.trim(),
                     field: value.field.trim(),
+                    condition: value.condition?.trim() || '',
                     legislationDocumentIds: value.legislationDocumentIds && value.legislationDocumentIds.length > 0
                         ? value.legislationDocumentIds
                         : undefined,

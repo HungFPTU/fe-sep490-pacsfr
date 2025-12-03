@@ -25,7 +25,13 @@ export const serviceGroupService = {
         if (!response.data?.success || !response.data?.data) {
             return null;
         }
-        return response.data.data as ServiceGroup;
+        const data = response.data.data;
+        // Map backend fields to frontend type
+        return {
+            ...data,
+            groupName: (data as any).serviceGroupName || (data as any).groupName,
+            groupCode: (data as any).serviceGroupCode || (data as any).groupCode,
+        } as ServiceGroup;
     },
 
     /**
@@ -39,7 +45,12 @@ export const serviceGroupService = {
             const errorMessage = apiResponse?.message || 'Failed to create service group';
             throw new Error(errorMessage);
         }
-        return response.data.data as ServiceGroup;
+        const responseData = response.data.data;
+        return {
+            ...responseData,
+            groupName: (responseData as any).serviceGroupName || (responseData as any).groupName,
+            groupCode: (responseData as any).serviceGroupCode || (responseData as any).groupCode,
+        } as ServiceGroup;
     },
 
     /**
@@ -53,7 +64,12 @@ export const serviceGroupService = {
             const errorMessage = apiResponse?.message || 'Failed to update service group';
             throw new Error(errorMessage);
         }
-        return response.data.data as ServiceGroup;
+        const responseData = response.data.data;
+        return {
+            ...responseData,
+            groupName: (responseData as any).serviceGroupName || (responseData as any).groupName,
+            groupCode: (responseData as any).serviceGroupCode || (responseData as any).groupCode,
+        } as ServiceGroup;
     },
 
     /**
