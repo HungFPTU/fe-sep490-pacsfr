@@ -155,3 +155,6 @@ export type StaffServiceGroup = {
 };
 
 
+// Domain models and utilities
+export { Result, type AsyncResult } from './Result';
+export { WorkShiftModel } from './WorkShift.model';

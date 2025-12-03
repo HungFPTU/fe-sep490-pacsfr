@@ -4,16 +4,12 @@
 
 export type CreateSubmissionMethodRequest = {
     submissionMethodName: string;
-    processingTime: string; // ISO 8601 date string
-    fee: number;
     description?: string;
 };
 
 export type UpdateSubmissionMethodRequest = {
     id: string;
     submissionMethodName: string;
-    processingTime: string; // ISO 8601 date string
-    fee: number;
     description?: string;
 };
 
@@ -22,5 +18,14 @@ export type SubmissionMethodFilters = {
     isActive?: boolean;
     page: number;
     size: number;
+};
+
+export type AssignSubmissionMethodsRequest = {
+    serviceId: string;
+    methods: Array<{
+        submissionMethodId: string;
+        fee: number;
+        processingTime: string; // Number of days as string (e.g., "02", "30")
+    }>;
 };
 
