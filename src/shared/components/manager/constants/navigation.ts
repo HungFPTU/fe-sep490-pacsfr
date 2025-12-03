@@ -57,14 +57,6 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
                 title: 'Đơn xin nghỉ',
                 url: '/manager/don-xin-nghi',
             },
-            {
-                title: 'Phân quyền & Vai trò',
-                url: '/manager/account/roles',
-            },
-            {
-                title: 'Hiệu suất làm việc',
-                url: '/manager/account/performance',
-            },
         ],
     },
     {
@@ -83,18 +75,6 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             {
                 title: 'Tài liệu yêu cầu',
                 url: '/manager/tai-lieu-yeu-cau',
-            },
-            {
-                title: 'Phân loại dịch vụ',
-                url: '/manager/service/list',
-            },
-            {
-                title: 'Cấu hình quy trình phục vụ',
-                url: '/manager/service/config',
-            },
-            {
-                title: 'Quy tắc xếp hàng',
-                url: '/manager/service/queue',
             },
             {
                 title: 'Phương thức nộp hồ sơ',
@@ -120,14 +100,6 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
                 url: '/manager/co-quan',
             },
             {
-                title: 'Giờ làm việc',
-                url: '/manager/operation/hours',
-            },
-            {
-                title: 'Giới hạn số lượng hàng chờ',
-                url: '/manager/operation/limits',
-            },
-            {
                 title: 'Quầy phục vụ',
                 url: '/manager/quan-li-quay',
             },
@@ -140,35 +112,11 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
         items: [
             {
                 title: 'Tình trạng hàng chờ',
-                url: '/manager/monitoring/queue',
-            },
-            {
-                title: 'Tải hệ thống',
-                url: '/manager/monitoring/manager',
+                url: '/manager/queue/status',
             },
             {
                 title: 'Quản lý hồ sơ & Ưu tiên',
                 url: '/manager/monitoring/special',
-            },
-        ],
-    },
-    {
-        title: 'Thống kê & Báo cáo',
-        url: '/manager/reporting',
-        icon: BarChart3,
-    },
-    {
-        title: 'Quản lý hàng đợi',
-        url: '',
-        icon: ListChecks,
-        items: [
-            {
-                title: 'Tình trạng hàng chờ',
-                url: '/manager/queue/status',
-            },
-            {
-                title: 'Thống kê hàng đợi',
-                url: '/manager/queue/statistics',
             },
         ],
     },
