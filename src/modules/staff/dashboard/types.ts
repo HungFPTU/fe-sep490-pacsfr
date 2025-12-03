@@ -171,7 +171,29 @@ export type CreateCaseApiResponse = {
     $id?: string;
     success: boolean;
     message?: string;
-    data?: CaseResponse;
+    data?: {
+        $id?: string;
+        success: boolean;
+        message?: string;
+        data?: {
+            $id?: string;
+            id: string;
+            caseCode: string;
+            guestId: string;
+            guestName: string;
+            serviceId: string;
+            serviceName: string;
+            priorityLevel: number;
+            submissionMethod: string;
+            estimatedCompletionDate: string;
+            totalFee: number;
+            isPayment: boolean;
+            notes: string;
+            staffName: string;
+            currentStatus: string;
+        };
+        timestamp?: string;
+    };
 };
 
 // Service types
