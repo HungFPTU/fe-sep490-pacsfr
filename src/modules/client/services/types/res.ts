@@ -65,8 +65,8 @@ export interface LegalBasisItem {
 export interface SubmissionMethod {
   id: string;
   submissionMethodName: string;
-  processingTime?: string;
-  fee?: number;
+  processingTime: string;
+  fee: number;
   description?: string;
   isActive?: boolean;
 }

@@ -265,10 +265,40 @@ export function CaseFormFields({
         });
     }, [submissionMethods]);
 
+    // Calculate estimated completion date based on processingTime
+    const calculateEstimatedDate = (processingTime: string): string => {
+        const days = parseInt(processingTime, 10);
+        if (isNaN(days)) return '';
+        
+        const today = new Date();
+        const futureDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
+        
+        const dd = String(futureDate.getDate()).padStart(2, '0');
+        const mm = String(futureDate.getMonth() + 1).padStart(2, '0');
+        const yyyy = futureDate.getFullYear();
+        
+        return `${yyyy}-${mm}-${dd}`;
+    };
+
+    // Handle submission method change
+    const handleSubmissionMethodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedMethodId = e.target.value;
+        const selectedMethod = uniqueSubmissionMethods.find(m => m.submissionMethodId === selectedMethodId);
+        
+        const updatedData: CreateCaseRequest = { ...caseData, submissionMethodId: selectedMethodId };
+        
+        // Auto-set estimated completion date based on processingTime
+        if (selectedMethod?.processingTime) {
+            updatedData.estimatedCompletionDate = calculateEstimatedDate(selectedMethod.processingTime);
+        }
+        
+        onDataChange(updatedData);
+    };
+
     return (
         <div className="space-y-6">
             {/* Priority Level */}
-            <div>
+            {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                     Mức độ ưu tiên
                 </label>
@@ -281,7 +311,7 @@ export function CaseFormFields({
                         <option key={level.value} value={level.value}>{level.label}</option>
                     ))}
                 </select>
-            </div>
+            </div> */}
 
             {/* Submission Method */}
             <div>
@@ -290,14 +320,14 @@ export function CaseFormFields({
                 </label>
                 <select
                     value={caseData.submissionMethodId}
-                    onChange={(e) => onDataChange({ ...caseData, submissionMethodId: e.target.value })}
+                    onChange={handleSubmissionMethodChange}
                     disabled={isLoadingSubmissionMethods}
                     className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     <option value="">{isLoadingSubmissionMethods ? "Đang tải..." : "-- Chọn phương thức nộp --"}</option>
                     {uniqueSubmissionMethods.map(method => (
                         <option key={method.submissionMethodId} value={method.submissionMethodId}>
-                            {method.submissionMethodName} {method.fee > 0 ? `(${method.fee.toLocaleString()}đ)` : "(Miễn phí)"}
+                            {method.submissionMethodName} - {method.processingTime} ngày {method.fee > 0 ? `(${method.fee.toLocaleString()}đ)` : "(Miễn phí)"}
                         </option>
                     ))}
                 </select>

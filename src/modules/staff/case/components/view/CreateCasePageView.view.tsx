@@ -154,13 +154,14 @@ export function CreateCasePageView() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSearchGuests = async () => {
+    const handleSearchGuests = async (keyword: string = "") => {
         // Allow empty search to show all guests
-
+        const searchKeyword = keyword.trim();
+        
         setIsSearching(true);
         try {
             const response = await staffDashboardApi.getGuests({
-                keyword: guestSearchKeyword,
+                keyword: searchKeyword,
                 isActive: true,
                 page: 1,
                 size: 20
@@ -168,14 +169,16 @@ export function CreateCasePageView() {
 
             if (response.success && response.data.$values) {
                 setGuestSearchResults(response.data.$values);
-                setShowGuestDropdown(true);
+                // Show dropdown only when there are results and input is not empty
+                setShowGuestDropdown(searchKeyword.length > 0);
             } else {
                 setGuestSearchResults([]);
-                addToast({ message: "Không tìm thấy khách hàng nào!", type: "info" });
+                setShowGuestDropdown(false);
             }
         } catch (error) {
             console.error("Error searching guests:", error);
-            addToast({ message: "Lỗi khi tìm kiếm: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
+            setGuestSearchResults([]);
+            setShowGuestDropdown(false);
         } finally {
             setIsSearching(false);
         }
@@ -188,11 +191,13 @@ export function CreateCasePageView() {
         setShowGuestDropdown(false);
     };
 
-    const handleSearchServices = async (page: number = 1) => {
+    const handleSearchServices = async (keyword: string = "", page: number = 1) => {
+        const searchKeyword = keyword.trim();
+        
         setIsSearchingService(true);
         try {
             const response = await staffDashboardApi.getServices({
-                keyword: serviceSearchKeyword.trim(),
+                keyword: searchKeyword,
                 isActive: true,
                 page: page,
                 size: 10
@@ -203,22 +208,22 @@ export function CreateCasePageView() {
                 setServicePage(page);
             } else {
                 setServiceData(null);
-                addToast({ message: "Không tìm thấy dịch vụ nào!", type: "info" });
             }
         } catch (error) {
             console.error("Error searching services:", error);
-            addToast({ message: "Lỗi khi tìm kiếm dịch vụ: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
+            setServiceData(null);
         } finally {
             setIsSearchingService(false);
         }
     };
 
     const handleServicePageChange = (page: number) => {
-        handleSearchServices(page);
+        handleSearchServices(serviceSearchKeyword, page);
     };
 
     const handleSelectService = async (service: Service) => {
         setSelectedService(service);
+        setServiceSearchKeyword(service.serviceName);
         setCaseData({ ...caseData, serviceId: service.id, submissionMethodId: "" }); // Reset submission method
         
         // Fetch submission methods for the selected service
@@ -440,9 +445,12 @@ export function CreateCasePageView() {
                                 searchResults={guestSearchResults}
                                 selectedGuest={selectedGuest}
                                 showDropdown={showGuestDropdown}
-                                onSearchKeywordChange={setGuestSearchKeyword}
-                                onSearch={handleSearchGuests}
+                                onSearchKeywordChange={(keyword) => {
+                                    setGuestSearchKeyword(keyword);
+                                    handleSearchGuests(keyword);
+                                }}
                                 onSelectGuest={handleSelectGuest}
+                                onCreateNewGuest={() => setMode("create-guest")}
                                 onToggleDropdown={() => setShowGuestDropdown(!showGuestDropdown)}
                             />
 
@@ -453,8 +461,10 @@ export function CreateCasePageView() {
                                 serviceData={serviceData}
                                 selectedService={selectedService}
                                 currentPage={servicePage}
-                                onSearchKeywordChange={setServiceSearchKeyword}
-                                onSearch={() => handleSearchServices(1)}
+                                onSearchKeywordChange={(keyword) => {
+                                    setServiceSearchKeyword(keyword);
+                                    handleSearchServices(keyword, 1);
+                                }}
                                 onSelectService={handleSelectService}
                                 onPageChange={handleServicePageChange}
                             />
