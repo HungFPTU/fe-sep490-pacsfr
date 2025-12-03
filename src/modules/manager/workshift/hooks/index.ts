@@ -8,11 +8,12 @@ import type { CreateWorkShiftRequest, UpdateWorkShiftRequest, AssignStaffWorkShi
 // Export hooks first
 // Re-export custom hooks at the end
 export { useWorkShiftForm } from './useWorkShiftForm';
-// GET list hook (không có filter)
+
+// GET list hook (with maximum page size)
 export const useWorkShifts = () => {
   return useQuery({
     queryKey: QUERY_KEYS.WORKSHIFT_LIST,
-    queryFn: () => WorkShiftService.getWorkShifts(),
+    queryFn: () => WorkShiftService.getWorkShifts({ page: 1, size: 200 }),
     gcTime: CACHE_TIME.SHORT,
     staleTime: STALE_TIME.MEDIUM,
   });
@@ -152,6 +153,17 @@ export const useStaffWorkShifts = () => {
     queryFn: () => WorkShiftService.getStaffWorkShifts(),
     gcTime: CACHE_TIME.SHORT,
     staleTime: STALE_TIME.MEDIUM,
+  });
+};
+
+// GET staff work shifts by staff ID (for validation)
+export const useStaffWorkShiftsByStaffId = (staffId: string) => {
+  return useQuery({
+    queryKey: ['workshift', 'staff-work-shifts', 'by-staff', staffId],
+    queryFn: () => WorkShiftService.getStaffWorkShiftsByStaffId(staffId),
+    enabled: !!staffId,
+    gcTime: CACHE_TIME.SHORT,
+    staleTime: STALE_TIME.SHORT,
   });
 };
 

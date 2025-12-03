@@ -6,7 +6,11 @@ export const QUERY_KEYS = {
 
 export { CACHE_TIME, STALE_TIME } from '@/shared/constants/react-query';
 
-export const DEFAULT_PAGE_SIZE = 10;
+export const DEFAULT_PAGE_SIZE = 200;
+
+// Business Rules Constants
+export const MAX_SHIFTS_PER_WEEK = 10; // Tối đa 10 ca trong 1 tuần (Thứ 2 - Thứ 7)
+export const MAX_SHIFTS_PER_MONTH = 40; // Tối đa 40 ca trong 1 tháng (ước tính)
 
 // Shift type time configurations
 export const SHIFT_TYPE_TIMES: Record<string, { startTime: string; endTime: string }> = {
