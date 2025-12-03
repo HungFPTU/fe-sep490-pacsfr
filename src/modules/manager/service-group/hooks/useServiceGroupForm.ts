@@ -54,10 +54,6 @@ export const useServiceGroupForm = ({
             }
 
             // Final validation before submit
-            if (!value.groupCode?.trim()) {
-                addToast({ message: 'Vui lòng nhập mã nhóm', type: 'error' });
-                return;
-            }
             if (!value.groupName?.trim()) {
                 addToast({ message: 'Vui lòng nhập tên nhóm', type: 'error' });
                 return;
@@ -65,7 +61,7 @@ export const useServiceGroupForm = ({
 
             try {
                 const request: CreateServiceGroupRequest = {
-                    groupCode: value.groupCode.trim(),
+                    groupCode: value.groupCode?.trim() || undefined,
                     groupName: value.groupName.trim(),
                     description: value.description?.trim() || '',
                     iconUrl: value.iconUrl.trim(),

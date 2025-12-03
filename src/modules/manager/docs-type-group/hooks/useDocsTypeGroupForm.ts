@@ -50,10 +50,7 @@ export const useDocsTypeGroupForm = ({
             }
 
             // Final validation before submit
-            if (!value.groupCode?.trim()) {
-                addToast({ message: 'Vui lòng nhập mã nhóm hồ sơ', type: 'error' });
-                return;
-            }
+
             if (!value.groupName?.trim()) {
                 addToast({ message: 'Vui lòng nhập tên nhóm hồ sơ', type: 'error' });
                 return;
@@ -61,7 +58,7 @@ export const useDocsTypeGroupForm = ({
 
             try {
                 const request: CreateDocsTypeGroupRequest = {
-                    groupCode: value.groupCode.trim(),
+                    groupCode: value.groupCode?.trim() || undefined,
                     groupName: value.groupName.trim(),
                     description: value.description?.trim() || '',
                     isActive: value.isActive,

@@ -58,10 +58,7 @@ export const useDocsTypeForm = ({
             }
 
             // Final validation before submit
-            if (!value.docTypeCode?.trim()) {
-                addToast({ message: 'Vui lòng nhập mã loại văn bản', type: 'error' });
-                return;
-            }
+
             if (!value.docTypeName?.trim()) {
                 addToast({ message: 'Vui lòng nhập tên loại văn bản', type: 'error' });
                 return;
@@ -77,7 +74,7 @@ export const useDocsTypeForm = ({
 
             try {
                 const request: CreateDocsTypeRequest = {
-                    docTypeCode: value.docTypeCode.trim(),
+                    docTypeCode: value.docTypeCode?.trim() || undefined,
                     docTypeName: value.docTypeName.trim(),
                     description: value.description?.trim() || '',
                     groupId: value.groupId.trim(),
