@@ -191,13 +191,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-      <NavUser user={userData} />
+        <NavUser user={userData} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-      <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={data.teams} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
