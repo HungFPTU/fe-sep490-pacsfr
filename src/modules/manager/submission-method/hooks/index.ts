@@ -6,7 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { submissionMethodService } from '../services/submission-method.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
-import type { CreateSubmissionMethodRequest, UpdateSubmissionMethodRequest, SubmissionMethodFilters } from '../types/request';
+import type { CreateSubmissionMethodRequest, UpdateSubmissionMethodRequest, SubmissionMethodFilters, AssignSubmissionMethodsRequest } from '../types/request';
 
 // Re-export custom form hook
 export { useSubmissionMethodForm } from './useSubmissionMethodForm';
@@ -82,6 +82,24 @@ export const useDeleteSubmissionMethod = () => {
     return useMutation({
         mutationFn: (id: string) => submissionMethodService.deleteSubmissionMethod(id),
         onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: QUERY_KEYS.SUBMISSION_METHOD_BASE,
+            });
+        },
+    });
+};
+
+/**
+ * Hook for assigning submission methods to service
+ */
+export const useAssignSubmissionMethodsToService = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (data: AssignSubmissionMethodsRequest) =>
+            submissionMethodService.assignToService(data),
+        onSuccess: () => {
+            // Invalidate submission method cache
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SUBMISSION_METHOD_BASE,
             });

@@ -42,7 +42,7 @@ export const WorkShiftListPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
+    <div>
       <WorkShiftHeader onCreateClick={handleCreate} />
 
       {/* Calendar View */}
@@ -75,6 +75,7 @@ export const WorkShiftListPage: React.FC = () => {
             setInitData(null);
           }}
           initData={initData}
+          existingShifts={workShifts}
           onSuccess={handleModalSuccess}
         />
       )}

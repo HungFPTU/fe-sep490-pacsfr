@@ -11,6 +11,8 @@ import {
     FileText,
     HelpCircle,
     Newspaper,
+    Calendar,
+    Clock,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -50,6 +52,10 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             {
                 title: 'Quản lý ca làm việc',
                 url: '/manager/ca-lam-viec',
+            },
+            {
+                title: 'Đơn xin nghỉ',
+                url: '/manager/don-xin-nghi',
             },
             {
                 title: 'Phân quyền & Vai trò',
@@ -246,6 +252,8 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
     // Quản lý nhân sự
     'quan-ly-nhan-vien': 'Quản lý nhân viên',
     'ca-lam-viec': 'Quản lý ca làm việc',
+    'phan-cong-ca': 'Phân công ca làm việc',
+    'don-xin-nghi': 'Đơn xin nghỉ',
     account: 'Tài khoản',
     roles: 'Phân quyền & Vai trò',
     performance: 'Hiệu suất làm việc',

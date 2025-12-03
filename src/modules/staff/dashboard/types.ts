@@ -293,7 +293,6 @@ export type Guest = {
 };
 
 export type CreateGuestRequest = {
-    guestCode: string;
     fullName: string;
     idNumber: string;
     idType: string;

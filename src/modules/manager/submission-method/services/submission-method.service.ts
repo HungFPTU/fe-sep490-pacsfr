@@ -5,8 +5,8 @@
 
 import type { RestPaged } from '@/types/rest';
 import { submissionMethodApi } from '../api/submission-method.api';
-import type { SubmissionMethod } from '../types/response';
-import type { CreateSubmissionMethodRequest, UpdateSubmissionMethodRequest, SubmissionMethodFilters } from '../types/request';
+import type { SubmissionMethod, AssignSubmissionMethodsResponse } from '../types/response';
+import type { CreateSubmissionMethodRequest, UpdateSubmissionMethodRequest, SubmissionMethodFilters, AssignSubmissionMethodsRequest } from '../types/request';
 
 export const submissionMethodService = {
     /**
@@ -61,6 +61,19 @@ export const submissionMethodService = {
      */
     async deleteSubmissionMethod(id: string): Promise<void> {
         await submissionMethodApi.delete(id);
+    },
+
+    /**
+     * Assign submission methods to service
+     */
+    async assignToService(data: AssignSubmissionMethodsRequest): Promise<AssignSubmissionMethodsResponse> {
+        const response = await submissionMethodApi.assignToService(data);
+        if (!response.data?.success) {
+            const apiResponse = response.data as { message?: string; success: boolean };
+            const errorMessage = apiResponse?.message || 'Failed to assign submission methods';
+            throw new Error(errorMessage);
+        }
+        return response.data.data as AssignSubmissionMethodsResponse;
     },
 };
 

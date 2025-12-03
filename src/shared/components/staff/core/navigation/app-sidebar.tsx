@@ -9,6 +9,7 @@ import {
     CreditCard,
     Megaphone,
     MessageSquare,
+    FileText,
 } from "lucide-react"
 
 import {
@@ -46,6 +47,11 @@ const data = {
             title: "Lịch làm việc",
             url: "/staff/workshift",
             icon: Calendar,
+        },
+        {
+            title: "Đơn xin nghỉ",
+            url: "/staff/don-nghi",
+            icon: FileText,
         },
         {
             title: "Thanh toán",

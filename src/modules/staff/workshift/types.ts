@@ -10,6 +10,7 @@ export interface WorkShift {
     status: string;
     staffName?: string;
     counterName?: string;
+    shiftDate: string;
     isDeleted?: boolean;
     createdAt?: string;
     createdBy?: string;
