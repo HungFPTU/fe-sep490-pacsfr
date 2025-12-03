@@ -6,8 +6,8 @@
 import { http, httpNoLoading } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
 import type { RestResponse, RestPaged } from '@/types/rest';
-import type { SubmissionMethod } from '../types/response';
-import type { CreateSubmissionMethodRequest, UpdateSubmissionMethodRequest, SubmissionMethodFilters } from '../types/request';
+import type { SubmissionMethod, AssignSubmissionMethodsResponse } from '../types/response';
+import type { CreateSubmissionMethodRequest, UpdateSubmissionMethodRequest, SubmissionMethodFilters, AssignSubmissionMethodsRequest } from '../types/request';
 
 export const submissionMethodApi = {
     /**
@@ -59,6 +59,16 @@ export const submissionMethodApi = {
     delete: (id: string) => {
         return http.delete<RestResponse<{ success: boolean }>>(
             API_PATH.MANAGER.SUBMISSION_METHOD.DELETE(id)
+        );
+    },
+
+    /**
+     * Assign submission methods to service
+     */
+    assignToService: (data: AssignSubmissionMethodsRequest) => {
+        return httpNoLoading.post<RestResponse<AssignSubmissionMethodsResponse>>(
+            API_PATH.MANAGER.SERVICES.ASSIGN_SUBMISSION_METHODS,
+            data
         );
     },
 };

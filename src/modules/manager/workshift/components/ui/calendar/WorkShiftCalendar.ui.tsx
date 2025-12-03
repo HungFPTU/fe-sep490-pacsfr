@@ -1,10 +1,14 @@
+/**
+ * Luxury WorkShift Calendar Component
+ * Features modern design with glassmorphism, smooth animations, and scrollable day cells
+ */
+
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
-import { formatDateVN } from '@core/utils/date';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import type { WorkShift } from '../../../types';
-import { getShiftTypeColors } from '../../../constants';
+import { WorkShiftModel } from '../../../types/WorkShift.model';
 
 interface WorkShiftCalendarProps {
   workShifts: WorkShift[];
@@ -26,17 +30,18 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
   const daysInMonth = lastDayOfMonth.getDate();
-  const startingDayOfWeek = firstDayOfMonth.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  const startingDayOfWeek = firstDayOfMonth.getDay();
 
-  // Group workshifts by date
+  // Group workshifts by date using domain models
   const shiftsByDate = useMemo(() => {
-    const map = new Map<string, WorkShift[]>();
+    const map = new Map<string, WorkShiftModel[]>();
     workShifts.forEach((shift) => {
-      const dateKey = new Date(shift.shiftDate).toISOString().split('T')[0];
+      const model = new WorkShiftModel(shift);
+      const dateKey = model.shiftDate.toISOString().split('T')[0];
       if (!map.has(dateKey)) {
         map.set(dateKey, []);
       }
-      map.get(dateKey)!.push(shift);
+      map.get(dateKey)!.push(model);
     });
     return map;
   }, [workShifts]);
@@ -55,7 +60,7 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
   };
 
   // Get shifts for a specific date
-  const getShiftsForDate = (day: number): WorkShift[] => {
+  const getShiftsForDate = (day: number): WorkShiftModel[] => {
     const date = new Date(year, month, day);
     const dateKey = date.toISOString().split('T')[0];
     return shiftsByDate.get(dateKey) || [];
@@ -89,72 +94,76 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
   }, [year, month, daysInMonth, startingDayOfWeek]);
 
   const monthNames = [
-    'Tháng 1',
-    'Tháng 2',
-    'Tháng 3',
-    'Tháng 4',
-    'Tháng 5',
-    'Tháng 6',
-    'Tháng 7',
-    'Tháng 8',
-    'Tháng 9',
-    'Tháng 10',
-    'Tháng 11',
-    'Tháng 12',
+    'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+    'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12',
   ];
 
   const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96 bg-white rounded-lg border border-gray-200">
-        <div className="text-gray-500">Đang tải dữ liệu...</div>
+      <div className="relative h-96 overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50" />
+        <div className="relative flex h-full items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-600/20 border-t-indigo-600" />
+            <p className="text-sm font-medium text-gray-600">Đang tải lịch làm việc...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm max-w-6xl mx-auto">
-      {/* Calendar Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-200">
-        <div className="flex items-center gap-3">
-          <CalendarIcon className="w-4 h-4 text-indigo-600" />
-          <h2 className="text-base font-semibold text-gray-900">
-            {monthNames[month]} {year}
-          </h2>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={goToPreviousMonth}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Tháng trước"
-          >
-            <ChevronLeft className="w-4 h-4 text-gray-600" />
-          </button>
-          <button
-            onClick={goToToday}
-            className="px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            Hôm nay
-          </button>
-          <button
-            onClick={goToNextMonth}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Tháng sau"
-          >
-            <ChevronRight className="w-4 h-4 text-gray-600" />
-          </button>
+    <div className="overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-2xl">
+      {/* Calendar Header with glassmorphism */}
+      <div className="relative overflow-hidden border-b border-gray-200/50 bg-gradient-to-r from-indigo-50 to-purple-50 p-5">
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="rounded-xl bg-white/80 p-2.5 shadow-sm backdrop-blur-sm">
+              <CalendarIcon className="h-5 w-5 text-indigo-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                {monthNames[month]} {year}
+              </h2>
+              <p className="text-sm text-gray-600">Lịch làm việc tháng</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={goToPreviousMonth}
+              className="rounded-lg bg-white/80 p-2 shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:bg-white hover:shadow-md"
+              aria-label="Tháng trước"
+            >
+              <ChevronLeft className="h-5 w-5 text-gray-700" />
+            </button>
+            <button
+              onClick={goToToday}
+              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg"
+            >
+              Hôm nay
+            </button>
+            <button
+              onClick={goToNextMonth}
+              className="rounded-lg bg-white/80 p-2 shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:bg-white hover:shadow-md"
+              aria-label="Tháng sau"
+            >
+              <ChevronRight className="h-5 w-5 text-gray-700" />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Calendar Grid */}
-      <div className="p-3">
+      <div className="p-6">
         {/* Day names header */}
-        <div className="grid grid-cols-7 gap-1 mb-1">
+        <div className="mb-3 grid grid-cols-7 gap-2">
           {dayNames.map((dayName, idx) => (
             <div
               key={idx}
-              className="text-center text-xs font-semibold text-gray-600 py-1"
+              className="text-center text-sm font-bold text-gray-700"
             >
               {dayName}
             </div>
@@ -162,13 +171,13 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
         </div>
 
         {/* Calendar days */}
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-2">
           {calendarDays.map(({ day, date }, idx) => {
             if (day === null) {
               return (
                 <div
                   key={`empty-${idx}`}
-                  className="h-32 bg-gray-50 rounded border border-transparent"
+                  className="h-36 rounded-xl bg-gray-50/50"
                 />
               );
             }
@@ -179,39 +188,66 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
             return (
               <div
                 key={day}
-                className={`h-32 border rounded p-1 overflow-y-auto transition-colors ${
+                className={`group relative flex flex-col rounded-xl border transition-all duration-300 ${
                   today
-                    ? 'border-indigo-500 bg-indigo-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
+                    ? 'border-indigo-400 bg-linear-to-br from-indigo-50 to-purple-50 shadow-lg ring-2 ring-indigo-400/30'
+                    : 'border-gray-200 bg-white hover:border-indigo-300 hover:shadow-md'
                 }`}
+                style={{ height: '144px' }}
               >
-                <div
-                  className={`text-xs font-medium mb-1 ${
-                    today ? 'text-indigo-700' : 'text-gray-700'
-                  }`}
-                >
-                  {day}
+                {/* Day number - fixed at top */}
+                <div className="shrink-0 p-2">
+                  <div
+                    className={`inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold transition-all ${
+                      today
+                        ? 'bg-indigo-600 text-white shadow-md'
+                        : 'text-gray-700 group-hover:bg-indigo-50'
+                    }`}
+                  >
+                    {day}
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  {shifts.map((shift) => {
-                    const colors = getShiftTypeColors(shift.shiftType);
-                    return (
-                      <div
-                        key={shift.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onShiftClick(shift);
-                        }}
-                        className={`text-xs px-1.5 py-1 rounded ${colors.bg} ${colors.text} cursor-pointer ${colors.hover} transition-colors truncate`}
-                        title={`${shift.shiftType} - ${shift.startTime} - ${shift.endTime}`}
-                      >
-                        <div className="font-medium truncate text-xs">{shift.shiftType}</div>
-                        <div className={`text-[10px] ${colors.textLight} truncate`}>
-                          {shift.startTime} - {shift.endTime}
+
+                {/* Shifts - scrollable container */}
+                <div className="flex-1 overflow-y-auto px-2 pb-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-indigo-200 hover:[&::-webkit-scrollbar-thumb]:bg-indigo-400">
+                  <div className="space-y-1.5">
+                    {shifts.map((shiftModel) => {
+                      const color = shiftModel.getDisplayColor();
+                      const icon = shiftModel.getIcon();
+                      
+                      return (
+                        <div
+                          key={shiftModel.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onShiftClick(shiftModel.toData());
+                          }}
+                          className={`group/shift relative cursor-pointer overflow-hidden rounded-lg p-2 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md ${
+                            color === 'indigo'
+                              ? 'bg-linear-to-r from-indigo-500 to-indigo-600 text-white'
+                              : color === 'amber'
+                              ? 'bg-linear-to-r from-amber-400 to-amber-500 text-amber-950'
+                              : color === 'purple'
+                              ? 'bg-linear-to-r from-purple-500 to-purple-600 text-white'
+                              : 'bg-gray-200 text-gray-800'
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm">{icon}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="truncate text-xs font-bold">
+                                {shiftModel.shiftType}
+                              </div>
+                              <div className="flex items-center gap-1 text-[10px] opacity-90">
+                                <Clock className="h-2.5 w-2.5" />
+                                <span className="truncate">{shiftModel.getTimeRange()}</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             );
@@ -221,4 +257,3 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
     </div>
   );
 };
-

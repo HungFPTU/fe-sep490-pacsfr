@@ -7,9 +7,12 @@ import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { CreateWorkShiftRequest, UpdateWorkShiftRequest, WorkShift } from '../../../types';
 import { WorkShiftForm } from './WorkShitfForm.ui';
 
+import { validateDuplicateShift } from '../../../utils/validation';
+
 interface CreateWorkShiftModalProps {
   open: boolean;
   initData?: WorkShift | null;
+  existingShifts?: WorkShift[];
   onSuccess?: () => void;
   onClose: () => void;
 }
@@ -17,6 +20,7 @@ interface CreateWorkShiftModalProps {
 export function CreateWorkShiftModal({
   open,
   initData,
+  existingShifts = [],
   onSuccess,
   onClose,
 }: CreateWorkShiftModalProps) {
@@ -27,6 +31,23 @@ export function CreateWorkShiftModal({
   const isLoading = createMutation.isPending;
 
   const handleSubmit = async (data: CreateWorkShiftRequest) => {
+    // Validate duplicate shift on the same day
+    if (!initData && existingShifts.length > 0) {
+      const duplicateError = validateDuplicateShift(
+        data.shiftDate,
+        data.shiftType,
+        existingShifts
+      );
+
+      if (duplicateError) {
+        addToast({
+          message: duplicateError,
+          type: 'error',
+        });
+        return;
+      }
+    }
+
     if (initData && initData.id) {
       try {
         // Lấy ngày giờ tử WS hiện tại 
@@ -56,8 +77,17 @@ export function CreateWorkShiftModal({
           return;
         }
         onClose();
-      } catch (error) {
-        addToast({ message: 'Có lỗi xảy ra khi lưu ca làm việc', type: 'error' });
+      } catch (error: any) {
+        // Extract error message from backend
+        const errorMessage = error?.message || 
+                           error?.response?.data?.message || 
+                           error?.response?.data?.title ||
+                           'Có lỗi xảy ra khi cập nhật ca làm việc';
+        
+        addToast({ 
+          message: errorMessage, 
+          type: 'error' 
+        });
         console.error('Submit error:', error);
       }
       return;
@@ -71,8 +101,17 @@ export function CreateWorkShiftModal({
           return;
         }
         onClose();
-      } catch (error) {
-        addToast({ message: 'Có lỗi xảy ra khi lưu ca làm việc', type: 'error' });
+      } catch (error: any) {
+        // Extract error message from backend
+        const errorMessage = error?.message || 
+                           error?.response?.data?.message || 
+                           error?.response?.data?.title ||
+                           'Có lỗi xảy ra khi lưu ca làm việc';
+        
+        addToast({ 
+          message: errorMessage, 
+          type: 'error' 
+        });
         console.error('Submit error:', error);
       }
     }

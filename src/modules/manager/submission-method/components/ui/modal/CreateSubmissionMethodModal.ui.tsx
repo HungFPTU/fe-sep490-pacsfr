@@ -30,19 +30,7 @@ export const CreateSubmissionMethodModal: React.FC<Props> = ({
         if (isLoading) {
             return;
         }
-        console.log('[CreateSubmissionMethodModal] handleOk called');
-        console.log('[CreateSubmissionMethodModal] Form state:', form.state);
-        console.log('[CreateSubmissionMethodModal] Form values:', form.state.values);
-        console.log('[CreateSubmissionMethodModal] Form errors:', form.state.errors);
-        console.log('[CreateSubmissionMethodModal] Form field states:', {
-            submissionMethodName: form.state.fieldMeta.submissionMethodName,
-            processingTime: form.state.fieldMeta.processingTime,
-            fee: form.state.fieldMeta.fee,
-        });
-
-        // Try to submit - form.handleSubmit will validate and call onSubmit if valid
-        const result = await handleSubmit();
-        console.log('[CreateSubmissionMethodModal] handleSubmit result:', result);
+        await handleSubmit();
     };
 
     return (
