@@ -124,37 +124,22 @@ export const ServiceGroupForm: React.FC<Props> = ({ form, isLoading, isEdit, ini
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <form.Field
-                name="groupCode"
-                validators={{
-                    onChange: ({ value }: { value: string }) => {
-                        if (!value || !value.trim()) {
-                            return 'Mã nhóm là bắt buộc';
-                        }
-                        return undefined;
-                    },
-                }}
-            >
+            <form.Field name="groupCode">
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {(field: any) => {
-                    const error = getFirstError(field);
                     return (
                         <div className="w-full">
                             <label htmlFor="groupCode" className="mb-1 inline-block text-sm font-medium text-slate-700">
                                 Mã nhóm
-                                <span className="ml-0.5 text-red-500">*</span>
                             </label>
                             <input
                                 id="groupCode"
                                 type="text"
-                                disabled={isEdit || isLoading}
-                                value={(field.state.value as string) ?? ''}
-                                onBlur={field.handleBlur}
-                                onChange={(e) => field.handleChange(e.currentTarget.value as never)}
-                                placeholder="Nhập mã nhóm dịch vụ"
-                                className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isEdit || isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                disabled={true}
+                                value={isEdit ? (field.state.value as string) ?? '' : ''}
+                                placeholder={isEdit ? '' : 'Mã sẽ được tự động sinh'}
+                                className="w-full rounded-xl border bg-slate-100 outline-none transition h-10 px-3 text-sm border-slate-300 cursor-not-allowed"
                             />
-                            {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
                         </div>
                     );
                 }}

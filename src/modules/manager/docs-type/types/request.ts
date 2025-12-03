@@ -3,7 +3,7 @@
  */
 
 export type CreateDocsTypeRequest = {
-    docTypeCode: string;
+    docTypeCode?: string;
     docTypeName: string;
     description: string;
     groupId: string;
@@ -15,7 +15,7 @@ export type CreateDocsTypeRequest = {
 
 export type UpdateDocsTypeRequest = {
     id: string;
-    docTypeCode: string;
+    docTypeCode?: string;
     docTypeName: string;
     description: string;
     groupId: string;

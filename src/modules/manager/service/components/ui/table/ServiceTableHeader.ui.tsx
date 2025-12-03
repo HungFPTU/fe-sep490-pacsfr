@@ -8,6 +8,7 @@ export const ServiceTableHeader: React.FC = () => {
         <TableRow>
             <TableHead className="w-[120px]">Mã dịch vụ</TableHead>
             <TableHead>Tên dịch vụ</TableHead>
+            <TableHead>Nhóm dịch vụ</TableHead>
             <TableHead className="w-[150px]">Loại dịch vụ</TableHead>
             <TableHead className="w-[120px]">Trực tuyến</TableHead>
             <TableHead className="w-[120px]">Trạng thái</TableHead>

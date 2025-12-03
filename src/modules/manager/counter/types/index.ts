@@ -22,7 +22,7 @@ export type Counter = {
 };
 
 export type CreateCounterRequest = {
-    counterCode: string;
+    counterCode?: string;
     counterName: string;
     location: string;
     counterType: string;
@@ -30,7 +30,7 @@ export type CreateCounterRequest = {
 };
 
 export type UpdateCounterRequest = {
-    counterCode: string;
+    counterCode?: string;
     counterName: string;
     location: string;
     counterType: string;
@@ -40,7 +40,7 @@ export type UpdateCounterRequest = {
 
 // Common form values type (fields that are editable in the form)
 export type CounterFormValues = {
-    counterCode: string;
+    counterCode?: string;
     counterName: string;
     location: string;
     counterType: string;

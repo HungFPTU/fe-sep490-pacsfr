@@ -51,10 +51,7 @@ export const useOrgUnitForm = ({
                 addToast({ message: 'Vui lòng chọn phòng ban', type: 'error' });
                 return;
             }
-            if (!value.unitCode?.trim()) {
-                addToast({ message: 'Vui lòng nhập mã cơ quan', type: 'error' });
-                return;
-            }
+
             if (!value.unitName?.trim()) {
                 addToast({ message: 'Vui lòng nhập tên cơ quan', type: 'error' });
                 return;
@@ -79,7 +76,7 @@ export const useOrgUnitForm = ({
             try {
                 const request: CreateOrgUnitRequest = {
                     departmentId: value.departmentId.trim(),
-                    unitCode: value.unitCode.trim(),
+                    unitCode: value.unitCode?.trim() || undefined,
                     unitName: value.unitName.trim(),
                     unitType: value.unitType.trim(),
                     address: value.address.trim(),

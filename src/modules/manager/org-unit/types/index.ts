@@ -20,7 +20,7 @@ export type OrgUnit = {
 // Request types
 export type CreateOrgUnitRequest = {
     departmentId: string;
-    unitCode: string;
+    unitCode?: string;
     unitName: string;
     unitType: string;
     address: string;
@@ -32,7 +32,7 @@ export type CreateOrgUnitRequest = {
 export type UpdateOrgUnitRequest = {
     id: string;
     departmentId: string;
-    unitCode: string;
+    unitCode?: string;
     unitName: string;
     unitType: string;
     address: string;

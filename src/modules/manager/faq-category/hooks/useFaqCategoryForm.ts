@@ -50,10 +50,7 @@ export const useFaqCategoryForm = ({
             }
 
             // Final validation before submit
-            if (!value.categoryCode?.trim()) {
-                addToast({ message: 'Vui lòng nhập mã danh mục', type: 'error' });
-                return;
-            }
+
             if (!value.categoryName?.trim()) {
                 addToast({ message: 'Vui lòng nhập tên danh mục', type: 'error' });
                 return;
@@ -61,7 +58,7 @@ export const useFaqCategoryForm = ({
 
             try {
                 const request: CreateFaqCategoryRequest = {
-                    categoryCode: value.categoryCode.trim(),
+                    categoryCode: value.categoryCode?.trim() || undefined,
                     categoryName: value.categoryName.trim(),
                     description: value.description?.trim() || '',
                     isActive: value.isActive,
