@@ -8,6 +8,7 @@ export interface WorkShift {
     endTime: string;   // HH:mm:ss format
     shiftType: string;
     status: string;
+    shiftDate: string;
     staffName?: string;
     counterName?: string;
     isDeleted?: boolean;
