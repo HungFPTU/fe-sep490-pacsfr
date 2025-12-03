@@ -5,15 +5,14 @@ import { WorkShiftService } from '../services/workshift.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
 import type { CreateWorkShiftRequest, UpdateWorkShiftRequest, AssignStaffWorkShiftRequest, UpdateStaffWorkShiftRequest } from '../types';
 
-// Export hooks first
-// Re-export custom hooks at the end
+// Re-export custom hooks
 export { useWorkShiftForm } from './useWorkShiftForm';
 
 // GET list hook (with maximum page size)
 export const useWorkShifts = () => {
   return useQuery({
     queryKey: QUERY_KEYS.WORKSHIFT_LIST,
-    queryFn: () => WorkShiftService.getWorkShifts({ page: 1, size: 200 }),
+    queryFn: () => WorkShiftService.getWorkShifts({ page: 1, size: 400 }),
     gcTime: CACHE_TIME.SHORT,
     staleTime: STALE_TIME.MEDIUM,
   });
@@ -28,44 +27,54 @@ export const useWorkShiftDetail = (id: string) => {
   });
 };
 
-// CREATE mutation
+// CREATE mutation with immediate refetch
 export const useCreateWorkShift = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: CreateWorkShiftRequest) => WorkShiftService.createWorkShift(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      // Invalidate and immediate refetch to update calendar
+      await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_BASE,
+      });
+     await queryClient.refetchQueries({
+        queryKey: QUERY_KEYS.WORKSHIFT_LIST,
       });
     },
   });
 };
 
-// UPDATE mutation
+// UPDATE mutation with immediate refetch
 export const useUpdateWorkShift = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ id, request }: { id: string; request: UpdateWorkShiftRequest }) =>
       WorkShiftService.updateWorkShift(id, request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_BASE,
+      });
+      await queryClient.refetchQueries({
+        queryKey: QUERY_KEYS.WORKSHIFT_LIST,
       });
     },
   });
 };
 
-// DELETE mutation
+// DELETE mutation with immediate refetch
 export const useDeleteWorkShift = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: string) => WorkShiftService.deleteWorkShift(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_BASE,
+      });
+      await queryClient.refetchQueries({
+        queryKey: QUERY_KEYS.WORKSHIFT_LIST,
       });
     },
   });
@@ -108,6 +117,7 @@ export const useAvailableStaff = (
     enabled: enabled && !!counterId && !!workShiftId,
     gcTime: CACHE_TIME.SHORT,
     staleTime: STALE_TIME.SHORT,
+    
   });
 };
 
@@ -121,7 +131,6 @@ export const useAssignStaffWorkShift = () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_BASE,
       });
-      // Also invalidate staff work shifts
       queryClient.invalidateQueries({
         queryKey: ['workshift', 'staff-work-shifts'],
       });

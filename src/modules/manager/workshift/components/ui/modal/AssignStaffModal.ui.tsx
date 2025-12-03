@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import Image from 'next/image';
-import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
+import { LargeServiceModal } from '@/shared/components/layout/manager/modal/ServiceDetailModal';
 import { LoadingSpinner } from '@/shared/components';
 import { useAvailableStaff, useAssignStaffWorkShift, useUpdateStaffWorkShift } from '../../../hooks';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
@@ -41,7 +41,7 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
   currentStartTime,
   currentEndTime,
 }) => {
-  const { data, isLoading } = useAvailableStaff(counterId, workShiftId, open);
+  const { data, isLoading, error } = useAvailableStaff(counterId, workShiftId, open);
   const assignMutation = useAssignStaffWorkShift();
   const updateMutation = useUpdateStaffWorkShift();
   const { addToast } = useGlobalToast();
@@ -53,6 +53,19 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
 
   const staffList = useMemo(() => data ?? [], [data]);
 
+  // Handle error from useAvailableStaff
+  useEffect(() => {
+    if (error) {
+      const errorMessage = (error as any)?.message || 
+                           (error as any)?.response?.data?.message || 
+                           (error as any)?.response?.data?.title ||
+                           'Có lỗi xảy ra khi tải danh sách nhân viên';
+      addToast({
+        message: errorMessage,
+        type: 'error',
+      });
+    }
+  }, [error, addToast]);
   // Proactively validate all staff when modal opens
   useEffect(() => {
     if (!open || !staffList || staffList.length === 0) {
@@ -167,9 +180,12 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
       setValidationErrors({});
       onSuccess?.();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error assigning staff:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Phân công nhân sự thất bại';
+      const errorMessage = error?.message || 
+                           error?.response?.data?.message || 
+                           error?.response?.data?.title ||
+                           'Phân công nhân sự thất bại';
       addToast({
         message: errorMessage,
         type: 'error',
@@ -200,17 +216,20 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
       setNote('');
       onSuccess?.();
       onClose();
-    } catch (error) {
-      console.error('Error updating assignment:', error);
+    } catch (error: any) {
+      const errorMessage = error?.message || 
+                           error?.response?.data?.message || 
+                           error?.response?.data?.title ||
+                           'Có lỗi xảy ra khi cập nhật ca làm việc';
       addToast({
-        message: 'Cập nhật phân công thất bại',
+        message: errorMessage,
         type: 'error',
       });
     }
   };
 
   return (
-    <BaseModal
+    <LargeServiceModal  
       open={open}
       onClose={onClose}
       title="Phân công nhân sự"
@@ -225,7 +244,7 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
           </button>
         </div>
       }
-      size="large"
+      width="90vw"
     >
       <div className="space-y-4">
         <div className="text-sm text-gray-600">
@@ -252,17 +271,6 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
             </div>
           </div>
 
-          {isLoading ? (
-            <div className="flex items-center justify-center py-10">
-              <LoadingSpinner />
-              <span className="ml-2 text-sm text-gray-600">Đang tải dữ liệu...</span>
-            </div>
-          ) : staffList.length === 0 ? (
-            <div className="py-10 text-center text-sm text-gray-500">
-              Không tìm thấy nhân sự phù hợp cho quầy này
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
               {/* Business Rules Info */}
               <div className="bg-blue-50 border-b border-blue-200 px-5 py-2">
                 <div className="flex items-center gap-2 text-xs text-blue-800">
@@ -395,9 +403,9 @@ export const AssignStaffModal: React.FC<AssignStaffModalProps> = ({
                 </tbody>
               </table>
             </div>
-          )}
+          {/* )} */}
         </div>
-      </div>
-    </BaseModal>
+
+    </LargeServiceModal>
   );
 };

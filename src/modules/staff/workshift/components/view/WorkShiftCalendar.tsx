@@ -7,13 +7,13 @@
 
 import React, { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from 'lucide-react';
-import type { WorkShift } from '../../../types';
-import { WorkShiftModel } from '../../../types/WorkShift.model';
+import type { WorkShift } from '../../types';
+import { WorkShiftModel } from '../../models/WorkShift.model';
 
 interface WorkShiftCalendarProps {
   workShifts: WorkShift[];
   isLoading?: boolean;
-  onShiftClick: (shift: WorkShift) => void;
+  onShiftClick?: (shift: WorkShift) => void;
 }
 
 export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
@@ -103,7 +103,7 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
   if (isLoading) {
     return (
       <div className="relative h-96 overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50" />
+        <div className="absolute inset-0 bg-linear-to-br from-indigo-50/50 to-purple-50/50" />
         <div className="relative flex h-full items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-600/20 border-t-indigo-600" />
@@ -117,7 +117,7 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-2xl">
       {/* Calendar Header with glassmorphism */}
-      <div className="relative overflow-hidden border-b border-gray-200/50 bg-gradient-to-r from-indigo-50 to-purple-50 p-5">
+      <div className="relative overflow-hidden border-b border-gray-200/50 bg-linear-to-r from-indigo-50 to-purple-50 p-5">
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="rounded-xl bg-white/80 p-2.5 shadow-sm backdrop-blur-sm">
@@ -220,7 +220,7 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
                           key={shiftModel.id}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onShiftClick(shiftModel.toData());
+                            onShiftClick?.(shiftModel.toData());
                           }}
                           className={`group/shift relative cursor-pointer overflow-hidden rounded-lg p-2 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md ${
                             color === 'indigo'

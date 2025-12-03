@@ -108,3 +108,36 @@ export const validateEndTimeAfterStartTime = (
   return undefined;
 };
 
+
+/**
+ * Validate duplicate shift on the same day
+ */
+export const validateDuplicateShift = (
+  shiftDate: string | Date,
+  shiftType: string,
+  existingShifts: any[]
+): string | undefined => {
+  if (!existingShifts || existingShifts.length === 0) {
+    return undefined;
+  }
+
+  const newShiftDate = typeof shiftDate === 'string' 
+    ? new Date(shiftDate) 
+    : shiftDate;
+  
+  const newDateStr = newShiftDate.toISOString().split('T')[0];
+
+  const isDuplicate = existingShifts.some(shift => {
+    const currentShiftDate = typeof shift.shiftDate === 'string'
+      ? shift.shiftDate.split('T')[0]
+      : (shift.shiftDate as Date).toISOString().split('T')[0];
+    
+    return currentShiftDate === newDateStr && shift.shiftType === shiftType;
+  });
+
+  if (isDuplicate) {
+    return `Đã tồn tại ca ${shiftType} trong ngày này`;
+  }
+
+  return undefined;
+};
