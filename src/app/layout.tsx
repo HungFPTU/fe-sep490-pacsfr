@@ -3,6 +3,7 @@ import "./globals.css";
 import { AppProviders } from "@/shared/providers/AppProviders";
 import { GlobalLoadingOverlay } from "@/shared/components/common/GlobalLoadingOverlay";
 import { GlobalToast } from "@/shared/components/GlobalToast.com";
+import { FloatingChatButton } from "@/modules/chatBot/components/ui";
 
 export const metadata: Metadata = {
   title: "Cổng Dịch vụ công quốc gia",
@@ -24,6 +25,7 @@ export default function RootLayout({
           <GlobalLoadingOverlay />
           <GlobalToast />
           {children}
+          <FloatingChatButton />
         </AppProviders>
       </body>
     </html>

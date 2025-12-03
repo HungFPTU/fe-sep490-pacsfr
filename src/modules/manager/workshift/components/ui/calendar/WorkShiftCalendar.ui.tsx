@@ -193,12 +193,12 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
                     ? 'border-indigo-400 bg-linear-to-br from-indigo-50 to-purple-50 shadow-lg ring-2 ring-indigo-400/30'
                     : 'border-gray-200 bg-white hover:border-indigo-300 hover:shadow-md'
                 }`}
-                style={{ height: '144px' }}
+                style={{ height: '180px' }}
               >
                 {/* Day number - fixed at top */}
-                <div className="shrink-0 p-2">
+                <div className="shrink-0 p-1.5">
                   <div
-                    className={`inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold transition-all ${
+                    className={`inline-flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold transition-all ${
                       today
                         ? 'bg-indigo-600 text-white shadow-md'
                         : 'text-gray-700 group-hover:bg-indigo-50'
@@ -209,11 +209,10 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
                 </div>
 
                 {/* Shifts - scrollable container */}
-                <div className="flex-1 overflow-y-auto px-2 pb-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-indigo-200 hover:[&::-webkit-scrollbar-thumb]:bg-indigo-400">
-                  <div className="space-y-1.5">
+                <div className="flex-1 overflow-y-auto px-1.5 pb-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-indigo-200 hover:[&::-webkit-scrollbar-thumb]:bg-indigo-400">
+                  <div className="space-y-1">
                     {shifts.map((shiftModel) => {
                       const color = shiftModel.getDisplayColor();
-                      const icon = shiftModel.getIcon();
                       
                       return (
                         <div
@@ -222,23 +221,22 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
                             e.stopPropagation();
                             onShiftClick(shiftModel.toData());
                           }}
-                          className={`group/shift relative cursor-pointer overflow-hidden rounded-lg p-2 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md ${
+                          className={`group/shift relative cursor-pointer overflow-hidden rounded-md px-2 py-1.5 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md border ${
                             color === 'indigo'
-                              ? 'bg-linear-to-r from-indigo-500 to-indigo-600 text-white'
+                              ? 'bg-indigo-50 border-indigo-200 text-indigo-700 font-bold hover:bg-indigo-100'
                               : color === 'amber'
-                              ? 'bg-linear-to-r from-amber-400 to-amber-500 text-amber-950'
+                              ? 'bg-amber-50 border-amber-200 text-amber-700 font-bold hover:bg-amber-100'
                               : color === 'purple'
-                              ? 'bg-linear-to-r from-purple-500 to-purple-600 text-white'
-                              : 'bg-gray-200 text-gray-800'
+                              ? 'bg-purple-50 border-purple-200 text-purple-700 font-bold hover:bg-purple-100'
+                              : 'bg-gray-50 border-gray-200 text-gray-700 font-bold hover:bg-gray-100'
                           }`}
                         >
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm">{icon}</span>
+                          <div className="flex items-center gap-1">
                             <div className="flex-1 min-w-0">
-                              <div className="truncate text-xs font-bold">
+                              <div className="truncate text-[11px] font-bold leading-tight">
                                 {shiftModel.shiftType}
                               </div>
-                              <div className="flex items-center gap-1 text-[10px] opacity-90">
+                              <div className="flex items-center gap-1 text-[10px] opacity-90 leading-tight mt-0.5">
                                 <Clock className="h-2.5 w-2.5" />
                                 <span className="truncate">{shiftModel.getTimeRange()}</span>
                               </div>

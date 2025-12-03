@@ -12,6 +12,9 @@ export interface Service {
   processingTime?: string;
   feeAmount?: number;
   resultDocument?: string;
+  condition?: string;
+  serviceGroupCode?: string;
+  serviceGroupName?: string;
   decisionNumber?: string;
   executionLevel?: string;
   field?: string;
@@ -85,6 +88,8 @@ export interface RequiredDocument {
   docTypeName: string;
   description: string;
   isDeleted: boolean;
+  quantityOriginal?: number;
+  quantityCopy?: number;
   createdAt: string;
 }
 

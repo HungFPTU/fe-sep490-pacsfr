@@ -151,7 +151,8 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
             {/* Cách thức thực hiện - Table Format */}
             {service.submissionMethods?.$values && service.submissionMethods.$values.length > 0 && (
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                        <Send className="w-5 h-5 text-purple-600" />
                         Cách thức thực hiện
                     </h2>
                     <div className="overflow-x-auto">
@@ -202,77 +203,69 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
             {/* Thành phần hồ sơ - Table Format */}
             {service.requiredDocuments?.$values && service.requiredDocuments.$values.length > 0 && (
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                    <button
-                        onClick={() => toggleSection('requiredDocuments')}
-                        className="w-full flex items-center justify-between p-4 sm:p-6 hover:bg-gray-50 transition-colors"
-                    >
-                        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                    <div className="p-4 sm:p-6 border-b border-gray-200">
+                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <FileText className="w-5 h-5 text-orange-600" />
                             Thành phần hồ sơ
                         </h2>
-                        {expandedSections.requiredDocuments ? (
-                            <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
-                        ) : (
-                            <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
-                        )}
-                    </button>
-                    {expandedSections.requiredDocuments && (
-                        <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-200">
-                            <p className="text-xs sm:text-sm font-medium text-gray-700 mb-3 sm:mb-4 pt-3 sm:pt-4">Bao gồm:</p>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300">
-                                                Loại giấy tờ
-                                            </th>
-                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300 w-20 sm:w-24">
-                                                Bản chính
-                                            </th>
-                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300 w-20 sm:w-24">
-                                                Bản sao
-                                            </th>
-                                            <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 w-32 sm:w-48">
-                                                Mẫu đơn, tờ khai
-                                            </th>
+                    </div>
+                    <div className="p-4 sm:p-6">
+                        <p className="text-xs sm:text-sm font-medium text-gray-700 mb-3 sm:mb-4">Bao gồm:</p>
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300">
+                                            Loại giấy tờ
+                                        </th>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300 w-20 sm:w-24">
+                                            Bản chính
+                                        </th>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 border-r border-gray-300 w-20 sm:w-24">
+                                            Bản sao
+                                        </th>
+                                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-semibold text-gray-700 w-32 sm:w-48">
+                                            Mẫu đơn, tờ khai
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {service.requiredDocuments.$values.map((doc, index) => (
+                                        <tr
+                                            key={doc.id}
+                                            className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                                        >
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 border-r border-gray-300">
+                                                <div>
+                                                    <p className="font-medium">{doc.docTypeName}</p>
+                                                    {doc.description && (
+                                                        <p className="text-xs text-gray-600 mt-1">{doc.description}</p>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 text-center border-r border-gray-300">
+                                                {doc.quantityOriginal ?? 0}
+                                            </td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 text-center border-r border-gray-300">
+                                                {doc.quantityCopy ?? 0}
+                                            </td>
+                                            <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700">
+                                                -
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {service.requiredDocuments.$values.map((doc, index) => (
-                                            <tr
-                                                key={doc.id}
-                                                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                                            >
-                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 border-r border-gray-300">
-                                                    <div>
-                                                        <p className="font-medium">{doc.docTypeName}</p>
-                                                        {doc.description && (
-                                                            <p className="text-xs text-gray-600 mt-1">{doc.description}</p>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 text-center border-r border-gray-300">
-                                                    1
-                                                </td>
-                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 text-center border-r border-gray-300">
-                                                    0
-                                                </td>
-                                                <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700">
-                                                    -
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                    )}
+                    </div>
                 </div>
             )}
 
             {/* Trình tự thực hiện */}
             {service.serviceProcedures?.$values && service.serviceProcedures.$values.length > 0 && (
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                        <ArrowRight className="w-5 h-5 text-emerald-600" />
                         Trình tự thực hiện
                     </h2>
                     <div className="space-y-3 sm:space-y-4">
@@ -317,9 +310,12 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                         onClick={() => toggleSection('serviceAgencies')}
                         className="w-full flex items-center justify-between p-4 sm:p-6 hover:bg-gray-50 transition-colors"
                     >
-                        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
-                            Cơ quan thực hiện
-                        </h2>
+                        <div className="flex items-center gap-3">
+                            <Briefcase className="w-5 h-5 text-blue-600" />
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                                Cơ quan thực hiện
+                            </h2>
+                        </div>
                         {expandedSections.serviceAgencies ? (
                             <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
                         ) : (
@@ -353,9 +349,12 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                     onClick={() => toggleSection('requirements')}
                     className="w-full flex items-center justify-between p-4 sm:p-6 hover:bg-gray-50 transition-colors"
                 >
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">
-                        Yêu cầu, điều kiện
-                    </h2>
+                    <div className="flex items-center gap-3">
+                        <Info className="w-5 h-5 text-amber-600" />
+                        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                            Yêu cầu, điều kiện
+                        </h2>
+                    </div>
                     {expandedSections.requirements ? (
                         <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 shrink-0" />
                     ) : (
@@ -366,7 +365,7 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                     <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gray-200">
                         <div className="pt-3 sm:pt-4">
                             <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-                                {service.description || 'Không có thông tin'}
+                                {service.condition || 'Không có thông tin'}
                             </p>
                         </div>
                     </div>
@@ -431,7 +430,8 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
 
             {/* Thủ tục hành chính liên quan */}
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-gray-600" />
                     Thủ tục hành chính liên quan
                 </h2>
                 <p className="text-xs sm:text-sm text-gray-600">Không có thông tin</p>

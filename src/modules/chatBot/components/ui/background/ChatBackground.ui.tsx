@@ -9,7 +9,7 @@ interface ChatBackgroundProps {
 }
 
 export const ChatBackground: React.FC<ChatBackgroundProps> = ({
-    imageSrc = '/assets/image/background/trong-dong.jpg',
+    imageSrc = '/assets/image/background/trong-dong-2.jpg',
     imageAlt = 'Hình nền trống đồng',
 }) => {
     return (
@@ -20,10 +20,10 @@ export const ChatBackground: React.FC<ChatBackgroundProps> = ({
                     alt={imageAlt}
                     fill
                     className="object-cover"
-                    priority
+                    priority    
                 />
             </div>
-            <div className="absolute inset-0 bg-yellow-50/70" />
+            <div className="absolute inset-0 bg-yellow-50/50" />
         </div>
     );
 };
