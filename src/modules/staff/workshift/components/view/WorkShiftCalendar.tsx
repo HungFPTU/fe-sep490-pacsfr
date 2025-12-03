@@ -37,11 +37,14 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
     const map = new Map<string, WorkShiftModel[]>();
     workShifts.forEach((shift) => {
       const model = new WorkShiftModel(shift);
-      const dateKey = model.shiftDate.toISOString().split('T')[0];
-      if (!map.has(dateKey)) {
-        map.set(dateKey, []);
+      // Ensure shiftDate is a valid Date object
+      if (model.shiftDate && model.shiftDate instanceof Date) {
+        const dateKey = model.shiftDate.toISOString().split('T')[0];
+        if (!map.has(dateKey)) {
+          map.set(dateKey, []);
+        }
+        map.get(dateKey)!.push(model);
       }
-      map.get(dateKey)!.push(model);
     });
     return map;
   }, [workShifts]);
