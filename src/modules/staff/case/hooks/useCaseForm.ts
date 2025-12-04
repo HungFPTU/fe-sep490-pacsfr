@@ -51,8 +51,13 @@ export const useCaseForm = ({ caseData, open, onSuccess, onClose }: UseCaseFormP
         const res = await updateMutation.mutateAsync({
           id: caseData.id,
           data: {
+            priorityLevel: caseData.priorityLevel,
+            submissionMethod: caseData.submissionMethod,
+            estimatedCompletionDate: caseData.estimatedCompletionDate,
             actualCompletionDate: new Date(value.actualCompletionDate).toISOString(),
             resultDescription: value.resultDescription,
+            totalFee: caseData.totalFee,
+            isPayment: caseData.isPayment,
             notes: value.notes,
           },
         });
@@ -72,14 +77,6 @@ export const useCaseForm = ({ caseData, open, onSuccess, onClose }: UseCaseFormP
   useEffect(() => {
     if (open && caseData) {
       form.reset();
-      form.setFieldValue('priorityLevel', caseData.priorityLevel);
-      form.setFieldValue('submissionMethod', caseData.submissionMethod);
-      form.setFieldValue(
-        'estimatedCompletionDate',
-        caseData.estimatedCompletionDate
-          ? new Date(caseData.estimatedCompletionDate).toISOString().split('T')[0]
-          : ''
-      );
       form.setFieldValue(
         'actualCompletionDate',
         caseData.estimatedCompletionDate
@@ -87,7 +84,6 @@ export const useCaseForm = ({ caseData, open, onSuccess, onClose }: UseCaseFormP
           : ''
       );
       form.setFieldValue('resultDescription', caseData.notes ?? '');
-      form.setFieldValue('totalFee', caseData.totalFee);
       form.setFieldValue('notes', caseData.notes ?? '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
