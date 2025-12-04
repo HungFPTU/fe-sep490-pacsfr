@@ -11,8 +11,8 @@ export const RequiredDocumentTableHeader: React.FC = () => {
             <TableHead className="w-[200px]">Loại giấy tờ</TableHead>
             <TableHead className="w-[120px] text-center">Bản gốc</TableHead>
             <TableHead className="w-[120px] text-center">Bản sao</TableHead>
-            <TableHead className="w-[140px]">Trạng thái</TableHead>
-            <TableHead className="w-[140px]">Cập nhật</TableHead>
+
+            <TableHead className="w-[140px] text-center">Cập nhật</TableHead>
             <TableHead className="w-[120px] text-right">Thao tác</TableHead>
         </TableRow>
     );

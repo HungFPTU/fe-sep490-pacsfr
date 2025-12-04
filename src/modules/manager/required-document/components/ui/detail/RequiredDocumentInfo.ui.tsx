@@ -24,14 +24,7 @@ export const RequiredDocumentInfo: React.FC<Props> = ({ document }) => {
             <InfoRow label="Mô tả tài liệu" value={document.description} />
             <InfoRow label="Số bản gốc" value={document.quantityOriginal} />
             <InfoRow label="Số bản sao" value={document.quantityCopy} />
-            <InfoRow
-                label="Trạng thái"
-                value={
-                    <Badge variant={document.isActive ? 'outline' : 'secondary'}>
-                        {document.isActive ? 'Đang áp dụng' : 'Ngừng áp dụng'}
-                    </Badge>
-                }
-            />
+
             <InfoRow
                 label="Ngày tạo"
                 value={document.createdAt ? formatDate(document.createdAt) : '-'}
