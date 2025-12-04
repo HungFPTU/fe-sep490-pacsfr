@@ -42,17 +42,13 @@ export const RequiredDocumentTableRow: React.FC<Props> = ({
             <TableCell className="text-center">
                 {requiredDocument.quantityCopy ?? 0}
             </TableCell>
-            <TableCell>
-                <Badge variant={requiredDocument.isActive ? 'outline' : 'secondary'}>
-                    {requiredDocument.isActive ? 'Đang áp dụng' : 'Ngừng áp dụng'}
-                </Badge>
-            </TableCell>
-            <TableCell className="text-muted-foreground">
+
+            <TableCell className="text-center text-muted-foreground">
                 {requiredDocument.modifiedAt
                     ? formatDate(requiredDocument.modifiedAt)
                     : requiredDocument.createdAt
-                    ? formatDate(requiredDocument.createdAt)
-                    : '-'}
+                        ? formatDate(requiredDocument.createdAt)
+                        : '-'}
             </TableCell>
             <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">

@@ -32,13 +32,13 @@ export const RequiredDocumentTable: React.FC<Props> = ({
                 <TableBody>
                     {isLoading ? (
                         <TableRow>
-                            <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                            <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                                 Đang tải dữ liệu...
                             </TableCell>
                         </TableRow>
                     ) : requiredDocuments.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                            <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                                 Không có tài liệu yêu cầu nào.
                             </TableCell>
                         </TableRow>
