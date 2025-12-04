@@ -10,7 +10,7 @@ export const FloatingChatButton: React.FC = () => {
     const router = useRouter();
 
     // Hide button on manager and staff routes
-    const shouldHide = pathname?.startsWith('/manager') || pathname?.startsWith('/staff') || pathname?.startsWith('/chatBot');
+    const shouldHide = pathname?.startsWith('/manager') || pathname?.startsWith('/staff') || pathname?.startsWith('/chatBot') || pathname?.startsWith('/login');
 
     if (shouldHide) {
         return null;
