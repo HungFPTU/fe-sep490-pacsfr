@@ -64,14 +64,6 @@ export const getCaseTableColumns = (
     },
   },
   {
-    id: 'priorityLevel',
-    header: 'Mức độ ưu tiên',
-    accessorKey: 'priorityLevel',
-    cell: ({ row }) => {
-      return <PriorityBadge priority={row.original.priorityLevel} variant="dot" />;
-    },
-  },
-  {
     id: 'currentStatus',
     header: 'Trạng thái',
     accessorKey: 'currentStatus',
