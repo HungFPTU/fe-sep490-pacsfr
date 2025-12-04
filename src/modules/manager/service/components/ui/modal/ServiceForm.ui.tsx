@@ -124,10 +124,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                         if (!value || !value.trim()) {
                             return 'Mã dịch vụ là bắt buộc';
                         }
-                        const codeRegex = /^[A-Za-z0-9_-]+$/;
-                        if (!codeRegex.test(value.trim())) {
-                            return 'Mã dịch vụ chỉ được chứa chữ cái, số, dấu gạch dưới và dấu gạch ngang';
-                        }
                         if (value.trim().length > 50) {
                             return 'Mã dịch vụ không được vượt quá 50 ký tự';
                         }
