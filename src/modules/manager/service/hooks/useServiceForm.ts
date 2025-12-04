@@ -63,14 +63,8 @@ export const useServiceForm = ({ initData, onSubmit, open }: UseServiceFormProps
 
                 if (!value.serviceCode?.trim()) {
                     errors.serviceCode = 'Mã dịch vụ là bắt buộc';
-                } else {
-                    // Service code format validation: alphanumeric, no spaces, max 50 chars
-                    const codeRegex = /^[A-Za-z0-9_-]+$/;
-                    if (!codeRegex.test(value.serviceCode.trim())) {
-                        errors.serviceCode = 'Mã dịch vụ chỉ được chứa chữ cái, số, dấu gạch dưới và dấu gạch ngang';
-                    } else if (value.serviceCode.trim().length > 50) {
-                        errors.serviceCode = 'Mã dịch vụ không được vượt quá 50 ký tự';
-                    }
+                } else if (value.serviceCode.trim().length > 50) {
+                    errors.serviceCode = 'Mã dịch vụ không được vượt quá 50 ký tự';
                 }
 
                 if (!value.serviceName?.trim()) {

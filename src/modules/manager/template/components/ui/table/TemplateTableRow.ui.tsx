@@ -43,7 +43,7 @@ export const TemplateTableRow: React.FC<Props> = ({
 
             {/* Docs Type Name */}
             <TableCell className="text-muted-foreground">
-                {template.docsTypeName || '-'}
+                {template.docTypeName || template.docsTypeName || '-'}
             </TableCell>
 
             {/* Version */}
