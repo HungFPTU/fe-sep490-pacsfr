@@ -17,21 +17,9 @@ interface CaseTableProps {
 export function CaseTable({ data, onViewDetail }: CaseTableProps) {
   const columns = getCaseTableColumns(onViewDetail);
 
-  // Add STT column
-  const columnsWithSTT = [
-    {
-      id: 'stt',
-      header: () => 'STT',
-      cell: ({ row }: { row: { index: number } }) => row.index + 1,
-      enableHiding: false,
-      enableSorting: false,
-    },
-    ...columns,
-  ];
-
   const table = useReactTable({
     data,
-    columns: columnsWithSTT,
+    columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -65,7 +53,7 @@ export function CaseTable({ data, onViewDetail }: CaseTableProps) {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columnsWithSTT.length} className="h-24 text-center">
+              <TableCell colSpan={columns.length} className="h-24 text-center">
                 Không có dữ liệu
               </TableCell>
             </TableRow>
