@@ -7,13 +7,11 @@ import { useUpdateCase } from './useUpdateCase';
 import type { CaseDetailResponse } from '../types/case-search';
 
 type FormValues = {
-  priorityLevel: number;
   submissionMethod: string;
   estimatedCompletionDate: string;
   actualCompletionDate: string;
   resultDescription: string;
   totalFee: number;
-  isPayment: boolean;
   notes: string;
 };
 
@@ -29,7 +27,6 @@ export const useCaseForm = ({ caseData, open, onSuccess, onClose }: UseCaseFormP
   const { addToast } = useGlobalToast();
 
   const toFormValues = (data?: Partial<CaseDetailResponse> | null): FormValues => ({
-    priorityLevel: data?.priorityLevel ?? 1,
     submissionMethod: data?.submissionMethod ?? '',
     estimatedCompletionDate: data?.estimatedCompletionDate
       ? new Date(data.estimatedCompletionDate).toISOString().split('T')[0]
@@ -39,7 +36,6 @@ export const useCaseForm = ({ caseData, open, onSuccess, onClose }: UseCaseFormP
       : '',
     resultDescription: data?.notes ?? '',
     totalFee: data?.totalFee ?? 0,
-    isPayment: data?.isPayment ?? false,
     notes: data?.notes ?? '',
   });
 
@@ -55,13 +51,8 @@ export const useCaseForm = ({ caseData, open, onSuccess, onClose }: UseCaseFormP
         const res = await updateMutation.mutateAsync({
           id: caseData.id,
           data: {
-            priorityLevel: value.priorityLevel,
-            submissionMethod: value.submissionMethod,
-            estimatedCompletionDate: new Date(value.estimatedCompletionDate).toISOString(),
             actualCompletionDate: new Date(value.actualCompletionDate).toISOString(),
             resultDescription: value.resultDescription,
-            totalFee: value.totalFee,
-            isPayment: value.isPayment,
             notes: value.notes,
           },
         });
@@ -97,7 +88,6 @@ export const useCaseForm = ({ caseData, open, onSuccess, onClose }: UseCaseFormP
       );
       form.setFieldValue('resultDescription', caseData.notes ?? '');
       form.setFieldValue('totalFee', caseData.totalFee);
-      form.setFieldValue('isPayment', caseData.isPayment);
       form.setFieldValue('notes', caseData.notes ?? '');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

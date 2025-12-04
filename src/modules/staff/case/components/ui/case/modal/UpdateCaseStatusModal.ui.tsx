@@ -88,6 +88,16 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, currentStatus]);
 
+  // Auto-fill reason when status changes
+  useEffect(() => {
+    if (newStatusId && newStatusId !== getCurrentStatusId()) {
+      const selectedStatus = caseStatuses.find(s => s.id === newStatusId);
+      if (selectedStatus) {
+        setReason(selectedStatus.name);
+      }
+    }
+  }, [newStatusId]);
+
   return (
     <BaseModal
       open={open}
@@ -120,17 +130,19 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
                 backgroundSize: '1.5em 1.5em',
               }}
             >
-              {caseStatuses.map((status) => {
-                return (
-                  <option 
-                    key={status.id} 
-                    value={status.id}
-                    className="py-2"
-                  >
-                    {status.name}
-                  </option>
-                );
-              })}
+              {caseStatuses
+                .filter(status => status.name !== 'Đã tiếp nhận' && status.name !== 'Đang xử lý')
+                .map((status) => {
+                  return (
+                    <option 
+                      key={status.id} 
+                      value={status.id}
+                      className="py-2"
+                    >
+                      {status.name}
+                    </option>
+                  );
+                })}
             </select>
           </div>
           <p className="text-xs text-gray-500 mt-1">
