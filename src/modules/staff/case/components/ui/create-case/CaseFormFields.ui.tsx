@@ -363,47 +363,12 @@ export function CaseFormFields({
                         <input
                             type="text"
                             value={formatISOToDate(caseData.estimatedCompletionDate || '')}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                if (/^[0-9/]*$/.test(value)) {
-                                    let formatted = value.replace(/\D/g, '');
-                                    if (formatted.length >= 2) {
-                                        formatted = formatted.substring(0, 2) + '/' + formatted.substring(2);
-                                    }
-                                    if (formatted.length >= 5) {
-                                        formatted = formatted.substring(0, 5) + '/' + formatted.substring(5, 9);
-                                    }
-                                    if (formatted.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(formatted)) {
-                                        const time = formatISOToTime(caseData.estimatedCompletionDate || '00:00');
-                                        const isoDate = formatDateToISO(formatted, time);
-                                        onDataChange({ ...caseData, estimatedCompletionDate: isoDate || undefined });
-                                    }
-                                }
-                            }}
                             placeholder="dd/mm/yyyy"
                             maxLength={10}
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            disabled
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
                         />
-                        <button
-                            type="button"
-                            onClick={() => setShowDatePicker(!showDatePicker)}
-                            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                            title="Chọn từ lịch"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </button>
                     </div>
-                    {showDatePicker && (
-                        <DatePickerCalendar
-                            value={caseData.estimatedCompletionDate || ''}
-                            onChange={(datetime) => {
-                                onDataChange({ ...caseData, estimatedCompletionDate: datetime || undefined });
-                            }}
-                            onClose={() => setShowDatePicker(false)}
-                        />
-                    )}
                 </div>
             </div>
         </div>
