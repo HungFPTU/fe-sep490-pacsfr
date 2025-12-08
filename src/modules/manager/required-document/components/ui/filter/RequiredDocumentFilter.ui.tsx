@@ -142,7 +142,7 @@ export const RequiredDocumentFilter: React.FC<Props> = ({
                     </select>
                 </div>
 
-                <div className="w-full shrink-0 sm:w-[170px]">
+                {/* <div className="w-full shrink-0 sm:w-[170px]">
                     <select
                         value={String(localFilters.isActive)}
                         onChange={(e) => setLocalFilters((prev) => ({ ...prev, isActive: e.target.value === 'true' }))}
@@ -155,7 +155,7 @@ export const RequiredDocumentFilter: React.FC<Props> = ({
                         <option value="true">Đang áp dụng</option>
                         <option value="false">Ngừng áp dụng</option>
                     </select>
-                </div>
+                </div> */}
             </ManagerFilterBar>
         </div>
     );
