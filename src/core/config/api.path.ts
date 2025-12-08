@@ -190,6 +190,21 @@ export const API_PATH = {
         GET_STAFF_WORKSHIFTS: '/StaffWorkShift',
         DELETE_STAFF_WORKSHIFT: (id: string) => `/StaffWorkShift/${id}`,
       },
+      SHIFT_SWAP: {
+        CREATE: '/ShiftSwapRequest',
+        GET_MY_REQUESTS: (status?: number) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
+        GET_LIST: (status?: number, page?: number, size?: number) => {
+          const params = new URLSearchParams();
+          if (status !== undefined) params.append('status', String(status));
+          if (page !== undefined) params.append('page', String(page));
+          if (size !== undefined) params.append('size', String(size));
+          return `/ShiftSwapRequest${params.toString() ? `?${params}` : ''}`;
+        },
+        GET_BY_ID: (id: string) => `/ShiftSwapRequest/${id}`,
+        RESPOND: (id: string) => `/ShiftSwapRequest/${id}/respond`,
+        APPROVE: (id: string) => `/ShiftSwapRequest/${id}/approve`,
+        CANCEL: (id: string) => `/ShiftSwapRequest/${id}/cancel`,
+      },
       COUNTER: {
         GET_ALL_ACTIVE: () => `/Counter/active`,
         GET_BY_ID: (id: string) => `/Counter/${id}`,
@@ -442,9 +457,40 @@ export const API_PATH = {
     },
     STAFF_WORKSHIFT: {
       BASE: "/StaffWorkShift",
+      GET: (
+        StaffId?: string,
+        WorkShiftId?: string,
+        CounterId?: string,
+        PrepareTimeFrom?: string,
+        PrepareTimeTo?: string,
+        FromDate?: string,
+        ToDate?: string,
+        StartTime?: string,
+        EndTime?: string,
+        Status?: string,
+        Keyword?: string,
+        Page?: number,
+        Size?: number
+      ) => {
+        let params = [];
+        if (StaffId !== undefined) params.push(`staffId=${StaffId}`);
+        if (WorkShiftId !== undefined) params.push(`workShiftId=${WorkShiftId}`);
+        if (CounterId !== undefined) params.push(`counterId=${CounterId}`);
+        if (PrepareTimeFrom !== undefined) params.push(`prepareTimeFrom=${PrepareTimeFrom}`);
+        if (PrepareTimeTo !== undefined) params.push(`prepareTimeTo=${PrepareTimeTo}`);
+        if (FromDate !== undefined) params.push(`fromDate=${FromDate}`);
+        if (ToDate !== undefined) params.push(`toDate=${ToDate}`);
+        if (StartTime !== undefined) params.push(`startTime=${StartTime}`);
+        if (EndTime !== undefined) params.push(`endTime=${EndTime}`);
+        if (Status !== undefined) params.push(`status=${Status}`);
+        if (Keyword !== undefined) params.push(`keyword=${Keyword}`);
+        if (Page !== undefined) params.push(`page=${Page}`);
+        if (Size !== undefined) params.push(`size=${Size}`);
+        return `/StaffWorkShift${params.length ? "?" + params.join("&") : ""}`;
+      },
       GET_BY_ID: (id: string) => `/StaffWorkShift/${id}`,
       CREATE: "/StaffWorkShift",
-      BY_STAFF: (staffId: string) => `/StaffWorkShift/by-staff/${staffId}`,
+      BY_STAFF: (staffId: string) => `/StaffWorkShift/${staffId}`,
       CHECK_IN: (id: string) => `/StaffWorkShift/${id}/check-in`,
       CHECK_OUT: (id: string) => `/StaffWorkShift/${id}/check-out`,
     },
@@ -668,6 +714,21 @@ export const API_PATH = {
         PUT: (id: string) => `/PAKNCategory/${id}`,
         DELETE: (id: string) => `/PAKNCategory/${id}`,
       },
+      SHIFT_SWAP: {
+        CREATE: '/ShiftSwapRequest',
+        GET_MY_REQUESTS: (status?: number) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
+        GET_LIST: (status?: number, page?: number, size?: number) => {
+          const params = new URLSearchParams();
+          if (status !== undefined) params.append('status', String(status));
+          if (page !== undefined) params.append('page', String(page));
+          if (size !== undefined) params.append('size', String(size));
+          return `/ShiftSwapRequest${params.toString() ? `?${params}` : ''}`;
+        },
+        GET_BY_ID: (id: string) => `/ShiftSwapRequest/${id}`,
+        RESPOND: (id: string) => `/ShiftSwapRequest/${id}/respond`,
+        APPROVE: (id: string) => `/ShiftSwapRequest/${id}/approve`,
+        CANCEL: (id: string) => `/ShiftSwapRequest/${id}/cancel`,
+      },
     },
   STAFF: {
     LEAVE_REQUEST: {
@@ -676,7 +737,7 @@ export const API_PATH = {
       GET_BY_ID: (id: string) => `/LeaveRequest/${id}`,
     },
     STAFF_WORKSHIFT: {
-      MY: "/StaffWorkShift/my",
+      MY: "/StaffWorkShift/my-schedule",
       CHECK_IN: (id: string) => `/StaffWorkShift/${id}/check-in`,
       CHECK_OUT: (id: string) => `/StaffWorkShift/${id}/check-out`,
     },

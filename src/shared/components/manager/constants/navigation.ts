@@ -192,6 +192,11 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             },
         ],
     },
+    {
+        title: 'Duyệt Đổi Ca',
+        url: '/manager/duyet-doi-ca',
+        icon: ListChecks,
+    },
 ];
 
 export const MANAGER_PATH_LABELS: Record<string, string> = {
@@ -243,6 +248,7 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
     // Quản lý PAKN
     pakn: 'Danh sách PAKN',
     'danh-muc-pakn': 'Danh mục PAKN',
+    'duyet-doi-ca': 'Duyệt Đổi Ca',
 };
 
 
