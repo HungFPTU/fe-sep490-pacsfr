@@ -1,7 +1,7 @@
 import { http, httpNoLoading } from '@core/http/client';
 import { API_PATH } from '@/core/config/api.path';
 import { RestResponse, RestPaged } from '@/types/rest';
-import type { Service, CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest } from '../types';
+import type { Service, CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest, AssignAudienceRequest } from '../types';
 
 export const serviceApi = {
     // GET list with filters
@@ -52,6 +52,14 @@ export const serviceApi = {
     assignSubmissionMethods: (data: AssignSubmissionMethodsRequest) => {
         return httpNoLoading.post<RestResponse<{ success: boolean; message: string }>>(
             API_PATH.MANAGER.SERVICES.ASSIGN_SUBMISSION_METHODS,
+            data
+        );
+    },
+
+    // Assign audience
+    assignAudience: (data: AssignAudienceRequest) => {
+        return httpNoLoading.post<RestResponse<{ success: boolean; message: string }>>(
+            API_PATH.MANAGER.SERVICES.ASSIGN_AUDIENCE,
             data
         );
     },

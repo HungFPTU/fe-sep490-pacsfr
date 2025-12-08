@@ -99,6 +99,7 @@ export const API_PATH = {
         GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) =>
           `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
         ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
+        ASSIGN_AUDIENCE: "/Service/assign-audience",
       },
       ACCOUNTS: {
         GET_ALL: '/Staff',
@@ -344,6 +345,7 @@ export const API_PATH = {
       DELETE: (id: string) => `/Service/${id}`,
       GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
       ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
+      ASSIGN_AUDIENCE: "/Service/assign-audience",
     },
     QUEUES: {
       ALL: "/queues",
@@ -617,23 +619,36 @@ export const API_PATH = {
       PUT: (id: string) => `/PublicServiceNew/${id}`,
       DELETE: (id: string) => `/PublicServiceNew/${id}`,
     },
-    PAKN: {
-      GET_ALL: (
-        keyword: string,
-        status: string,
-        categoryId: string,
-        page: number,
-        size: number
-      ) =>
-        `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
-      GET_BY_ID: (id: string) => `/PAKN/${id}`,
-      POST: "/PAKN",
-      PUT: (id: string) => `/PAKN/${id}`,
-      DELETE: (id: string) => `/PAKN/${id}`,
-      ASSIGN_STAFF: "/PAKN/assign-staff",
-      UPDATE_STATUS: "/PAKN/update-status",
+      PAKN: {
+        GET_ALL: (
+          keyword: string,
+          status: string,
+          categoryId: string,
+          page: number,
+          size: number
+        ) =>
+          `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
+        GET_BY_ID: (id: string) => `/PAKN/${id}`,
+        POST: "/PAKN",
+        PUT: (id: string) => `/PAKN/${id}`,
+        DELETE: (id: string) => `/PAKN/${id}`,
+        ASSIGN_STAFF: "/PAKN/assign-staff",
+        UPDATE_STATUS: "/PAKN/update-status",
+      },
+      TARGET_AUDIENCE: {
+        GET_ALL: (
+          Keyword: string,
+          IsActive: boolean,
+          Page: number,
+          Size: number
+        ) =>
+          `/TargetAudience?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${Size}`,
+        GET_BY_ID: (id: string) => `/TargetAudience/${id}`,
+        POST: "/TargetAudience",
+        PUT: (id: string) => `/TargetAudience/${id}`,
+        DELETE: (id: string) => `/TargetAudience/${id}`,
+      },
     },
-  },
   STAFF: {
     LEAVE_REQUEST: {
       MY: "/LeaveRequest/my",

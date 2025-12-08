@@ -84,6 +84,10 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
                 title: 'Quy trình dịch vụ',
                 url: '/manager/quy-trinh-dich-vu',
             },
+            {
+                title: 'Quản lý đối tượng',
+                url: '/manager/doi-tuong',
+            },
         ],
     },
     {
@@ -204,6 +208,7 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
     'phuong-thuc-nop-ho-so': 'Phương thức nộp hồ sơ',
     'quy-trinh-dich-vu': 'Quy trình dịch vụ',
     'tai-lieu-yeu-cau': 'Tài liệu yêu cầu',
+    'doi-tuong': 'Quản lý đối tượng',
     queue: 'Quản lý hàng đợi',
 
     // Quản lý phòng ban
