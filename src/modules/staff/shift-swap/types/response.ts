@@ -30,23 +30,43 @@ export interface ShiftSwapRequest {
   createdAt: string | Date;
 }
 
-export type ShiftSwapStatus = 0 | 1 | 2 | 3 | 4 | 5;
+export type ShiftSwapStatus = 
+  | 'PendingTargetResponse'
+  | 'PendingManagerApproval'
+  | 'Approved'
+  | 'RejectedByTarget'
+  | 'RejectedByManager'
+  | 'Cancelled';
 
 export const SHIFT_SWAP_STATUS_LABELS: Record<ShiftSwapStatus, string> = {
-  0: 'Chờ phản hồi',
-  1: 'Chờ duyệt',
-  2: 'Đã duyệt',
-  3: 'Bị từ chối',
-  4: 'Manager từ chối',
-  5: 'Đã hủy',
+  'PendingTargetResponse': 'Chờ phản hồi',
+  'PendingManagerApproval': 'Chờ duyệt',
+  'Approved': 'Đã duyệt',
+  'RejectedByTarget': 'Bị từ chối (nhân viên)',
+  'RejectedByManager': 'Manager từ chối',
+  'Cancelled': 'Đã hủy',
 };
 
 export const SHIFT_SWAP_STATUS_COLORS: Record<ShiftSwapStatus, string> = {
-  0: 'bg-yellow-100 text-yellow-800',
-  1: 'bg-blue-100 text-blue-800',
-  2: 'bg-green-100 text-green-800',
-  3: 'bg-red-100 text-red-800',
-  4: 'bg-red-100 text-red-800',
-  5: 'bg-slate-100 text-slate-800',
+  'PendingTargetResponse': 'bg-yellow-100 text-yellow-800',
+  'PendingManagerApproval': 'bg-blue-100 text-blue-800',
+  'Approved': 'bg-green-100 text-green-800',
+  'RejectedByTarget': 'bg-red-100 text-red-800',
+  'RejectedByManager': 'bg-red-100 text-red-800',
+  'Cancelled': 'bg-slate-100 text-slate-800',
+};
+
+// Helper to check if status is pending manager approval
+export const isPendingManagerApproval = (status: ShiftSwapStatus): boolean => {
+  return status === 'PendingManagerApproval';
+};
+
+// Helper to convert status to display format
+export const getStatusLabel = (status: ShiftSwapStatus): string => {
+  return SHIFT_SWAP_STATUS_LABELS[status];
+};
+
+export const getStatusColor = (status: ShiftSwapStatus): string => {
+  return SHIFT_SWAP_STATUS_COLORS[status];
 };
 

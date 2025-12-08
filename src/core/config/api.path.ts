@@ -192,12 +192,12 @@ export const API_PATH = {
       },
       SHIFT_SWAP: {
         CREATE: '/ShiftSwapRequest',
-        GET_MY_REQUESTS: (status?: number) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
-        GET_LIST: (status?: number, page?: number, size?: number) => {
+        GET_MY_REQUESTS: (status?: string) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
+        GET_LIST: (status?: string, page?: number, size?: number) => {
           const params = new URLSearchParams();
-          if (status !== undefined) params.append('status', String(status));
-          if (page !== undefined) params.append('page', String(page));
-          if (size !== undefined) params.append('size', String(size));
+          if (status !== undefined) params.append('status', status);
+          if (page !== undefined) params.append('page', page.toString());
+          if (size !== undefined) params.append('size', size.toString());
           return `/ShiftSwapRequest${params.toString() ? `?${params}` : ''}`;
         },
         GET_BY_ID: (id: string) => `/ShiftSwapRequest/${id}`,
@@ -716,12 +716,12 @@ export const API_PATH = {
       },
       SHIFT_SWAP: {
         CREATE: '/ShiftSwapRequest',
-        GET_MY_REQUESTS: (status?: number) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
-        GET_LIST: (status?: number, page?: number, size?: number) => {
+        GET_MY_REQUESTS: (status?: string) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
+        GET_LIST: (status?: string, page?: number, size?: number) => {
           const params = new URLSearchParams();
-          if (status !== undefined) params.append('status', String(status));
-          if (page !== undefined) params.append('page', String(page));
-          if (size !== undefined) params.append('size', String(size));
+          if (status !== undefined) params.append('status', status);
+          if (page !== undefined) params.append('page', page.toString());
+          if (size !== undefined) params.append('size', size.toString());
           return `/ShiftSwapRequest${params.toString() ? `?${params}` : ''}`;
         },
         GET_BY_ID: (id: string) => `/ShiftSwapRequest/${id}`,

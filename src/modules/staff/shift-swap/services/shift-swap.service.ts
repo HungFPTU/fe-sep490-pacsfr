@@ -18,12 +18,12 @@ export const shiftSwapService = {
     return result;
   },
 
-  async getMyRequests(status?: number): Promise<RestPaged<ShiftSwapRequest>> {
+  async getMyRequests(status?: string): Promise<RestPaged<ShiftSwapRequest>> {
     const response = await shiftSwapApi.getMyRequests(status);
     return response.data as RestPaged<ShiftSwapRequest>;
   },
 
-  async getList(status?: number, page = 1, size = 10): Promise<RestPaged<ShiftSwapRequest>> {
+  async getList(status?: string, page = 1, size = 10): Promise<RestPaged<ShiftSwapRequest>> {
     const response = await shiftSwapApi.getList(status, page, size);
     return response.data as RestPaged<ShiftSwapRequest>;
   },

@@ -5,12 +5,12 @@ import { Filter, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/shared/components/ui/button.ui';
 import { useShiftSwapList, useApproveShiftSwap } from '@/modules/staff/shift-swap/hooks';
 import { ShiftSwapRequestCard } from '@/modules/staff/shift-swap/components';
-import { SHIFT_SWAP_STATUS_LABELS } from '@/modules/staff/shift-swap/types';
+import { SHIFT_SWAP_STATUS_LABELS, isPendingManagerApproval } from '@/modules/staff/shift-swap/types';
 import { useGlobalToast } from '@/core/patterns/SingletonHook';
 import type { ShiftSwapRequest } from '@/modules/staff/shift-swap/types';
 
 export default function ManagerShiftSwapPage() {
-  const [selectedStatus, setSelectedStatus] = useState<number | undefined>(1); // Mặc định chờ duyệt
+  const [selectedStatus, setSelectedStatus] = useState<string | undefined>('PendingManagerApproval'); // Mặc định chờ duyệt
   const [rejectionReason, setRejectionReason] = useState('');
   const [rejectingId, setRejectingId] = useState<string | null>(null);
 
@@ -24,7 +24,12 @@ export default function ManagerShiftSwapPage() {
   const approveMutation = useApproveShiftSwap();
   const toast = useGlobalToast();
 
-  const requests = requestsData?.items || [];
+  // Extract requests from API response
+  const requests = (() => {
+    if (!requestsData?.data) return [];
+    const values = (requestsData.data as any)?.$values || (requestsData.data as any)?.items?.$values;
+    return Array.isArray(values) ? values : [];
+  })();
 
   const handleApprove = async (request: ShiftSwapRequest) => {
     try {
@@ -69,7 +74,7 @@ export default function ManagerShiftSwapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white p-6">
+    <div className="min-h-screen bg-linear-to-b from-slate-50 to-white p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -84,19 +89,19 @@ export default function ManagerShiftSwapPage() {
           <div className="rounded-lg border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-600">Chờ Duyệt</p>
             <p className="mt-1 text-2xl font-bold text-indigo-600">
-              {requests.filter((r) => r.status === 1).length}
+              {requests.filter((r) => isPendingManagerApproval(r.status as any)).length}
             </p>
           </div>
           <div className="rounded-lg border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-600">Đã Duyệt</p>
             <p className="mt-1 text-2xl font-bold text-green-600">
-              {requests.filter((r) => r.status === 2).length}
+              {requests.filter((r) => r.status === 'Approved').length}
             </p>
           </div>
           <div className="rounded-lg border border-slate-200 bg-white p-4">
             <p className="text-sm text-slate-600">Từ Chối</p>
             <p className="mt-1 text-2xl font-bold text-red-600">
-              {requests.filter((r) => r.status === 3 || r.status === 4).length}
+              {requests.filter((r) => r.status === 'RejectedByTarget' || r.status === 'RejectedByManager').length}
             </p>
           </div>
         </div>
@@ -106,7 +111,7 @@ export default function ManagerShiftSwapPage() {
           <Filter className="h-4 w-4 text-slate-400" />
           <select
             value={selectedStatus ?? ''}
-            onChange={(e) => setSelectedStatus(e.target.value ? Number(e.target.value) : undefined)}
+            onChange={(e) => setSelectedStatus(e.target.value || undefined)}
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
           >
             <option value="">Tất cả trạng thái</option>
@@ -139,7 +144,7 @@ export default function ManagerShiftSwapPage() {
                 </div>
 
                 {/* Manager Actions */}
-                {request.status === 1 && (
+                {isPendingManagerApproval(request.status as any) && (
                   <div className="space-y-3 border-t border-slate-200 pt-4">
                     {rejectingId === request.id ? (
                       <div className="space-y-2">

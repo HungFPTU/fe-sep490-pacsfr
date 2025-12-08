@@ -8,7 +8,7 @@ import type { RestMany } from '@/types/rest';
 
 const QUERY_KEYS = {
   BASE: ['staff-shift-swap'] as const,
-  MY_REQUESTS: (status?: number) => [...QUERY_KEYS.BASE, 'my-requests', status] as const,
+  MY_REQUESTS: (status?: string) => [...QUERY_KEYS.BASE, 'my-requests', status] as const,
   LIST: (filters?: ShiftSwapFilters) => [...QUERY_KEYS.BASE, 'list', filters] as const,
   DETAIL: (id: string) => [...QUERY_KEYS.BASE, 'detail', id] as const,
   AVAILABLE_STAFF: (keyword?: string) => [...QUERY_KEYS.BASE, 'available-staff', keyword] as const,
@@ -24,7 +24,7 @@ export const useCreateShiftSwapRequest = () => {
   });
 };
 
-export const useMyShiftSwapRequests = (status?: number) => {
+export const useMyShiftSwapRequests = (status?: string) => {
   return useQuery({
     queryKey: QUERY_KEYS.MY_REQUESTS(status),
     queryFn: () => shiftSwapService.getMyRequests(status),

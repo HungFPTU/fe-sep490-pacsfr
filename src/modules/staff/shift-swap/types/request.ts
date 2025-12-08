@@ -18,7 +18,7 @@ export interface ApproveShiftSwapRequest {
 }
 
 export interface ShiftSwapFilters {
-  status?: number;
+  status?: string;
   page?: number;
   size?: number;
 }

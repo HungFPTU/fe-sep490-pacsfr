@@ -4,26 +4,30 @@ import React from 'react';
 import { formatDate } from '@/shared/lib/utils';
 import type { ShiftSwapRequest } from '../../../types';
 import { SHIFT_SWAP_STATUS_LABELS, SHIFT_SWAP_STATUS_COLORS } from '../../../types';
-import { Calendar, User, Clock } from 'lucide-react';
+import { Calendar, User, Clock, CheckCircle2, XCircle } from 'lucide-react';
 
 interface ShiftSwapRequestCardProps {
   request: ShiftSwapRequest;
   onRespond?: (request: ShiftSwapRequest) => void;
   onApprove?: (request: ShiftSwapRequest) => void;
-  isStaff?: boolean;
-  isManager?: boolean;
+  isTargetStaff?: boolean; // Staff có quyền trả lời (Chấp nhận/Từ chối)
+  isManager?: boolean; // Manager có quyền duyệt
 }
 
 export const ShiftSwapRequestCard: React.FC<ShiftSwapRequestCardProps> = ({
   request,
   onRespond,
   onApprove,
-  isStaff = true,
+  isTargetStaff = false,
   isManager = false,
 }) => {
-  const canRespond = isStaff && request.status === 0; // Staff B chờ phản hồi
-  const canApprove = isManager && request.status === 1; // Manager chờ duyệt
-  const showRespond = request.targetStaffId === '' && request.status === 0; // Check if current user is target staff
+  // Check status using string enum
+  // Target Staff (người được yêu cầu) có quyền trả lời khi status = PendingTargetResponse
+  const canRespond = isTargetStaff && request.status === 'PendingTargetResponse';
+  // Manager có quyền duyệt khi status = PendingManagerApproval
+  const canApprove = isManager && request.status === 'PendingManagerApproval';
+  const isRejectedByTarget = request.status === 'RejectedByTarget';
+  const isRejectedByManager = request.status === 'RejectedByManager';
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -82,7 +86,7 @@ export const ShiftSwapRequestCard: React.FC<ShiftSwapRequestCardProps> = ({
       </div>
 
       {/* Status Info */}
-      {request.status === 3 && request.rejectionReason && (
+      {(isRejectedByTarget || isRejectedByManager) && request.rejectionReason && (
         <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3">
           <p className="text-xs font-medium text-red-700">Lý do từ chối:</p>
           <p className="text-sm text-red-600">{request.rejectionReason}</p>
@@ -91,35 +95,41 @@ export const ShiftSwapRequestCard: React.FC<ShiftSwapRequestCardProps> = ({
 
       {/* Actions */}
       <div className="flex gap-2 pt-4 border-t border-slate-200">
+        {/* Target Staff chỉ có quyền trả lời khi status = PendingTargetResponse */}
         {canRespond && onRespond && (
           <>
             <button
-              onClick={() => onRespond(request)}
-              className="flex-1 rounded-lg bg-green-600 hover:bg-green-700 text-white py-2 text-sm font-medium"
+              onClick={() => onRespond({ ...request, targetStaffAccepted: true })}
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 hover:bg-green-700 text-white py-2 text-sm font-medium transition-colors"
             >
+              <CheckCircle2 className="h-4 w-4" />
               Chấp nhận
             </button>
             <button
-              onClick={() => onRespond({ ...request, status: 3 })}
-              className="flex-1 rounded-lg bg-red-600 hover:bg-red-700 text-white py-2 text-sm font-medium"
+              onClick={() => onRespond({ ...request, targetStaffAccepted: false })}
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-700 text-white py-2 text-sm font-medium transition-colors"
             >
+              <XCircle className="h-4 w-4" />
               Từ chối
             </button>
           </>
         )}
 
+        {/* Manager chỉ có quyền duyệt/từ chối khi status = PendingManagerApproval */}
         {canApprove && onApprove && (
           <>
             <button
               onClick={() => onApprove(request)}
-              className="flex-1 rounded-lg bg-green-600 hover:bg-green-700 text-white py-2 text-sm font-medium"
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 hover:bg-green-700 text-white py-2 text-sm font-medium transition-colors"
             >
+              <CheckCircle2 className="h-4 w-4" />
               Duyệt
             </button>
             <button
-              onClick={() => onApprove({ ...request, status: 4 })}
-              className="flex-1 rounded-lg bg-red-600 hover:bg-red-700 text-white py-2 text-sm font-medium"
+              onClick={() => onApprove(request)}
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-700 text-white py-2 text-sm font-medium transition-colors"
             >
+              <XCircle className="h-4 w-4" />
               Từ chối
             </button>
           </>

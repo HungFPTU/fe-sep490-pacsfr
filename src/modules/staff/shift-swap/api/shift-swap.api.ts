@@ -16,13 +16,13 @@ export const shiftSwapApi = {
     );
   },
 
-  getMyRequests: (status?: number) => {
+  getMyRequests: (status?: string) => {
     return http.get<RestPaged<ShiftSwapRequest>>(
       API_PATH.MANAGER.SHIFT_SWAP.GET_MY_REQUESTS(status)
     );
   },
 
-  getList: (status?: number, page?: number, size?: number) => {
+  getList: (status?: string, page?: number, size?: number) => {
     return http.get<RestPaged<ShiftSwapRequest>>(
       API_PATH.MANAGER.SHIFT_SWAP.GET_LIST(status, page, size)
     );
