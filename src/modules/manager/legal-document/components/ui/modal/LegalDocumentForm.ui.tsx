@@ -27,6 +27,7 @@ interface Props {
 export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, initData }) => {
     const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
     const [uploadedFileName, setUploadedFileName] = useState<string>('');
+    const [inputMode, setInputMode] = useState<'upload' | 'manual'>('upload');
 
     // Sync uploadedFileUrl with initData fileUrl (for edit mode) or form fileUrl (for new uploads)
     const formFileUrl = form.state.values.fileUrl;
@@ -420,87 +421,215 @@ export const LegalDocumentForm: React.FC<Props> = ({ form, isLoading, isEdit, in
                 }}
             </form.Field>
 
-            {/* File Upload */}
-            <div className="space-y-2">
+            {/* File Upload or Manual URL Input */}
+            <div className="space-y-3">
                 <label className="text-sm font-medium text-foreground">
                     File đính kèm {isEdit && <span className="text-gray-500">(Chỉ thay đổi khi cần thiết)</span>}
                 </label>
 
-                {/* File Upload Area */}
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                    <input
-                        type="file"
-                        onChange={handleFileChange}
-                        accept=".pdf,.doc,.docx,.txt"
-                        className="hidden"
-                        id="file-upload"
-                        disabled={isUploading || isLoading}
-                    />
-                    <label
-                        htmlFor="file-upload"
-                        className={`cursor-pointer flex flex-col items-center space-y-2 ${isUploading || isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                {/* Mode Toggle Buttons */}
+                <div className="flex gap-2 p-1 bg-gray-100 rounded-lg w-fit">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setInputMode('upload');
+                            // Clear manual URL when switching to upload mode
+                            if (form.state.values.fileUrl && !uploadedFileUrl) {
+                                form.setFieldValue('fileUrl', '', { shouldTouch: true, shouldDirty: true });
+                            }
+                        }}
+                        className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                            inputMode === 'upload'
+                                ? 'bg-white text-blue-600 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                        disabled={isLoading}
                     >
-                        {isUploading ? (
-                            <>
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                                <span className="text-sm text-gray-600">Đang upload...</span>
-                            </>
-                        ) : (
-                            <>
-                                <UploadCloud className="w-8 h-8 text-gray-400" />
-                                <div>
-                                    <span className="text-sm font-medium text-blue-600 hover:text-blue-500">
-                                        Chọn file để upload
-                                    </span>
-                                    <p className="text-xs text-gray-500 mt-1">
-                                        PDF, DOC, DOCX, TXT (tối đa 100MB)
-                                    </p>
-                                </div>
-                            </>
-                        )}
-                    </label>
+                        Upload File
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setInputMode('manual');
+                            // Clear uploaded file when switching to manual mode
+                            if (uploadedFileUrl) {
+                                setUploadedFileUrl('');
+                                setUploadedFileName('');
+                            }
+                        }}
+                        className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                            inputMode === 'manual'
+                                ? 'bg-white text-blue-600 shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                        disabled={isLoading}
+                    >
+                        Nhập URL
+                    </button>
                 </div>
 
-                {/* Upload Error */}
-                {uploadError && (
-                    <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-md">
-                        <AlertCircle className="w-4 h-4 text-red-500" />
-                        <span className="text-sm text-red-600">{uploadError}</span>
-                    </div>
-                )}
-
-                {/* File Preview - Show existing file in edit mode or newly uploaded file */}
-                {(uploadedFileUrl || (isEdit && (formFileUrl || initFileUrl))) && (
-                    <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                        <div className="flex items-center space-x-3">
-                            <CheckCircle className="w-8 h-8 text-green-500" />
-                            <div>
-                                <p className="text-sm text-green-700 font-medium">
-                                    {isEdit ? 'File hiện tại' : 'File đã upload'}
-                                </p>
-                                <p className="text-xs text-green-600">
-                                    {uploadedFileName || (initFileUrl || formFileUrl || '').split('/').pop() || 'Unknown file'}
-                                </p>
-                                {isEdit && (
-                                    <p className="text-xs text-green-500 mt-1">
-                                        Click để thay đổi file
-                                    </p>
+                {/* Upload Mode */}
+                {inputMode === 'upload' && (
+                    <div className="space-y-2">
+                        {/* File Upload Area */}
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                            <input
+                                type="file"
+                                onChange={handleFileChange}
+                                accept=".pdf,.doc,.docx,.txt"
+                                className="hidden"
+                                id="file-upload"
+                                disabled={isUploading || isLoading}
+                            />
+                            <label
+                                htmlFor="file-upload"
+                                className={`cursor-pointer flex flex-col items-center space-y-2 ${isUploading || isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {isUploading ? (
+                                    <>
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                                        <span className="text-sm text-gray-600">Đang upload...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <UploadCloud className="w-8 h-8 text-gray-400" />
+                                        <div>
+                                            <span className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                                                Chọn file để upload
+                                            </span>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                PDF, DOC, DOCX, TXT (tối đa 100MB)
+                                            </p>
+                                        </div>
+                                    </>
                                 )}
-                            </div>
+                            </label>
                         </div>
+
+                        {/* Upload Error */}
+                        {uploadError && (
+                            <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                                <AlertCircle className="w-4 h-4 text-red-500" />
+                                <span className="text-sm text-red-600">{uploadError}</span>
+                            </div>
+                        )}
+
+                        {/* File Preview - Show existing file in edit mode or newly uploaded file */}
+                        {(uploadedFileUrl || (isEdit && (formFileUrl || initFileUrl))) && (
+                            <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                                <div className="flex items-center space-x-3">
+                                    <CheckCircle className="w-8 h-8 text-green-500" />
+                                    <div>
+                                        <p className="text-sm text-green-700 font-medium">
+                                            {isEdit ? 'File hiện tại' : 'File đã upload'}
+                                        </p>
+                                        <p className="text-xs text-green-600">
+                                            {uploadedFileName || (initFileUrl || formFileUrl || '').split('/').pop() || 'Unknown file'}
+                                        </p>
+                                        {isEdit && (
+                                            <p className="text-xs text-green-500 mt-1">
+                                                Click để thay đổi file
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Selected File Info (for new file selection) */}
+                        {form.state.values.file && !uploadedFileUrl && !isEdit && (
+                            <div className="p-3 bg-gray-50 border border-gray-200 rounded-md">
+                                <p className="text-sm text-gray-700">
+                                    <strong>File đã chọn:</strong> {form.state.values.file.name}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    Kích thước: {formatFileSize(form.state.values.file.size)}
+                                </p>
+                            </div>
+                        )}
                     </div>
                 )}
 
-                {/* Selected File Info (for new file selection) */}
-                {form.state.values.file && !uploadedFileUrl && !isEdit && (
-                    <div className="p-3 bg-gray-50 border border-gray-200 rounded-md">
-                        <p className="text-sm text-gray-700">
-                            <strong>File đã chọn:</strong> {form.state.values.file.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                            Kích thước: {formatFileSize(form.state.values.file.size)}
-                        </p>
-                    </div>
+                {/* Manual URL Input Mode */}
+                {inputMode === 'manual' && (
+                    <form.Field name="fileUrl">
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {(field: any) => {
+                            const manualUrl = field.state.value as string || '';
+                            const isValidUrl = manualUrl ? /^https?:\/\/.+/.test(manualUrl) : true;
+                            
+                            return (
+                                <div className="space-y-2">
+                                    <div className="relative">
+                                        <input
+                                            type="url"
+                                            className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm pr-20 ${
+                                                !isValidUrl ? 'border-red-400 focus:border-red-500' : 'border-slate-300 focus:border-slate-500'
+                                            } ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                            value={manualUrl}
+                                            onChange={(e) => {
+                                                field.handleChange(e.target.value as never);
+                                                // Clear uploaded file state when manually entering URL
+                                                if (uploadedFileUrl) {
+                                                    setUploadedFileUrl('');
+                                                    setUploadedFileName('');
+                                                }
+                                            }}
+                                            onBlur={field.handleBlur}
+                                            placeholder="https://example.com/document.pdf"
+                                            disabled={isLoading}
+                                        />
+                                        {manualUrl && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    field.handleChange('' as never);
+                                                    setUploadedFileUrl('');
+                                                    setUploadedFileName('');
+                                                }}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-xs text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                                                disabled={isLoading}
+                                            >
+                                                Xóa
+                                            </button>
+                                        )}
+                                    </div>
+                                    
+                                    {!isValidUrl && manualUrl && (
+                                        <p className="text-xs text-red-600">
+                                            URL không hợp lệ. Vui lòng nhập URL bắt đầu với http:// hoặc https://
+                                        </p>
+                                    )}
+                                    
+                                    <p className="text-xs text-gray-500">
+                                        Nhập URL trực tiếp đến file (ví dụ: link Google Drive, Dropbox, hoặc server khác)
+                                    </p>
+                                    
+                                    {manualUrl && isValidUrl && (
+                                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center space-x-2">
+                                                    <CheckCircle className="w-5 h-5 text-blue-500" />
+                                                    <div>
+                                                        <p className="text-sm text-blue-700 font-medium">URL đã nhập</p>
+                                                        <p className="text-xs text-blue-600 truncate max-w-md">{manualUrl}</p>
+                                                    </div>
+                                                </div>
+                                                <a
+                                                    href={manualUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="px-3 py-1 text-xs text-blue-600 hover:text-blue-700 bg-white hover:bg-blue-50 border border-blue-300 rounded transition-colors"
+                                                >
+                                                    Xem thử
+                                                </a>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        }}
+                    </form.Field>
                 )}
             </div>
 

@@ -16,13 +16,11 @@ interface UpdateCaseModalProps {
 }
 
 type FormValues = {
-  priorityLevel: number;
   submissionMethod: string;
   estimatedCompletionDate: string;
   actualCompletionDate: string;
   resultDescription: string;
   totalFee: number;
-  isPayment: boolean;
   notes: string;
 };
 
@@ -76,40 +74,20 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
 
         {/* Form Fields */}
         <div className="space-y-4">
-          {/* Priority Level */}
-          <form.Field name="priorityLevel">
-            {(field) => (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Mức độ ưu tiên <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(Number(e.target.value) as never)}
-                  disabled={isLoading}
-                  className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value={1}>Thấp (1)</option>
-                  <option value={2}>Trung bình (2)</option>
-                  <option value={3}>Cao (3)</option>
-                  <option value={4}>Rất cao (4)</option>
-                  <option value={5}>Khẩn cấp (5)</option>
-                </select>
-              </div>
-            )}
-          </form.Field>
-
           {/* Submission Method */}
           <form.Field name="submissionMethod">
             {(field) => (
-              <InputField<FormValues>
-                form={form as FormApiOf<FormValues>}
-                name="submissionMethod"
-                label="Phương thức nộp"
-                required
-                placeholder="Nhập phương thức nộp (trực tiếp, online...)"
-                disabled={isLoading}
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phương thức nộp
+                </label>
+                <input
+                  type="text"
+                  value={field.state.value}
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                />
+              </div>
             )}
           </form.Field>
 
@@ -119,14 +97,13 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
               {(field) => (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Ngày dự kiến hoàn thành <span className="text-red-500">*</span>
+                    Ngày dự kiến hoàn thành
                   </label>
                   <input
                     type="date"
                     value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value as never)}
-                    disabled={isLoading}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
                   />
                 </div>
               )}
@@ -155,39 +132,17 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
             {(field) => (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tổng phí <span className="text-red-500">*</span>
+                  Tổng phí
                 </label>
                 <input
                   type="number"
                   value={field.state.value}
-                  onChange={(e) => field.handleChange(Number(e.target.value) as never)}
-                  disabled={isLoading}
-                  min={0}
-                  step={1000}
-                  placeholder="Nhập tổng phí"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Số tiền: {field.state.value.toLocaleString('vi-VN')} VNĐ
                 </p>
-              </div>
-            )}
-          </form.Field>
-
-          {/* Is Payment */}
-          <form.Field name="isPayment">
-            {(field) => (
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.checked as never)}
-                  disabled={isLoading}
-                  className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                />
-                <label className="ml-2 text-sm font-medium text-gray-700">
-                  Đã thanh toán
-                </label>
               </div>
             )}
           </form.Field>

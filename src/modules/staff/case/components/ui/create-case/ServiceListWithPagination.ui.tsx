@@ -128,8 +128,6 @@ export function ServiceListWithPagination({
                                             </div>
                                             <div className="text-xs text-gray-500 mt-1 flex items-center gap-3">
                                                 <span>Loại: {service.serviceType}</span>
-                                                <span>•</span>
-                                                <span>Phí: {service.feeAmount?.toLocaleString('vi-VN') ?? '0'}đ</span>
                                                 {service.processingTime && (
                                                     <>
                                                         <span>•</span>

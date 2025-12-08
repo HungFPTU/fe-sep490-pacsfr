@@ -18,10 +18,11 @@ export type Template = {
     modifiedAt?: string | Date;
     modifiedBy?: string;
     $id?: string;
-    
+
     // Populated fields (optional)
     docsTypeName?: string;
-    
+    docTypeName?: string;
+
     // Legacy field names (for backward compatibility with API)
     sampleCode?: string;
     sampleName?: string;
