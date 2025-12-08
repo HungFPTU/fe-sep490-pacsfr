@@ -178,12 +178,16 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
         ],
     },
     {
-        title: 'Quản lý PAKN',
+        title: 'Quản lý Phản ánh kiến nghị',
         url: '',
         icon: ListChecks,
         items: [
             {
-                title: 'Danh sách PAKN',
+                title: 'Danh mục phản ánh kiến nghị',
+                url: '/manager/danh-muc-pakn',
+            },
+            {
+                title: 'Phản ánh kiến nghị',
                 url: '/manager/pakn',
             },
         ],
@@ -238,6 +242,7 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
 
     // Quản lý PAKN
     pakn: 'Danh sách PAKN',
+    'danh-muc-pakn': 'Danh mục PAKN',
 };
 
 

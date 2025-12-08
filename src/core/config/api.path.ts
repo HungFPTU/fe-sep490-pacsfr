@@ -648,6 +648,19 @@ export const API_PATH = {
         PUT: (id: string) => `/TargetAudience/${id}`,
         DELETE: (id: string) => `/TargetAudience/${id}`,
       },
+      PAKN_CATEGORY: {
+        GET_ALL: (
+          keyword: string,
+          isActive: boolean | null,
+          page: number,
+          size: number
+        ) =>
+          `/PAKNCategory?keyword=${keyword}&isActive=${isActive ?? ""}&Page=${page}&Size=${size}`,
+        GET_BY_ID: (id: string) => `/PAKNCategory/${id}`,
+        POST: "/PAKNCategory",
+        PUT: (id: string) => `/PAKNCategory/${id}`,
+        DELETE: (id: string) => `/PAKNCategory/${id}`,
+      },
     },
   STAFF: {
     LEAVE_REQUEST: {
