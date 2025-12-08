@@ -12,7 +12,7 @@ import {
 } from '@/shared/components/manager/ui/select';
 import { useUpdatePaknStatus } from '../../../hooks';
 import { useGlobalToast } from '@/core/patterns/SingletonHook';
-import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR, getManagerAvailableTransitions } from '../../../constants';
+import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR, getStaffAvailableTransitions } from '../../../constants';
 import { PaknStatus } from '../../../types';
 
 
@@ -29,9 +29,9 @@ export const UpdateStatusModal: React.FC<Props> = ({ open, onClose, paknId, curr
   const updateStatusMutation = useUpdatePaknStatus();
   const toast = useGlobalToast();
 
-  // Get available transitions based on business rules
+  // Get available transitions based on business rules for Staff
   const availableStatuses = currentStatus 
-    ? getManagerAvailableTransitions(currentStatus)
+    ? getStaffAvailableTransitions(currentStatus)
     : [];
 
   useEffect(() => {
@@ -134,7 +134,10 @@ export const UpdateStatusModal: React.FC<Props> = ({ open, onClose, paknId, curr
                 ⚠️ Không thể chuyển đổi trạng thái
               </p>
               <p className="text-xs text-amber-700 mt-1">
-                Trạng thái "{PAKN_STATUS_LABEL[currentStatus]}" là trạng thái cuối cùng và không thể thay đổi.
+                {currentStatus === 'CHO_TIEP_NHAN' 
+                  ? 'Bạn chỉ có thể xử lý PAKN sau khi được Manager phân công (trạng thái "Đã tiếp nhận").'
+                  : `Trạng thái "${PAKN_STATUS_LABEL[currentStatus]}" là trạng thái cuối cùng và không thể thay đổi.`
+                }
               </p>
             </div>
           )}
@@ -160,3 +163,4 @@ export const UpdateStatusModal: React.FC<Props> = ({ open, onClose, paknId, curr
     </BaseModal>
   );
 };
+

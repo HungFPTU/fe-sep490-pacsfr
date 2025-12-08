@@ -1,15 +1,14 @@
 import React from 'react';
-import { Eye, Pencil, UserPlus } from 'lucide-react';
+import { Eye, Pencil } from 'lucide-react';
 import type { Pakn } from '../../../types';
 import { formatDate } from '@/shared/lib/utils';
-import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR, getManagerAvailableTransitions } from '../../../constants';
+import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR, getStaffAvailableTransitions } from '../../../constants';
 import { Button } from '@/shared/components/ui/button.ui';
 
 interface Props {
   items: Pakn[];
   isLoading: boolean;
   onView: (item: Pakn) => void;
-  onAssign: (item: Pakn) => void;
   onUpdateStatus: (item: Pakn) => void;
 }
 
@@ -17,7 +16,6 @@ export const PaknTable: React.FC<Props> = ({
   items,
   isLoading,
   onView,
-  onAssign,
   onUpdateStatus,
 }) => {
   return (
@@ -103,26 +101,15 @@ export const PaknTable: React.FC<Props> = ({
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => onAssign(item)}
-                      title="Phân công"
-                      disabled={
-                        item.status === 'HOAN_THANH' || 
-                        item.status === 'TU_CHOI' ||
-                        !!item.assignedStaffId
-                      }
-                    >
-                      <UserPlus className={`h-4 w-4 ${!!item.assignedStaffId ? 'text-slate-300' : 'text-indigo-500'}`} />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
                       onClick={() => onUpdateStatus(item)}
                       title={
-                        getManagerAvailableTransitions(item.status).length === 0
-                          ? 'Không thể cập nhật trạng thái (trạng thái cuối cùng)'
-                          : `Cập nhật trạng thái (có ${getManagerAvailableTransitions(item.status).length} lựa chọn)`
+                        getStaffAvailableTransitions(item.status).length === 0
+                          ? item.status === 'CHO_TIEP_NHAN'
+                            ? 'Chưa được phân công để xử lý'
+                            : 'Không thể cập nhật trạng thái (trạng thái cuối cùng)'
+                          : `Cập nhật trạng thái (có ${getStaffAvailableTransitions(item.status).length} lựa chọn)`
                       }
-                      disabled={getManagerAvailableTransitions(item.status).length === 0}
+                      disabled={getStaffAvailableTransitions(item.status).length === 0}
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
@@ -136,3 +123,4 @@ export const PaknTable: React.FC<Props> = ({
     </div>
   );
 };
+

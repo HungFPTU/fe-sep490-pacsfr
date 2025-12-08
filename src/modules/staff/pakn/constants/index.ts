@@ -17,20 +17,20 @@ export const PAKN_STATUS_COLOR: Record<string, string> = {
 };
 
 /**
- * Business Rules: Manager Status Transitions
- * Manager có thể chuyển đổi status theo các quy tắc sau:
+ * Business Rules: Staff Status Transitions
+ * Staff (sau khi được assign) có thể chuyển đổi status theo các quy tắc sau:
  */
-export const MANAGER_STATUS_TRANSITIONS: Record<string, string[]> = {
-  // Từ "Chờ tiếp nhận" -> có thể tiếp nhận hoặc từ chối
-  CHO_TIEP_NHAN: ['DA_TIEP_NHAN', 'TU_CHOI'],
+export const STAFF_STATUS_TRANSITIONS: Record<string, string[]> = {
+  // Từ "Chờ tiếp nhận" -> Staff không thể xử lý (chưa được assign)
+  CHO_TIEP_NHAN: [],
   
-  // Từ "Đã tiếp nhận" -> có thể chuyển sang xử lý (sau khi assign staff) hoặc từ chối
-  DA_TIEP_NHAN: ['DANG_XU_LY', 'TU_CHOI'],
+  // Từ "Đã tiếp nhận" -> Staff có thể bắt đầu xử lý
+  DA_TIEP_NHAN: ['DANG_XU_LY'],
   
-  // Từ "Đang xử lý" -> có thể chuyển sang đã trả lời hoặc từ chối
+  // Từ "Đang xử lý" -> Staff có thể trả lời hoặc từ chối nếu không thể xử lý
   DANG_XU_LY: ['DA_TRA_LOI', 'TU_CHOI'],
   
-  // Từ "Đã trả lời" -> có thể hoàn thành hoặc quay lại xử lý
+  // Từ "Đã trả lời" -> Staff có thể hoàn thành hoặc quay lại xử lý nếu cần
   DA_TRA_LOI: ['HOAN_THANH', 'DANG_XU_LY'],
   
   // Từ "Từ chối" -> không thể chuyển đổi (final state)
@@ -41,8 +41,8 @@ export const MANAGER_STATUS_TRANSITIONS: Record<string, string[]> = {
 };
 
 /**
- * Get available status transitions for Manager
+ * Get available status transitions for Staff
  */
-export const getManagerAvailableTransitions = (currentStatus: string): string[] => {
-  return MANAGER_STATUS_TRANSITIONS[currentStatus] || [];
+export const getStaffAvailableTransitions = (currentStatus: string): string[] => {
+  return STAFF_STATUS_TRANSITIONS[currentStatus] || [];
 };
