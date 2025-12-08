@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
-import { FileText, User, MapPin, Phone, Mail, Calendar, Tag, Info } from 'lucide-react';
+import React, { useState } from 'react';
+import { FileText, User, MapPin, Phone, Mail, Calendar, Tag, Info, MessageSquare } from 'lucide-react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { Button } from '@/shared/components/ui/button.ui';
 import { usePaknDetail } from '../../../hooks';
 import { formatDate } from '@/shared/lib/utils';
 import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR } from '../../../constants';
+import { PaknResponseModal } from '@/modules/staff/pakn-response/components/ui';
 
 interface Props {
   open: boolean;
@@ -16,6 +17,7 @@ interface Props {
 
 export const PaknDetailModal: React.FC<Props> = ({ open, onClose, id }) => {
   const { data: pakn, isLoading } = usePaknDetail(id || '');
+  const [responseModalOpen, setResponseModalOpen] = useState(false);
 
   const renderContent = () => {
     if (isLoading) {
@@ -155,20 +157,46 @@ export const PaknDetailModal: React.FC<Props> = ({ open, onClose, id }) => {
     );
   };
 
+  const canRespond = pakn && (pakn.status === 'DA_TIEP_NHAN' || pakn.status === 'DANG_XU_LY' || pakn.status === 'DA_TRA_LOI');
+
   return (
-    <BaseModal
-      open={open}
-      onClose={onClose}
-      title="Chi tiết Phản ánh kiến nghị"
-      footer={
-        <Button onClick={onClose} variant="default">
-          Đóng
-        </Button>
-      }
-      size="large"
-    >
-      {renderContent()}
-    </BaseModal>
+    <>
+      <BaseModal
+        open={open}
+        onClose={onClose}
+        title="Chi tiết Phản ánh kiến nghị"
+        footer={
+          <div className="flex justify-between">
+            {canRespond && (
+              <Button
+                onClick={() => setResponseModalOpen(true)}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Phản hồi
+              </Button>
+            )}
+            <Button onClick={onClose} variant="default">
+              Đóng
+            </Button>
+          </div>
+        }
+        size="large"
+      >
+        {renderContent()}
+      </BaseModal>
+
+      <PaknResponseModal
+        open={responseModalOpen}
+        onClose={() => setResponseModalOpen(false)}
+        paknId={id}
+        paknCode={pakn?.paknCode}
+        onSuccess={() => {
+          // Refresh PAKN detail after response
+          window.location.reload();
+        }}
+      />
+    </>
   );
 };
 

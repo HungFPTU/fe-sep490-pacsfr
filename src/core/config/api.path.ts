@@ -634,6 +634,13 @@ export const API_PATH = {
         DELETE: (id: string) => `/PAKN/${id}`,
         ASSIGN_STAFF: "/PAKN/assign-staff",
         UPDATE_STATUS: "/PAKN/update-status",
+        RESPONSE: {
+          POST: "/PAKN/response",
+          GET_LIST: (paknId: string, page: number, size: number) =>
+            `/PAKN/response?PAKNId=${paknId}&Page=${page}&Size=${size}`,
+          GET_BY_ID: (id: string) => `/PAKN/respone/${id}`,
+          GET_BY_CODE: (paknCode: string) => `/PAKN/responses/by-code?paknCode=${paknCode}`,
+        },
       },
       TARGET_AUDIENCE: {
         GET_ALL: (
