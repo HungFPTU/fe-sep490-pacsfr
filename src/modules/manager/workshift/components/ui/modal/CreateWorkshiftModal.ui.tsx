@@ -8,6 +8,7 @@ import { CreateWorkShiftRequest, UpdateWorkShiftRequest, WorkShift } from '../..
 import { WorkShiftForm } from './WorkShitfForm.ui';
 
 import { validateDuplicateShift } from '../../../utils/validation';
+import { isHoliday } from '../../../utils';
 
 interface CreateWorkShiftModalProps {
   open: boolean;
@@ -48,17 +49,27 @@ export function CreateWorkShiftModal({
       }
     }
 
+    // Validate holiday
+    const dateToCheck = typeof data.shiftDate === 'string' ? data.shiftDate : new Date(data.shiftDate).toISOString();
+    if (isHoliday(dateToCheck)) {
+      addToast({
+        message: 'Đây là ngày nghỉ không thể tạo ca làm việc',
+        type: 'error',
+      });
+      return;
+    }
+
     if (initData && initData.id) {
       try {
         // Lấy ngày giờ tử WS hiện tại 
-        const dateStr = typeof data.shiftDate === 'string' 
-          ? data.shiftDate 
-          : new Date(data.shiftDate).toISOString().split('T')[0]; 
+        const dateStr = typeof data.shiftDate === 'string'
+          ? data.shiftDate
+          : new Date(data.shiftDate).toISOString().split('T')[0];
         const [year, month, day] = dateStr.split('-');
         const dateObj = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
         const shiftDateISO = dateObj.toISOString();
 
-        
+
         const request: UpdateWorkShiftRequest = {
           id: initData.id,
           counterId: '3fa85f64-5717-4562-b3fc-2c963f66afa6', //Cái này fix cứng nha thầy Tài
@@ -79,14 +90,14 @@ export function CreateWorkShiftModal({
         onClose();
       } catch (error: any) {
         // Extract error message from backend
-        const errorMessage = error?.message || 
-                           error?.response?.data?.message || 
-                           error?.response?.data?.title ||
-                           'Có lỗi xảy ra khi cập nhật ca làm việc';
-        
-        addToast({ 
-          message: errorMessage, 
-          type: 'error' 
+        const errorMessage = error?.message ||
+          error?.response?.data?.message ||
+          error?.response?.data?.title ||
+          'Có lỗi xảy ra khi cập nhật ca làm việc';
+
+        addToast({
+          message: errorMessage,
+          type: 'error'
         });
         console.error('Submit error:', error);
       }
@@ -103,14 +114,14 @@ export function CreateWorkShiftModal({
         onClose();
       } catch (error: any) {
         // Extract error message from backend
-        const errorMessage = error?.message || 
-                           error?.response?.data?.message || 
-                           error?.response?.data?.title ||
-                           'Có lỗi xảy ra khi lưu ca làm việc';
-        
-        addToast({ 
-          message: errorMessage, 
-          type: 'error' 
+        const errorMessage = error?.message ||
+          error?.response?.data?.message ||
+          error?.response?.data?.title ||
+          'Có lỗi xảy ra khi lưu ca làm việc';
+
+        addToast({
+          message: errorMessage,
+          type: 'error'
         });
         console.error('Submit error:', error);
       }
