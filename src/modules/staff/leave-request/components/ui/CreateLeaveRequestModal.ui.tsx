@@ -8,7 +8,7 @@ import { useGlobalToast } from '@/core/patterns/SingletonHook';
 import { useAuth } from '@/modules/auth/hooks';
 import { Calendar, AlertCircle, Clock } from 'lucide-react';
 import { MAX_LEAVE_DAYS_PER_YEAR, LEAVE_TYPES, LEAVE_TYPE_LABELS } from '@/modules/manager/leave-request/constants';
-import { convertToISODateTime } from '../../utils';
+import { convertToISODateTime, getHolidaysInRange } from '../../utils';
 import type { LeaveType } from '@/modules/manager/leave-request/types';
 
 interface Props {
@@ -58,15 +58,20 @@ export const CreateLeaveRequestModal: React.FC<Props> = ({
         }
     }, [open, staffId]);
 
-    const calculateDays = (from: string, to: string): number => {
-        if (!from || !to) return 0;
+    const calculateDays = (from: string, to: string): { totalDays: number, holidayDates: string[] } => {
+        if (!from || !to) return { totalDays: 0, holidayDates: [] };
         const fromTime = new Date(from).getTime();
         const toTime = new Date(to).getTime();
-        if (toTime < fromTime) return 0;
-        return Math.ceil((toTime - fromTime) / (1000 * 60 * 60 * 24)) + 1;
+        if (toTime < fromTime) return { totalDays: 0, holidayDates: [] };
+
+        const rawDays = Math.ceil((toTime - fromTime) / (1000 * 60 * 60 * 24)) + 1;
+        const holidayDates = getHolidaysInRange(from, to);
+        const totalDays = Math.max(0, rawDays - holidayDates.length);
+
+        return { totalDays, holidayDates };
     };
 
-    const days = calculateDays(fromDate, toDate);
+    const { totalDays: days, holidayDates } = calculateDays(fromDate, toDate);
 
     const validate = (): boolean => {
         const newErrors: typeof errors = {};
@@ -88,6 +93,12 @@ export const CreateLeaveRequestModal: React.FC<Props> = ({
             const to = new Date(toDate);
             if (to < from) {
                 newErrors.toDate = 'Ngày kết thúc phải sau ngày bắt đầu';
+            }
+
+            // If user selects ONLY holidays (days = 0 but range is valid), show error
+            if (days === 0 && holidayDates.length > 0) {
+                const holidayError = 'Đây là ngày nghỉ , không cần nộp đơn';
+                newErrors.fromDate = holidayError;
             }
         }
 
@@ -273,13 +284,26 @@ export const CreateLeaveRequestModal: React.FC<Props> = ({
                 </div>
 
                 {/* Days Count */}
-                {days > 0 && (
+                {(days > 0 || holidayDates.length > 0) && (
                     <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-                        <div className="flex items-center gap-2 text-sm">
-                            <Clock className="h-4 w-4 text-indigo-600" />
-                            <span className="text-indigo-900 font-medium">
-                                Tổng số ngày nghỉ: <strong className="text-lg">{days}</strong> ngày
-                            </span>
+                        <div className="flex flex-col gap-1 text-sm">
+                            <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-indigo-600" />
+                                <span className="text-indigo-900 font-medium">
+                                    Tổng số ngày nghỉ: <strong className="text-lg">{days}</strong> ngày
+                                </span>
+                            </div>
+                            {holidayDates.length > 0 && (
+                                <div className="text-xs text-indigo-700 pl-6 space-y-0.5">
+                                    <p>Đã trừ {holidayDates.length} ngày lễ:</p>
+                                    <ul className="list-disc list-inside">
+                                        {holidayDates.map(date => {
+                                            const [y, m, d] = date.split('-');
+                                            return <li key={date}>Ngày {d}/{m}/{y} được nghỉ</li>;
+                                        })}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
