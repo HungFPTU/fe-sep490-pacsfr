@@ -9,6 +9,7 @@ import React, { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import type { WorkShift } from '../../../types';
 import { WorkShiftModel } from '../../../types/WorkShift.model';
+import { getHolidayName } from '../../../utils';
 
 interface WorkShiftCalendarProps {
   workShifts: WorkShift[];
@@ -188,24 +189,40 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
             return (
               <div
                 key={day}
-                className={`group relative flex flex-col rounded-xl border transition-all duration-300 ${
-                  today
-                    ? 'border-indigo-400 bg-linear-to-br from-indigo-50 to-purple-50 shadow-lg ring-2 ring-indigo-400/30'
-                    : 'border-gray-200 bg-white hover:border-indigo-300 hover:shadow-md'
-                }`}
+                className={`group relative flex flex-col rounded-xl border transition-all duration-300 ${today
+                  ? 'border-indigo-400 bg-linear-to-br from-indigo-50 to-purple-50 shadow-lg ring-2 ring-indigo-400/30'
+                  : 'border-gray-200 bg-white hover:border-indigo-300 hover:shadow-md'
+                  }`}
                 style={{ height: '180px' }}
               >
                 {/* Day number - fixed at top */}
-                <div className="shrink-0 p-1.5">
+                <div className="shrink-0 p-1.5 flex flex-col items-start gap-1">
                   <div
-                    className={`inline-flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold transition-all ${
-                      today
-                        ? 'bg-indigo-600 text-white shadow-md'
-                        : 'text-gray-700 group-hover:bg-indigo-50'
-                    }`}
+                    className={`inline-flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold transition-all ${today
+                      ? 'bg-indigo-600 text-white shadow-md'
+                      : 'text-gray-700 group-hover:bg-indigo-50'
+                      }`}
                   >
                     {day}
                   </div>
+                  {/* Holiday Name */}
+                  {date && (
+                    (() => {
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      const dateStr = `${year}-${month}-${day}`;
+                      const holidayName = getHolidayName(dateStr);
+                      if (holidayName) {
+                        return (
+                          <span className="text-[10px] font-semibold text-red-500 bg-red-50 px-1 py-0.5 rounded-sm line-clamp-1 w-full">
+                            {holidayName}
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()
+                  )}
                 </div>
 
                 {/* Shifts - scrollable container */}
@@ -213,7 +230,7 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
                   <div className="space-y-1">
                     {shifts.map((shiftModel) => {
                       const color = shiftModel.getDisplayColor();
-                      
+
                       return (
                         <div
                           key={shiftModel.id}
@@ -221,15 +238,14 @@ export const WorkShiftCalendar: React.FC<WorkShiftCalendarProps> = ({
                             e.stopPropagation();
                             onShiftClick(shiftModel.toData());
                           }}
-                          className={`group/shift relative cursor-pointer overflow-hidden rounded-md px-2 py-1.5 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md border ${
-                            color === 'indigo'
-                              ? 'bg-indigo-50 border-indigo-200 text-indigo-700 font-bold hover:bg-indigo-100'
-                              : color === 'amber'
+                          className={`group/shift relative cursor-pointer overflow-hidden rounded-md px-2 py-1.5 shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md border ${color === 'indigo'
+                            ? 'bg-indigo-50 border-indigo-200 text-indigo-700 font-bold hover:bg-indigo-100'
+                            : color === 'amber'
                               ? 'bg-amber-50 border-amber-200 text-amber-700 font-bold hover:bg-amber-100'
                               : color === 'purple'
-                              ? 'bg-purple-50 border-purple-200 text-purple-700 font-bold hover:bg-purple-100'
-                              : 'bg-gray-50 border-gray-200 text-gray-700 font-bold hover:bg-gray-100'
-                          }`}
+                                ? 'bg-purple-50 border-purple-200 text-purple-700 font-bold hover:bg-purple-100'
+                                : 'bg-gray-50 border-gray-200 text-gray-700 font-bold hover:bg-gray-100'
+                            }`}
                         >
                           <div className="flex items-center gap-1">
                             <div className="flex-1 min-w-0">
