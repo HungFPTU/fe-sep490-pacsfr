@@ -21,12 +21,12 @@ export const useChatSubmit = ({
     onError,
 }: UseChatSubmitProps) => {
     const { sendMessage, isSending } = useSendMessage();
-    
+
     const fetchAndSaveConversation = useCallback(async (convId: string, fallbackTitle?: string) => {
         try {
             const { chatbotService } = await import('../services/chatbot.service');
             const conversation = await chatbotService.getConversation(convId);
-            
+
             if (conversation) {
                 saveConversation({
                     conversationId: conversation.id,
@@ -36,7 +36,7 @@ export const useChatSubmit = ({
             }
         } catch (error) {
             console.error('Failed to fetch conversation details:', error);
-            
+
             if (fallbackTitle || convId) {
                 saveConversation({
                     conversationId: convId,
@@ -84,8 +84,8 @@ export const useChatSubmit = ({
             } catch (error) {
                 if ((error as Error).name !== 'AbortError') {
                     const errorMessage = error instanceof Error ? error.message : 'Đã xảy ra lỗi';
-                    onUpdateLastMessage(`Lỗi: ${errorMessage}`);
-                    onError('Không thể gửi tin nhắn. Vui lòng thử lại.');
+                    onUpdateLastMessage(`Hệ thống đang có lỗi , quý khách vui lòng chờ ít phút hoặc thử lại sau !`);
+                    onError('Hệ thống đang có lỗi , quý khách vui lòng chờ ít phút hoặc thử lại sau !');
                 }
                 return null;
             }
