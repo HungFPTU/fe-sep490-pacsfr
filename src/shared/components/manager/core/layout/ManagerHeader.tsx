@@ -42,15 +42,6 @@ export function ManagerHeader() {
                 {/* Right side - Actions */}
                 <div className="flex items-center gap-2">
                     {/* Settings */}
-                    <button
-                        className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                        title="Cài đặt"
-                    >
-                        <Settings className="h-5 w-5" />
-                    </button>
-
-                    {/* Notifications */}
-                    <NotificationsMenu />
 
                     <Separator orientation="vertical" className="mx-2 h-6" />
 

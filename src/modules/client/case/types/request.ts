@@ -1,6 +1,14 @@
 export interface CaseProgressRequest {
     caseCode: string;
-    captchaToken: string;
+}
+
+export interface CaseLookupRequest {
+    caseCode: string;
+}
+
+export interface CaseVerifyOTPRequest {
+    caseCode: string;
+    otpCode: string;
 }
 
 export interface CaseFeedbackRequest {
