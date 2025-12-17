@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { serviceService } from "../services/service.service";
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
-import type { CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest } from "../types";
+import type { CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest, AssignAudienceRequest } from "../types";
 
 // Re-export custom hooks
 export { useServiceForm } from './useServiceForm';
@@ -79,6 +79,25 @@ export const useAssignSubmissionMethods = () => {
             serviceService.assignSubmissionMethods(data),
         onSuccess: (_, variables) => {
             // Invalidate service detail to refresh submission methods
+            queryClient.invalidateQueries({
+                queryKey: QUERY_KEYS.SERVICE_DETAIL(variables.serviceId)
+            });
+            queryClient.invalidateQueries({
+                queryKey: QUERY_KEYS.SERVICE_BASE
+            });
+        },
+    });
+};
+
+// ASSIGN AUDIENCE mutation
+export const useAssignAudience = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (data: AssignAudienceRequest) => 
+            serviceService.assignAudience(data),
+        onSuccess: (_, variables) => {
+            // Invalidate service detail to refresh audience
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_DETAIL(variables.serviceId)
             });

@@ -20,6 +20,7 @@ const pathLabels: Record<string, string> = {
     case: 'Tra cứu hồ sơ',
     'create-case': 'Tạo hồ sơ mới',
     workshift: 'Lịch làm việc',
+    'doi-ca': 'Đổi ca làm việc',
     payment: 'Thanh toán',
     'pakn-category': 'Danh mục phản ánh kiến nghị',
     pakn: 'Phản ánh kiến nghị',

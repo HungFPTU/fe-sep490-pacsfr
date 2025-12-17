@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react';
 import { LargeServiceModal } from '@/shared/components/layout/manager/modal/ServiceDetailModal';
 import { ServiceInfo } from './ServiceInfo.ui';
 import { ServiceSubmissionMethods } from './ServiceSubmissionMethods.ui';
+import { ServiceAudiences } from './ServiceAudiences.ui';
 import { SubmissionMethodsDisplay } from './SubmissionMethodsDisplay.ui';
 import {
     ServiceAgenciesTable,
@@ -40,6 +41,13 @@ export const ServiceDetailModal: React.FC<Props> = ({
     const isLoadingDetail = !!service && !serviceDetail && (isDetailLoading || isFetching);
     const assignedMethodIds =
         serviceDetail?.submissionMethods?.$values?.map((method) => method.id) ?? [];
+    
+    // Get assigned audience IDs from serviceDetail
+    // Note: This assumes the API returns targetAudiences in serviceDetail
+    // If not available, will default to empty array
+    const assignedAudienceIds: string[] = [];
+    // TODO: Update this when API provides targetAudiences in serviceDetail response
+    // const assignedAudienceIds = serviceDetail?.targetAudiences?.$values?.map((audience) => audience.id) ?? [];
 
     if (!service || !resolvedService) return null;
 
@@ -124,12 +132,20 @@ export const ServiceDetailModal: React.FC<Props> = ({
                 )}
 
                 {service.id && (
-                    <div className="mt-6 border-t border-slate-200 pt-6">
-                        <ServiceSubmissionMethods
-                            serviceId={service.id}
-                            assignedMethodIds={assignedMethodIds}
-                        />
-                    </div>
+                    <>
+                        <div className="mt-6 border-t border-slate-200 pt-6">
+                            <ServiceSubmissionMethods
+                                serviceId={service.id}
+                                assignedMethodIds={assignedMethodIds}
+                            />
+                        </div>
+                        <div className="mt-6 border-t border-slate-200 pt-6">
+                            <ServiceAudiences
+                                serviceId={service.id}
+                                assignedAudienceIds={assignedAudienceIds}
+                            />
+                        </div>
+                    </>
                 )}
             </div>
         </LargeServiceModal>

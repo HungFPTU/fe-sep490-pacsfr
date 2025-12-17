@@ -8,4 +8,5 @@ export { ServiceSubmissionMethods } from './ServiceSubmissionMethods.ui';
 export { ServiceSubmissionMethodsTable } from './ServiceSubmissionMethodsTable.ui';
 export { SubmissionMethodsDisplay } from './SubmissionMethodsDisplay.ui';
 export { ServiceGroupDetail } from './ServiceGroupDetail.ui';
+export { ServiceAudiences } from './ServiceAudiences.ui';
 
