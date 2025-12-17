@@ -9,7 +9,7 @@ import { useGlobalToast } from '@/core/patterns/SingletonHook';
 interface CaseOTPVerificationModalProps {
   isOpen: boolean;
   caseCode: string;
-  onVerifySuccess?: () => void;
+  onVerifySuccess?: (data: any) => void;
   onClose: () => void;
 }
 
@@ -63,7 +63,7 @@ export const CaseOTPVerificationModal: React.FC<CaseOTPVerificationModalProps> =
         setStep('success');
         addToast({ message: 'Xác minh OTP thành công!', type: 'success' });
         setTimeout(() => {
-          onVerifySuccess?.();
+          onVerifySuccess?.(result?.data);
           handleClose();
         }, 1500);
       } else {
