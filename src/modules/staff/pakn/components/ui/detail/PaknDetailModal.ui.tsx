@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const PaknDetailModal: React.FC<Props> = ({ open, onClose, id }) => {
-  const { data: pakn, isLoading } = usePaknDetail(id || '');
+  const { data: pakn, isLoading, refetch } = usePaknDetail(id || '');
   const [responseModalOpen, setResponseModalOpen] = useState(false);
 
   const renderContent = () => {
@@ -170,7 +170,7 @@ export const PaknDetailModal: React.FC<Props> = ({ open, onClose, id }) => {
             {canRespond && (
               <Button
                 onClick={() => setResponseModalOpen(true)}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white mr-2"
               >
                 <MessageSquare className="h-4 w-4 mr-2" />
                 Phản hồi
@@ -191,9 +191,12 @@ export const PaknDetailModal: React.FC<Props> = ({ open, onClose, id }) => {
         onClose={() => setResponseModalOpen(false)}
         paknId={id}
         paknCode={pakn?.paknCode}
+        paknContent={pakn?.content}
         onSuccess={() => {
-          // Refresh PAKN detail after response
-          window.location.reload();
+          if (id) {
+            // Refresh PAKN detail after response without reloading the page
+            refetch();
+          }
         }}
       />
     </>

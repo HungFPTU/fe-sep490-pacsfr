@@ -12,6 +12,7 @@ interface Props {
   onClose: () => void;
   paknId: string | null;
   paknCode?: string;
+  paknContent?: string;
   onSuccess?: () => void;
 }
 
@@ -20,6 +21,7 @@ export const PaknResponseModal: React.FC<Props> = ({
   onClose,
   paknId,
   paknCode,
+  paknContent,
   onSuccess,
 }) => {
   const [responseContent, setResponseContent] = useState('');
@@ -102,6 +104,13 @@ export const PaknResponseModal: React.FC<Props> = ({
             <p className="text-sm text-slate-600">
               Mã PAKN: <span className="font-medium text-slate-900">{paknCode}</span>
             </p>
+            {/* Nội dung phản ánh */}
+            <div className="mt-2">
+              <label className="text-sm font-medium text-slate-700">
+                Nội dung phản ánh
+              </label>
+              <p className="mt-1 text-sm text-slate-900">{paknContent}</p>
+            </div>
           </div>
         )}
 
