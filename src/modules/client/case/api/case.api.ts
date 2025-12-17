@@ -36,5 +36,14 @@ export const caseClientApi = {
             },
         );
     },
+    feedback(payload: CaseFeedbackRequest) {
+        return http.post<{ success: boolean; message?: string; data?: any }>(
+            API_PATH.CLIENT.FEEDBACK.SUBMIT,
+            payload,
+            {
+                auth: false,
+            },
+        );
+    }
 };
 
