@@ -78,7 +78,9 @@ export const API_PATH = {
       LIST: (keyword: string, status: string, categoryId: string, page: number, size: number) => `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
       GET_BY_ID: (id: string) => `/PAKN/${id}`,
       FILES: (id: string) => `/PAKN/${id}/files`,
-
+      LOOKUP: "/PAKN/lookup/send-otp",
+      VERIFY: "/PAKN/lookup/verify-otp",
+      RESEND_OTP: "/PAKN/lookup/resend-otp",
     },
     PAKN_CATEGORY: {
       LIST: (keyword: string, isActive: boolean, page: number, size: number) => `/PAKNCategory?keyword=${keyword}&isActive=${isActive}&Page=${page}&Size=${size}`,

@@ -5,6 +5,9 @@ import { paknService } from '../services/pakn.service';
 import { PAKN_QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
 import type { PaknListFilters, PaknSubmitPayload } from '../types/request';
 
+export { usePaknVerifyOTP } from './usePaknVerifyOTP';
+export { usePaknResendOTP } from './usePaknResendOTP';
+
 export const usePaknList = (filters: PaknListFilters) => {
     return useQuery({
         queryKey: PAKN_QUERY_KEYS.LIST(filters),

@@ -1,5 +1,6 @@
 export * from './form/PaknSubmitForm.ui';
 export * from './lookup/PaknLookupCard.ui';
+export * from './modal/PaknOTPVerificationModal.ui';
 export * from './notes/PaknNotesCard.ui';
 export * from './filter/PaknListFilterBar.ui';
 export * from './status/PaknStatusBadge.ui';

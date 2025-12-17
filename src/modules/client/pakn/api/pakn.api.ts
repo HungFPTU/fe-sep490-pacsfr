@@ -38,6 +38,18 @@ export const paknApi = {
         });
     },
 
+    lookup: (payload: { paknCode: string }) => {
+        return http.post(API_PATH.CLIENT.PAKN.LOOKUP, payload);
+    },
+
+    verifyOTP: (payload: { paknCode: string; otpCode: string }) => {
+        return http.post(API_PATH.CLIENT.PAKN.VERIFY, payload);
+    },
+
+    resendOTP: (payload: { paknCode: string }) => {
+        return http.post(API_PATH.CLIENT.PAKN.RESEND_OTP, payload);
+    },
+
     getList: (filters: PaknListFilters) => {
         return http.get<RestPaged<PaknItem>>(
             API_PATH.CLIENT.PAKN.LIST(
