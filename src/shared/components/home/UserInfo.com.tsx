@@ -208,15 +208,6 @@ export function UserInfo() {
                     </DropdownMenuItem>
 
                     {/* Settings Link */}
-                    <DropdownMenuItem asChild>
-                        <Link
-                            href={getProfileUrl(role) + '/settings'}
-                            className="flex items-center gap-2 cursor-pointer"
-                        >
-                            <Settings className="h-4 w-4" />
-                            <span>Cài đặt</span>
-                        </Link>
-                    </DropdownMenuItem>
 
                     <DropdownMenuSeparator />
 

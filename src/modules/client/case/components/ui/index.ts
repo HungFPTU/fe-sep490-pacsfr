@@ -19,3 +19,5 @@ export { CaseProgressResultView } from './result/CaseProgressResult.ui';
 export { CaseFeedbackCard } from './feedback/CaseFeedbackCard.ui';
 export { CaseFeedbackViewer } from './feedback/CaseFeedbackViewer.ui';
 
+// Modals
+export { CaseOTPVerificationModal } from './modal/CaseOTPVerificationModal.ui';
