@@ -2,7 +2,7 @@ import React from 'react';
 import { Eye, Pencil, UserPlus } from 'lucide-react';
 import type { Pakn } from '../../../types';
 import { formatDate } from '@/shared/lib/utils';
-import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR } from '../../../constants';
+import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR, getManagerAvailableTransitions } from '../../../constants';
 import { Button } from '@/shared/components/ui/button.ui';
 
 interface Props {
@@ -117,8 +117,12 @@ export const PaknTable: React.FC<Props> = ({
                       variant="outline"
                       size="icon"
                       onClick={() => onUpdateStatus(item)}
-                      title="Cập nhật trạng thái"
-                      disabled={item.status === 'HOAN_THANH' || item.status === 'TU_CHOI'}
+                      title={
+                        getManagerAvailableTransitions(item.status).length === 0
+                          ? 'Không thể cập nhật trạng thái (trạng thái cuối cùng)'
+                          : `Cập nhật trạng thái (có ${getManagerAvailableTransitions(item.status).length} lựa chọn)`
+                      }
+                      disabled={getManagerAvailableTransitions(item.status).length === 0}
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>

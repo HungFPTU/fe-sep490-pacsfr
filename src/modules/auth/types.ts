@@ -17,7 +17,7 @@ export interface User {
     phone?: string;
     avatar?: string;
     role: UserRole;
-    roleType?: string; // API response field
+    roleType?: string;
     position?: Position;
     isActive: boolean;
     createdAt: string;
