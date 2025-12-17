@@ -113,6 +113,12 @@ export const CreateLeaveRequestModal: React.FC<Props> = ({
                 const holidayError = 'Đây là ngày nghỉ , không cần nộp đơn';
                 newErrors.fromDate = holidayError;
             }
+
+            // If user selects ONLY holidays (days = 0 but range is valid), show error
+            if (days === 0 && holidayDates.length > 0) {
+                const holidayError = 'Đây là ngày nghỉ , không cần nộp đơn';
+                newErrors.fromDate = holidayError;
+            }
         }
 
         if (days > MAX_LEAVE_DAYS_PER_YEAR) {
