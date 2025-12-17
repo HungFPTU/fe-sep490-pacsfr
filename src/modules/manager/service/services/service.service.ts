@@ -1,5 +1,5 @@
 import { serviceApi } from '../api/service.api';
-import type { CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest } from '../types';
+import type { CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest, AssignAudienceRequest } from '../types';
 
 export const serviceService = {
     getServiceList: async (filters: ServiceFilters) => {
@@ -46,6 +46,19 @@ export const serviceService = {
         // Check if request was successful
         if (!apiResponse?.success) {
             const errorMessage = (apiResponse as { message?: string })?.message || 'Failed to assign submission methods';
+            throw new Error(errorMessage);
+        }
+
+        return apiResponse;
+    },
+
+    assignAudience: async (data: AssignAudienceRequest) => {
+        const response = await serviceApi.assignAudience(data);
+        const apiResponse = response.data;
+
+        // Check if request was successful
+        if (!apiResponse?.success) {
+            const errorMessage = (apiResponse as { message?: string })?.message || 'Failed to assign audience';
             throw new Error(errorMessage);
         }
 

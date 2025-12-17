@@ -127,3 +127,8 @@ export type ServiceFilters = {
 // Re-export from submission-method module
 export type { AssignSubmissionMethodsRequest } from '@/modules/manager/submission-method/types';
 
+export type AssignAudienceRequest = {
+    serviceId: string;
+    audienceIds: string[];
+};
+

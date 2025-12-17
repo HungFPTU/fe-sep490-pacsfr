@@ -9,5 +9,6 @@ export { NewProceduresCarousel } from "./NewProceduresCarousel.com";
 export { AdministrativeProcedures } from "./AdministrativeProcedures.com";
 export { OnlineServices } from "./OnlineServices.com";
 export { StatisticsSection } from "./StatisticsSection.com";
+export { PaknResponseSection } from "./PaknResponseSection.com";
 export { GovernmentFooter } from "./GovernmentFooter.com";
 export { FloatingAIChatButton } from "./FloatingAIChatButton.com";

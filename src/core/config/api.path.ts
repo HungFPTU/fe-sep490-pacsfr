@@ -99,6 +99,7 @@ export const API_PATH = {
         GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) =>
           `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
         ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
+        ASSIGN_AUDIENCE: "/Service/assign-audience",
       },
       ACCOUNTS: {
         GET_ALL: '/Staff',
@@ -188,6 +189,21 @@ export const API_PATH = {
         UPDATE_STAFF_WORKSHIFT: '/StaffWorkShift',
         GET_STAFF_WORKSHIFTS: '/StaffWorkShift',
         DELETE_STAFF_WORKSHIFT: (id: string) => `/StaffWorkShift/${id}`,
+      },
+      SHIFT_SWAP: {
+        CREATE: '/ShiftSwapRequest',
+        GET_MY_REQUESTS: (status?: string) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
+        GET_LIST: (status?: string, page?: number, size?: number) => {
+          const params = new URLSearchParams();
+          if (status !== undefined) params.append('status', status);
+          if (page !== undefined) params.append('page', page.toString());
+          if (size !== undefined) params.append('size', size.toString());
+          return `/ShiftSwapRequest${params.toString() ? `?${params}` : ''}`;
+        },
+        GET_BY_ID: (id: string) => `/ShiftSwapRequest/${id}`,
+        RESPOND: (id: string) => `/ShiftSwapRequest/${id}/respond`,
+        APPROVE: (id: string) => `/ShiftSwapRequest/${id}/approve`,
+        CANCEL: (id: string) => `/ShiftSwapRequest/${id}/cancel`,
       },
       COUNTER: {
         GET_ALL_ACTIVE: () => `/Counter/active`,
@@ -344,6 +360,7 @@ export const API_PATH = {
       DELETE: (id: string) => `/Service/${id}`,
       GET_ALL_GROUP: (Keyword: string, isActive: boolean, Page: number, Size: number) => `/ServiceGroup?isActive=${isActive}&Page=${Page}&Size=${Size}`,
       ASSIGN_SUBMISSION_METHODS: "/Service/assign-submission-methods",
+      ASSIGN_AUDIENCE: "/Service/assign-audience",
     },
     QUEUES: {
       ALL: "/queues",
@@ -440,9 +457,40 @@ export const API_PATH = {
     },
     STAFF_WORKSHIFT: {
       BASE: "/StaffWorkShift",
+      GET: (
+        StaffId?: string,
+        WorkShiftId?: string,
+        CounterId?: string,
+        PrepareTimeFrom?: string,
+        PrepareTimeTo?: string,
+        FromDate?: string,
+        ToDate?: string,
+        StartTime?: string,
+        EndTime?: string,
+        Status?: string,
+        Keyword?: string,
+        Page?: number,
+        Size?: number
+      ) => {
+        let params = [];
+        if (StaffId !== undefined) params.push(`staffId=${StaffId}`);
+        if (WorkShiftId !== undefined) params.push(`workShiftId=${WorkShiftId}`);
+        if (CounterId !== undefined) params.push(`counterId=${CounterId}`);
+        if (PrepareTimeFrom !== undefined) params.push(`prepareTimeFrom=${PrepareTimeFrom}`);
+        if (PrepareTimeTo !== undefined) params.push(`prepareTimeTo=${PrepareTimeTo}`);
+        if (FromDate !== undefined) params.push(`fromDate=${FromDate}`);
+        if (ToDate !== undefined) params.push(`toDate=${ToDate}`);
+        if (StartTime !== undefined) params.push(`startTime=${StartTime}`);
+        if (EndTime !== undefined) params.push(`endTime=${EndTime}`);
+        if (Status !== undefined) params.push(`status=${Status}`);
+        if (Keyword !== undefined) params.push(`keyword=${Keyword}`);
+        if (Page !== undefined) params.push(`page=${Page}`);
+        if (Size !== undefined) params.push(`size=${Size}`);
+        return `/StaffWorkShift${params.length ? "?" + params.join("&") : ""}`;
+      },
       GET_BY_ID: (id: string) => `/StaffWorkShift/${id}`,
       CREATE: "/StaffWorkShift",
-      BY_STAFF: (staffId: string) => `/StaffWorkShift/by-staff/${staffId}`,
+      BY_STAFF: (staffId: string) => `/StaffWorkShift/${staffId}`,
       CHECK_IN: (id: string) => `/StaffWorkShift/${id}/check-in`,
       CHECK_OUT: (id: string) => `/StaffWorkShift/${id}/check-out`,
     },
@@ -617,23 +665,71 @@ export const API_PATH = {
       PUT: (id: string) => `/PublicServiceNew/${id}`,
       DELETE: (id: string) => `/PublicServiceNew/${id}`,
     },
-    PAKN: {
-      GET_ALL: (
-        keyword: string,
-        status: string,
-        categoryId: string,
-        page: number,
-        size: number
-      ) =>
-        `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
-      GET_BY_ID: (id: string) => `/PAKN/${id}`,
-      POST: "/PAKN",
-      PUT: (id: string) => `/PAKN/${id}`,
-      DELETE: (id: string) => `/PAKN/${id}`,
-      ASSIGN_STAFF: "/PAKN/assign-staff",
-      UPDATE_STATUS: "/PAKN/update-status",
+      PAKN: {
+        GET_ALL: (
+          keyword: string,
+          status: string,
+          categoryId: string,
+          page: number,
+          size: number
+        ) =>
+          `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
+        GET_BY_ID: (id: string) => `/PAKN/${id}`,
+        POST: "/PAKN",
+        PUT: (id: string) => `/PAKN/${id}`,
+        DELETE: (id: string) => `/PAKN/${id}`,
+        ASSIGN_STAFF: "/PAKN/assign-staff",
+        UPDATE_STATUS: "/PAKN/update-status",
+        RESPONSE: {
+          POST: "/PAKN/response",
+          GET_LIST: (paknId: string, page: number, size: number) =>
+            `/PAKN/response?PAKNId=${paknId}&Page=${page}&Size=${size}`,
+          GET_BY_ID: (id: string) => `/PAKN/respone/${id}`,
+          GET_BY_CODE: (paknCode: string) => `/PAKN/responses/by-code?paknCode=${paknCode}`,
+        },
+      },
+      TARGET_AUDIENCE: {
+        GET_ALL: (
+          Keyword: string,
+          IsActive: boolean,
+          Page: number,
+          Size: number
+        ) =>
+          `/TargetAudience?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${Size}`,
+        GET_BY_ID: (id: string) => `/TargetAudience/${id}`,
+        POST: "/TargetAudience",
+        PUT: (id: string) => `/TargetAudience/${id}`,
+        DELETE: (id: string) => `/TargetAudience/${id}`,
+      },
+      PAKN_CATEGORY: {
+        GET_ALL: (
+          keyword: string,
+          isActive: boolean | null,
+          page: number,
+          size: number
+        ) =>
+          `/PAKNCategory?keyword=${keyword}&isActive=${isActive ?? ""}&Page=${page}&Size=${size}`,
+        GET_BY_ID: (id: string) => `/PAKNCategory/${id}`,
+        POST: "/PAKNCategory",
+        PUT: (id: string) => `/PAKNCategory/${id}`,
+        DELETE: (id: string) => `/PAKNCategory/${id}`,
+      },
+      SHIFT_SWAP: {
+        CREATE: '/ShiftSwapRequest',
+        GET_MY_REQUESTS: (status?: string) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
+        GET_LIST: (status?: string, page?: number, size?: number) => {
+          const params = new URLSearchParams();
+          if (status !== undefined) params.append('status', status);
+          if (page !== undefined) params.append('page', page.toString());
+          if (size !== undefined) params.append('size', size.toString());
+          return `/ShiftSwapRequest${params.toString() ? `?${params}` : ''}`;
+        },
+        GET_BY_ID: (id: string) => `/ShiftSwapRequest/${id}`,
+        RESPOND: (id: string) => `/ShiftSwapRequest/${id}/respond`,
+        APPROVE: (id: string) => `/ShiftSwapRequest/${id}/approve`,
+        CANCEL: (id: string) => `/ShiftSwapRequest/${id}/cancel`,
+      },
     },
-  },
   STAFF: {
     LEAVE_REQUEST: {
       MY: "/LeaveRequest/my",
@@ -641,7 +737,7 @@ export const API_PATH = {
       GET_BY_ID: (id: string) => `/LeaveRequest/${id}`,
     },
     STAFF_WORKSHIFT: {
-      MY: "/StaffWorkShift/my",
+      MY: "/StaffWorkShift/my-schedule",
       CHECK_IN: (id: string) => `/StaffWorkShift/${id}/check-in`,
       CHECK_OUT: (id: string) => `/StaffWorkShift/${id}/check-out`,
     },

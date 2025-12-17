@@ -84,6 +84,10 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
                 title: 'Quy trình dịch vụ',
                 url: '/manager/quy-trinh-dich-vu',
             },
+            {
+                title: 'Quản lý đối tượng',
+                url: '/manager/doi-tuong',
+            },
         ],
     },
     {
@@ -174,15 +178,24 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
         ],
     },
     {
-        title: 'Quản lý PAKN',
+        title: 'Quản lý Phản ánh kiến nghị',
         url: '',
         icon: ListChecks,
         items: [
             {
-                title: 'Danh sách PAKN',
+                title: 'Danh mục phản ánh kiến nghị',
+                url: '/manager/danh-muc-pakn',
+            },
+            {
+                title: 'Phản ánh kiến nghị',
                 url: '/manager/pakn',
             },
         ],
+    },
+    {
+        title: 'Duyệt Đổi Ca',
+        url: '/manager/duyet-doi-ca',
+        icon: ListChecks,
     },
 ];
 
@@ -204,6 +217,7 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
     'phuong-thuc-nop-ho-so': 'Phương thức nộp hồ sơ',
     'quy-trinh-dich-vu': 'Quy trình dịch vụ',
     'tai-lieu-yeu-cau': 'Tài liệu yêu cầu',
+    'doi-tuong': 'Quản lý đối tượng',
     queue: 'Quản lý hàng đợi',
 
     // Quản lý phòng ban
@@ -233,6 +247,8 @@ export const MANAGER_PATH_LABELS: Record<string, string> = {
 
     // Quản lý PAKN
     pakn: 'Danh sách PAKN',
+    'danh-muc-pakn': 'Danh mục PAKN',
+    'duyet-doi-ca': 'Duyệt Đổi Ca',
 };
 
 

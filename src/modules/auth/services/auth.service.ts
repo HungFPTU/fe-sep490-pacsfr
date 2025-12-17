@@ -212,10 +212,23 @@ export const authService = {
         }
     },
 
-    // Get profile
+    // Get profile and update store
     async getProfile(): Promise<User> {
         const response = await authApi.getProfile();
-        return response.data as User;
+        const profileData = response.data as User;
+        
+        // Update auth store with latest profile data
+        const authStore = useAuthStore.getState();
+        if (authStore.user && authStore.token && authStore.role) {
+            authStore.setCredentials(
+                profileData,
+                authStore.token,
+                authStore.role,
+                authStore.rememberMe
+            );
+        }
+        
+        return profileData;
     },
 
     // Utility methods using ROLES constants

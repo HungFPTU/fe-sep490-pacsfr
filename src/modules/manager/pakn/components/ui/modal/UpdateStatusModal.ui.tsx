@@ -12,7 +12,7 @@ import {
 } from '@/shared/components/manager/ui/select';
 import { useUpdatePaknStatus } from '../../../hooks';
 import { useGlobalToast } from '@/core/patterns/SingletonHook';
-import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR } from '../../../constants';
+import { PAKN_STATUS_LABEL, PAKN_STATUS_COLOR, getManagerAvailableTransitions } from '../../../constants';
 import { PaknStatus } from '../../../types';
 
 
@@ -29,9 +29,10 @@ export const UpdateStatusModal: React.FC<Props> = ({ open, onClose, paknId, curr
   const updateStatusMutation = useUpdatePaknStatus();
   const toast = useGlobalToast();
 
-  const availableStatuses = Object.keys(PAKN_STATUS_LABEL).filter(
-    (status) => status !== currentStatus
-  );
+  // Get available transitions based on business rules
+  const availableStatuses = currentStatus 
+    ? getManagerAvailableTransitions(currentStatus)
+    : [];
 
   useEffect(() => {
     if (open) {
@@ -114,16 +115,32 @@ export const UpdateStatusModal: React.FC<Props> = ({ open, onClose, paknId, curr
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              {availableStatuses.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {PAKN_STATUS_LABEL[status] || status}
+              {availableStatuses.length > 0 ? (
+                availableStatuses.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {PAKN_STATUS_LABEL[status] || status}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="" disabled>
+                  Không có trạng thái khả dụng
                 </SelectItem>
-              ))}
+              )}
             </SelectContent>
           </Select>
-          {availableStatuses.length === 0 && (
-            <p className="text-xs text-amber-600 mt-1">
-              Không thể chuyển đổi trạng thái từ trạng thái hiện tại.
+          {availableStatuses.length === 0 && currentStatus && (
+            <div className="rounded-md bg-amber-50 border border-amber-200 p-3 mt-2">
+              <p className="text-xs text-amber-800 font-medium">
+                ⚠️ Không thể chuyển đổi trạng thái
+              </p>
+              <p className="text-xs text-amber-700 mt-1">
+                Trạng thái "{PAKN_STATUS_LABEL[currentStatus]}" là trạng thái cuối cùng và không thể thay đổi.
+              </p>
+            </div>
+          )}
+          {availableStatuses.length > 0 && (
+            <p className="text-xs text-slate-500 mt-1">
+              Có {availableStatuses.length} trạng thái có thể chuyển đổi từ trạng thái hiện tại
             </p>
           )}
         </div>
