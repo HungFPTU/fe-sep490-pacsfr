@@ -47,15 +47,15 @@ const buildResult = (
 /**
  * Validate case progress request payload
  */
-const validateRequest = (payload: CaseProgressRequest): void => {
-    if (!payload.caseCode || typeof payload.caseCode !== "string" || payload.caseCode.trim().length === 0) {
-        throw new Error("Mã số hồ sơ không hợp lệ.");
-    }
+// const validateRequest = (payload: CaseProgressRequest): void => {
+//     if (!payload.caseCode || typeof payload.caseCode !== "string" || payload.caseCode.trim().length === 0) {
+//         throw new Error("Mã số hồ sơ không hợp lệ.");
+//     }
 
-    if (!payload.captchaToken || typeof payload.captchaToken !== "string" || payload.captchaToken.trim().length === 0) {
-        throw new Error("Token reCAPTCHA không hợp lệ. Vui lòng thử lại.");
-    }
-};
+//     if (!payload.captchaToken || typeof payload.captchaToken !== "string" || payload.captchaToken.trim().length === 0) {
+//         throw new Error("Token reCAPTCHA không hợp lệ. Vui lòng thử lại.");
+//     }
+// };
 
 /**
  * Normalize and transform error messages
@@ -134,42 +134,42 @@ export class CaseClientService {
      * Lookup case progress
      * Orchestrates the entire flow: Validation -> Repository -> Mapping -> Result
      */
-    async lookupCaseProgress(payload: CaseProgressRequest): Promise<CaseProgressResult> {
-        // Step 1: Validate input
-        validateRequest(payload);
+    // async lookupCaseProgress(payload: CaseProgressRequest): Promise<CaseProgressResult> {
+    //     // Step 1: Validate input
+    //     validateRequest(payload);
 
-        try {
-            // Step 2: Call repository (data access layer)
-            const response = await caseRepository.lookupProgress({
-                caseCode: payload.caseCode.trim(),
-                captchaToken: payload.captchaToken.trim(),
-            });
+    //     try {
+    //         // Step 2: Call repository (data access layer)
+    //         const response = await caseRepository.lookupProgress({
+    //             caseCode: payload.caseCode.trim(),
+    //             captchaToken: payload.captchaToken.trim(),
+    //         });
 
-            // Step 3: Transform and build result
-            const result = buildResult(response, payload.caseCode.trim());
+    //         // Step 3: Transform and build result
+    //         const result = buildResult(response, payload.caseCode.trim());
 
-            // Step 4: Handle business logic - check success status
-            if (!result.success) {
-                const message = result.message || "Yêu cầu không thành công. Vui lòng thử lại.";
-                const messageLower = message.toLowerCase();
+    //         // Step 4: Handle business logic - check success status
+    //         if (!result.success) {
+    //             const message = result.message || "Yêu cầu không thành công. Vui lòng thử lại.";
+    //             const messageLower = message.toLowerCase();
 
-                // Business rule: CAPTCHA errors need special handling
-                if (messageLower.includes("captcha") || messageLower.includes("verification")) {
-                    const translatedMessage = message.includes("CAPTCHA verification failed")
-                        ? "Xác thực CAPTCHA thất bại. Vui lòng thử lại."
-                        : message;
-                    throw new Error(translatedMessage);
-                }
+    //             // Business rule: CAPTCHA errors need special handling
+    //             if (messageLower.includes("captcha") || messageLower.includes("verification")) {
+    //                 const translatedMessage = message.includes("CAPTCHA verification failed")
+    //                     ? "Xác thực CAPTCHA thất bại. Vui lòng thử lại."
+    //                     : message;
+    //                 throw new Error(translatedMessage);
+    //             }
 
-                throw new Error(message);
-            }
+    //             throw new Error(message);
+    //         }
 
-            return result;
-        } catch (error) {
-            console.error("[CaseService] Error details:", error);
-            throw normalizeError(error);
-        }
-    }
+    //         return result;
+    //     } catch (error) {
+    //         console.error("[CaseService] Error details:", error);
+    //         throw normalizeError(error);
+    //     }
+    // }
 
     async submitFeedback(payload: CaseFeedbackRequest): Promise<CaseFeedbackResponse> {
         validateFeedbackRequest(payload);
