@@ -1,4 +1,4 @@
-import { http } from "@core/http/client";
+import { http, httpNoLoading } from "@core/http/client";
 import { API_PATH } from "@core/config/api.path";
 import type { CaseProgressApiResponse, CaseFeedback } from "../types";
 import type { CaseProgressRequest, CaseLookupRequest, CaseFeedbackRequest } from "../types";
@@ -8,7 +8,7 @@ export const caseClientApi = {
         console.log("[CaseAPI] Calling lookup endpoint:", API_PATH.CLIENT.CASE.LOOKUP);
         console.log("[CaseAPI] Payload:", { caseCode: payload.caseCode });
 
-        return http.post<CaseProgressApiResponse>(API_PATH.CLIENT.CASE.LOOKUP, payload, {
+        return httpNoLoading.post<CaseProgressApiResponse>(API_PATH.CLIENT.CASE.LOOKUP, payload, {
             auth: false,
         });
     },
@@ -29,7 +29,7 @@ export const caseClientApi = {
         });
     },
     getFeedbackByCase: (caseId: string) => {
-        return http.get<{ success?: boolean; message?: string; data?: CaseFeedback }>(
+        return httpNoLoading.get<{ success?: boolean; message?: string; data?: CaseFeedback }>(
             API_PATH.CLIENT.FEEDBACK.BY_CASE(caseId),
             {
                 auth: false,

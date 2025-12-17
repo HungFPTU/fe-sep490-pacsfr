@@ -18,15 +18,18 @@ export const CaseProgressResultView: React.FC<CaseProgressResultProps> = ({
 }) => {
     if (isLoading) {
         return (
-            <div className="mt-10 rounded-xl border border-gray-200 bg-white p-10 shadow-lg">
-                <div className="flex flex-col items-center gap-4 text-gray-600">
-                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-red-500 border-t-transparent" />
+            <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-12 shadow-lg ring-1 ring-black/5">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="relative h-12 w-12">
+                        <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
+                        <div className="absolute inset-0 border-4 border-transparent border-t-red-500 rounded-full animate-spin" />
+                    </div>
                     <div className="text-center">
-                        <p className="text-base font-semibold text-gray-700">
-                            Đang tra cứu dữ liệu hồ sơ...
+                        <p className="text-base font-semibold text-slate-900">
+                            Đang tra cứu hồ sơ...
                         </p>
-                        <p className="text-sm text-gray-500">
-                            Vui lòng chờ trong giây lát, hệ thống đang kết nối tới máy chủ.
+                        <p className="mt-1 text-sm text-slate-600">
+                            Hệ thống đang kết nối và lấy dữ liệu
                         </p>
                     </div>
                 </div>
@@ -36,9 +39,13 @@ export const CaseProgressResultView: React.FC<CaseProgressResultProps> = ({
 
     if (hasSearched && !result) {
         return (
-            <div className="mt-10 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500 shadow-inner">
-                Không tìm thấy thông tin hồ sơ. Bạn vui lòng kiểm tra lại Mã số hồ sơ hoặc liên hệ
-                cơ quan tiếp nhận để được hỗ trợ.
+            <div className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center ring-1 ring-black/5">
+                <div className="space-y-2">
+                    <p className="font-semibold text-slate-700">Không tìm thấy kết quả</p>
+                    <p className="text-sm text-slate-600">
+                        Kiểm tra lại mã hồ sơ hoặc liên hệ cơ quan tiếp nhận để được hỗ trợ
+                    </p>
+                </div>
             </div>
         );
     }
@@ -48,7 +55,7 @@ export const CaseProgressResultView: React.FC<CaseProgressResultProps> = ({
     }
 
     return (
-        <div className="mt-10 space-y-8">
+        <div className="mt-8 space-y-6">
             <CaseProgressSummaryCard summary={result.summary} message={result.message} />
             <CaseProgressTimeline steps={result.steps} />
             <CaseProgressDetailTable rawData={result.rawData} />
