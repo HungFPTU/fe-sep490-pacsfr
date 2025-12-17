@@ -238,6 +238,7 @@ export const ShiftSwapFormModal: React.FC<ShiftSwapFormModalProps> = ({
               setSelectedTargetShift(''); // Reset target shift
               setErrors({ ...errors, myShift: '' });
             }}
+            placeholder="Chọn ca làm việc của bạn"
             options={myShifts.map((shift) => ({
               value: shift.id,
               label: `${shift.shiftType} - ${formatDate(shift.shiftDate)} (${shift.startTime} - ${shift.endTime})`,
@@ -263,6 +264,7 @@ export const ShiftSwapFormModal: React.FC<ShiftSwapFormModalProps> = ({
               setSelectedTargetShift(''); // Reset target shift
               setErrors({ ...errors, targetStaff: '' });
             }}
+            placeholder="Chọn nhân viên muốn đổi ca"
             options={availableStaff.map((staff) => ({
               value: staff.id,
               label: `${staff.name} - ${staff.shifts?.length || 0} ca`,

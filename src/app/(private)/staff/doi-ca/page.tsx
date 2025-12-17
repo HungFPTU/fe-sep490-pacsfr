@@ -64,7 +64,7 @@ export default function StaffShiftSwapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-50 to-white p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">

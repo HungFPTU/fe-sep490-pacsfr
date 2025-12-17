@@ -8,7 +8,7 @@ import { useGlobalToast } from '@/core/patterns/SingletonHook';
 import { useAuth } from '@/modules/auth/hooks';
 import { Calendar, AlertCircle, Clock } from 'lucide-react';
 import { MAX_LEAVE_DAYS_PER_YEAR, LEAVE_TYPES, LEAVE_TYPE_LABELS } from '@/modules/manager/leave-request/constants';
-import { convertToISODateTime } from '../../utils';
+import { convertToISODateTime, isVietnameseHoliday, getHolidayName, getHolidaysInRange } from '../../utils';
 import type { LeaveType } from '@/modules/manager/leave-request/types';
 
 interface Props {
@@ -77,10 +77,16 @@ export const CreateLeaveRequestModal: React.FC<Props> = ({
 
         if (!fromDate) {
             newErrors.fromDate = 'Vui lòng chọn ngày bắt đầu';
+        } else if (isVietnameseHoliday(fromDate)) {
+            const holidayName = getHolidayName(fromDate);
+            newErrors.fromDate = `Không thể chọn ngày lễ: ${holidayName}`;
         }
 
         if (!toDate) {
             newErrors.toDate = 'Vui lòng chọn ngày kết thúc';
+        } else if (isVietnameseHoliday(toDate)) {
+            const holidayName = getHolidayName(toDate);
+            newErrors.toDate = `Không thể chọn ngày lễ: ${holidayName}`;
         }
 
         if (fromDate && toDate) {
@@ -88,6 +94,13 @@ export const CreateLeaveRequestModal: React.FC<Props> = ({
             const to = new Date(toDate);
             if (to < from) {
                 newErrors.toDate = 'Ngày kết thúc phải sau ngày bắt đầu';
+            } else {
+                // Check if date range contains any holidays
+                const holidaysInRange = getHolidaysInRange(fromDate, toDate);
+                if (holidaysInRange.length > 0) {
+                    const holidayNames = holidaysInRange.map(date => getHolidayName(date)).join(', ');
+                    newErrors.toDate = `Khoảng thời gian chứa ${holidaysInRange.length} ngày lễ: ${holidayNames}`;
+                }
             }
         }
 
@@ -188,6 +201,7 @@ export const CreateLeaveRequestModal: React.FC<Props> = ({
                                 <li>Tối đa {MAX_LEAVE_DAYS_PER_YEAR} ngày nghỉ phép/năm</li>
                                 <li>Đơn sẽ được quản lý xem xét và duyệt</li>
                                 <li>Nếu có ca làm việc, quản lý sẽ tìm người thay thế</li>
+                                <li className="text-red-600 font-medium">⚠️ Không được chọn ngày lễ Việt Nam</li>
                             </ul>
                         </div>
                     </div>
