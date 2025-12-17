@@ -5,7 +5,7 @@ import { Card } from "@/shared/components/ui/card.ui";
 import { Button } from "@/shared/components/ui/button.ui";
 import { Input } from "@/shared/components/ui/input.ui";
 import { Select } from "@/shared/components/ui/select.ui";
-import { User, Calendar, Check, FileText } from "lucide-react";
+import { User, Calendar, Check, FileText, ScanLine, X } from "lucide-react";
 import type { CreateGuestRequest } from "../../../../dashboard/types";
 import { useProvinces, useDistricts, useWards } from "../../../hooks";
 import { getProvinceById, getDistrictById, getWardById } from "../../../constants/vietnam-address";
@@ -160,11 +160,10 @@ const DatePickerCalendar: React.FC<{
                                 type="button"
                                 onClick={() => day && handleSelectDate(day)}
                                 disabled={!day}
-                                className={`w-10 h-10 text-sm rounded hover:bg-blue-100 disabled:opacity-30 disabled:cursor-not-allowed font-medium transition-colors ${
-                                    day === displayDate.getDate() && currentDate.getMonth() === displayDate.getMonth()
-                                        ? "bg-blue-500 text-white hover:bg-blue-600"
-                                        : ""
-                                }`}
+                                className={`w-10 h-10 text-sm rounded hover:bg-blue-100 disabled:opacity-30 disabled:cursor-not-allowed font-medium transition-colors ${day === displayDate.getDate() && currentDate.getMonth() === displayDate.getMonth()
+                                    ? "bg-blue-500 text-white hover:bg-blue-600"
+                                    : ""
+                                    }`}
                             >
                                 {day}
                             </button>
@@ -183,11 +182,10 @@ const DatePickerCalendar: React.FC<{
                                         key={year}
                                         type="button"
                                         onClick={() => handleYearChange(year)}
-                                        className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-                                            year === selectedYear
-                                                ? "bg-blue-500 text-white hover:bg-blue-600"
-                                                : "bg-gray-100 hover:bg-gray-200 text-gray-900"
-                                        }`}
+                                        className={`px-3 py-2 rounded text-sm font-medium transition-colors ${year === selectedYear
+                                            ? "bg-blue-500 text-white hover:bg-blue-600"
+                                            : "bg-gray-100 hover:bg-gray-200 text-gray-900"
+                                            }`}
                                     >
                                         {year}
                                     </button>
@@ -214,11 +212,10 @@ const DatePickerCalendar: React.FC<{
                                     key={index}
                                     type="button"
                                     onClick={() => handleMonthChange(index)}
-                                    className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-                                        index === selectedMonth
-                                            ? "bg-blue-500 text-white hover:bg-blue-600"
-                                            : "bg-gray-100 hover:bg-gray-200 text-gray-900"
-                                    }`}
+                                    className={`px-3 py-2 rounded text-sm font-medium transition-colors ${index === selectedMonth
+                                        ? "bg-blue-500 text-white hover:bg-blue-600"
+                                        : "bg-gray-100 hover:bg-gray-200 text-gray-900"
+                                        }`}
                                 >
                                     {month}
                                 </button>
@@ -276,6 +273,92 @@ export function GuestForm({
     const [showBirthDatePicker, setShowBirthDatePicker] = React.useState(false);
     const [showIdIssueDatePicker, setShowIdIssueDatePicker] = React.useState(false);
 
+    // QR Scanner State
+    const [isScanMode, setIsScanMode] = useState(false);
+    const cccdInputRef = React.useRef<HTMLInputElement>(null);
+
+    // Activate Scanner
+    const handleActivateScanner = () => {
+        setIsScanMode(true);
+        // Delay slightly to ensure render, though React 18 usually handles this well
+        setTimeout(() => {
+            if (cccdInputRef.current) {
+                cccdInputRef.current.focus();
+                cccdInputRef.current.select();
+            }
+        }, 100);
+    };
+
+    // Deactivate Scanner
+    const handleDeactivateScanner = () => {
+        setIsScanMode(false);
+    };
+
+    // Handle CCCD Input Change with Parsing Logic
+    const handleCCCDChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+
+        // Check for QR code pattern (contains pipes)
+        // Format: ID|OldID|Name|DOB|Gender|Address|Date
+        // Example: 046201000152||Võ Việt Dũng|30072001|Nam|Address...|Date...
+        if (isScanMode && value.includes("|")) {
+            const parts = value.split("|");
+            // Basic validation - check if we have enough parts
+            // Some cards might differ slightly but usually have at least 6 parts
+            if (parts.length >= 6) {
+                const idNumber = parts[0] || "";
+                const fullName = parts[2] || "";
+                const dobRaw = parts[3] || "";
+                const genderRaw = parts[4] || "";
+                const address = parts[5] || "";
+
+                // Parse Date of Birth (ddmmyyyy -> yyyy-mm-dd)
+                let birthDate = guestData.birthDate;
+                if (dobRaw.length === 8) {
+                    const day = dobRaw.substring(0, 2);
+                    const month = dobRaw.substring(2, 4);
+                    const year = dobRaw.substring(4, 8);
+                    birthDate = `${year}-${month}-${day}`;
+                }
+
+                // Map Gender (assuming raw is "Nam" or "Nữ", matching select values)
+                const gender = genderRaw;
+
+                // Parse Issue Date (last part of string)
+                // Format: ddmmyyyy -> yyyy-mm-dd
+                const issueDateRaw = parts[parts.length - 1] || "";
+                let idIssueDate = guestData.idIssueDate;
+                if (issueDateRaw.length === 8) {
+                    const day = issueDateRaw.substring(0, 2);
+                    const month = issueDateRaw.substring(2, 4);
+                    const year = issueDateRaw.substring(4, 8);
+                    idIssueDate = `${year}-${month}-${day}`;
+                }
+
+                // Hardcode Issue Place
+                const idIssuePlace = "CỤC TRƯỞNG CỤC CẢNH SÁT QUẢN LÝ HÀNH CHÍNH VỀ TRẬT TỰ XÃ HỘI";
+
+                const newData = {
+                    ...guestData,
+                    idNumber,
+                    fullName,
+                    birthDate,
+                    gender,
+                    address,
+                    idIssuePlace,
+                    idIssueDate,
+                };
+
+                onDataChange(newData);
+                setIsScanMode(false);
+                return;
+            }
+        }
+
+        // Normal input behavior
+        onDataChange({ ...guestData, idNumber: value });
+    };
+
     // Fetch Vietnam address data
     const { data: provinces } = useProvinces();
     const { data: districts } = useDistricts(selectedProvinceId || undefined);
@@ -332,6 +415,47 @@ export function GuestForm({
 
     return (
         <div className="space-y-6">
+            {/* QR Scanner Control Bar */}
+            {!isSuccess && (
+                <div className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm mb-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex-1">
+                            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <ScanLine className="w-5 h-5 text-indigo-600" />
+                                Quét mã QR CCCD
+                            </h3>
+                            <p className="text-sm text-gray-500">
+                                Kích hoạt chế độ quét để tự động điền thông tin từ thẻ CCCD gắn chip
+                            </p>
+                        </div>
+
+                        {isScanMode ? (
+                            <div className="flex items-center gap-2 w-full md:w-auto">
+                                <div className="flex-1 md:flex-none px-4 py-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-200 flex items-center gap-2 animate-pulse font-medium">
+                                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-ping" />
+                                    Đang chờ quét...
+                                </div>
+                                <Button
+                                    onClick={handleDeactivateScanner}
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                >
+                                    <X className="w-4 h-4 mr-1" />
+                                    Hủy
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button
+                                onClick={handleActivateScanner}
+                                className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all transform hover:scale-105"
+                            >
+                                <ScanLine className="w-4 h-4 mr-2" />
+                                Kích hoạt máy quét
+                            </Button>
+                        )}
+                    </div>
+                </div>
+            )}
             {/* Success State */}
             {isSuccess && guestId && onContinueToCase && onFinish && (
                 <Card className="p-6 bg-blue-50 border-blue-200">
@@ -341,7 +465,7 @@ export function GuestForm({
                             <h3 className="text-lg font-bold text-blue-900 mb-2">
                                 Tạo khách hàng thành công!
                             </h3>
-                           
+
                             <div className="flex gap-3">
                                 <Button
                                     onClick={onContinueToCase}
@@ -413,10 +537,15 @@ export function GuestForm({
                                 Số CCCD <span className="text-red-500">*</span>
                             </label>
                             <Input
+                                ref={cccdInputRef}
                                 value={guestData.idNumber}
-                                onChange={(e) => onDataChange({ ...guestData, idNumber: e.target.value })}
-                                placeholder="VD: 023..."
-                                className={errors.idNumber ? "border-red-500" : ""}
+                                onChange={handleCCCDChange}
+                                placeholder={isScanMode ? "Đang đợt dữ liệu quét..." : "VD: 023..."}
+                                className={`${errors.idNumber ? "border-red-500" : ""
+                                    } ${isScanMode
+                                        ? "border-blue-500 ring-2 ring-blue-200 bg-blue-50 transition-all duration-300" // Highlight style
+                                        : ""
+                                    }`}
                                 disabled={isSuccess}
                             />
                             {errors.idNumber && <p className="text-xs text-red-500 mt-1">{errors.idNumber}</p>}
@@ -453,9 +582,8 @@ export function GuestForm({
                                         }}
                                         placeholder="dd/mm/yyyy"
                                         maxLength={10}
-                                        className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
-                                            errors.birthDate ? "border-red-500" : "border-gray-300"
-                                        }`}
+                                        className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${errors.birthDate ? "border-red-500" : "border-gray-300"
+                                            }`}
                                         disabled={isSuccess}
                                     />
                                     <button
@@ -504,7 +632,7 @@ export function GuestForm({
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Calendar className="w-4 h-4 inline mr-1" />
-                                Ngày cấp <span className="text-red-500">*</span>
+                                Ngày hết hạn <span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
                                 <div className="flex items-center gap-2">
@@ -529,9 +657,8 @@ export function GuestForm({
                                         }}
                                         placeholder="dd/mm/yyyy"
                                         maxLength={10}
-                                        className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${
-                                            errors.idIssueDate ? "border-red-500" : "border-gray-300"
-                                        }`}
+                                        className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 ${errors.idIssueDate ? "border-red-500" : "border-gray-300"
+                                            }`}
                                         disabled={isSuccess}
                                     />
                                     <button
@@ -666,80 +793,7 @@ export function GuestForm({
                         />
                     </div>
 
-                    {/* Row 9: Province, District, Ward */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Tỉnh/Thành phố
-                            </label>
-                            <Select
-                                value={
-                                    provinces.find((p: any) => p.name === guestData.city)?.id || ""
-                                }
-                                onChange={(e) => handleProvinceChange(e.target.value)}
-                                options={provinceOptions}
-                                placeholder="Chọn tỉnh/thành phố"
-                                disabled={isSuccess}
-                            />
-                        </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Quận/Huyện
-                            </label>
-                            <Select
-                                value={
-                                    districts.find((d: any) => d.name === guestData.ward)?.id || ""
-                                }
-                                onChange={(e) => handleDistrictChange(e.target.value)}
-                                options={districtOptions}
-                                placeholder={
-                                    !guestData.city
-                                        ? "Chọn tỉnh/thành phố trước"
-                                        : districtOptions.length > 0
-                                          ? `Chọn quận/huyện (${districtOptions.length})`
-                                          : "Không có dữ liệu"
-                                }
-                                disabled={isSuccess || !guestData.city || districtOptions.length === 0}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Phường/Xã
-                            </label>
-                            <Select
-                                value={
-                                    wards.find((w: any) => w.name === guestData.country)?.id || ""
-                                }
-                                onChange={(e) => handleWardChange(e.target.value)}
-                                options={wardOptions}
-                                placeholder={
-                                    !guestData.ward
-                                        ? "Chọn quận/huyện trước"
-                                        : wardOptions.length > 0
-                                          ? `Chọn phường/xã (${wardOptions.length})`
-                                          : "Không có dữ liệu"
-                                }
-                                disabled={isSuccess || !guestData.ward || wardOptions.length === 0}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Row 10: Notes */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Ghi chú
-                        </label>
-                        <textarea
-                            value={guestData.notes}
-                            onChange={(e) => onDataChange({ ...guestData, notes: e.target.value })}
-                            rows={3}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Thêm ghi chú nếu cần..."
-                            disabled={isSuccess}
-                        />
-                    </div>
 
                     {/* Submit Button */}
                     {!isSuccess && (
