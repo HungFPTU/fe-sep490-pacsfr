@@ -192,11 +192,11 @@ export const MANAGER_NAVIGATION_ITEMS: ManagerNavigationItem[] = [
             },
         ],
     },
-    {
-        title: 'Duyệt Đổi Ca',
-        url: '/manager/duyet-doi-ca',
-        icon: ListChecks,
-    },
+    // {
+    //     title: 'Duyệt Đổi Ca',
+    //     url: '/manager/duyet-doi-ca',
+    //     icon: ListChecks,
+    // },
 ];
 
 export const MANAGER_PATH_LABELS: Record<string, string> = {

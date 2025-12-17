@@ -14,6 +14,9 @@ export const API_PATH = {
     },
     CASE: {
       PROGRESS: "/Case/progress",
+      LOOKUP: "/Case/lookup/send-otp",
+      VERIFY: "/Case/lookup/verify",
+      RESEND_OTP: "/Case/lookup/resend-otp",
     },
     FEEDBACK: {
       SUBMIT: "/Feedback",

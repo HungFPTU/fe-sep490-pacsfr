@@ -50,26 +50,8 @@ export const HOME_NAVIGATION_ITEMS: HomeNavigationItem[] = [
         type: 'dropdown',
         subItems: [
             { key: 'pakn-send', label: 'Gửi PAKN', href: '/gui-pakn' },
-            { key: 'pakn-list', label: 'Danh sách PAKN', href: '/pakn' },
+            { key: 'pakn-list', label: 'Tra cứu PAKN', href: '/pakn' },
         ],
-    },
-    {
-        key: 'feedback',
-        label: 'Phản ánh - Kiến nghị',
-        href: '/feedback',
-        type: 'link',
-    },
-    {
-        key: 'evaluation',
-        label: 'Đánh giá',
-        href: '/evaluation',
-        type: 'link',
-    },
-    {
-        key: 'statistics',
-        label: 'Thống kê',
-        href: '/statistics',
-        type: 'link',
     },
     {
         key: 'support',
@@ -189,7 +171,7 @@ export function getHomeBreadcrumbsByPath(pathname: string): HomeBreadcrumbItem[]
         return [
             { label: 'Trang chủ', href: '/' },
             { label: 'Phản ánh kiến nghị', href: '/pakn' },
-            { label: 'Danh sách PAKN' },
+            { label: 'Tra cứu PAKN' },
         ];
     }
 
