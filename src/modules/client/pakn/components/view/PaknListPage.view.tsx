@@ -1,67 +1,23 @@
 "use client";
 
-import { useMemo, useState } from 'react';
-import { usePaknCategories, usePaknList } from '../../hooks';
-import { PaknListFilterBar, PaknListTableView, PaknPagination, PaknLookupCard } from '../ui';
-import type { PaknListFilters } from '../../types/request';
-import { PAKN_LIST_PAGE_SIZE } from '../../constants';
+import { PaknLookupCard } from '../ui';
+
 
 export const PaknListPageView: React.FC = () => {
-    const [filters, setFilters] = useState<PaknListFilters>({
-        keyword: '',
-        status: '',
-        categoryId: '',
-        page: 1,
-        size: PAKN_LIST_PAGE_SIZE,
-    });
-
-    const { data: categoriesData } = usePaknCategories();
-    const { data: paknPage, isLoading } = usePaknList(filters);
-
-    const handleSubmit = () => {
-        setFilters((prev) => ({ ...prev, page: 1 }));
-    };
-
-    const handleReset = () => {
-        setFilters({ keyword: '', status: '', categoryId: '', page: 1, size: PAKN_LIST_PAGE_SIZE });
-    };
-
-    const handlePageChange = (page: number) => {
-        setFilters((prev) => ({ ...prev, page }));
-    };
-
     return (
-        <div className="space-y-6">
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h2 className="text-2xl font-bold text-slate-900">Danh sách phản ánh kiến nghị</h2>
-                <p className="mt-1 text-sm text-slate-600">
-                    Tra cứu các phản ánh, kiến nghị đã gửi lên hệ thống để theo dõi tiến độ xử lý.
-                </p>
-                <div className="mt-6">
-                    <PaknListFilterBar
-                        keyword={filters.keyword}
-                        status={filters.status}
-                        categoryId={filters.categoryId}
-                        onKeywordChange={(value) => setFilters((prev) => ({ ...prev, keyword: value }))}
-                        onStatusChange={(value) => setFilters((prev) => ({ ...prev, status: value }))}
-                        onCategoryChange={(value) => setFilters((prev) => ({ ...prev, categoryId: value }))}
-                        onSubmit={handleSubmit}
-                        onReset={handleReset}
-                        isLoading={isLoading}
-                        categories={categoriesData ?? []}
-                    />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-4 py-12">
+            <div className="mx-auto flex max-w-4xl flex-col items-center gap-8">
+                <div className="text-center space-y-3">
+                    <p className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-red-600">
+                        <span className="h-2 w-2 rounded-full bg-red-500" />
+                        Tra cứu phản ánh kiến nghị
+                    </p>
+                    <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Tra cứu nhanh PAKN của bạn</h1>
+                    <p className="text-slate-600">Nhập mã PAKN hoặc tên người gửi để xem thông tin phản ánh và tải tài liệu đính kèm.</p>
                 </div>
+
+                <PaknLookupCard className="w-full" />
             </div>
-
-            <PaknListTableView items={paknPage?.items ?? []} isLoading={isLoading} />
-
-            <PaknPagination
-                page={paknPage?.page ?? filters.page}
-                totalPages={paknPage?.totalPages ?? 1}
-                onPageChange={handlePageChange}
-            />
-
-            <PaknLookupCard className="lg:w-1/2" />
         </div>
     );
 };

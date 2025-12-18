@@ -19,7 +19,6 @@ import type {
  * Defines contract for case data operations
  */
 export interface ICaseRepository {
-    lookupProgress(payload: CaseProgressRequest): Promise<CaseProgressApiResponse>;
     submitFeedback(payload: CaseFeedbackRequest): Promise<CaseFeedbackResponse>;
     getFeedbackByCase(caseId: string): Promise<CaseFeedback | null>;
 }
@@ -32,15 +31,6 @@ export class CaseRepository implements ICaseRepository {
     /**
      * Lookup case progress from API
      */
-    async lookupProgress(payload: CaseProgressRequest): Promise<CaseProgressApiResponse> {
-        try {
-            const response = await caseClientApi.progress(payload);
-            return response.data;
-        } catch (error) {
-            console.error("[CaseRepository] Error looking up case progress:", error);
-            throw error;
-        }
-    }
 
     async submitFeedback(payload: CaseFeedbackRequest): Promise<CaseFeedbackResponse> {
         try {

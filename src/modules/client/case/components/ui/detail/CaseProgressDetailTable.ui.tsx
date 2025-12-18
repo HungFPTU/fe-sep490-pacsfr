@@ -37,6 +37,33 @@ const getFieldLabel = (key: string): string => {
         applicantName: 'Tên người nộp hồ sơ',
         guestName: 'Tên khách hàng',
         citizenName: 'Tên công dân',
+        fullName: 'Họ và tên',
+        email: 'Email',
+        phone: 'Số điện thoại',
+        address: 'Địa chỉ',
+        dateOfBirth: 'Ngày sinh',
+        gender: 'Giới tính',
+        nationality: 'Quốc tịch',
+        idCard: 'Số CMND/CCCD',
+        priority: 'Ưu tiên',
+        notes: 'Ghi chú',
+        remark: 'Nhận xét',
+        description: 'Mô tả',
+        title: 'Tiêu đề',
+        name: 'Tên',
+        staffId: 'Mã nhân viên',
+        staffName: 'Tên nhân viên',
+        departmentId: 'Mã phòng ban',
+        organizationId: 'Mã tổ chức',
+        processedAt: 'Thời gian xử lý',
+        handlerName: 'Người xử lý',
+        stepName: 'Tên bước',
+        stepOrder: 'Thứ tự bước',
+        order: 'Thứ tự',
+        priorityLevel: 'Mức ưu tiên',
+        totalFee: 'Tổng phí',
+        isPayment: 'Đã thanh toán',
+        submissionMethod: 'Hình thức nộp',
     };
 
     return labelMap[key] || key
@@ -99,8 +126,13 @@ const shouldDisplayField = (key: string, value: unknown): boolean => {
     // Skip internal fields
     if (key.startsWith('$')) return false;
 
-    // Skip id field (not needed for user display)
-    if (key === 'id') return false;
+    // Skip id fields (not needed for user display)
+    if (key === 'id' || key === 'guestId' || key === 'serviceId' || key === 'receivedBy') return false;
+    
+    // Skip variations of these fields
+    if (key.toLowerCase().includes('guestid') || key.toLowerCase().includes('serviceid') || key.toLowerCase().includes('receivedby')) {
+        return false;
+    }
 
     // Skip complex objects and arrays (they're handled in timeline)
     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
@@ -156,33 +188,23 @@ export const CaseProgressDetailTable: React.FC<CaseProgressDetailTableProps> = (
     }
 
     return (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
-            <div className="mb-6 border-b border-gray-200 pb-4">
-                <h3 className="text-xl font-semibold text-gray-900">Thông tin chi tiết</h3>
-                <p className="mt-1 text-sm text-gray-600">
-                    Thông tin đầy đủ về hồ sơ được hiển thị dưới dạng bảng để tiện theo dõi.
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg ring-1 ring-black/5">
+            <div className="mb-6 border-b border-slate-200 pb-4">
+                <h3 className="text-2xl font-bold text-slate-900">Thông tin chi tiết</h3>
+                <p className="mt-1 text-sm text-slate-600">
+                    Toàn bộ chi tiết hồ sơ và dữ liệu xử lý
                 </p>
             </div>
 
-            <div className="overflow-hidden rounded-lg border border-gray-100">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
-                                Thông tin
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
-                                Giá trị
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 bg-white">
-                        {fields.map((field) => (
-                            <tr key={field.key} className="transition-colors hover:bg-gray-50">
-                                <td className="w-1/3 whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-700">
+            <div className="overflow-x-auto">
+                <table className="min-w-full">
+                    <tbody className="divide-y divide-slate-200">
+                        {fields.map((field, index) => (
+                            <tr key={field.key} className={`hover:bg-slate-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
+                                <td className="w-1/3 px-6 py-4 text-sm font-semibold text-slate-700 border-r border-slate-200">
                                     {field.label}
                                 </td>
-                                <td className="px-6 py-4 text-sm text-gray-900">
+                                <td className="px-6 py-4 text-sm text-slate-900">
                                     <div className="break-words">
                                         {field.value}
                                     </div>

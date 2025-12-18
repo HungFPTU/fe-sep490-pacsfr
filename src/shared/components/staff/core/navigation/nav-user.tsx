@@ -93,10 +93,10 @@ export function NavUser({
                                 <BadgeCheck />
                                 Thông tin tài khoản
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            {/* <DropdownMenuItem>
                                 <Bell />
                                 Thông báo
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem

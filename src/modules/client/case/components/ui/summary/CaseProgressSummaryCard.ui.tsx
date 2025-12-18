@@ -1,36 +1,26 @@
 'use client';
 
-import { CalendarDays, ClipboardList, Contact, FileText, MapPin, Timer, TrendingUp, User } from "lucide-react";
+import { CalendarDays, ClipboardList, Contact, FileText, Zap, CheckCircle2 } from "lucide-react";
 import type { CaseProgressSummary } from "../../../types";
-import { cn } from "@/shared/lib";
 
 interface CaseProgressSummaryCardProps {
     summary: CaseProgressSummary;
     message?: string;
 }
 
-const SummaryRow: React.FC<{
+const InfoItem: React.FC<{
     icon: React.ReactNode;
     label: string;
     value?: string;
-    highlight?: boolean;
-}> = ({ icon, label, value, highlight = false }) => {
+}> = ({ icon, label, value }) => {
     if (!value) return null;
-
     return (
-        <div
-            className={cn(
-                "flex items-start gap-3 rounded-lg border border-gray-100 bg-white/90 p-4 shadow-sm transition hover:shadow-md",
-                highlight ? "border-blue-200 bg-blue-50" : "",
-            )}
-        >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
-                {icon}
+        <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+                <div className="text-red-600">{icon}</div>
+                <span className="font-medium">{label}</span>
             </div>
-            <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600">{label}</p>
-                <p className="mt-1 text-base font-semibold text-gray-900">{value}</p>
-            </div>
+            <p className="ml-6 text-sm font-semibold text-slate-900">{value}</p>
         </div>
     );
 };
@@ -40,91 +30,96 @@ export const CaseProgressSummaryCard: React.FC<CaseProgressSummaryCardProps> = (
     message,
 }) => {
     return (
-        <div className="rounded-xl border border-gray-200 bg-gradient-to-br from-white via-white to-blue-50 p-6 shadow-lg">
-            <div className="flex items-center justify-between gap-4 border-b border-gray-200 pb-4">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg ring-1 ring-black/5">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 border-b border-slate-200 pb-6">
                 <div>
-                    <h3 className="text-xl font-semibold text-gray-900">Tổng quan hồ sơ</h3>
-                    <p className="text-sm text-gray-600">
-                        Thông tin trạng thái xử lý mới nhất của hồ sơ công dân.
-                    </p>
+                    <h3 className="text-2xl font-bold text-slate-900">Thông tin hồ sơ</h3>
+                    <p className="mt-1 text-sm text-slate-600">Chi tiết xử lý và tiến độ hồ sơ của bạn</p>
                 </div>
                 {message && (
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
-                        {message}
-                    </span>
+                    <div className="flex items-center gap-2 rounded-full bg-green-50 px-4 py-2 text-green-700">
+                        <CheckCircle2 className="h-5 w-5" />
+                        <span className="text-sm font-semibold">{message}</span>
+                    </div>
                 )}
             </div>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <SummaryRow
+            {/* Key Information Grid */}
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <InfoItem
                     icon={<ClipboardList className="h-5 w-5" />}
-                    label="Mã số hồ sơ"
+                    label="Mã hồ sơ"
                     value={summary.caseCode}
-                    highlight
                 />
-                <SummaryRow
+                <InfoItem
                     icon={<FileText className="h-5 w-5" />}
-                    label="Thủ tục hành chính"
+                    label="Thủ tục"
                     value={summary.serviceName}
                 />
-                <SummaryRow
+                <InfoItem
                     icon={<Contact className="h-5 w-5" />}
-                    label="Người nộp hồ sơ"
+                    label="Người nộp"
                     value={summary.applicantName}
                 />
-                <SummaryRow
-                    icon={<User className="h-5 w-5" />}
+                <InfoItem
+                    icon={<Zap className="h-5 w-5" />}
                     label="Cán bộ phụ trách"
                     value={summary.processingAgency}
                 />
-                <SummaryRow
+                <InfoItem
                     icon={<CalendarDays className="h-5 w-5" />}
                     label="Ngày tiếp nhận"
                     value={summary.submittedAt}
                 />
-                <SummaryRow
-                    icon={<Timer className="h-5 w-5" />}
-                    label="Ngày cập nhật gần nhất"
-                    value={summary.updatedAt}
-                />
                 {summary.progressPercentage !== undefined && (
-                    <SummaryRow
-                        icon={<TrendingUp className="h-5 w-5" />}
-                        label="Tiến độ xử lý"
-                        value={`${summary.progressPercentage}%`}
-                        highlight
-                    />
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <Zap className="h-5 w-5 text-red-600" />
+                            <span className="font-medium">Tiến độ</span>
+                        </div>
+                        <div className="ml-6 space-y-2">
+                            <p className="text-sm font-semibold text-slate-900">{summary.progressPercentage}%</p>
+                            <div className="h-2 rounded-full bg-slate-200">
+                                <div className="h-full rounded-full bg-red-600" style={{ width: `${summary.progressPercentage}%` }} />
+                            </div>
+                        </div>
+                    </div>
                 )}
             </div>
 
+            {/* Status Section */}
             {(summary.status || summary.statusNote || summary.estimatedCompletionDate || summary.receivedChannel) && (
-                <div className="mt-6 rounded-lg border border-blue-100 bg-blue-50 p-4">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <p className="text-sm font-medium text-blue-700 uppercase tracking-wide">
-                                Trạng thái hiện tại
-                            </p>
-                            <p className="text-lg font-semibold text-blue-900">
-                                {summary.status ?? "Chưa xác định"}
-                            </p>
-                        </div>
-                        {summary.estimatedCompletionDate && (
-                            <div className="rounded-md border border-blue-200 bg-white px-4 py-2 text-sm text-blue-700">
-                                Dự kiến hoàn thành:{" "}
-                                <span className="font-semibold">{summary.estimatedCompletionDate}</span>
+                <div className="mt-6 rounded-xl border border-red-100 bg-red-50 p-5">
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-widest text-red-700">Trạng thái hiện tại</p>
+                                <p className="mt-1 text-lg font-bold text-red-900">{summary.status ?? "Chưa xác định"}</p>
                             </div>
+                            {summary.progressPercentage !== undefined && summary.progressPercentage === 100 && (
+                                <div className="rounded-full bg-green-100 p-3 text-green-600">
+                                    <CheckCircle2 className="h-6 w-6" />
+                                </div>
+                            )}
+                        </div>
+                        {summary.statusNote && (
+                            <p className="rounded-lg border border-red-200 bg-white px-3 py-2 text-sm text-red-900">
+                                {summary.statusNote}
+                            </p>
                         )}
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between text-sm text-red-800">
+                            {summary.estimatedCompletionDate && (
+                                <span><strong>Dự kiến:</strong> {summary.estimatedCompletionDate}</span>
+                            )}
+                            {summary.receivedChannel && (
+                                <span><strong>Hình thức:</strong> {summary.receivedChannel}</span>
+                            )}
+                            {summary.updatedAt && (
+                                <span><strong>Cập nhật:</strong> {summary.updatedAt}</span>
+                            )}
+                        </div>
                     </div>
-                    {summary.statusNote && (
-                        <p className="mt-3 rounded-md bg-white px-4 py-3 text-sm text-blue-800">
-                            {summary.statusNote}
-                        </p>
-                    )}
-                    {summary.receivedChannel && (
-                        <p className="mt-2 text-xs text-blue-600">
-                            Hình thức tiếp nhận: {summary.receivedChannel}
-                        </p>
-                    )}
                 </div>
             )}
         </div>
