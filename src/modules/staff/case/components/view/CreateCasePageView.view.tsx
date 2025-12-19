@@ -17,6 +17,7 @@ import {
     GuestSearchForm,
     ServiceListWithPagination,
     CaseFormFields,
+    OtpVerification,
 } from "../ui/create-case";
 
 type PageMode = "select" | "create-guest" | "create-case";
@@ -29,8 +30,10 @@ export function CreateCasePageView() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [guestCreatedSuccess, setGuestCreatedSuccess] = useState(false);
+    const [showOtpVerification, setShowOtpVerification] = useState(false);
+    const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
 
-// Guest Form Data
+    // Guest Form Data
     // const [guestData, setGuestData] = useState<CreateGuestRequest>({
     //     fullName: "",
     //     idNumber: "",
@@ -51,7 +54,7 @@ export function CreateCasePageView() {
     //     country: "Việt Nam",
     // });
 
-      // Guest Form Data
+    // Guest Form Data
     const [guestData, setGuestData] = useState<CreateGuestRequest>({
         fullName: "",
         idNumber: "",
@@ -115,17 +118,17 @@ export function CreateCasePageView() {
         const newErrors: Record<string, string> = {};
 
         if (!guestData.fullName.trim()) newErrors.fullName = "Họ tên là bắt buộc";
-        
+
         // Validate ID Number (CCCD/Passport)
         if (!guestData.idNumber.trim()) {
             newErrors.idNumber = "Số CCCD là bắt buộc";
         } else if (!/^\d{12}$/.test(guestData.idNumber.trim())) {
             newErrors.idNumber = "Số CCCD phải là 12 chữ số không có ký tự";
         }
-        
+
         // Validate Birth Date
         if (!guestData.birthDate) newErrors.birthDate = "Ngày sinh là bắt buộc";
-        
+
         // Validate ID Issue Date (must be >= birthDate + 14 years)
         if (!guestData.idIssueDate) {
             newErrors.idIssueDate = "Ngày cấp là bắt buộc";
@@ -133,21 +136,21 @@ export function CreateCasePageView() {
             const birthDate = new Date(guestData.birthDate);
             const issueDate = new Date(guestData.idIssueDate);
             const minIssueDate = new Date(birthDate.getFullYear() + 14, birthDate.getMonth(), birthDate.getDate());
-            
+
             if (issueDate < minIssueDate) {
                 newErrors.idIssueDate = "Ngày cấp phải cách 14 năm kể từ ngày sinh";
             }
         }
-        
+
         if (!guestData.idIssuePlace.trim()) newErrors.idIssuePlace = "Nơi cấp là bắt buộc";
-        
+
         // Validate Phone Number (10 digits)
         if (!guestData.phone.trim()) {
             newErrors.phone = "Số điện thoại là bắt buộc";
         } else if (!/^\d{10}$/.test(guestData.phone.trim())) {
             newErrors.phone = "Số điện thoại phải là 10 chữ số";
         }
-        
+
         if (!guestData.email.trim()) newErrors.email = "Email là bắt buộc";
 
         setErrors(newErrors);
@@ -157,7 +160,7 @@ export function CreateCasePageView() {
     const handleSearchGuests = async (keyword: string = "") => {
         // Allow empty search to show all guests
         const searchKeyword = keyword.trim();
-        
+
         setIsSearching(true);
         try {
             const response = await staffDashboardApi.getGuests({
@@ -193,7 +196,7 @@ export function CreateCasePageView() {
 
     const handleSearchServices = async (keyword: string = "", page: number = 1) => {
         const searchKeyword = keyword.trim();
-        
+
         setIsSearchingService(true);
         try {
             const response = await staffDashboardApi.getServices({
@@ -225,7 +228,7 @@ export function CreateCasePageView() {
         setSelectedService(service);
         setServiceSearchKeyword(service.serviceName);
         setCaseData({ ...caseData, serviceId: service.id, submissionMethodId: "" }); // Reset submission method
-        
+
         // Fetch submission methods for the selected service
         setIsLoadingSubmissionMethods(true);
         try {
@@ -233,9 +236,9 @@ export function CreateCasePageView() {
             setSubmissionMethods(methods);
         } catch (error) {
             console.error("Error fetching submission methods:", error);
-            addToast({ 
-                message: "Lỗi khi tải phương thức nộp: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), 
-                type: "error" 
+            addToast({
+                message: "Lỗi khi tải phương thức nộp: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"),
+                type: "error"
             });
             setSubmissionMethods([]);
         } finally {
@@ -258,7 +261,8 @@ export function CreateCasePageView() {
             if (response.success && response.data) {
                 setGuestId(response.data);
                 setGuestCreatedSuccess(true);
-                addToast({ message: response.message || "Tạo khách hàng thành công!", type: "success" });
+                setShowOtpVerification(true);
+                addToast({ message: response.message || "Tạo khách hàng thành công! Mã xác thực đã được gửi đến email.", type: "success" });
             } else {
                 addToast({ message: "Lỗi: " + (response.message || "Không thể tạo khách hàng"), type: "error" });
             }
@@ -267,6 +271,40 @@ export function CreateCasePageView() {
             addToast({ message: "Lỗi khi tạo khách hàng: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleVerifyOtp = async (otpCode: string) => {
+        setIsVerifyingOtp(true);
+        try {
+            const response = await staffDashboardApi.verifyGuestEmail(guestId, otpCode);
+
+            if (response.success) {
+                addToast({ message: "Xác thực email thành công!", type: "success" });
+                setShowOtpVerification(false);
+            } else {
+                addToast({ message: response.message || "Mã xác thực không đúng. Vui lòng thử lại!", type: "error" });
+            }
+        } catch (error) {
+            console.error("Error verifying OTP:", error);
+            addToast({ message: "Lỗi khi xác thực: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
+        } finally {
+            setIsVerifyingOtp(false);
+        }
+    };
+
+    const handleResendOtp = async () => {
+        try {
+            const response = await staffDashboardApi.resendGuestOtp(guestId);
+
+            if (response.success) {
+                addToast({ message: "Mã xác thực mới đã được gửi đến email!", type: "success" });
+            } else {
+                addToast({ message: response.message || "Không thể gửi lại mã. Vui lòng thử lại!", type: "error" });
+            }
+        } catch (error) {
+            console.error("Error resending OTP:", error);
+            addToast({ message: "Lỗi khi gửi lại mã: " + (error instanceof Error ? error.message : "Vui lòng thử lại!"), type: "error" });
         }
     };
 
@@ -311,7 +349,7 @@ export function CreateCasePageView() {
     const handleContinueToCreateCase = () => {
         // Set guest data in case form
         setCaseData({ ...caseData, guestId: guestId });
-        
+
         // Set a mock selected guest to display in the form (showing the guestId)
         setSelectedGuest({
             id: guestId,
@@ -334,7 +372,7 @@ export function CreateCasePageView() {
             city: guestData.city,
             country: guestData.country,
         } as Guest);
-        
+
         setMode("create-case");
     };
 
@@ -412,10 +450,22 @@ export function CreateCasePageView() {
                             setMode("select");
                             setGuestCreatedSuccess(false);
                             setGuestId("");
+                            setShowOtpVerification(false);
                         }}
                         onContinueToCase={handleContinueToCreateCase}
                         onFinish={handleFinish}
                     />
+
+                    {/* OTP Verification Section */}
+                    {guestCreatedSuccess && showOtpVerification && guestId && (
+                        <OtpVerification
+                            guestId={guestId}
+                            email={guestData.email}
+                            isVerifying={isVerifyingOtp}
+                            onVerify={handleVerifyOtp}
+                            onResend={handleResendOtp}
+                        />
+                    )}
                 </div>
             </StaffDashboardTabsView>
         );
