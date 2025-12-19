@@ -159,7 +159,7 @@ export const staffDashboardApi = {
     // Get services with pagination and filters
     async getServices(filters?: ServiceFilters): Promise<ServiceListResponse> {
         const params = new URLSearchParams();
-        
+
         if (filters?.keyword) params.append('Keyword', filters.keyword);
         if (filters?.serviceGroupId) params.append('ServiceGroupId', filters.serviceGroupId);
         if (filters?.legalBasisId) params.append('LegalBasisId', filters.legalBasisId);
@@ -177,7 +177,7 @@ export const staffDashboardApi = {
     // Get service groups with pagination and filters
     async getServiceGroups(filters?: ServiceGroupFilters): Promise<ServiceGroupListResponse> {
         const params = new URLSearchParams();
-        
+
         if (filters?.keyword) params.append('Keyword', filters.keyword);
         if (filters?.departmentId) params.append('DepartmentId', filters.departmentId);
         if (filters?.isActive !== undefined) params.append('IsActive', filters.isActive.toString());
@@ -218,6 +218,24 @@ export const staffDashboardApi = {
         const url = `${API_PATH.STAFF.DASHBOARD.GET_GUESTS}${query ? '?' + query : ''}`;
 
         const response = await httpNoLoading.get<GetGuestsResponse>(url);
+        return response.data;
+    },
+
+    // Verify Guest Email
+    async verifyGuestEmail(guestId: string, otpCode: string): Promise<{ success: boolean; message: string }> {
+        const response = await http.post<{ success: boolean; message: string }>(
+            API_PATH.STAFF.DASHBOARD.VERIFY_GUEST_EMAIL,
+            { guestId, otpCode }
+        );
+        return response.data;
+    },
+
+    // Resend Guest OTP
+    async resendGuestOtp(guestId: string): Promise<{ success: boolean; message: string }> {
+        const response = await http.post<{ success: boolean; message: string }>(
+            API_PATH.STAFF.DASHBOARD.RESEND_GUEST_OTP(guestId),
+            {}
+        );
         return response.data;
     },
 };
