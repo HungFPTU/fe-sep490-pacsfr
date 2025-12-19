@@ -26,7 +26,7 @@ export function StaffDashboardView() {
     const router = useRouter();
     const { withMinimumLoadingTime } = useMinimumLoadingTime(1500); // 1.5 seconds minimum
     const { addToast } = useGlobalToast();
-    
+
     const {
         waitingList,
         stats,
@@ -48,7 +48,7 @@ export function StaffDashboardView() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedServiceType, setSelectedServiceType] = useState("");
     const [showQueueSetup, setShowQueueSetup] = useState(!serviceGroupId);
-    
+
     // Service Group states
     const [serviceGroups, setServiceGroups] = useState<ServiceGroup[]>([]);
     const [isLoadingServiceGroups, setIsLoadingServiceGroups] = useState(false);
@@ -77,7 +77,7 @@ export function StaffDashboardView() {
                     size: 100
                 });
                 setServiceGroups(groups);
-                
+
                 // Auto-select if serviceGroupId exists (only on first load)
                 if (!keyword && serviceGroupId) {
                     const found = groups.find((g: ServiceGroup) => g.id === serviceGroupId);
@@ -118,7 +118,7 @@ export function StaffDashboardView() {
     // Load queue status
     const loadQueueStatus = useCallback(async () => {
         if (!serviceGroupId) return;
-        
+
         setLoadingQueueStatus(true);
         try {
             await withMinimumLoadingTime(async () => {
@@ -139,7 +139,7 @@ export function StaffDashboardView() {
                 // In real app, these would be API calls
                 // For now, using mock data
                 setWaitingList(getMockWaitingList());
-                
+
                 // Load queue status if serviceGroupId is set
                 if (serviceGroupId) {
                     await loadQueueStatus();
@@ -156,19 +156,19 @@ export function StaffDashboardView() {
     const callNextNumber = async () => {
         if (!serviceGroupId) {
             addToast({ message: 'Vui lòng cấu hình Service Group ID trước!', type: 'info' });
-            return;
+            return undefined;
         }
 
         setCallingNext(true);
 
         try {
-            await withMinimumLoadingTime(async () => {
+            return await withMinimumLoadingTime(async () => {
                 const response = await staffDashboardService.callNext(serviceGroupId);
-                
+
                 if (response.success && response.data?.ticketNumber) {
                     // Get ticket detail using the ticketNumber from call next response
                     const ticketDetail = await staffDashboardService.getTicketDetail(response.data.ticketNumber);
-                    
+
                     // Update current serving with detailed ticket data
                     setCurrentServing({
                         id: ticketDetail.ticketNumber,
@@ -178,14 +178,15 @@ export function StaffDashboardView() {
                         calledAt: ticketDetail.servedAt
                     });
 
-                    addToast({ 
-                        message: `Mời số ${ticketDetail.ticketNumber} - ${ticketDetail.fullName} vào phục vụ`, 
-                        type: 'info' 
+                    addToast({
+                        message: `Mời số ${ticketDetail.ticketNumber} - ${ticketDetail.fullName} vào phục vụ`,
+                        type: 'info'
                     });
-                    
+
                     // Reload queue status and dashboard data
                     await loadQueueStatus();
                     await loadDashboardData();
+                    return response;
                 } else {
                     throw new Error(response.message || 'Failed to call next');
                 }
@@ -197,6 +198,7 @@ export function StaffDashboardView() {
             } else {
                 addToast({ message: 'Có lỗi xảy ra khi gọi số tiếp theo', type: 'info' });
             }
+            return undefined;
         } finally {
             setCallingNext(false);
         }
@@ -254,7 +256,7 @@ export function StaffDashboardView() {
 
     const handleStatusChanged = useCallback((ticketNumber: string, status: string) => {
         // Update current serving status when it changes
-        setCurrentServing(prev => 
+        setCurrentServing(prev =>
             prev && prev.ticketNumber === ticketNumber
                 ? { ...prev, status }
                 : prev
@@ -352,7 +354,7 @@ export function StaffDashboardView() {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Button 
+                        <Button
                             onClick={() => router.push('/staff/create-case')}
                             className="bg-indigo-600 hover:bg-indigo-700"
                             size="sm"
@@ -413,4 +415,3 @@ export function StaffDashboardView() {
         </StaffDashboardTabsView>
     );
 }
-

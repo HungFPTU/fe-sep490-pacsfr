@@ -7,6 +7,7 @@ import { Users, Clock, CheckCircle, Phone, UserCheck, Settings } from "lucide-re
 import { staffDashboardService } from "../../../services/staff-dashboard.service";
 import { useGlobalToast } from "@core/patterns/SingletonHook";
 import type { QueueStatus } from "../../../types";
+import { useQueueAnnouncer } from "../../../hooks/useQueueAnnouncer";
 
 interface CurrentServingData {
     id: string;
@@ -22,7 +23,7 @@ interface CurrentServingPanelProps {
     isLoadingQueueStatus: boolean;
     currentServing: CurrentServingData | null;
     isCallingNext: boolean;
-    onCallNext: () => void;
+    onCallNext: () => Promise<any> | void;
     onRefresh: () => void;
     onChangeQueue: () => void;
     onStatusUpdated?: (ticketData: CurrentServingData) => void;
@@ -52,6 +53,7 @@ export function CurrentServingPanel({
     const { addToast } = useGlobalToast();
     const [selectedStatus, setSelectedStatus] = useState<string>(currentServing?.status || 'Processing');
     const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+    const { announceTicket, isSpeaking } = useQueueAnnouncer();
 
     // Sync selected status when current serving changes
     React.useEffect(() => {
@@ -70,13 +72,13 @@ export function CurrentServingPanel({
         try {
             // Update ticket status
             await staffDashboardService.updateTicketStatus(currentServing.ticketNumber, selectedStatus);
-            
+
             // Fetch the latest ticket details
             const updatedTicket = await staffDashboardService.getTicketDetail(currentServing.ticketNumber);
-            
+
             // Update selected status with latest data
             setSelectedStatus(updatedTicket.status);
-            
+
             // Call parent callback to update currentServing
             if (onStatusUpdated) {
                 onStatusUpdated({
@@ -87,21 +89,34 @@ export function CurrentServingPanel({
                     calledAt: updatedTicket.servedAt
                 });
             }
-            
-            addToast({ 
-                message: `Đã cập nhật trạng thái ticket ${currentServing.ticketNumber} thành ${staffDashboardService.getTicketStatusText(updatedTicket.status)}`, 
-                type: 'info' 
+
+            addToast({
+                message: `Đã cập nhật trạng thái ticket ${currentServing.ticketNumber} thành ${staffDashboardService.getTicketStatusText(updatedTicket.status)}`,
+                type: 'info'
             });
             // Refresh queue status to get latest updates
             onRefresh();
         } catch (error) {
             console.error('Error updating ticket status:', error);
-            addToast({ 
-                message: 'Lỗi khi cập nhật trạng thái. Vui lòng thử lại!', 
-                type: 'info' 
+            addToast({
+                message: 'Lỗi khi cập nhật trạng thái. Vui lòng thử lại!',
+                type: 'info'
             });
         } finally {
             setIsUpdatingStatus(false);
+        }
+    };
+
+    const handleCallNext = async () => {
+        try {
+            const result = await onCallNext();
+
+            // Check if result matches the expected structure
+            if (result && result.success && result.data) {
+                announceTicket(result.data);
+            }
+        } catch (error) {
+            console.error("Error calling next ticket:", error);
         }
     };
 
@@ -236,36 +251,60 @@ export function CurrentServingPanel({
             )}
 
             {/* Action Buttons */}
-            <div className="flex items-center space-x-3 mt-6 pt-4 border-t border-gray-200">
-                <Button
-                    onClick={onCallNext}
-                    disabled={isCallingNext || !serviceGroupId || (queueStatus?.messageCount === 0)}
-                    className="flex-1 bg-indigo-600 hover:bg-indigo-700"
-                    title={!serviceGroupId ? 'Vui lòng cấu hình Service Group ID trước' : (queueStatus?.messageCount === 0 ? 'Không có ticket trong hàng đợi' : '')}
-                >
-                    {isCallingNext ? (
-                        <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Đang gọi...
-                        </>
-                    ) : (
-                        <>
-                            <Phone className="w-4 h-4 mr-2" />
-                            Gọi số tiếp theo
-                        </>
-                    )}
-                </Button>
+            <div className="flex flex-col gap-3 mt-6 pt-4 border-t border-gray-200">
+                {currentServing && (
+                    <Button
+                        onClick={() => announceTicket({
+                            ...currentServing,
+                            $id: currentServing.id
+                        })}
+                        disabled={isSpeaking}
+                        className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white"
+                    >
+                        {isSpeaking ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                Đang đọc...
+                            </>
+                        ) : (
+                            <>
+                                <Phone className="w-4 h-4 mr-2 rotate-12" />
+                                Gọi lại số này
+                            </>
+                        )}
+                    </Button>
+                )}
 
-                <Button
-                    onClick={onRefresh}
-                    disabled={isLoadingQueueStatus}
-                    variant="outline"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                >
-                    <Clock className="w-4 h-4" />
-                </Button>
+                <div className="flex items-center space-x-3">
+                    <Button
+                        onClick={handleCallNext}
+                        disabled={isCallingNext || !serviceGroupId || (queueStatus?.messageCount === 0) || isSpeaking}
+                        className="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400"
+                        title={!serviceGroupId ? 'Vui lòng cấu hình Service Group ID trước' : (queueStatus?.messageCount === 0 ? 'Không có ticket trong hàng đợi' : (isSpeaking ? 'Đang đọc loa...' : ''))}
+                    >
+                        {isCallingNext ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                Đang gọi...
+                            </>
+                        ) : (
+                            <>
+                                <Phone className="w-4 h-4 mr-2" />
+                                Gọi số tiếp theo
+                            </>
+                        )}
+                    </Button>
+
+                    <Button
+                        onClick={onRefresh}
+                        disabled={isLoadingQueueStatus}
+                        variant="outline"
+                        className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                    >
+                        <Clock className="w-4 h-4" />
+                    </Button>
+                </div>
             </div>
         </Card>
     );
 }
-
