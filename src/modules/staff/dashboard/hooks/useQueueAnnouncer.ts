@@ -89,8 +89,26 @@ export const useQueueAnnouncer = () => {
 
         setIsSpeaking(true);
 
-        // Directly speak without sound effect for now
-        speakAnnouncement(ticket);
+        // Play ding-dong sound first
+        const audio = new Audio('/assets/sounds/dingdong.mp3');
+
+        const playAnnouncement = () => {
+            speakAnnouncement(ticket);
+        };
+
+        audio.onended = playAnnouncement;
+
+        // Fallback: If audio fails/error, still speak
+        audio.onerror = (e) => {
+            console.error("Audio playback error:", e);
+            playAnnouncement();
+        };
+
+        audio.play().catch(err => {
+            console.error("Error playing audio:", err);
+            // If play fails (e.g. user interaction policy), just speak
+            playAnnouncement();
+        });
 
     }, [speakAnnouncement]);
 
