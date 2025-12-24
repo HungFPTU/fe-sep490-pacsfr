@@ -273,6 +273,19 @@ export function GuestForm({
     const [showBirthDatePicker, setShowBirthDatePicker] = React.useState(false);
     const [showIdIssueDatePicker, setShowIdIssueDatePicker] = React.useState(false);
 
+    // Local state for date inputs to show while typing
+    const [birthDateInput, setBirthDateInput] = React.useState('');
+    const [idIssueDateInput, setIdIssueDateInput] = React.useState('');
+
+    // Sync with guestData
+    React.useEffect(() => {
+        setBirthDateInput(formatISOToDate(guestData.birthDate || ''));
+    }, [guestData.birthDate]);
+
+    React.useEffect(() => {
+        setIdIssueDateInput(formatISOToDate(guestData.idIssueDate || ''));
+    }, [guestData.idIssueDate]);
+
     // QR Scanner State
     const [isScanMode, setIsScanMode] = useState(false);
     const cccdInputRef = React.useRef<HTMLInputElement>(null);
@@ -563,7 +576,7 @@ export function GuestForm({
                                 <div className="flex items-center gap-2">
                                     <input
                                         type="text"
-                                        value={formatISOToDate(guestData.birthDate || '')}
+                                        value={birthDateInput}
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             if (/^[0-9/]*$/.test(value)) {
@@ -574,10 +587,26 @@ export function GuestForm({
                                                 if (formatted.length >= 5) {
                                                     formatted = formatted.substring(0, 5) + '/' + formatted.substring(5, 9);
                                                 }
+
+                                                // Update local state immediately
+                                                setBirthDateInput(formatted);
+
+                                                // Update parent only when complete
                                                 if (formatted.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(formatted)) {
                                                     const isoDate = formatDateToISO(formatted);
                                                     onDataChange({ ...guestData, birthDate: isoDate });
+                                                } else {
+                                                    // Clear if incomplete
+                                                    onDataChange({ ...guestData, birthDate: '' });
                                                 }
+                                            }
+                                        }}
+                                        onBlur={(e) => {
+                                            // Validate and format on blur
+                                            const value = e.target.value;
+                                            if (value && /^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+                                                const isoDate = formatDateToISO(value);
+                                                onDataChange({ ...guestData, birthDate: isoDate });
                                             }
                                         }}
                                         placeholder="dd/mm/yyyy"
@@ -638,7 +667,7 @@ export function GuestForm({
                                 <div className="flex items-center gap-2">
                                     <input
                                         type="text"
-                                        value={formatISOToDate(guestData.idIssueDate || '')}
+                                        value={idIssueDateInput}
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             if (/^[0-9/]*$/.test(value)) {
@@ -649,10 +678,26 @@ export function GuestForm({
                                                 if (formatted.length >= 5) {
                                                     formatted = formatted.substring(0, 5) + '/' + formatted.substring(5, 9);
                                                 }
+
+                                                // Update local state immediately
+                                                setIdIssueDateInput(formatted);
+
+                                                // Update parent only when complete
                                                 if (formatted.length === 10 && /^\d{2}\/\d{2}\/\d{4}$/.test(formatted)) {
                                                     const isoDate = formatDateToISO(formatted);
                                                     onDataChange({ ...guestData, idIssueDate: isoDate });
+                                                } else {
+                                                    // Clear if incomplete
+                                                    onDataChange({ ...guestData, idIssueDate: '' });
                                                 }
+                                            }
+                                        }}
+                                        onBlur={(e) => {
+                                            // Validate and format on blur
+                                            const value = e.target.value;
+                                            if (value && /^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+                                                const isoDate = formatDateToISO(value);
+                                                onDataChange({ ...guestData, idIssueDate: isoDate });
                                             }
                                         }}
                                         placeholder="dd/mm/yyyy"

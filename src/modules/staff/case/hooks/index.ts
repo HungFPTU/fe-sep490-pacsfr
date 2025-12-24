@@ -13,4 +13,5 @@ export { usePaymentBill } from './usePaymentBill';
 export { usePrintBill } from './usePrintBill';
 export { useGetCaseStatuses } from './useGetCaseStatuses';
 export { useProvinces, useDistricts, useWards } from './useVietnamAddress';
+export { useMoveNextStep } from './useMoveNextStep';
 
