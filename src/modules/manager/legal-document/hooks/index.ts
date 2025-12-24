@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LegalDocumentService } from '../services/legal-document.service';
 import { CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type {
     CreateLegalDocumentRequest,
     UpdateLegalDocumentRequest,
@@ -30,12 +31,14 @@ export const useLegalDocument = (id: string) => {
 // Hook for creating legal document
 export const useCreateLegalDocument = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateLegalDocumentRequest) =>
             LegalDocumentService.createLegalDocument(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['legal-documents'] });
+            invalidateDropdown('legalDocument');
         },
     });
 };
@@ -43,6 +46,7 @@ export const useCreateLegalDocument = () => {
 // Hook for updating legal document
 export const useUpdateLegalDocument = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateLegalDocumentRequest }) =>
@@ -50,6 +54,7 @@ export const useUpdateLegalDocument = () => {
         onSuccess: (_, { id }) => {
             queryClient.invalidateQueries({ queryKey: ['legal-documents'] });
             queryClient.invalidateQueries({ queryKey: ['legal-document', id] });
+            invalidateDropdown('legalDocument');
         },
     });
 };
@@ -57,11 +62,13 @@ export const useUpdateLegalDocument = () => {
 // Hook for deleting legal document
 export const useDeleteLegalDocument = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => LegalDocumentService.deleteLegalDocument(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['legal-documents'] });
+            invalidateDropdown('legalDocument');
         },
     });
 };

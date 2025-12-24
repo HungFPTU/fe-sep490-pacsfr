@@ -668,11 +668,11 @@ export const API_PATH = {
         Page: number,
         PageSize: number
       ) =>
-        `/PublicServiceNew?keyword=${Keyword}&serviceId=${ServiceId}&newsCategoryId=${NewsCategoryId}&staffId=${StaffId}&isPublished=${IsPublished}&Page=${Page}&Size=${PageSize}`,
-      GET_BY_ID: (id: string) => `/PublicServiceNew/${id}`,
-      POST: "/PublicServiceNew",
-      PUT: (id: string) => `/PublicServiceNew/${id}`,
-      DELETE: (id: string) => `/PublicServiceNew/${id}`,
+        `/PublicServiceNews?keyword=${Keyword}&serviceId=${ServiceId}&newsCategoryId=${NewsCategoryId}&staffId=${StaffId}&isPublished=${IsPublished}&Page=${Page}&Size=${PageSize}`,
+      GET_BY_ID: (id: string) => `/PublicServiceNews/${id}`,
+      POST: "/PublicServiceNews",
+      PUT: (id: string) => `/PublicServiceNews/${id}`,
+      DELETE: (id: string) => `/PublicServiceNews/${id}`,
     },
       PAKN: {
         GET_ALL: (

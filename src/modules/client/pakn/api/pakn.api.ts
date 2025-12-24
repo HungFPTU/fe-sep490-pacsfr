@@ -6,6 +6,7 @@ import type {
     PaknCategoryOption,
     PaknItem,
     PaknOrgUnitOption,
+    PaknDetail,
 } from '../types/response';
 import type { PaknListFilters, PaknSubmitPayload } from '../types/request';
 
@@ -43,7 +44,7 @@ export const paknApi = {
     },
 
     verifyOTP: (payload: { paknCode: string; otpCode: string }) => {
-        return http.post(API_PATH.CLIENT.PAKN.VERIFY, payload);
+        return http.post<{ success: boolean; message: string; data: PaknDetail }>(API_PATH.CLIENT.PAKN.VERIFY, payload);
     },
 
     resendOTP: (payload: { paknCode: string }) => {

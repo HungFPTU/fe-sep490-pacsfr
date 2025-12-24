@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { submissionMethodService } from '../services/submission-method.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateSubmissionMethodRequest, UpdateSubmissionMethodRequest, SubmissionMethodFilters, AssignSubmissionMethodsRequest } from '../types/request';
 
 // Re-export custom form hook
@@ -41,6 +42,7 @@ export const useSubmissionMethod = (id: string, enabled = true) => {
  */
 export const useCreateSubmissionMethod = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateSubmissionMethodRequest) =>
@@ -49,6 +51,7 @@ export const useCreateSubmissionMethod = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SUBMISSION_METHOD_BASE,
             });
+            invalidateDropdown('submissionMethod');
         },
     });
 };
@@ -58,6 +61,7 @@ export const useCreateSubmissionMethod = () => {
  */
 export const useUpdateSubmissionMethod = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateSubmissionMethodRequest }) =>
@@ -69,6 +73,7 @@ export const useUpdateSubmissionMethod = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SUBMISSION_METHOD_BASE,
             });
+            invalidateDropdown('submissionMethod');
         },
     });
 };
@@ -78,6 +83,7 @@ export const useUpdateSubmissionMethod = () => {
  */
 export const useDeleteSubmissionMethod = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => submissionMethodService.deleteSubmissionMethod(id),
@@ -85,6 +91,7 @@ export const useDeleteSubmissionMethod = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SUBMISSION_METHOD_BASE,
             });
+            invalidateDropdown('submissionMethod');
         },
     });
 };
@@ -94,16 +101,16 @@ export const useDeleteSubmissionMethod = () => {
  */
 export const useAssignSubmissionMethodsToService = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: AssignSubmissionMethodsRequest) =>
             submissionMethodService.assignToService(data),
         onSuccess: () => {
-            // Invalidate submission method cache
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SUBMISSION_METHOD_BASE,
             });
+            invalidateDropdown('submissionMethod');
         },
     });
 };
-

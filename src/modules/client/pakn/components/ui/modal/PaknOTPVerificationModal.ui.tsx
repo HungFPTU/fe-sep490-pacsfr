@@ -63,8 +63,11 @@ export const PaknOTPVerificationModal: React.FC<PaknOTPVerificationModalProps> =
       setStep('success');
       addToast({ message: 'Xác thực OTP thành công!', type: 'success' });
       
-      // Pass data to parent
-      if (onVerifySuccess && result?.data) {
+      // Pass data to parent - API response structure: { success, message, data: PaknDetail }
+      if (onVerifySuccess && result?.data?.data) {
+        onVerifySuccess(result.data.data);
+      } else if (onVerifySuccess && result?.data) {
+        // Fallback if data is directly in result.data
         onVerifySuccess(result.data);
       }
 

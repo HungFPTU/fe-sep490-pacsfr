@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from '@tansta
 import { docsTypeService } from '../services/docs-type.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
 import { getValuesPage } from '@/types/rest';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateDocsTypeRequest, UpdateDocsTypeRequest, DocsTypeFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -69,6 +70,7 @@ export const useDocsType = (id: string, enabled = true) => {
  */
 export const useCreateDocsType = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateDocsTypeRequest) =>
@@ -77,6 +79,7 @@ export const useCreateDocsType = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DOCS_TYPE_ALL(),
             });
+            invalidateDropdown('docsType');
         },
     });
 };
@@ -86,6 +89,7 @@ export const useCreateDocsType = () => {
  */
 export const useUpdateDocsType = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateDocsTypeRequest }) =>
@@ -97,6 +101,7 @@ export const useUpdateDocsType = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DOCS_TYPE_ALL(),
             });
+            invalidateDropdown('docsType');
         },
     });
 };
@@ -106,6 +111,7 @@ export const useUpdateDocsType = () => {
  */
 export const useDeleteDocsType = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => docsTypeService.deleteDocsType(id),
@@ -113,7 +119,7 @@ export const useDeleteDocsType = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DOCS_TYPE_ALL(),
             });
+            invalidateDropdown('docsType');
         },
     });
 };
-

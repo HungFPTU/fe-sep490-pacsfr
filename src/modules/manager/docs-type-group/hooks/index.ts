@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { docsTypeGroupService } from '../services/docs-type-group.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateDocsTypeGroupRequest, UpdateDocsTypeGroupRequest, DocsTypeGroupFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -41,6 +42,7 @@ export const useDocsTypeGroup = (id: string, enabled = true) => {
  */
 export const useCreateDocsTypeGroup = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateDocsTypeGroupRequest) =>
@@ -49,6 +51,7 @@ export const useCreateDocsTypeGroup = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DOCS_TYPE_GROUP_ALL(),
             });
+            invalidateDropdown('docsTypeGroup');
         },
     });
 };
@@ -58,6 +61,7 @@ export const useCreateDocsTypeGroup = () => {
  */
 export const useUpdateDocsTypeGroup = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateDocsTypeGroupRequest }) =>
@@ -69,6 +73,7 @@ export const useUpdateDocsTypeGroup = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DOCS_TYPE_GROUP_ALL(),
             });
+            invalidateDropdown('docsTypeGroup');
         },
     });
 };
@@ -78,6 +83,7 @@ export const useUpdateDocsTypeGroup = () => {
  */
 export const useDeleteDocsTypeGroup = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => docsTypeGroupService.deleteDocsTypeGroup(id),
@@ -85,7 +91,7 @@ export const useDeleteDocsTypeGroup = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DOCS_TYPE_GROUP_ALL(),
             });
+            invalidateDropdown('docsTypeGroup');
         },
     });
 };
-

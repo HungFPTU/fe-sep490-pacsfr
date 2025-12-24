@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { orgUnitService } from "../services/org-unit.service";
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
+import { useFormDataStore } from "@/shared/stores";
 import type { CreateOrgUnitRequest, UpdateOrgUnitRequest, OrgUnitFilters } from "../types";
 
 // Re-export custom hooks
@@ -30,6 +31,7 @@ export const useOrgUnitDetail = (id: string) => {
 // CREATE mutation
 export const useCreateOrgUnit = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateOrgUnitRequest) => orgUnitService.createOrgUnit(data),
@@ -37,6 +39,7 @@ export const useCreateOrgUnit = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.ORG_UNIT_BASE
             });
+            invalidateDropdown('orgUnit');
         },
     });
 };
@@ -44,6 +47,7 @@ export const useCreateOrgUnit = () => {
 // UPDATE mutation
 export const useUpdateOrgUnit = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, request }: { id: string; request: UpdateOrgUnitRequest }) =>
@@ -52,6 +56,7 @@ export const useUpdateOrgUnit = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.ORG_UNIT_BASE
             });
+            invalidateDropdown('orgUnit');
         },
     });
 };
@@ -59,6 +64,7 @@ export const useUpdateOrgUnit = () => {
 // DELETE mutation
 export const useDeleteOrgUnit = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => orgUnitService.deleteOrgUnit(id),
@@ -66,7 +72,7 @@ export const useDeleteOrgUnit = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.ORG_UNIT_BASE
             });
+            invalidateDropdown('orgUnit');
         },
     });
 };
-

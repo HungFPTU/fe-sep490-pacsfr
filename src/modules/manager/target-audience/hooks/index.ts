@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { targetAudienceService } from '../services/target-audience.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateTargetAudienceRequest, UpdateTargetAudienceRequest, TargetAudienceFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -41,6 +42,7 @@ export const useTargetAudience = (id: string, enabled = true) => {
  */
 export const useCreateTargetAudience = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateTargetAudienceRequest) =>
@@ -49,6 +51,7 @@ export const useCreateTargetAudience = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.TARGET_AUDIENCE_ALL(),
             });
+            invalidateDropdown('targetAudience');
         },
     });
 };
@@ -58,6 +61,7 @@ export const useCreateTargetAudience = () => {
  */
 export const useUpdateTargetAudience = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateTargetAudienceRequest }) =>
@@ -69,6 +73,7 @@ export const useUpdateTargetAudience = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.TARGET_AUDIENCE_ALL(),
             });
+            invalidateDropdown('targetAudience');
         },
     });
 };
@@ -78,6 +83,7 @@ export const useUpdateTargetAudience = () => {
  */
 export const useDeleteTargetAudience = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => targetAudienceService.deleteTargetAudience(id),
@@ -85,7 +91,7 @@ export const useDeleteTargetAudience = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.TARGET_AUDIENCE_ALL(),
             });
+            invalidateDropdown('targetAudience');
         },
     });
 };
-
