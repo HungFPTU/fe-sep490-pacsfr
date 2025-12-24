@@ -311,6 +311,10 @@ export const API_PATH = {
   QUEUE: {
     COUNTERS: "/queue/counters",
     OVERVIEW: "/queue/overview",
+    WORKSHIFT_OVERVIEW: {
+      CURRENT: "/Queue/workshift-overview/current",
+      BY_ID: (workShiftId: string) => `/Queue/workshift-overview/${workShiftId}`,
+    },
     STAFF: {
       DASHBOARD: {
         WAITING_LIST: "/staff/dashboard/waiting",
