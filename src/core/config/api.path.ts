@@ -78,7 +78,9 @@ export const API_PATH = {
       LIST: (keyword: string, status: string, categoryId: string, page: number, size: number) => `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
       GET_BY_ID: (id: string) => `/PAKN/${id}`,
       FILES: (id: string) => `/PAKN/${id}/files`,
-
+      LOOKUP: "/PAKN/lookup/send-otp",
+      VERIFY: "/PAKN/lookup/verify-otp",
+      RESEND_OTP: "/PAKN/lookup/resend-otp",
     },
     PAKN_CATEGORY: {
       LIST: (keyword: string, isActive: boolean, page: number, size: number) => `/PAKNCategory?keyword=${keyword}&isActive=${isActive}&Page=${page}&Size=${size}`,
@@ -309,6 +311,10 @@ export const API_PATH = {
   QUEUE: {
     COUNTERS: "/queue/counters",
     OVERVIEW: "/queue/overview",
+    WORKSHIFT_OVERVIEW: {
+      CURRENT: "/Queue/workshift-overview/current",
+      BY_ID: (workShiftId: string) => `/Queue/workshift-overview/${workShiftId}`,
+    },
     STAFF: {
       DASHBOARD: {
         WAITING_LIST: "/staff/dashboard/waiting",
@@ -664,11 +670,11 @@ export const API_PATH = {
         Page: number,
         PageSize: number
       ) =>
-        `/PublicServiceNew?keyword=${Keyword}&serviceId=${ServiceId}&newsCategoryId=${NewsCategoryId}&staffId=${StaffId}&isPublished=${IsPublished}&Page=${Page}&Size=${PageSize}`,
-      GET_BY_ID: (id: string) => `/PublicServiceNew/${id}`,
-      POST: "/PublicServiceNew",
-      PUT: (id: string) => `/PublicServiceNew/${id}`,
-      DELETE: (id: string) => `/PublicServiceNew/${id}`,
+        `/PublicServiceNews?keyword=${Keyword}&serviceId=${ServiceId}&newsCategoryId=${NewsCategoryId}&staffId=${StaffId}&isPublished=${IsPublished}&Page=${Page}&Size=${PageSize}`,
+      GET_BY_ID: (id: string) => `/PublicServiceNews/${id}`,
+      POST: "/PublicServiceNews",
+      PUT: (id: string) => `/PublicServiceNews/${id}`,
+      DELETE: (id: string) => `/PublicServiceNews/${id}`,
     },
     PAKN: {
       GET_ALL: (

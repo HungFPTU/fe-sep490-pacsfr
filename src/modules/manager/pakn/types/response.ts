@@ -7,9 +7,28 @@ export type PaknStatus =
   | 'TU_CHOI';
 
 export interface PaknAttachment {
-  id: string;
+  id?: string;
   fileName: string;
   fileUrl: string;
+}
+
+export interface PaknStatusHistory {
+  id: string;
+  oldStatus: PaknStatus;
+  newStatus: PaknStatus;
+  note: string;
+  staffId: string;
+  modifiedAt: string;
+}
+
+export interface PaknResponse {
+  id: string;
+  responseContent: string;
+  attachments?: {
+    $values: PaknAttachment[];
+  };
+  staffId: string;
+  createdAt: string;
 }
 
 export interface Pakn {
@@ -26,10 +45,21 @@ export interface Pakn {
   paknCategoryId: string;
   categoryName: string;
   orgUnitId: string;
+  assignedStaffId?: string;
   status: PaknStatus;
+  receivedAt?: string;
+  processingStartedAt?: string;
+  completedAt?: string;
   attachments?: {
     $values: PaknAttachment[];
   };
-  assignedStaffId?: string;
+  statusHistories?: {
+    $values: PaknStatusHistory[];
+  };
+  responses?: {
+    $values: PaknResponse[];
+  };
   createdAt: string;
+  modifiedAt?: string;
+  modifiedBy?: string;
 }

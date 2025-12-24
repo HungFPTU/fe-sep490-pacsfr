@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { serviceProcedureService } from '../services/service-procedure.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type {
     CreateServiceProcedureRequest,
     UpdateServiceProcedureRequest,
@@ -32,6 +33,7 @@ export const useServiceProcedure = (id: string, enabled = true) => {
 
 export const useCreateServiceProcedure = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateServiceProcedureRequest) =>
@@ -40,12 +42,14 @@ export const useCreateServiceProcedure = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_PROCEDURE_BASE,
             });
+            invalidateDropdown('serviceProcedure');
         },
     });
 };
 
 export const useUpdateServiceProcedure = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateServiceProcedureRequest }) =>
@@ -57,12 +61,14 @@ export const useUpdateServiceProcedure = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_PROCEDURE_DETAIL(variables.id),
             });
+            invalidateDropdown('serviceProcedure');
         },
     });
 };
 
 export const useDeleteServiceProcedure = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => serviceProcedureService.deleteServiceProcedure(id),
@@ -70,6 +76,7 @@ export const useDeleteServiceProcedure = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_PROCEDURE_BASE,
             });
+            invalidateDropdown('serviceProcedure');
         },
     });
 };

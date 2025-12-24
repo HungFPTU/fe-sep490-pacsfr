@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { departmentService } from "../services/department.service";
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
+import { useFormDataStore } from "@/shared/stores";
 import type { CreateDepartmentRequest, UpdateDepartmentRequest, DepartmentFilters } from "../types";
 
 // Re-export custom hooks
@@ -30,6 +31,7 @@ export const useDepartmentDetail = (id: string) => {
 // CREATE mutation
 export const useCreateDepartment = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateDepartmentRequest) => departmentService.createDepartment(data),
@@ -37,6 +39,7 @@ export const useCreateDepartment = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DEPARTMENT_BASE
             });
+            invalidateDropdown('department');
         },
     });
 };
@@ -44,6 +47,7 @@ export const useCreateDepartment = () => {
 // UPDATE mutation
 export const useUpdateDepartment = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, request }: { id: string; request: UpdateDepartmentRequest }) =>
@@ -52,6 +56,7 @@ export const useUpdateDepartment = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DEPARTMENT_BASE
             });
+            invalidateDropdown('department');
         },
     });
 };
@@ -59,6 +64,7 @@ export const useUpdateDepartment = () => {
 // DELETE mutation
 export const useDeleteDepartment = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => departmentService.deleteDepartment(id),
@@ -66,7 +72,7 @@ export const useDeleteDepartment = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.DEPARTMENT_BASE
             });
+            invalidateDropdown('department');
         },
     });
 };
-

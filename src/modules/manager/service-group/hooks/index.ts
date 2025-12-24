@@ -6,10 +6,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { serviceGroupService } from '../services/service-group.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateServiceGroupRequest, UpdateServiceGroupRequest, ServiceGroupFilters } from '../types/request';
 
 // Re-export custom form hook
 export { useServiceGroupForm } from './useServiceGroupForm';
+export { useServiceGroupDropdown } from './useServiceGroupDropdown';
 
 /**
  * Hook for getting service groups list with filters
@@ -38,9 +40,11 @@ export const useServiceGroup = (id: string, enabled = true) => {
 
 /**
  * Hook for creating service group
+ * Triggers dropdown refresh for forms using serviceGroup dropdown
  */
 export const useCreateServiceGroup = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateServiceGroupRequest) =>
@@ -49,15 +53,19 @@ export const useCreateServiceGroup = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_GROUP_ALL(),
             });
+            // Trigger dropdown refresh for other forms
+            invalidateDropdown('serviceGroup');
         },
     });
 };
 
 /**
  * Hook for updating service group
+ * Triggers dropdown refresh for forms using serviceGroup dropdown
  */
 export const useUpdateServiceGroup = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateServiceGroupRequest }) =>
@@ -69,15 +77,19 @@ export const useUpdateServiceGroup = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_GROUP_ALL(),
             });
+            // Trigger dropdown refresh for other forms
+            invalidateDropdown('serviceGroup');
         },
     });
 };
 
 /**
  * Hook for deleting service group
+ * Triggers dropdown refresh for forms using serviceGroup dropdown
  */
 export const useDeleteServiceGroup = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => serviceGroupService.deleteServiceGroup(id),
@@ -85,6 +97,9 @@ export const useDeleteServiceGroup = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_GROUP_ALL(),
             });
+            // Trigger dropdown refresh for other forms
+            invalidateDropdown('serviceGroup');
         },
     });
 };
+
