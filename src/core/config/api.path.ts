@@ -339,6 +339,8 @@ export const API_PATH = {
           `/Queue/ticket/${ticketNumber}/status?status=${status}`,
         CREATE_GUEST: "/Guests",
         GET_GUESTS: "/Guests",
+        VERIFY_GUEST_EMAIL: "/Guests/verify-email",
+        RESEND_GUEST_OTP: (guestId: string) => `/Guests/${guestId}/resend-otp`,
         CREATE_CASE: "/Case",
         GET_SERVICES: "/Service",
         GET_SERVICE_SUBMISSION_METHODS: (serviceId: string) =>
@@ -674,71 +676,71 @@ export const API_PATH = {
       PUT: (id: string) => `/PublicServiceNews/${id}`,
       DELETE: (id: string) => `/PublicServiceNews/${id}`,
     },
-      PAKN: {
-        GET_ALL: (
-          keyword: string,
-          status: string,
-          categoryId: string,
-          page: number,
-          size: number
-        ) =>
-          `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
-        GET_BY_ID: (id: string) => `/PAKN/${id}`,
-        POST: "/PAKN",
-        PUT: (id: string) => `/PAKN/${id}`,
-        DELETE: (id: string) => `/PAKN/${id}`,
-        ASSIGN_STAFF: "/PAKN/assign-staff",
-        UPDATE_STATUS: "/PAKN/update-status",
-        RESPONSE: {
-          POST: "/PAKN/response",
-          GET_LIST: (paknId: string, page: number, size: number) =>
-            `/PAKN/response?PAKNId=${paknId}&Page=${page}&Size=${size}`,
-          GET_BY_ID: (id: string) => `/PAKN/respone/${id}`,
-          GET_BY_CODE: (paknCode: string) => `/PAKN/responses/by-code?paknCode=${paknCode}`,
-        },
-      },
-      TARGET_AUDIENCE: {
-        GET_ALL: (
-          Keyword: string,
-          IsActive: boolean,
-          Page: number,
-          Size: number
-        ) =>
-          `/TargetAudience?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${Size}`,
-        GET_BY_ID: (id: string) => `/TargetAudience/${id}`,
-        POST: "/TargetAudience",
-        PUT: (id: string) => `/TargetAudience/${id}`,
-        DELETE: (id: string) => `/TargetAudience/${id}`,
-      },
-      PAKN_CATEGORY: {
-        GET_ALL: (
-          keyword: string,
-          isActive: boolean | null,
-          page: number,
-          size: number
-        ) =>
-          `/PAKNCategory?keyword=${keyword}&isActive=${isActive ?? ""}&Page=${page}&Size=${size}`,
-        GET_BY_ID: (id: string) => `/PAKNCategory/${id}`,
-        POST: "/PAKNCategory",
-        PUT: (id: string) => `/PAKNCategory/${id}`,
-        DELETE: (id: string) => `/PAKNCategory/${id}`,
-      },
-      SHIFT_SWAP: {
-        CREATE: '/ShiftSwapRequest',
-        GET_MY_REQUESTS: (status?: string) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
-        GET_LIST: (status?: string, page?: number, size?: number) => {
-          const params = new URLSearchParams();
-          if (status !== undefined) params.append('status', status);
-          if (page !== undefined) params.append('page', page.toString());
-          if (size !== undefined) params.append('size', size.toString());
-          return `/ShiftSwapRequest${params.toString() ? `?${params}` : ''}`;
-        },
-        GET_BY_ID: (id: string) => `/ShiftSwapRequest/${id}`,
-        RESPOND: (id: string) => `/ShiftSwapRequest/${id}/respond`,
-        APPROVE: (id: string) => `/ShiftSwapRequest/${id}/approve`,
-        CANCEL: (id: string) => `/ShiftSwapRequest/${id}/cancel`,
+    PAKN: {
+      GET_ALL: (
+        keyword: string,
+        status: string,
+        categoryId: string,
+        page: number,
+        size: number
+      ) =>
+        `/PAKN?keyword=${keyword}&status=${status}&categoryId=${categoryId}&Page=${page}&Size=${size}`,
+      GET_BY_ID: (id: string) => `/PAKN/${id}`,
+      POST: "/PAKN",
+      PUT: (id: string) => `/PAKN/${id}`,
+      DELETE: (id: string) => `/PAKN/${id}`,
+      ASSIGN_STAFF: "/PAKN/assign-staff",
+      UPDATE_STATUS: "/PAKN/update-status",
+      RESPONSE: {
+        POST: "/PAKN/response",
+        GET_LIST: (paknId: string, page: number, size: number) =>
+          `/PAKN/response?PAKNId=${paknId}&Page=${page}&Size=${size}`,
+        GET_BY_ID: (id: string) => `/PAKN/respone/${id}`,
+        GET_BY_CODE: (paknCode: string) => `/PAKN/responses/by-code?paknCode=${paknCode}`,
       },
     },
+    TARGET_AUDIENCE: {
+      GET_ALL: (
+        Keyword: string,
+        IsActive: boolean,
+        Page: number,
+        Size: number
+      ) =>
+        `/TargetAudience?keyword=${Keyword}&isActive=${IsActive}&Page=${Page}&Size=${Size}`,
+      GET_BY_ID: (id: string) => `/TargetAudience/${id}`,
+      POST: "/TargetAudience",
+      PUT: (id: string) => `/TargetAudience/${id}`,
+      DELETE: (id: string) => `/TargetAudience/${id}`,
+    },
+    PAKN_CATEGORY: {
+      GET_ALL: (
+        keyword: string,
+        isActive: boolean | null,
+        page: number,
+        size: number
+      ) =>
+        `/PAKNCategory?keyword=${keyword}&isActive=${isActive ?? ""}&Page=${page}&Size=${size}`,
+      GET_BY_ID: (id: string) => `/PAKNCategory/${id}`,
+      POST: "/PAKNCategory",
+      PUT: (id: string) => `/PAKNCategory/${id}`,
+      DELETE: (id: string) => `/PAKNCategory/${id}`,
+    },
+    SHIFT_SWAP: {
+      CREATE: '/ShiftSwapRequest',
+      GET_MY_REQUESTS: (status?: string) => `/ShiftSwapRequest/my-requests${status !== undefined ? `?status=${status}` : ''}`,
+      GET_LIST: (status?: string, page?: number, size?: number) => {
+        const params = new URLSearchParams();
+        if (status !== undefined) params.append('status', status);
+        if (page !== undefined) params.append('page', page.toString());
+        if (size !== undefined) params.append('size', size.toString());
+        return `/ShiftSwapRequest${params.toString() ? `?${params}` : ''}`;
+      },
+      GET_BY_ID: (id: string) => `/ShiftSwapRequest/${id}`,
+      RESPOND: (id: string) => `/ShiftSwapRequest/${id}/respond`,
+      APPROVE: (id: string) => `/ShiftSwapRequest/${id}/approve`,
+      CANCEL: (id: string) => `/ShiftSwapRequest/${id}/cancel`,
+    },
+  },
   STAFF: {
     LEAVE_REQUEST: {
       MY: "/LeaveRequest/my",
@@ -773,6 +775,8 @@ export const API_PATH = {
         `/Queue/ticket/${ticketNumber}/status?status=${status}`,
       CREATE_GUEST: "/Guests",
       GET_GUESTS: "/Guests",
+      VERIFY_GUEST_EMAIL: "/Guests/verify-email",
+      RESEND_GUEST_OTP: (guestId: string) => `/Guests/${guestId}/resend-otp`,
       CREATE_CASE: "/Case",
       GET_SERVICES: "/Service",
       GET_SERVICE_SUBMISSION_METHODS: (serviceId: string) =>

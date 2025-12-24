@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { LineChartData } from '../../../types';
 
 interface Props {
@@ -26,54 +26,48 @@ export const CaseProcessingLineChart: React.FC<Props> = ({ data }) => {
                     Tháng {data.month}/{data.year} - Tổng: {data.totalCases} hồ sơ
                 </p>
             </div>
-            
+
             <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={chartData}>
+                <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis 
-                        dataKey="name" 
+                    <XAxis
+                        dataKey="name"
                         tick={{ fontSize: 12 }}
                         stroke="#64748b"
                     />
-                    <YAxis 
+                    <YAxis
                         tick={{ fontSize: 12 }}
                         stroke="#64748b"
                     />
-                    <Tooltip 
+                    <Tooltip
                         contentStyle={{
                             backgroundColor: '#fff',
                             border: '1px solid #e2e8f0',
                             borderRadius: '0.5rem',
                         }}
+                        cursor={{ fill: '#f1f5f9' }}
                     />
                     <Legend />
-                    <Line 
-                        type="monotone" 
-                        dataKey="Tổng hồ sơ" 
-                        stroke="#6366f1" 
-                        strokeWidth={2}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
+                    <Bar
+                        dataKey="Tổng hồ sơ"
+                        fill="#6366f1"
+                        radius={[4, 4, 0, 0]}
+                        barSize={40}
                     />
-                    <Line 
-                        type="monotone" 
-                        dataKey="Hoàn thành" 
-                        stroke="#10b981" 
-                        strokeWidth={2}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
+                    <Bar
+                        dataKey="Hoàn thành"
+                        fill="#10b981"
+                        radius={[4, 4, 0, 0]}
+                        barSize={40}
                     />
-                    <Line 
-                        type="monotone" 
-                        dataKey="Đang xử lý" 
-                        stroke="#f59e0b" 
-                        strokeWidth={2}
-                        dot={{ r: 4 }}
-                        activeDot={{ r: 6 }}
+                    <Bar
+                        dataKey="Đang xử lý"
+                        fill="#f59e0b"
+                        radius={[4, 4, 0, 0]}
+                        barSize={40}
                     />
-                </LineChart>
+                </BarChart>
             </ResponsiveContainer>
         </div>
     );
 };
-
