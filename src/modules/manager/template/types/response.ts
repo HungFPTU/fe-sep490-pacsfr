@@ -13,6 +13,7 @@ export type Template = {
     version?: string;
     docsTypeId: string;
     isActive: boolean;
+    downloadCount?: number;
     createdAt?: string | Date;
     createdBy?: string;
     modifiedAt?: string | Date;
@@ -27,4 +28,3 @@ export type Template = {
     sampleCode?: string;
     sampleName?: string;
 };
-
