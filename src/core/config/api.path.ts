@@ -792,6 +792,7 @@ export const API_PATH = {
       UPDATE: (caseId: string) => `/Case/${caseId}`,
       UPDATE_STATUS: (caseId: string) => `/Case/${caseId}/status`,
       UPDATE_PAYMENT: (caseId: string) => `/Case/${caseId}/payment`,
+      MOVE_NEXT_STEP: "/Case/cases/move-next-step",
     },
     PAKN_CATEGORY: {
       GET_ALL: (
