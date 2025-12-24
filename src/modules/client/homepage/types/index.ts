@@ -1,5 +1,5 @@
 /**
- * Homepage Module Types - Barrel Export
+ * Homepage Module - Types Barrel Export
  */
 export * from './response';
 export * from './request';

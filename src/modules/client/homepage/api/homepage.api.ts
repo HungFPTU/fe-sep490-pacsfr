@@ -1,15 +1,20 @@
 /**
- * Homepage API Layer
- * Aggregates API calls for homepage sections
+ * Homepage Module - API Layer
+ * Single Responsibility: HTTP calls only, no business logic
  */
 
 import { httpNoLoading } from '@core/http/client';
 import { API_PATH } from '@core/config/api.path';
 import type { RestPaged, RestResponse } from '@/types/rest';
-import type { Faq, FaqCategory, PublicServiceNews } from '../types';
+import type { 
+  Faq, 
+  FaqCategory, 
+  PublicServiceNews,
+  ComprehensiveReportData,
+} from '../types';
 
-// Dashboard response type
-interface DashboardResponse {
+// Generic dashboard response for untyped endpoints
+interface GenericDashboardResponse {
   [key: string]: unknown;
 }
 
@@ -45,7 +50,7 @@ export const homepageApi = {
    * Get dashboard line chart data (case processing statistics)
    */
   getCaseProcessingStats: (month?: number, year?: number) => {
-    return httpNoLoading.get<RestResponse<DashboardResponse>>(
+    return httpNoLoading.get<RestResponse<GenericDashboardResponse>>(
       API_PATH.MANAGER_DASHBOARD.GET_LINE_CHART(month, year)
     );
   },
@@ -54,7 +59,7 @@ export const homepageApi = {
    * Get service usage pie chart data
    */
   getServiceUsageStats: (startDate?: string, endDate?: string) => {
-    return httpNoLoading.get<RestResponse<DashboardResponse>>(
+    return httpNoLoading.get<RestResponse<GenericDashboardResponse>>(
       API_PATH.MANAGER_DASHBOARD.GET_PIE_CHART(startDate, endDate)
     );
   },
@@ -63,7 +68,7 @@ export const homepageApi = {
    * Get comprehensive dashboard report
    */
   getComprehensiveReport: (fromDate?: string, toDate?: string) => {
-    return httpNoLoading.get<RestResponse<DashboardResponse>>(
+    return httpNoLoading.get<RestResponse<ComprehensiveReportData>>(
       API_PATH.MANAGER_DASHBOARD.GET_COMPREHENSIVE_REPORT(fromDate, toDate)
     );
   },
