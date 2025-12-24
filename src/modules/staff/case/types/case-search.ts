@@ -69,6 +69,28 @@ export interface CaseSearchFilters {
   size?: number;
 }
 
+// Case Step
+export interface CaseStep {
+  $id?: string;
+  caseServiceProcedureId: string;
+  stepNumber: number;
+  stepName: string;
+  isCurrent: boolean;
+  isFinished: boolean;
+}
+
+// Payment Info
+export interface PaymentInfo {
+  $id?: string;
+  paymentId: string;
+  amount: number;
+  paymentStatus: string;
+  qrCodeUrl: string;
+  billUrl: string;
+  description: string;
+  expiredAt: string;
+}
+
 // Case Detail Response (GET by ID)
 export interface CaseDetailResponse {
   id: string;
@@ -93,6 +115,12 @@ export interface CaseDetailResponse {
   staffName: string;
   currentStatus: string;
   notes?: string;
+  paymentInfo?: PaymentInfo;
+  currentStep?: CaseStep;
+  steps?: {
+    $id?: string;
+    $values: CaseStep[];
+  };
 }
 
 export interface CaseLookupRequest {
@@ -161,6 +189,25 @@ export interface UpdateCaseStatusResponse {
     currentStatus: string;
     statusId: string;
     updatedAt: string;
+  };
+  timestamp: string;
+}
+
+// Move Next Step Request
+export interface MoveNextStepRequest {
+  caseId: string;
+  note: string;
+}
+
+// Move Next Step Response
+export interface MoveNextStepResponse {
+  $id: string;
+  success: boolean;
+  message: string;
+  data: {
+    $id: string;
+    caseId: string;
+    currentStep: CaseStep;
   };
   timestamp: string;
 }

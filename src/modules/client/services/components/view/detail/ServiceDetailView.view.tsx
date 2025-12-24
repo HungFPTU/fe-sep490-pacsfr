@@ -180,7 +180,7 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                                             {method.submissionMethodName}
                                         </td>
                                         <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 border-r border-gray-300">
-                                            {method.processingTime ? formatProcessingTime(method.processingTime) : service.processingTime || '-'}
+                                            {method.processingTime || '-'}
                                         </td>
                                         <td className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 border-r border-gray-300">
                                             {method.fee !== undefined && method.fee !== null

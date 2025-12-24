@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient, useQueries } from '@tanstack/rea
 import { counterService } from '../services/counter.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateCounterRequest, UpdateCounterRequest, AssignServiceGroupRequest, Counter } from '../types';
 
 export const useCounterList = () => {
@@ -29,12 +30,14 @@ export const useCounterById = (id: string | null) => {
 export const useCreateCounter = () => {
     const queryClient = useQueryClient();
     const { addToast } = useGlobalToast();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateCounterRequest) => counterService.create(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COUNTER_BASE });
             addToast({ message: 'Tạo quầy mới thành công', type: 'success' });
+            invalidateDropdown('counter');
         },
         onError: (error) => {
             addToast({
@@ -48,6 +51,7 @@ export const useCreateCounter = () => {
 export const useUpdateCounter = () => {
     const queryClient = useQueryClient();
     const { addToast } = useGlobalToast();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateCounterRequest }) =>
@@ -55,6 +59,7 @@ export const useUpdateCounter = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COUNTER_BASE });
             addToast({ message: 'Cập nhật quầy thành công', type: 'success' });
+            invalidateDropdown('counter');
         },
         onError: (error) => {
             addToast({
@@ -97,12 +102,14 @@ export const useAssignServiceGroup = () => {
 export const useDeleteCounter = () => {
     const queryClient = useQueryClient();
     const { addToast } = useGlobalToast();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => counterService.delete(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COUNTER_BASE });
             addToast({ message: 'Xóa quầy thành công', type: 'success' });
+            invalidateDropdown('counter');
         },
         onError: (error) => {
             addToast({

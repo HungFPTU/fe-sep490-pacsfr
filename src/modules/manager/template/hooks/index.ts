@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { templateService } from '../services/template.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateTemplateRequest, UpdateTemplateRequest, TemplateFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -41,6 +42,7 @@ export const useTemplate = (id: string, enabled = true) => {
  */
 export const useCreateTemplate = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateTemplateRequest) =>
@@ -49,6 +51,7 @@ export const useCreateTemplate = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.TEMPLATE_ALL(),
             });
+            invalidateDropdown('template');
         },
     });
 };
@@ -58,6 +61,7 @@ export const useCreateTemplate = () => {
  */
 export const useUpdateTemplate = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateTemplateRequest }) =>
@@ -69,6 +73,7 @@ export const useUpdateTemplate = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.TEMPLATE_ALL(),
             });
+            invalidateDropdown('template');
         },
     });
 };
@@ -78,6 +83,7 @@ export const useUpdateTemplate = () => {
  */
 export const useDeleteTemplate = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => templateService.deleteTemplate(id),
@@ -85,7 +91,7 @@ export const useDeleteTemplate = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.TEMPLATE_ALL(),
             });
+            invalidateDropdown('template');
         },
     });
 };
-
