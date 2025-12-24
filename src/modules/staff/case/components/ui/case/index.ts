@@ -16,3 +16,6 @@ export * from './lookup';
 // Modal
 export * from './modal';
 
+// Steps Progress
+export * from './CaseStepsProgress.ui';
+
