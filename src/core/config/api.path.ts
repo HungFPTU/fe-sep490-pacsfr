@@ -647,6 +647,14 @@ export const API_PATH = {
       PUT: (id: string) => `/FAQ/${id}`,
       DELETE: (id: string) => `/FAQ/${id}`,
     },
+    FAST_INPUT: {
+      CHECK_DOCX: "/FastInput/check-docx",
+      CREATE_LEGISLATION_DOCUMENT: "/FastInput/create-legislation-document",
+      CREATE_DOCS_TYPE: "/FastInput/create-docs-type",
+      CREATE_SUBMISSION_METHOD: "/FastInput/create-submission-method",
+      CREATE_SERVICE_AGENCY: "/FastInput/create-service-agency",
+      CREATE_SERVICE: "/FastInput/create-service",
+    },
     NEWS_CATEGORY: {
       GET_ALL: (
         Keyword: string,
