@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { newsCategoryService } from '../services/news-category.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateNewsCategoryRequest, UpdateNewsCategoryRequest, NewsCategoryFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -41,6 +42,7 @@ export const useNewsCategory = (id: string, enabled = true) => {
  */
 export const useCreateNewsCategory = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateNewsCategoryRequest) =>
@@ -49,6 +51,7 @@ export const useCreateNewsCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.NEWS_CATEGORY_ALL(),
             });
+            invalidateDropdown('newsCategory');
         },
     });
 };
@@ -58,6 +61,7 @@ export const useCreateNewsCategory = () => {
  */
 export const useUpdateNewsCategory = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateNewsCategoryRequest }) =>
@@ -69,6 +73,7 @@ export const useUpdateNewsCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.NEWS_CATEGORY_ALL(),
             });
+            invalidateDropdown('newsCategory');
         },
     });
 };
@@ -78,6 +83,7 @@ export const useUpdateNewsCategory = () => {
  */
 export const useDeleteNewsCategory = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => newsCategoryService.deleteNewsCategory(id),
@@ -85,7 +91,7 @@ export const useDeleteNewsCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.NEWS_CATEGORY_ALL(),
             });
+            invalidateDropdown('newsCategory');
         },
     });
 };
-

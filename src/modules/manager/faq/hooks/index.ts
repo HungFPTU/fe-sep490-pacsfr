@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { faqService } from '../services/faq.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateFaqRequest, UpdateFaqRequest, FaqFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -41,6 +42,7 @@ export const useFaq = (id: string, enabled = true) => {
  */
 export const useCreateFaq = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateFaqRequest) =>
@@ -49,6 +51,7 @@ export const useCreateFaq = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.FAQ_ALL(),
             });
+            invalidateDropdown('faq');
         },
     });
 };
@@ -58,6 +61,7 @@ export const useCreateFaq = () => {
  */
 export const useUpdateFaq = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateFaqRequest }) =>
@@ -69,6 +73,7 @@ export const useUpdateFaq = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.FAQ_ALL(),
             });
+            invalidateDropdown('faq');
         },
     });
 };
@@ -78,6 +83,7 @@ export const useUpdateFaq = () => {
  */
 export const useDeleteFaq = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => faqService.deleteFaq(id),
@@ -85,7 +91,7 @@ export const useDeleteFaq = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.FAQ_ALL(),
             });
+            invalidateDropdown('faq');
         },
     });
 };
-

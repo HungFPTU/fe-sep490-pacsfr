@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { requiredDocumentService } from '../services/required-document.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type {
     CreateRequiredDocumentRequest,
     UpdateRequiredDocumentRequest,
@@ -32,6 +33,7 @@ export const useRequiredDocument = (id: string, enabled = true) => {
 
 export const useCreateRequiredDocument = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateRequiredDocumentRequest) =>
@@ -40,12 +42,14 @@ export const useCreateRequiredDocument = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.REQUIRED_DOCUMENT_BASE,
             });
+            invalidateDropdown('requiredDocument');
         },
     });
 };
 
 export const useUpdateRequiredDocument = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateRequiredDocumentRequest }) =>
@@ -57,12 +61,14 @@ export const useUpdateRequiredDocument = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.REQUIRED_DOCUMENT_DETAIL(variables.id),
             });
+            invalidateDropdown('requiredDocument');
         },
     });
 };
 
 export const useDeleteRequiredDocument = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => requiredDocumentService.deleteRequiredDocument(id),
@@ -70,7 +76,7 @@ export const useDeleteRequiredDocument = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.REQUIRED_DOCUMENT_BASE,
             });
+            invalidateDropdown('requiredDocument');
         },
     });
 };
-

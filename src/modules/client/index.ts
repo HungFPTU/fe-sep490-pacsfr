@@ -15,3 +15,7 @@ export type { LegalBasis, LegalBasisDetailResponse, LegalBasisListResponse } fro
 export { LegalBasisApi } from "./legal-basis/api/legal-basis.api";
 export { LegalBasisService } from "./legal-basis/services/legal-basis.service";
 export { useLegalBasis, useLegalBasisList } from "./legal-basis/hooks/useLegalBasis";
+
+// Homepage Module
+export * from "./homepage";
+

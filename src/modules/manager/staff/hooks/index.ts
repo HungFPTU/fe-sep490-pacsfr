@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { StaffService } from '../services/staff.service';
 import { QUERY_KEYS } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import {
   Staff,
   StaffDetail,
@@ -49,22 +50,26 @@ export const useStaffDetail = (
 
 export const useCreateStaff = () => {
   const queryClient = useQueryClient();
+  const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
   return useMutation({
     mutationFn: (data: CreateStaffRequest) => StaffService.createStaff(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STAFF_ALL() });
+      invalidateDropdown('staff');
     },
   });
 };
 
 export const useDeleteStaff = () => {
   const queryClient = useQueryClient();
+  const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
   return useMutation({
     mutationFn: (id: string) => StaffService.deleteStaff(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.STAFF_ALL() });
+      invalidateDropdown('staff');
     },
   });
 };

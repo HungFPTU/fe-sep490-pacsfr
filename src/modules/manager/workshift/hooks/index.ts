@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { WorkShiftService } from '../services/workshift.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateWorkShiftRequest, UpdateWorkShiftRequest, AssignStaffWorkShiftRequest, UpdateStaffWorkShiftRequest } from '../types';
 
 // Re-export custom hooks
@@ -30,17 +31,18 @@ export const useWorkShiftDetail = (id: string) => {
 // CREATE mutation with immediate refetch
 export const useCreateWorkShift = () => {
   const queryClient = useQueryClient();
+  const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
   return useMutation({
     mutationFn: (data: CreateWorkShiftRequest) => WorkShiftService.createWorkShift(data),
     onSuccess: async () => {
-      // Invalidate and immediate refetch to update calendar
       await queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_BASE,
       });
-     await queryClient.refetchQueries({
+      await queryClient.refetchQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_LIST,
       });
+      invalidateDropdown('workshift');
     },
   });
 };
@@ -48,6 +50,7 @@ export const useCreateWorkShift = () => {
 // UPDATE mutation with immediate refetch
 export const useUpdateWorkShift = () => {
   const queryClient = useQueryClient();
+  const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
   return useMutation({
     mutationFn: ({ id, request }: { id: string; request: UpdateWorkShiftRequest }) =>
@@ -59,6 +62,7 @@ export const useUpdateWorkShift = () => {
       await queryClient.refetchQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_LIST,
       });
+      invalidateDropdown('workshift');
     },
   });
 };
@@ -66,6 +70,7 @@ export const useUpdateWorkShift = () => {
 // DELETE mutation with immediate refetch
 export const useDeleteWorkShift = () => {
   const queryClient = useQueryClient();
+  const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
   return useMutation({
     mutationFn: (id: string) => WorkShiftService.deleteWorkShift(id),
@@ -76,6 +81,7 @@ export const useDeleteWorkShift = () => {
       await queryClient.refetchQueries({
         queryKey: QUERY_KEYS.WORKSHIFT_LIST,
       });
+      invalidateDropdown('workshift');
     },
   });
 };

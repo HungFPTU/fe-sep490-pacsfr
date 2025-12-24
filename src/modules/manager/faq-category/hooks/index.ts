@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { faqCategoryService } from '../services/faq-category.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreateFaqCategoryRequest, UpdateFaqCategoryRequest, FaqCategoryFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -41,6 +42,7 @@ export const useFaqCategory = (id: string, enabled = true) => {
  */
 export const useCreateFaqCategory = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateFaqCategoryRequest) =>
@@ -49,6 +51,7 @@ export const useCreateFaqCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.FAQ_CATEGORY_ALL(),
             });
+            invalidateDropdown('faqCategory');
         },
     });
 };
@@ -58,6 +61,7 @@ export const useCreateFaqCategory = () => {
  */
 export const useUpdateFaqCategory = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateFaqCategoryRequest }) =>
@@ -69,6 +73,7 @@ export const useUpdateFaqCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.FAQ_CATEGORY_ALL(),
             });
+            invalidateDropdown('faqCategory');
         },
     });
 };
@@ -78,6 +83,7 @@ export const useUpdateFaqCategory = () => {
  */
 export const useDeleteFaqCategory = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => faqCategoryService.deleteFaqCategory(id),
@@ -85,7 +91,7 @@ export const useDeleteFaqCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.FAQ_CATEGORY_ALL(),
             });
+            invalidateDropdown('faqCategory');
         },
     });
 };
-

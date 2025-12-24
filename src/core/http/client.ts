@@ -26,6 +26,7 @@ export interface HttpResponse<T> {
     data: T;
     status: number;
     headers: Headers;
+    message?: string;
 }
 
 export interface HttpError {

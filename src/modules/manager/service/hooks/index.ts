@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { serviceService } from "../services/service.service";
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from "../constants";
+import { useFormDataStore } from "@/shared/stores";
 import type { CreateServiceRequest, UpdateServiceRequest, ServiceFilters, AssignSubmissionMethodsRequest, AssignAudienceRequest } from "../types";
 
 // Re-export custom hooks
@@ -30,6 +31,7 @@ export const useServiceDetail = (id: string) => {
 // CREATE mutation
 export const useCreateService = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreateServiceRequest) => serviceService.createService(data),
@@ -37,6 +39,7 @@ export const useCreateService = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_BASE
             });
+            invalidateDropdown('service');
         },
     });
 };
@@ -44,6 +47,7 @@ export const useCreateService = () => {
 // UPDATE mutation
 export const useUpdateService = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, request }: { id: string; request: UpdateServiceRequest }) =>
@@ -52,6 +56,7 @@ export const useUpdateService = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_BASE
             });
+            invalidateDropdown('service');
         },
     });
 };
@@ -59,6 +64,7 @@ export const useUpdateService = () => {
 // DELETE mutation
 export const useDeleteService = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => serviceService.deleteService(id),
@@ -66,6 +72,7 @@ export const useDeleteService = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.SERVICE_BASE
             });
+            invalidateDropdown('service');
         },
     });
 };
@@ -107,4 +114,3 @@ export const useAssignAudience = () => {
         },
     });
 };
-

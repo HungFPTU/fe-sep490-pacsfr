@@ -58,9 +58,14 @@ export const PaknResponseModal: React.FC<Props> = ({
       handleReset();
       onSuccess?.();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error('Không thể gửi phản hồi. Vui lòng thử lại');
+      // Extract error message from backend response
+      const errorMessage = 
+        error?.response?.data?.message || 
+        error?.message || 
+        'Không thể gửi phản hồi. Vui lòng thử lại';
+      toast.error(errorMessage);
     }
   };
 

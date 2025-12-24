@@ -6,6 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { publicServiceNewsService } from '../services/public-service-news.service';
 import { QUERY_KEYS, CACHE_TIME, STALE_TIME } from '../constants';
+import { useFormDataStore } from '@/shared/stores';
 import type { CreatePublicServiceNewsRequest, UpdatePublicServiceNewsRequest, PublicServiceNewsFilters } from '../types/request';
 
 // Re-export custom form hook
@@ -41,6 +42,7 @@ export const usePublicServiceNews = (id: string, enabled = true) => {
  */
 export const useCreatePublicServiceNews = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (data: CreatePublicServiceNewsRequest) =>
@@ -49,6 +51,7 @@ export const useCreatePublicServiceNews = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.PUBLIC_SERVICE_NEWS_BASE,
             });
+            invalidateDropdown('publicServiceNews');
         },
     });
 };
@@ -58,6 +61,7 @@ export const useCreatePublicServiceNews = () => {
  */
 export const useUpdatePublicServiceNews = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdatePublicServiceNewsRequest }) =>
@@ -69,6 +73,7 @@ export const useUpdatePublicServiceNews = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.PUBLIC_SERVICE_NEWS_BASE,
             });
+            invalidateDropdown('publicServiceNews');
         },
     });
 };
@@ -78,6 +83,7 @@ export const useUpdatePublicServiceNews = () => {
  */
 export const useDeletePublicServiceNews = () => {
     const queryClient = useQueryClient();
+    const invalidateDropdown = useFormDataStore((s) => s.invalidate);
 
     return useMutation({
         mutationFn: (id: string) => publicServiceNewsService.deletePublicServiceNews(id),
@@ -85,7 +91,7 @@ export const useDeletePublicServiceNews = () => {
             queryClient.invalidateQueries({
                 queryKey: QUERY_KEYS.PUBLIC_SERVICE_NEWS_BASE,
             });
+            invalidateDropdown('publicServiceNews');
         },
     });
 };
-
