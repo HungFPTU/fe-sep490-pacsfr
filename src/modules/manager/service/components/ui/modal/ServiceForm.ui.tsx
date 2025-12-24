@@ -32,7 +32,7 @@ type OptionType = {
 };
 
 interface Props {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     form: any;
     isLoading: boolean;
     isEdit: boolean;
@@ -57,21 +57,17 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
         size: 100,
     });
 
-    // Extract service groups
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pageResult = serviceGroupsData ? getValuesPage(serviceGroupsData as any) : null;
     const serviceGroups = pageResult?.items || [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const serviceGroupOptions = serviceGroups.map((group: any): OptionType => ({
         value: group.id,
         label: group.groupName,
     }));
 
     // Extract legal documents
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const legalDocumentsPageResult = legalDocumentsData ? getValuesPage(legalDocumentsData as any) : null;
     const legalDocuments = legalDocumentsPageResult?.items || [];
-    const legalDocumentOptions = legalDocuments.map((doc: any): OptionType => ({ // eslint-disable-line @typescript-eslint/no-explicit-any
+    const legalDocumentOptions = legalDocuments.map((doc: any): OptionType => ({
         value: doc.id,
         label: `${doc.documentNumber} - ${doc.name}`,
     }));
@@ -131,7 +127,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                     },
                 }}
             >
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {(field: any) => {
                     const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
                     return (
@@ -174,7 +169,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                     },
                 }}
             >
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {(field: any) => {
                     const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
                     return (
@@ -200,6 +194,7 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
             </form.Field>
 
             {/* Service Type */}
+            {/* Service Type */}
             <form.Field
                 name="serviceType"
                 validators={{
@@ -207,7 +202,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                         !value || !value.trim() ? 'Loại dịch vụ là bắt buộc' : undefined,
                 }}
             >
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {(field: any) => {
                     const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
                     return (
@@ -216,28 +210,23 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                                 Loại dịch vụ
                                 <span className="ml-0.5 text-red-500">*</span>
                             </label>
-                            <select
+                            <input
                                 id="serviceType"
+                                type="text"
                                 className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                                 value={(field.state.value as string) || ''}
                                 onChange={(e) => field.handleChange(e.target.value as never)}
                                 onBlur={field.handleBlur}
+                                placeholder="Nhập loại dịch vụ"
                                 disabled={isLoading}
-                            >
-                                <option value="">Chọn loại dịch vụ</option>
-                                {Array.from(SERVICE_TYPES).map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                             {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
                         </div>
                     );
                 }}
             </form.Field>
 
-            {/* Execution Level */}
+
             <form.Field
                 name="executionLevel"
                 validators={{
@@ -254,28 +243,23 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                                 Cấp thực hiện
                                 <span className="ml-0.5 text-red-500">*</span>
                             </label>
-                            <select
+                            <input
                                 id="executionLevel"
+                                type="text"
                                 className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                                 value={(field.state.value as string) || ''}
                                 onChange={(e) => field.handleChange(e.target.value as never)}
                                 onBlur={field.handleBlur}
+                                placeholder="Nhập cấp thực hiện"
                                 disabled={isLoading}
-                            >
-                                <option value="">Chọn cấp thực hiện</option>
-                                {Array.from(EXECUTION_LEVELS).map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                             {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
                         </div>
                     );
                 }}
             </form.Field>
 
-            {/* Field */}
+
             <form.Field
                 name="field"
                 validators={{
@@ -283,7 +267,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                         !value || !value.trim() ? 'Lĩnh vực là bắt buộc' : undefined,
                 }}
             >
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {(field: any) => {
                     const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
                     return (
@@ -292,21 +275,16 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                                 Lĩnh vực
                                 <span className="ml-0.5 text-red-500">*</span>
                             </label>
-                            <select
+                            <input
                                 id="field"
+                                type="text"
                                 className={`w-full rounded-xl border bg-white outline-none transition h-10 px-3 text-sm border-slate-300 focus:border-slate-500 ${error ? 'border-red-400 focus:border-red-500' : ''} ${isLoading ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                                 value={(field.state.value as string) || ''}
                                 onChange={(e) => field.handleChange(e.target.value as never)}
                                 onBlur={field.handleBlur}
+                                placeholder="Nhập lĩnh vực"
                                 disabled={isLoading}
-                            >
-                                <option value="">Chọn lĩnh vực</option>
-                                {Array.from(SERVICE_FIELDS).map((option) => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                             {error && <div className="mt-1 text-xs text-red-600">{error}</div>}
                         </div>
                     );
@@ -344,7 +322,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                         },
                     }}
                 >
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {(field: any) => {
                         const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
                         return (
@@ -382,7 +359,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
                         },
                     }}
                 >
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {(field: any) => {
                         const error = field.state.meta.errors?.[0] || field.state.meta.touchedErrors?.[0] || null;
                         return (
@@ -410,7 +386,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
             {/* Legal Documents Multi-Select */}
             <div className="md:col-span-2">
                 <form.Field name="legislationDocumentIds">
-                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {(field: any) => {
                         const selectedLegislationIds = (field.state.value as string[]) || [];
                         const availableLegalDocuments = legalDocumentOptions.filter(
@@ -511,7 +486,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
 
             {/* Toggle Switches */}
             <form.Field name="isOnlineAvailable">
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {(field: any) => (
                     <ToggleSwitch
                         checked={field.state.value ?? false}
@@ -527,7 +501,6 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
             </form.Field>
 
             <form.Field name="isActive">
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {(field: any) => (
                     <ToggleSwitch
                         checked={field.state.value ?? false}
