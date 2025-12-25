@@ -49,11 +49,7 @@ export const ServiceRequiredDocumentsTable: React.FC<Props> = ({ documents }) =>
                                     <p className="font-medium text-slate-900">
                                         {doc.docTypeName || 'Chưa xác định'}
                                     </p>
-                                    {doc.docTypeId && (
-                                        <p className="text-xs text-slate-500">
-                                            Mã: {doc.docTypeId}
-                                        </p>
-                                    )}
+
                                 </TableCell>
                                 <TableCell>
                                     {doc.description ? (

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import type { CaseData, CaseDetailResponse } from '../../types/case-search';
-import { CaseInfo, CaseMetadata, CaseNotes, CaseReceivers, CaseAdditionalInfo } from '../ui/case';
+import { CaseInfo, CaseMetadata, CaseNotes, CaseReceivers, CaseAdditionalInfo, CaseStepsProgress } from '../ui/case';
 
 interface CaseDetailViewProps {
   caseData: CaseData | CaseDetailResponse;
@@ -11,7 +11,7 @@ interface CaseDetailViewProps {
 
 export const CaseDetailView: React.FC<CaseDetailViewProps> = ({ caseData, onStatusClick }) => {
   const detailData = caseData as CaseDetailResponse;
-  
+
   return (
     <div className="space-y-6">
       {/* Main Info Grid */}
@@ -40,6 +40,16 @@ export const CaseDetailView: React.FC<CaseDetailViewProps> = ({ caseData, onStat
           />
         </div>
       </div>
+
+      {/* Steps Progress - Hiển thị khi có steps */}
+      {detailData.steps && (
+        <CaseStepsProgress
+          caseId={detailData.id}
+          currentStatus={detailData.currentStatus}
+          steps={detailData.steps}
+          currentStep={detailData.currentStep}
+        />
+      )}
 
       {/* Additional Info Cards */}
       {(detailData.estimatedCompletionDate || detailData.totalFee || detailData.staffName) && (
