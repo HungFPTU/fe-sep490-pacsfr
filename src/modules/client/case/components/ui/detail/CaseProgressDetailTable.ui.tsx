@@ -64,6 +64,7 @@ const getFieldLabel = (key: string): string => {
         totalFee: 'Tổng phí',
         isPayment: 'Đã thanh toán',
         submissionMethod: 'Hình thức nộp',
+        currentStep: 'Bước hiện tại',
     };
 
     return labelMap[key] || key

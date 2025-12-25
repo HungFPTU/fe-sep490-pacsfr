@@ -1,4 +1,4 @@
 /**
- * Homepage API Layer - Barrel Export
+ * Homepage Module - API Barrel Export
  */
-export * from './homepage.api';
+export { homepageApi } from './homepage.api';
