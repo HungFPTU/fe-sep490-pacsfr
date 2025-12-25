@@ -34,7 +34,7 @@ export const SubmissionMethodsTable: React.FC<Props> = ({ methods, onChange, isL
                 submissionMethodId: '',
                 submissionMethodName: '',
                 processingTime: '',
-                fee: ''
+                fee: 0
             }
         ]);
     };
@@ -47,7 +47,13 @@ export const SubmissionMethodsTable: React.FC<Props> = ({ methods, onChange, isL
 
     const handleUpdate = (index: number, field: keyof ServiceSubmissionMethodInput, value: any) => {
         const newMethods = [...methods];
-        newMethods[index] = { ...newMethods[index], [field]: value };
+        // Handle number constraint
+        if (field === 'fee') {
+            const numVal = parseInt(value);
+            newMethods[index] = { ...newMethods[index], [field]: isNaN(numVal) ? 0 : numVal };
+        } else {
+            newMethods[index] = { ...newMethods[index], [field]: value };
+        }
         onChange(newMethods);
     };
 
@@ -75,7 +81,7 @@ export const SubmissionMethodsTable: React.FC<Props> = ({ methods, onChange, isL
                         <tr>
                             <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/3">Hình thức</th>
                             <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian giải quyết</th>
-                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phí / Lệ phí</th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phí / Lệ phí (VNĐ)</th>
                             <th className="px-3 py-2 w-10"></th>
                         </tr>
                     </thead>
@@ -111,10 +117,11 @@ export const SubmissionMethodsTable: React.FC<Props> = ({ methods, onChange, isL
                                     </td>
                                     <td className="px-3 py-2">
                                         <input
-                                            type="text"
-                                            value={method.fee || ''}
+                                            type="number"
+                                            value={method.fee !== undefined ? method.fee : ''}
                                             onChange={(e) => handleUpdate(index, 'fee', e.target.value)}
-                                            placeholder="VD: 50.000 VNĐ"
+                                            placeholder="Nhập số tiền"
+                                            min={0}
                                             className="w-full text-sm border-gray-300 rounded focus:border-blue-500 border px-2 py-1"
                                             disabled={isLoading}
                                         />

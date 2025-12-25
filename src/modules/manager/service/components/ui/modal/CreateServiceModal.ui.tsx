@@ -46,6 +46,8 @@ export const CreateServiceModal: React.FC<Props> = ({
     const [procedure, setProcedure] = useState<string>('');
     const [isFastInputMode, setIsFastInputMode] = useState(false);
     const [createdAgencyIds, setCreatedAgencyIds] = useState<string[]>([]);
+    const [createdLegalDocs, setCreatedLegalDocs] = useState<any[]>([]);
+
 
     // Helper to extract list from simple array or $values wrapper
     const getList = <T,>(input: any): T[] => {
@@ -54,6 +56,8 @@ export const CreateServiceModal: React.FC<Props> = ({
         if (input.$values && Array.isArray(input.$values)) return input.$values;
         return [];
     };
+
+
 
     const handleSubmit = async (data: CreateServiceRequest | UpdateServiceRequest) => {
         try {
@@ -71,10 +75,10 @@ export const CreateServiceModal: React.FC<Props> = ({
                     return;
                 }
             } else {
-                // Create Flow
+                // Luồng tạo mới
                 if (isFastInputMode || requiredDocuments.length > 0 || submissionMethods.length > 0) {
 
-                    // Validate Required Documents (Must have ID)
+                    // Validate phải có ID
                     for (const doc of requiredDocuments) {
                         if (!doc.docTypeId) {
                             toast.error(`Vui lòng tạo hoặc chọn loại giấy tờ cho: ${doc.docTypeName}`);
@@ -82,24 +86,22 @@ export const CreateServiceModal: React.FC<Props> = ({
                         }
                     }
 
-                    // Pre-process: Ensure all Submission Methods have IDs
                     const processedSubmissionMethods = await Promise.all(submissionMethods.map(async (method) => {
                         if (!method.submissionMethodId) {
                             try {
                                 const newMethodRes = await fastInputService.createSubmissionMethod({
                                     submissionMethodName: method.submissionMethodName || 'Chưa đặt tên',
-                                    description: method.description || `Thời hạn: ${method.processingTime || ''}, Phí: ${method.fee || ''}`
+                                    description: method.description || `Thời hạn: ${method.processingTime || ''}, Phí: ${method.fee || 0}`
                                 });
-                                // Handle response similar to MissingEntitiesPanel
                                 const resAny = newMethodRes as any;
                                 const newId = resAny.data || (resAny.success && resAny.data) ? (typeof resAny.data === 'string' ? resAny.data : resAny.data?.id) : null;
 
                                 if (newId) {
                                     return { ...method, submissionMethodId: newId };
-                                } else if (typeof newMethodRes === 'string') { // string fallback
+                                } else if (typeof newMethodRes === 'string') {
                                     return { ...method, submissionMethodId: newMethodRes };
                                 }
-                                return method; // Failed to create? warning?
+                                return method;
                             } catch (e) {
                                 console.error('Failed to auto-create submission method', e);
                                 return method;
@@ -113,8 +115,6 @@ export const CreateServiceModal: React.FC<Props> = ({
                         ...(data as CreateServiceRequest),
                         condition: (data as CreateServiceRequest).condition || '',
                         requiredDocuments: requiredDocuments.map(d => ({
-                            // If docTypeId is missing, valid GUID 00... might be safer or undefined if allowed. 
-                            // User expected payload has docTypeId.
                             docTypeId: d.docTypeId || undefined,
                             description: d.description || '',
                             quantityOriginal: d.quantityOriginal || 0,
@@ -123,6 +123,7 @@ export const CreateServiceModal: React.FC<Props> = ({
                         submissionMethods: processedSubmissionMethods.map(m => ({
                             submissionMethodId: m.submissionMethodId,
                             processingTime: m.processingTime || 'Trong ngày',
+                            fee: m.fee || 0,
                             description: m.description || ''
                         })),
                         processingProcedure: procedure, // Use string directly
@@ -262,17 +263,17 @@ export const CreateServiceModal: React.FC<Props> = ({
             quantityCopy: doc.quantityCopy || doc.banSao || 0,
             description: `Mẫu đơn: ${doc.mauDon}`,
             note: ''
-        }));
+        })).filter(d => Boolean(d.docTypeId)); // Only include documents that already exist
         setRequiredDocuments(mappedDocs);
 
         const methodList = getList<any>(extracted.cachThucThucHien);
         const mappedMethods: ServiceSubmissionMethodInput[] = methodList.map(method => ({
-            submissionMethodId: method.id || '', 
+            submissionMethodId: method.id || '',
             submissionMethodName: method.hinhThuc,
             processingTime: method.thoiHan,
-            fee: method.phiLePhi,
+            fee: method.phiLePhi ? parseInt(method.phiLePhi.replace(/\D/g, '')) || 0 : 0,
             description: method.moTa
-        }));
+        })).filter(m => Boolean(m.submissionMethodId)); // Only include methods that already exist
         setSubmissionMethods(mappedMethods);
 
         setProcedure(extracted.trinhTuThucHien || '');
@@ -289,25 +290,40 @@ export const CreateServiceModal: React.FC<Props> = ({
                 // Add to form field
                 const currentIds = form.getFieldValue('legislationDocumentIds') as string[] || [];
                 form.setFieldValue('legislationDocumentIds', [...currentIds, newId] as never);
+
+                // Track newly created doc for display
+                const extracted = originalData;
+                if (extracted) {
+                    setCreatedLegalDocs(prev => [...prev, {
+                        value: newId,
+                        label: `${extracted.soKyHieu || ''} - ${extracted.trichYeu || ''}`
+                    }]);
+                }
             } else if (type === 'docsType') {
                 updatedMissing.docsTypes = getList<MissingItem>(updatedMissing.docsTypes).filter((i) => i.originalData !== originalData);
-                // Update requiredDocuments with new ID
-                setRequiredDocuments(prev => prev.map(doc => {
-                    const extracted = originalData as ExtractedDocument;
-                    if (doc.docTypeName === extracted.tenGiayTo) {
-                        return { ...doc, docTypeId: newId };
-                    }
-                    return doc;
-                }));
+                // Extract original data to map to table row
+                const extracted = originalData as ExtractedDocument;
+                const newDoc: ServiceRequiredDocumentInput = {
+                    docTypeId: newId,
+                    docTypeName: extracted.tenGiayTo || 'Không có tên',
+                    quantityOriginal: extracted.quantityOriginal || extracted.banChinh || 0,
+                    quantityCopy: extracted.quantityCopy || extracted.banSao || 0,
+                    description: `Mẫu đơn: ${extracted.mauDon || ''}`,
+                    note: ''
+                };
+                setRequiredDocuments(prev => [...prev, newDoc]);
             } else if (type === 'submissionMethod') {
                 updatedMissing.submissionMethods = getList<MissingItem>(updatedMissing.submissionMethods).filter((i) => i.originalData !== originalData);
-                // Update matching method in submissionMethods
-                setSubmissionMethods(prev => prev.map(m => {
-                    if (!m.submissionMethodId) {
-                        return { ...m, submissionMethodId: newId };
-                    }
-                    return m;
-                }));
+
+                const extracted = originalData as any;
+                const newMethod: ServiceSubmissionMethodInput = {
+                    submissionMethodId: newId,
+                    submissionMethodName: extracted.hinhThuc || 'Chưa đặt tên',
+                    processingTime: extracted.thoiHan || '',
+                    fee: extracted.phiLePhi ? parseInt(extracted.phiLePhi.replace(/\D/g, '')) || 0 : 0,
+                    description: extracted.moTa || ''
+                };
+                setSubmissionMethods(prev => [...prev, newMethod]);
             } else if (type === 'serviceAgency') {
                 updatedMissing.serviceAgencies = getList<MissingItem>(updatedMissing.serviceAgencies).filter((i) => i.originalData !== originalData);
                 setCreatedAgencyIds(prev => [...prev, newId]);
@@ -357,7 +373,12 @@ export const CreateServiceModal: React.FC<Props> = ({
                 />
             )}
 
-            <ServiceForm form={form} isLoading={isLoading} isEdit={isEdit} />
+            <ServiceForm
+                form={form}
+                isLoading={isLoading}
+                isEdit={isEdit}
+                additionalLegalDocs={createdLegalDocs}
+            />
 
             {/* Additional Sections for Fast Input / Extended Create */}
             {!isEdit && (
