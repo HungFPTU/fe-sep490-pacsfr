@@ -36,9 +36,10 @@ interface Props {
     form: any;
     isLoading: boolean;
     isEdit: boolean;
+    additionalLegalDocs?: OptionType[];
 }
 
-export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
+export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit, additionalLegalDocs = [] }) => {
     // Fetch service groups for dropdown
     const { data: serviceGroupsData } = useServiceGroups({
         keyword: '',
@@ -67,10 +68,20 @@ export const ServiceForm: React.FC<Props> = ({ form, isLoading, isEdit }) => {
     // Extract legal documents
     const legalDocumentsPageResult = legalDocumentsData ? getValuesPage(legalDocumentsData as any) : null;
     const legalDocuments = legalDocumentsPageResult?.items || [];
-    const legalDocumentOptions = legalDocuments.map((doc: any): OptionType => ({
+    const fetchedLegalDocumentOptions = legalDocuments.map((doc: any): OptionType => ({
         value: doc.id,
         label: `${doc.documentNumber} - ${doc.name}`,
     }));
+
+    // Merge fetched options with additional options (e.g., newly created ones)
+    // Use a map to handle duplicates, preferring the fetched one if exists (though created one is fresher)
+    // Actually, additional ones are likely fresher if they were just created and not yet in the fetch.
+    const legalDocumentOptions = [...fetchedLegalDocumentOptions];
+    additionalLegalDocs.forEach(addDoc => {
+        if (!legalDocumentOptions.find(d => d.value === addDoc.value)) {
+            legalDocumentOptions.push(addDoc);
+        }
+    });
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
