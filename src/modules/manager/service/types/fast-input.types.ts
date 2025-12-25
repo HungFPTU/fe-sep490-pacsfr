@@ -132,7 +132,7 @@ export type ServiceSubmissionMethodInput = {
     submissionMethodId: string;
     submissionMethodName?: string;
     processingTime: string;
-    fee?: string; // Backend sample didn't show fee, but I'll keep it as optional or remove
+    fee?: number; 
     description?: string;
 };
 
