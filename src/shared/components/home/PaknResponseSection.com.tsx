@@ -91,8 +91,8 @@ export function PaknResponseSection() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 mb-4">
-                <MessageSquare className="h-8 w-8 text-indigo-600" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
+                <MessageSquare className="h-8 w-8 text-red-600" />
               </div>
               <h2 className="text-3xl font-bold text-gray-800 mb-4">
                 Tra cứu phản hồi Phản ánh kiến nghị
@@ -119,7 +119,7 @@ export function PaknResponseSection() {
                 <Button
                   onClick={handleSendOTP}
                   disabled={!paknCode.trim() || isLoading}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  className="bg-red-600 hover:bg-red-700 text-white"
                 >
                   {isLoading ? (
                     <>
