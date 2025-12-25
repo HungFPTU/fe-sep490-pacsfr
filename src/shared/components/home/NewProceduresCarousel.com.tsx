@@ -1,102 +1,146 @@
 "use client";
 
 import { useState } from "react";
-
-const newProcedures = [
-  {
-    id: 1,
-    title: "Dịch vụ đăng ký khai sinh trực tuyến toàn trình từ 01/01/2025",
-    description: "Dịch vụ đăng ký khai sinh hoàn toàn trực tuyến"
-  },
-  {
-    id: 2,
-    title: "Quy định về cấp, thu hồi thẻ căn cước công dân và hộ chiếu",
-    description: "Quy định mới về cấp giấy tờ tùy thân"
-  },
-  {
-    id: 3,
-    title: "Quy định về đăng ký kinh doanh và quản lý doanh nghiệp trực tuyến",
-    description: "Quy định về đăng ký kinh doanh trực tuyến"
-  }
-];
+import { useNewsHighlights } from "@/modules/client/homepage/hooks";
+import { 
+  NewspaperIcon, 
+  ChevronLeftIcon, 
+  ChevronRightIcon,
+  ArrowPathIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export function NewProceduresCarousel() {
-    const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { data: news = [], isLoading, isError } = useNewsHighlights(6);
 
-    const nextSlide = () => {
-        setCurrentIndex((prev) => (prev + 1) % newProcedures.length);
-    };
+  const nextSlide = () => {
+    if (news.length === 0) return;
+    setCurrentIndex((prev) => (prev + 1) % news.length);
+  };
 
-    const prevSlide = () => {
-        setCurrentIndex((prev) => (prev - 1 + newProcedures.length) % newProcedures.length);
-    };
+  const prevSlide = () => {
+    if (news.length === 0) return;
+    setCurrentIndex((prev) => (prev - 1 + news.length) % news.length);
+  };
 
+  // Loading state
+  if (isLoading) {
     return (
-        <section className="py-8 bg-white">
-            <div className="container mx-auto px-4">
+      <section className="py-8 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center h-32">
+            <ArrowPathIcon className="w-6 h-6 animate-spin text-red-600" />
+            <span className="ml-2 text-gray-600">Đang tải tin tức...</span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error or empty state
+  if (isError || news.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="py-8 bg-white relative overflow-hidden">
+      {/* Left Background Decoration */}
+      <div 
+        className="absolute left-0 top-0 bottom-0 w-48 opacity-90 pointer-events-none hidden lg:block"
+        style={{
+          backgroundImage: "url('/assets/image/background/ban-mai-iii-tranh-son-mai-hoa-sen-cua-hoa-si-tran-thieu-nam.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'left center',
+          maskImage: 'linear-gradient(to right, rgba(0,0,0,0.8), transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,0.8), transparent)',
+        }}
+      />
+      
+      {/* Right Background Decoration */}
+      <div 
+        className="absolute right-0 top-0 bottom-0 w-48 opacity-90 pointer-events-none hidden lg:block"
+        style={{
+          backgroundImage: "url('/assets/image/background/ban-mai-iii-tranh-son-mai-hoa-sen-cua-hoa-si-tran-thieu-nam.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'right center',
+          maskImage: 'linear-gradient(to left, rgba(0,0,0,0.8), transparent)',
+          WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.8), transparent)',
+        }}
+      />
+
+      <div className="container mx-auto px-16 relative z-10">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-red-600 mb-2 flex items-center justify-center">
-            <svg className="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-            </svg>
-            Dịch vụ công mới
+            <NewspaperIcon className="w-6 h-6 mr-2" />
+            Tin tức dịch vụ công mới
           </h2>
         </div>
 
-                <div className="relative">
-                    {/* Carousel Container */}
-                    <div className="overflow-hidden">
-                        <div
-                            className="flex transition-transform duration-300 ease-in-out"
-                            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-                        >
-                            {newProcedures.map((procedure) => (
-                                <div key={procedure.id} className="w-full flex-shrink-0">
-                                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                                            {procedure.title}
-                                        </h3>
-                                        <p className="text-gray-600">
-                                            {procedure.description}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+        <div className="relative">
+          {/* Carousel Container */}
+          <div className="overflow-hidden">
+            <div
+              className="flex transition-transform duration-300 ease-in-out"
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            >
+              {news.map((item) => (
+                <div key={item.id} className="w-full flex-shrink-0">
+                  <Link href={`/tin-tuc/${item.id}`}>
+                    <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-lg p-6 border border-red-200 hover:shadow-md transition-shadow cursor-pointer">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-gray-600 line-clamp-2">
+                        {item.summary || item.content?.substring(0, 150)}
+                      </p>
+                      {item.createdAt && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          {new Date(item.createdAt).toLocaleDateString("vi-VN")}
+                        </p>
+                      )}
                     </div>
-
-                    {/* Navigation Arrows */}
-                    <button
-                        onClick={prevSlide}
-                        className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                    >
-                        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-
-                    <button
-                        onClick={nextSlide}
-                        className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
-                    >
-                        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
+                  </Link>
                 </div>
-
-                {/* Dots Indicator */}
-                <div className="flex justify-center mt-4 space-x-2">
-                    {newProcedures.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentIndex(index)}
-                            className={`w-2 h-2 rounded-full transition-colors ${index === currentIndex ? "bg-red-600" : "bg-gray-300"
-                                }`}
-                        />
-                    ))}
-                </div>
+              ))}
             </div>
-        </section>
-    );
+          </div>
+
+          {/* Navigation Arrows */}
+          {news.length > 1 && (
+            <>
+              <button
+                onClick={prevSlide}
+                className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              >
+                <ChevronLeftIcon className="w-5 h-5 text-gray-600" />
+              </button>
+
+              <button
+                onClick={nextSlide}
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              >
+                <ChevronRightIcon className="w-5 h-5 text-gray-600" />
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* Dots Indicator */}
+        {news.length > 1 && (
+          <div className="flex justify-center mt-4 space-x-2">
+            {news.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === currentIndex ? "bg-red-600" : "bg-gray-300"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
