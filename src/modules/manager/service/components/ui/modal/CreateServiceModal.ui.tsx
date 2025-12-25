@@ -91,7 +91,7 @@ export const CreateServiceModal: React.FC<Props> = ({
                             try {
                                 const newMethodRes = await fastInputService.createSubmissionMethod({
                                     submissionMethodName: method.submissionMethodName || 'Chưa đặt tên',
-                                    description: method.description || `Thời hạn: ${method.processingTime || ''}, Phí: ${method.fee || ''}`
+                                    description: method.description || `Thời hạn: ${method.processingTime || ''}, Phí: ${method.fee || 0}`
                                 });
                                 const resAny = newMethodRes as any;
                                 const newId = resAny.data || (resAny.success && resAny.data) ? (typeof resAny.data === 'string' ? resAny.data : resAny.data?.id) : null;
@@ -123,6 +123,7 @@ export const CreateServiceModal: React.FC<Props> = ({
                         submissionMethods: processedSubmissionMethods.map(m => ({
                             submissionMethodId: m.submissionMethodId,
                             processingTime: m.processingTime || 'Trong ngày',
+                            fee: m.fee || 0,
                             description: m.description || ''
                         })),
                         processingProcedure: procedure, // Use string directly
@@ -270,7 +271,7 @@ export const CreateServiceModal: React.FC<Props> = ({
             submissionMethodId: method.id || '',
             submissionMethodName: method.hinhThuc,
             processingTime: method.thoiHan,
-            fee: method.phiLePhi,
+            fee: method.phiLePhi ? parseInt(method.phiLePhi.replace(/\D/g, '')) || 0 : 0,
             description: method.moTa
         })).filter(m => Boolean(m.submissionMethodId)); // Only include methods that already exist
         setSubmissionMethods(mappedMethods);
@@ -319,7 +320,7 @@ export const CreateServiceModal: React.FC<Props> = ({
                     submissionMethodId: newId,
                     submissionMethodName: extracted.hinhThuc || 'Chưa đặt tên',
                     processingTime: extracted.thoiHan || '',
-                    fee: extracted.phiLePhi || '',
+                    fee: extracted.phiLePhi ? parseInt(extracted.phiLePhi.replace(/\D/g, '')) || 0 : 0,
                     description: extracted.moTa || ''
                 };
                 setSubmissionMethods(prev => [...prev, newMethod]);
