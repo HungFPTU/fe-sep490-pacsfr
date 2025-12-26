@@ -21,8 +21,8 @@ export const STAFF_STATUS_OPTIONS = [
 ];
 
 export const ROLE_TYPE_OPTIONS = [
-  { label: 'Nhân viên', value: 'Nhân viên' },
-  { label: 'Quản lý', value: 'Quản lý' },
+  { label: 'Nhân viên', value: 'Staff' },
+  { label: 'Quản lý', value: 'Manager' },
 ];
 
 export const STAFF_POSITION_OPTIONS = [
