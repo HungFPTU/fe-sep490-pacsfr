@@ -30,7 +30,7 @@ export const PaymentConfirmButton: React.FC<PaymentConfirmButtonProps> = ({ case
         <button
           onClick={() => setShowConfirm(true)}
           disabled={isDisabled}
-          className="w-full inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+          className="w-full inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
         >
           <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -74,7 +74,7 @@ export const PaymentConfirmButton: React.FC<PaymentConfirmButtonProps> = ({ case
                 Bạn có chắc chắn muốn xác nhận hồ sơ này đã thanh toán?
               </p>
               <p className="text-sm text-red-600 mt-2 font-medium">
-                ⚠️ Hành động này không thể hoàn tác.
+                Hành động này không thể hoàn tác.
               </p>
             </div>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { XMarkIcon, ExclamationCircleIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useCaseDetail } from '../../../../hooks/useCaseDetail';
 import { CaseDetailView } from '../../../view/CaseDetailView.view';
@@ -34,9 +35,7 @@ export const CaseDetailModal: React.FC<CaseDetailModalProps> = ({
   };
 
   const handleUpdateSuccess = () => {
-    // Refetch the detail data
     refetch();
-    // Call the parent callback to refresh search table
     onUpdateSuccess?.();
   };
 
@@ -46,21 +45,23 @@ export const CaseDetailModal: React.FC<CaseDetailModalProps> = ({
         open={open}
         onClose={onClose}
         title="Chi tiết hồ sơ"
-        size="large"
+        size="xl"
         centered
         footer={
-          <div className="flex justify-between items-center gap-4">
+          <div className="flex items-center justify-between gap-3">
             <button
               onClick={handleUpdateClick}
               disabled={isLoading || !!error || !data?.data}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-800 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed"
             >
+              <PencilSquareIcon className="h-4 w-4" />
               Cập nhật hồ sơ
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
             >
+              <XMarkIcon className="h-4 w-4" />
               Đóng
             </button>
           </div>
@@ -68,21 +69,15 @@ export const CaseDetailModal: React.FC<CaseDetailModalProps> = ({
       >
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
-            <p className="text-sm text-gray-500">Đang tải dữ liệu...</p>
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600 mb-3"></div>
+            <p className="text-sm text-slate-500">Đang tải dữ liệu...</p>
           </div>
         ) : error ? (
-          <div className="bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 rounded-lg p-4 shadow-sm">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <div className="ml-4">
-                <h4 className="text-sm font-bold text-red-900">Lỗi tải dữ liệu</h4>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <ExclamationCircleIcon className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-medium text-red-800">Lỗi tải dữ liệu</h4>
                 <p className="text-sm text-red-700 mt-1">
                   Không thể tải thông tin chi tiết hồ sơ. Vui lòng thử lại.
                 </p>
@@ -116,4 +111,3 @@ export const CaseDetailModal: React.FC<CaseDetailModalProps> = ({
     </>
   );
 };
-

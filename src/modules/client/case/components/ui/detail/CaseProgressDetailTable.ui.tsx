@@ -1,221 +1,302 @@
 'use client';
 
 import React from 'react';
+import {
+    FileText,
+    User,
+    Briefcase,
+    Calendar,
+    Clock,
+    Send,
+    Banknote,
+    UserCheck,
+    StickyNote,
+    CreditCard,
+    AlertCircle
+} from "lucide-react";
 import type { CaseProgressRaw } from '../../../types';
-import { formatDate } from '@/shared/lib/utils';
 
 interface CaseProgressDetailTableProps {
     rawData: CaseProgressRaw | null;
 }
 
-/**
- * Format field label to Vietnamese
- */
-const getFieldLabel = (key: string): string => {
-    const labelMap: Record<string, string> = {
-        caseCode: 'Mã số hồ sơ',
-        code: 'Mã hồ sơ',
-        serviceName: 'Tên thủ tục hành chính',
-        service: 'Thủ tục hành chính',
-        currentStatus: 'Trạng thái hiện tại',
-        status: 'Trạng thái',
-        statusName: 'Tên trạng thái',
-        statusDescription: 'Mô tả trạng thái',
-        createdAt: 'Ngày tạo',
-        createdDate: 'Ngày tạo',
-        submitDate: 'Ngày nộp hồ sơ',
-        updatedAt: 'Ngày cập nhật',
-        lastUpdated: 'Ngày cập nhật cuối',
-        estimatedCompletionDate: 'Ngày dự kiến hoàn thành',
-        expectedCompletion: 'Ngày dự kiến hoàn thành',
-        progressPercentage: 'Tiến độ xử lý',
-        assignedStaffName: 'Cán bộ phụ trách',
-        processingAgency: 'Cơ quan xử lý',
-        departmentName: 'Tên phòng ban',
-        organizationName: 'Tên tổ chức',
-        receivedChannel: 'Hình thức tiếp nhận',
-        applicantName: 'Tên người nộp hồ sơ',
-        guestName: 'Tên khách hàng',
-        citizenName: 'Tên công dân',
-        fullName: 'Họ và tên',
-        email: 'Email',
-        phone: 'Số điện thoại',
-        address: 'Địa chỉ',
-        dateOfBirth: 'Ngày sinh',
-        gender: 'Giới tính',
-        nationality: 'Quốc tịch',
-        idCard: 'Số CMND/CCCD',
-        priority: 'Ưu tiên',
-        notes: 'Ghi chú',
-        remark: 'Nhận xét',
-        description: 'Mô tả',
-        title: 'Tiêu đề',
-        name: 'Tên',
-        staffId: 'Mã nhân viên',
-        staffName: 'Tên nhân viên',
-        departmentId: 'Mã phòng ban',
-        organizationId: 'Mã tổ chức',
-        processedAt: 'Thời gian xử lý',
-        handlerName: 'Người xử lý',
-        stepName: 'Tên bước',
-        stepOrder: 'Thứ tự bước',
-        order: 'Thứ tự',
-        priorityLevel: 'Mức ưu tiên',
-        totalFee: 'Tổng phí',
-        isPayment: 'Đã thanh toán',
-        submissionMethod: 'Hình thức nộp',
-        currentStep: 'Bước hiện tại',
+// Format date
+const formatDate = (dateStr: string | undefined): string => {
+    if (!dateStr) return '-';
+    try {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('vi-VN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    } catch {
+        return dateStr;
+    }
+};
+
+// Format currency
+const formatCurrency = (amount: number | undefined): string => {
+    if (amount === undefined || amount === null) return '0đ';
+    return amount.toLocaleString('vi-VN') + 'đ';
+};
+
+// Get payment status in Vietnamese
+const getPaymentStatusLabel = (status: string | undefined): { label: string; color: string } => {
+    const statusMap: Record<string, { label: string; color: string }> = {
+        'Pending': { label: 'Chờ thanh toán', color: 'text-amber-600 bg-amber-50' },
+        'Paid': { label: 'Đã thanh toán', color: 'text-emerald-600 bg-emerald-50' },
+        'Failed': { label: 'Thanh toán thất bại', color: 'text-red-600 bg-red-50' },
+        'Cancelled': { label: 'Đã hủy', color: 'text-gray-600 bg-gray-50' },
     };
-
-    return labelMap[key] || key
-        .replace(/([A-Z])/g, ' $1')
-        .replace(/^./, (str) => str.toUpperCase())
-        .trim();
+    return statusMap[status || ''] || { label: status || '-', color: 'text-gray-600 bg-gray-50' };
 };
 
-/**
- * Format field value to readable format
- */
-const formatFieldValue = (key: string, value: unknown): string => {
-    if (value === null || value === undefined) {
-        return '-';
-    }
+interface InfoCardProps {
+    icon: React.ReactNode;
+    label: string;
+    value: string | React.ReactNode;
+    iconBg?: string;
+}
 
-    // Format dates
-    if (key.includes('Date') || key.includes('At') || key === 'createdAt' || key === 'updatedAt' || key === 'submitDate') {
-        if (typeof value === 'string') {
-            try {
-                return formatDate(value);
-            } catch {
-                return value;
-            }
-        }
-    }
-
-    // Format percentage
-    if (key === 'progressPercentage' && typeof value === 'number') {
-        return `${value}%`;
-    }
-
-    // Format boolean
-    if (typeof value === 'boolean') {
-        return value ? 'Có' : 'Không';
-    }
-
-    // Format number
-    if (typeof value === 'number') {
-        return value.toLocaleString('vi-VN');
-    }
-
-    // Format string
-    if (typeof value === 'string') {
-        return value.trim() || '-';
-    }
-
-    // Skip complex objects and arrays (they're handled separately)
-    if (typeof value === 'object') {
-        return '-';
-    }
-
-    return String(value);
-};
-
-/**
- * Check if field should be displayed
- */
-const shouldDisplayField = (key: string, value: unknown): boolean => {
-    // Skip internal fields
-    if (key.startsWith('$')) return false;
-
-    // Skip id fields (not needed for user display)
-    if (key === 'id' || key === 'guestId' || key === 'serviceId' || key === 'receivedBy') return false;
-    
-    // Skip variations of these fields
-    if (key.toLowerCase().includes('guestid') || key.toLowerCase().includes('serviceid') || key.toLowerCase().includes('receivedby')) {
-        return false;
-    }
-
-    // Skip complex objects and arrays (they're handled in timeline)
-    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-        // Only skip if it's a complex nested object (not a simple value)
-        if (key === 'statusHistory' || key === 'progressSteps' || key === 'steps' || key === 'histories' || key === 'timeline') {
-            return false;
-        }
-    }
-
-    // Skip empty values
-    if (value === null || value === undefined || value === '') {
-        return false;
-    }
-
-    return true;
-};
+const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value, iconBg = 'bg-gray-100' }) => (
+    <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+        <div className={`w-10 h-10 rounded-lg ${iconBg} flex items-center justify-center shrink-0`}>
+            {icon}
+        </div>
+        <div className="min-w-0 flex-1">
+            <p className="text-xs text-gray-500 uppercase tracking-wide">{label}</p>
+            <div className="text-sm font-semibold text-gray-900 mt-0.5">{value}</div>
+        </div>
+    </div>
+);
 
 export const CaseProgressDetailTable: React.FC<CaseProgressDetailTableProps> = ({ rawData }) => {
     if (!rawData) {
         return null;
     }
 
-    // Extract fields to display
-    const fields = Object.entries(rawData)
-        .filter(([key, value]) => shouldDisplayField(key, value))
-        .map(([key, value]) => ({
-            key,
-            label: getFieldLabel(key),
-            value: formatFieldValue(key, value),
-        }))
-        .sort((a, b) => {
-            // Sort by priority: important fields first
-            const priority: Record<string, number> = {
-                caseCode: 1,
-                serviceName: 2,
-                currentStatus: 3,
-                status: 4,
-                createdAt: 5,
-                submitDate: 6,
-                updatedAt: 7,
-                estimatedCompletionDate: 8,
-                progressPercentage: 9,
-                assignedStaffName: 10,
-                processingAgency: 11,
-            };
-            const aPriority = priority[a.key] || 99;
-            const bPriority = priority[b.key] || 99;
-            return aPriority - bPriority;
-        });
+    // Extract payment info if available
+    const paymentInfo = rawData.paymentInfo;
 
-    if (fields.length === 0) {
-        return null;
-    }
+    const paymentStatus = paymentInfo?.paymentStatus ? getPaymentStatusLabel(paymentInfo.paymentStatus) : null;
 
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg ring-1 ring-black/5">
-            <div className="mb-6 border-b border-slate-200 pb-4">
-                <h3 className="text-2xl font-bold text-slate-900">Thông tin chi tiết</h3>
-                <p className="mt-1 text-sm text-slate-600">
-                    Toàn bộ chi tiết hồ sơ và dữ liệu xử lý
-                </p>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-slate-600" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold text-gray-900">Thông tin chi tiết hồ sơ</h3>
+                        <p className="text-xs text-gray-500">Toàn bộ dữ liệu của hồ sơ</p>
+                    </div>
+                </div>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="min-w-full">
-                    <tbody className="divide-y divide-slate-200">
-                        {fields.map((field, index) => (
-                            <tr key={field.key} className={`hover:bg-slate-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}`}>
-                                <td className="w-1/3 px-6 py-4 text-sm font-semibold text-slate-700 border-r border-slate-200">
-                                    {field.label}
-                                </td>
-                                <td className="px-6 py-4 text-sm text-slate-900">
-                                    <div className="break-words">
-                                        {field.value}
+            {/* Content */}
+            <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Case Code */}
+                    {rawData.caseCode && (
+                        <InfoCard
+                            icon={<FileText className="w-5 h-5 text-indigo-600" />}
+                            iconBg="bg-indigo-50"
+                            label="Mã hồ sơ"
+                            value={<span className="font-mono">{rawData.caseCode}</span>}
+                        />
+                    )}
+
+                    {/* Guest Name */}
+                    {rawData.guestName && (
+                        <InfoCard
+                            icon={<User className="w-5 h-5 text-blue-600" />}
+                            iconBg="bg-blue-50"
+                            label="Tên công dân"
+                            value={rawData.guestName}
+                        />
+                    )}
+
+                    {/* Service Name */}
+                    {rawData.serviceName && (
+                        <InfoCard
+                            icon={<Briefcase className="w-5 h-5 text-purple-600" />}
+                            iconBg="bg-purple-50"
+                            label="Thủ tục hành chính"
+                            value={rawData.serviceName}
+                        />
+                    )}
+
+                    {/* Staff Name */}
+                    {rawData.staffName && (
+                        <InfoCard
+                            icon={<UserCheck className="w-5 h-5 text-orange-600" />}
+                            iconBg="bg-orange-50"
+                            label="Nhân viên xử lý"
+                            value={rawData.staffName}
+                        />
+                    )}
+
+                    {/* Submission Method */}
+                    {rawData.submissionMethod && (
+                        <InfoCard
+                            icon={<Send className="w-5 h-5 text-slate-600" />}
+                            iconBg="bg-slate-100"
+                            label="Hình thức nộp"
+                            value={rawData.submissionMethod}
+                        />
+                    )}
+
+                    {/* Priority Level */}
+                    {rawData.priorityLevel !== undefined && (
+                        <InfoCard
+                            icon={<AlertCircle className="w-5 h-5 text-amber-600" />}
+                            iconBg="bg-amber-50"
+                            label="Mức độ ưu tiên"
+                            value={rawData.priorityLevel === 0 ? 'Bình thường' : `Mức ${rawData.priorityLevel}`}
+                        />
+                    )}
+
+                    {/* Estimated Completion Date */}
+                    {rawData.estimatedCompletionDate && (
+                        <InfoCard
+                            icon={<Calendar className="w-5 h-5 text-emerald-600" />}
+                            iconBg="bg-emerald-50"
+                            label="Ngày dự kiến hoàn thành"
+                            value={formatDate(rawData.estimatedCompletionDate)}
+                        />
+                    )}
+
+                    {/* Current Status */}
+                    {rawData.currentStatus && (
+                        <InfoCard
+                            icon={<Clock className="w-5 h-5 text-indigo-600" />}
+                            iconBg="bg-indigo-50"
+                            label="Trạng thái hiện tại"
+                            value={
+                                <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+                                    {rawData.currentStatus}
+                                </span>
+                            }
+                        />
+                    )}
+
+                    {/* Total Fee */}
+                    {rawData.totalFee !== undefined && (
+                        <InfoCard
+                            icon={<Banknote className="w-5 h-5 text-emerald-600" />}
+                            iconBg="bg-emerald-50"
+                            label="Tổng phí"
+                            value={formatCurrency(rawData.totalFee)}
+                        />
+                    )}
+
+                    {/* Payment Status */}
+                    {rawData.isPayment !== undefined && (
+                        <InfoCard
+                            icon={<CreditCard className="w-5 h-5 text-blue-600" />}
+                            iconBg="bg-blue-50"
+                            label="Đã thanh toán"
+                            value={rawData.isPayment ? 'Có' : 'Chưa'}
+                        />
+                    )}
+                </div>
+
+                {/* Notes Section */}
+                {rawData.notes && (
+                    <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-100">
+                        <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                                <StickyNote className="w-4 h-4 text-amber-600" />
+                            </div>
+                            <div>
+                                <p className="text-xs text-amber-700 uppercase tracking-wide font-medium">Ghi chú</p>
+                                <p className="text-sm text-amber-900 mt-1">{rawData.notes}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Steps Progress Section */}
+                {rawData.steps?.$values && rawData.steps.$values.length > 0 && (
+                    <div className="mt-4 p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                        <h4 className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-4">
+                            Tiến trình xử lý hồ sơ
+                        </h4>
+                        <div className="space-y-3">
+                            {rawData.steps.$values.map((step, index) => (
+                                <div key={step.caseServiceProcedureId || index} className="flex items-center gap-3">
+                                    {/* Step Number */}
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold ${
+                                        step.isFinished 
+                                            ? 'bg-emerald-500 text-white' 
+                                            : step.isCurrent 
+                                                ? 'bg-indigo-500 text-white' 
+                                                : 'bg-gray-200 text-gray-500'
+                                    }`}>
+                                        {step.isFinished ? '✓' : step.stepNumber}
                                     </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                    {/* Step Info */}
+                                    <div className="flex-1 min-w-0">
+                                        <p className={`text-sm font-medium ${
+                                            step.isFinished 
+                                                ? 'text-emerald-700' 
+                                                : step.isCurrent 
+                                                    ? 'text-indigo-700' 
+                                                    : 'text-gray-500'
+                                        }`}>
+                                            {step.stepName}
+                                        </p>
+                                    </div>
+                                    {/* Status Badge */}
+                                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                        step.isFinished 
+                                            ? 'bg-emerald-100 text-emerald-700' 
+                                            : step.isCurrent 
+                                                ? 'bg-indigo-100 text-indigo-700' 
+                                                : 'bg-gray-100 text-gray-500'
+                                    }`}>
+                                        {step.isFinished ? 'Hoàn thành' : step.isCurrent ? 'Đang xử lý' : 'Chờ xử lý'}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Payment Info Section */}
+                {paymentInfo && (
+                    <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                            Thông tin thanh toán
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <p className="text-xs text-gray-500">Số tiền</p>
+                                <p className="text-sm font-semibold text-gray-900">{formatCurrency(paymentInfo.amount)}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-gray-500">Trạng thái</p>
+                                {paymentStatus && (
+                                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${paymentStatus.color}`}>
+                                        {paymentStatus.label}
+                                    </span>
+                                )}
+                            </div>
+                            {paymentInfo.expiredAt && (
+                                <div>
+                                    <p className="text-xs text-gray-500">Hạn thanh toán</p>
+                                    <p className="text-sm font-semibold text-gray-900">{formatDate(paymentInfo.expiredAt)}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
 };
-

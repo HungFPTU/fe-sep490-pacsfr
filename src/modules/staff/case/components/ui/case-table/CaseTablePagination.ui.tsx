@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface PaginationInfo {
   page: number;
@@ -16,100 +17,50 @@ interface CaseTablePaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export const CaseTablePagination: React.FC<CaseTablePaginationProps> = ({
-  pagination,
-  onPageChange,
-}) => {
+export const CaseTablePagination: React.FC<CaseTablePaginationProps> = ({ pagination, onPageChange }) => {
   const { page, totalPages, total, size, hasNextPage, hasPreviousPage } = pagination;
 
   if (totalPages <= 1) return null;
 
-  // Calculate page numbers to display
   const pages: number[] = [];
-  const maxVisiblePages = 5;
-  let startPage = Math.max(1, page - Math.floor(maxVisiblePages / 2));
-  const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-  if (endPage - startPage + 1 < maxVisiblePages) {
-    startPage = Math.max(1, endPage - maxVisiblePages + 1);
-  }
-
-  for (let i = startPage; i <= endPage; i++) {
-    pages.push(i);
-  }
+  const maxVisible = 5;
+  let start = Math.max(1, page - Math.floor(maxVisible / 2));
+  const end = Math.min(totalPages, start + maxVisible - 1);
+  if (end - start + 1 < maxVisible) start = Math.max(1, end - maxVisible + 1);
+  for (let i = start; i <= end; i++) pages.push(i);
 
   return (
-    <div className="bg-white px-6 py-4 border-t border-gray-200 sm:flex sm:items-center sm:justify-between">
-      {/* Mobile Pagination */}
-      <div className="flex-1 flex justify-between sm:hidden">
+    <div className="px-5 py-3 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+      <p className="text-sm text-gray-600">
+        Hiển thị {(page - 1) * size + 1} - {Math.min(page * size, total)} / {total}
+      </p>
+      <div className="flex items-center gap-1">
         <button
           onClick={() => onPageChange(page - 1)}
           disabled={!hasPreviousPage}
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 rounded hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          Trước
+          <ChevronLeft className="h-4 w-4" />
         </button>
+        {pages.map((p) => (
+          <button
+            key={p}
+            onClick={() => onPageChange(p)}
+            className={`min-w-[32px] h-8 px-2 text-sm font-medium rounded ${
+              p === page ? 'bg-blue-600 text-white' : 'hover:bg-gray-200 text-gray-700'
+            }`}
+          >
+            {p}
+          </button>
+        ))}
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={!hasNextPage}
-          className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-2 rounded hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          Sau
+          <ChevronRight className="h-4 w-4" />
         </button>
-      </div>
-
-      {/* Desktop Pagination */}
-      <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm text-gray-700">
-            Hiển thị <span className="font-medium">{((page - 1) * size) + 1}</span> - <span className="font-medium">{Math.min(page * size, total)}</span> trong tổng số <span className="font-medium">{total}</span> kết quả
-          </p>
-        </div>
-
-        <div>
-          <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            {/* Previous Button */}
-            <button
-              onClick={() => onPageChange(page - 1)}
-              disabled={!hasPreviousPage}
-              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="sr-only">Trước</span>
-              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            </button>
-
-            {/* Page Numbers */}
-            {pages.map((pageNum) => (
-              <button
-                key={pageNum}
-                onClick={() => onPageChange(pageNum)}
-                className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                  pageNum === page
-                    ? 'z-10 bg-red-50 border-red-500 text-red-600'
-                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                }`}
-              >
-                {pageNum}
-              </button>
-            ))}
-
-            {/* Next Button */}
-            <button
-              onClick={() => onPageChange(page + 1)}
-              disabled={!hasNextPage}
-              className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="sr-only">Sau</span>
-              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </nav>
-        </div>
       </div>
     </div>
   );
 };
-

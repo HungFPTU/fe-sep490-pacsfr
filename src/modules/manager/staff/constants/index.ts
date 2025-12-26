@@ -21,16 +21,16 @@ export const STAFF_STATUS_OPTIONS = [
 ];
 
 export const ROLE_TYPE_OPTIONS = [
-  { label: 'Nhân viên', value: 'Staff' },
-  { label: 'Quản lý', value: 'Manager' },
+  { label: 'Nhân viên', value: 'Nhân viên' },
+  { label: 'Quản lý', value: 'Quản lý' },
 ];
 
 export const STAFF_POSITION_OPTIONS = [
-  { label: 'Lễ tân', value: 'RECEPTIONIST' },
-  { label: 'Công chức', value: 'OFFICER' },
-  { label: 'Chuyên viên', value: 'SPECIALIST' },
-  { label: 'Trưởng phòng', value: 'HEAD_OF_DEPARTMENT' },
-  { label: 'Phó phòng', value: 'DEPUTY_HEAD' },
+  { label: 'Lễ tân', value: 'Lễ tân' },
+  { label: 'Công chức', value: 'Công chức' },
+  { label: 'Chuyên viên', value: 'Chuyên viên' },
+  { label: 'Trưởng phòng', value: 'Trưởng phòng' },
+  { label: 'Phó phòng', value: 'Phó phòng' },
 ];
 
 export const BOOLEAN_OPTIONS = [

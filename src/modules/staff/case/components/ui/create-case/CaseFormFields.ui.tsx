@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
+import { Send, StickyNote, Calendar } from "lucide-react";
 import type { CreateCaseRequest, SubmissionMethod } from "../../../../dashboard/types";
-import { Calendar } from "lucide-react";
 
 interface PriorityLevel {
     value: number;
@@ -18,230 +18,11 @@ interface CaseFormFieldsProps {
 }
 
 // Helper functions for date conversion
-const formatDateToISO = (dateValue: string, timeValue: string = '00:00'): string => {
-    if (!dateValue) return '';
-    const parts = dateValue.split('/');
-    if (parts.length !== 3) return '';
-    const [day, month, year] = parts;
-    const [hours, minutes] = timeValue.split(':');
-    return `${year}-${month}-${day}T${hours}:${minutes}:00`;
-};
-
 const formatISOToDate = (isoValue: string): string => {
     if (!isoValue) return '';
     const datePart = isoValue.substring(0, 10);
     const [year, month, day] = datePart.split('-');
     return `${day}/${month}/${year}`;
-};
-
-const formatISOToTime = (isoValue: string): string => {
-    if (!isoValue) return '00:00';
-    const timePart = isoValue.substring(11, 16);
-    return timePart || '00:00';
-};
-
-// DatePickerCalendar with year and month selector
-const DatePickerCalendar: React.FC<{
-    value: string;
-    onChange: (datetime: string) => void;
-    onClose: () => void;
-}> = ({ value, onChange, onClose }) => {
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [showYearSelector, setShowYearSelector] = useState(false);
-    const [showMonthSelector, setShowMonthSelector] = useState(false);
-    const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
-    const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth());
-
-    const getDisplayDate = () => {
-        if (value) {
-            const datePart = value.substring(0, 10);
-            const [year, month, day] = datePart.split('-');
-            if (year && month && day) {
-                return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-            }
-        }
-        return currentDate;
-    };
-
-    const displayDate = getDisplayDate();
-    const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
-    const days: (number | null)[] = [];
-
-    for (let i = 0; i < firstDayOfMonth; i++) {
-        days.push(null);
-    }
-    for (let i = 1; i <= daysInMonth; i++) {
-        days.push(i);
-    }
-
-    const handleSelectDate = (day: number) => {
-        const selected = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-        const dd = String(selected.getDate()).padStart(2, '0');
-        const mm = String(selected.getMonth() + 1).padStart(2, '0');
-        const yyyy = selected.getFullYear();
-        onChange(`${yyyy}-${mm}-${dd}`);
-        onClose();
-    };
-
-    const handlePrevMonth = () => {
-        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
-    };
-
-    const handleNextMonth = () => {
-        setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
-    };
-
-    const handleYearChange = (year: number) => {
-        setCurrentDate(new Date(year, currentDate.getMonth(), 1));
-        setSelectedYear(year);
-        setShowYearSelector(false);
-    };
-
-    const handleMonthChange = (month: number) => {
-        setCurrentDate(new Date(currentDate.getFullYear(), month, 1));
-        setSelectedMonth(month);
-        setShowMonthSelector(false);
-    };
-
-    const currentYear = new Date().getFullYear();
-    const yearRange = Array.from({ length: 100 }, (_, i) => currentYear - i);
-
-    const monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
-    const monthShortNames = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12"];
-    const dayNames = ["CN", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
-
-    return (
-        <div className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-xl z-20 p-3 w-full max-w-md">
-            {!showYearSelector && !showMonthSelector ? (
-                <>
-                    {/* Month Navigation */}
-                    <div className="flex justify-between items-center mb-4">
-                        <button
-                            type="button"
-                            onClick={handlePrevMonth}
-                            className="px-2 py-1 hover:bg-gray-100 rounded text-sm font-medium"
-                        >
-                            ← Trước
-                        </button>
-                        <div className="flex items-center gap-2 flex-1 justify-center">
-                            <button
-                                type="button"
-                                onClick={() => setShowMonthSelector(true)}
-                                className="px-3 py-1 hover:bg-gray-100 rounded text-sm font-semibold border border-gray-300"
-                            >
-                                {monthNames[currentDate.getMonth()]}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setShowYearSelector(true)}
-                                className="px-3 py-1 hover:bg-gray-100 rounded text-sm font-semibold border border-gray-300"
-                            >
-                                {currentDate.getFullYear()}
-                            </button>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={handleNextMonth}
-                            className="px-2 py-1 hover:bg-gray-100 rounded text-sm font-medium"
-                        >
-                            Sau →
-                        </button>
-                    </div>
-
-                    {/* Days Header */}
-                    <div className="grid grid-cols-7 gap-1 mb-2">
-                        {dayNames.map((day) => (
-                            <div key={day} className="text-center text-xs font-semibold text-gray-600">
-                                {day}
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Days Grid */}
-                    <div className="grid grid-cols-7 gap-1 mb-4">
-                        {days.map((day, index) => (
-                            <button
-                                key={index}
-                                type="button"
-                                onClick={() => day && handleSelectDate(day)}
-                                disabled={!day}
-                                className={`w-10 h-10 text-sm rounded hover:bg-blue-100 disabled:opacity-30 disabled:cursor-not-allowed font-medium transition-colors ${
-                                    day === displayDate.getDate() && currentDate.getMonth() === displayDate.getMonth()
-                                        ? "bg-blue-500 text-white hover:bg-blue-600"
-                                        : ""
-                                }`}
-                            >
-                                {day}
-                            </button>
-                        ))}
-                    </div>
-                </>
-            ) : showYearSelector ? (
-                <>
-                    {/* Year Selector */}
-                    <div className="mb-4">
-                        <h3 className="text-sm font-semibold text-gray-900 mb-3">Chọn năm</h3>
-                        <div className="max-h-64 overflow-y-auto border border-gray-300 rounded-lg">
-                            <div className="grid grid-cols-3 gap-2 p-3">
-                                {yearRange.map((year) => (
-                                    <button
-                                        key={year}
-                                        type="button"
-                                        onClick={() => handleYearChange(year)}
-                                        className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-                                            year === selectedYear
-                                                ? "bg-blue-500 text-white hover:bg-blue-600"
-                                                : "bg-gray-100 hover:bg-gray-200 text-gray-900"
-                                        }`}
-                                    >
-                                        {year}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => setShowYearSelector(false)}
-                        className="w-full px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm font-medium transition-colors"
-                    >
-                        Quay lại
-                    </button>
-                </>
-            ) : (
-                <>
-                    {/* Month Selector */}
-                    <div className="mb-4">
-                        <h3 className="text-sm font-semibold text-gray-900 mb-3">Chọn tháng</h3>
-                        <div className="grid grid-cols-3 gap-2">
-                            {monthShortNames.map((month, index) => (
-                                <button
-                                    key={index}
-                                    type="button"
-                                    onClick={() => handleMonthChange(index)}
-                                    className={`px-3 py-2 rounded text-sm font-medium transition-colors ${
-                                        index === selectedMonth
-                                            ? "bg-blue-500 text-white hover:bg-blue-600"
-                                            : "bg-gray-100 hover:bg-gray-200 text-gray-900"
-                                    }`}
-                                >
-                                    {month}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={() => setShowMonthSelector(false)}
-                        className="w-full px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm font-medium transition-colors"
-                    >
-                        Quay lại
-                    </button>
-                </>
-            )}
-        </div>
-    );
 };
 
 export function CaseFormFields({
@@ -251,8 +32,6 @@ export function CaseFormFields({
     isLoadingSubmissionMethods = false,
     onDataChange,
 }: CaseFormFieldsProps) {
-    const [showDatePicker, setShowDatePicker] = useState(false);
-
     // Deduplicate submission methods by submissionMethodId
     const uniqueSubmissionMethods = useMemo(() => {
         const seen = new Set<string>();
@@ -295,34 +74,29 @@ export function CaseFormFields({
         onDataChange(updatedData);
     };
 
-    return (
-        <div className="space-y-6">
-            {/* Priority Level */}
-            {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mức độ ưu tiên
-                </label>
-                <select
-                    value={caseData.priorityLevel}
-                    onChange={(e) => onDataChange({ ...caseData, priorityLevel: parseInt(e.target.value) })}
-                    className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                    {priorityLevels.map(level => (
-                        <option key={level.value} value={level.value}>{level.label}</option>
-                    ))}
-                </select>
-            </div> */}
+    const labelClass = "block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5";
+    const inputClass = "w-full h-10 px-3 text-sm border border-gray-200 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed";
+    const selectedMethod = uniqueSubmissionMethods.find(m => m.submissionMethodId === caseData.submissionMethodId);
 
+    return (
+        <div className="space-y-5">
             {/* Submission Method */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={labelClass}>
+                    <Send className="w-3.5 h-3.5 inline mr-1" />
                     Phương thức nộp <span className="text-red-500">*</span>
                 </label>
                 <select
                     value={caseData.submissionMethodId}
                     onChange={handleSubmissionMethodChange}
                     disabled={isLoadingSubmissionMethods}
-                    className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                    className={`${inputClass} appearance-none cursor-pointer`}
+                    style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.75rem center',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: '1.25em 1.25em',
+                    }}
                 >
                     <option value="">{isLoadingSubmissionMethods ? "Đang tải..." : "-- Chọn phương thức nộp --"}</option>
                     {uniqueSubmissionMethods.map(method => (
@@ -331,47 +105,38 @@ export function CaseFormFields({
                         </option>
                     ))}
                 </select>
-                {uniqueSubmissionMethods.find(m => m.submissionMethodId === caseData.submissionMethodId) && (
-                    <p className="text-xs text-gray-500 mt-1">
-                        {uniqueSubmissionMethods.find(m => m.submissionMethodId === caseData.submissionMethodId)?.description}
-                    </p>
+                {selectedMethod && (
+                    <p className="text-xs text-gray-500 mt-1.5 pl-1">{selectedMethod.description}</p>
                 )}
             </div>
 
+            {/* Estimated Completion Date */}
+            {caseData.estimatedCompletionDate && (
+                <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                        <Calendar className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <div>
+                        <p className="text-xs text-emerald-700">Ngày hoàn thành dự kiến</p>
+                        <p className="text-sm font-semibold text-emerald-900">{formatISOToDate(caseData.estimatedCompletionDate)}</p>
+                    </div>
+                </div>
+            )}
+
             {/* Notes */}
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={labelClass}>
+                    <StickyNote className="w-3.5 h-3.5 inline mr-1" />
                     Ghi chú
                 </label>
                 <textarea
                     value={caseData.notes || ""}
                     onChange={(e) => onDataChange({ ...caseData, notes: e.target.value })}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
                     placeholder="Thêm ghi chú cho hồ sơ..."
                 />
-            </div>
-
-            {/* Estimated Completion Date */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Calendar className="w-4 h-4 inline mr-1" />
-                    Ngày hoàn thành dự kiến
-                </label>
-                <div className="relative">
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="text"
-                            value={formatISOToDate(caseData.estimatedCompletionDate || '')}
-                            placeholder="dd/mm/yyyy"
-                            maxLength={10}
-                            disabled
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
-                        />
-                    </div>
-                </div>
             </div>
         </div>
     );
 }
-

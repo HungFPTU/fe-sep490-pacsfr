@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { ClipboardList, MessageSquare, StickyNote, AlertCircle } from 'lucide-react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
 import { useGlobalToast } from '@core/patterns/SingletonHook';
 import { useUpdateCaseStatus } from '../../../../hooks/useUpdateCaseStatus';
@@ -23,7 +24,6 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
 }) => {
   const { data: caseStatuses = [], isLoading: isLoadingStatuses } = useGetCaseStatuses();
   
-  // Find current status ID from status name
   const getCurrentStatusId = () => {
     const status = caseStatuses.find(s => s.name === currentStatus);
     return status?.id || '';
@@ -80,7 +80,6 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
     onClose();
   };
 
-  // Update newStatusId when currentStatus changes or modal opens
   useEffect(() => {
     if (open) {
       setNewStatusId(getCurrentStatusId());
@@ -88,7 +87,6 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, currentStatus]);
 
-  // Auto-fill reason when status changes
   useEffect(() => {
     if (newStatusId && newStatusId !== getCurrentStatusId()) {
       const selectedStatus = caseStatuses.find(s => s.id === newStatusId);
@@ -98,11 +96,14 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
     }
   }, [newStatusId]);
 
+  const labelClass = "block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5";
+  const inputClass = "w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:cursor-not-allowed";
+
   return (
     <BaseModal
       open={open}
       onClose={handleClose}
-      title="Cập nhật trạng thái hồ sơ"
+      title="Cập nhật trạng thái"
       onOk={handleSubmit}
       onCancel={handleClose}
       okText="Cập nhật"
@@ -111,76 +112,78 @@ export const UpdateCaseStatusModal: React.FC<UpdateCaseStatusModalProps> = ({
       size="medium"
       confirmLoading={updateStatusMutation.isPending}
     >
-      <div className="space-y-4">
+      <div className="space-y-5">
+        {/* Current Status Info */}
+        <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+          <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center shrink-0">
+            <AlertCircle className="w-4 h-4 text-slate-600" />
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Trạng thái hiện tại</p>
+            <p className="text-sm font-semibold text-gray-900">{currentStatus}</p>
+          </div>
+        </div>
+
         {/* New Status */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Trạng thái <span className="text-red-500">*</span>
+          <label className={labelClass}>
+            <ClipboardList className="w-3.5 h-3.5 inline mr-1" />
+            Trạng thái mới <span className="text-red-500">*</span>
           </label>
-          <div className="relative">
-            <select
-              value={newStatusId}
-              onChange={(e) => setNewStatusId(e.target.value)}
-              disabled={updateStatusMutation.isPending}
-              className="flex h-10 w-full rounded-md border border-input bg-white px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 appearance-none pr-10"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
-                backgroundPosition: 'right 0.5rem center',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: '1.5em 1.5em',
-              }}
-            >
-              {caseStatuses
-                .filter(status => status.name !== 'Đã tiếp nhận' && status.name !== 'Đang xử lý')
-                .map((status) => {
-                  return (
-                    <option 
-                      key={status.id} 
-                      value={status.id}
-                      className="py-2"
-                    >
-                      {status.name}
-                    </option>
-                  );
-                })}
-            </select>
-          </div>
-          <p className="text-xs text-gray-500 mt-1">
-            Trạng thái hiện tại: <span className="font-medium">{currentStatus}</span>
-          </p>
+          <select
+            value={newStatusId}
+            onChange={(e) => setNewStatusId(e.target.value)}
+            disabled={updateStatusMutation.isPending}
+            className={`${inputClass} bg-white appearance-none cursor-pointer`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+              backgroundPosition: 'right 0.75rem center',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '1.25em 1.25em',
+            }}
+          >
+            {caseStatuses
+              .filter(status => status.name !== 'Đã tiếp nhận' && status.name !== 'Đang xử lý')
+              .map((status) => (
+                <option key={status.id} value={status.id}>
+                  {status.name}
+                </option>
+              ))}
+          </select>
         </div>
 
         {/* Reason */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className={labelClass}>
+            <MessageSquare className="w-3.5 h-3.5 inline mr-1" />
             Lý do <span className="text-red-500">*</span>
-          </label> 
+          </label>
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             disabled={updateStatusMutation.isPending}
             rows={3}
-            placeholder="Nhập lý do cập nhật trạng thái"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
+            placeholder="Nhập lý do cập nhật trạng thái..."
+            className={`${inputClass} resize-none`}
           />
         </div>
 
         {/* Note */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ghi chú
+          <label className={labelClass}>
+            <StickyNote className="w-3.5 h-3.5 inline mr-1" />
+            Ghi chú (tùy chọn)
           </label>
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             disabled={updateStatusMutation.isPending}
             rows={2}
-            placeholder="Nhập ghi chú bổ sung (tùy chọn)"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
+            placeholder="Nhập ghi chú bổ sung..."
+            className={`${inputClass} resize-none`}
           />
         </div>
       </div>
     </BaseModal>
   );
 };
-

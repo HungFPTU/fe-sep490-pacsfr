@@ -13,11 +13,12 @@ export const CaseDetailView: React.FC<CaseDetailViewProps> = ({ caseData, onStat
   const detailData = caseData as CaseDetailResponse;
 
   return (
-    <div className="space-y-6">
-      {/* Main Info Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column - Basic Info */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+    <div className="space-y-5">
+      {/* Main Info Grid - Right column wider */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Left Column - Basic Info (5 cols) */}
+        <div className="lg:col-span-5 bg-white rounded-lg border border-gray-200 p-5">
+          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Thông tin cơ bản</h4>
           <CaseInfo
             caseCode={caseData.caseCode}
             guestName={caseData.guestName}
@@ -26,8 +27,9 @@ export const CaseDetailView: React.FC<CaseDetailViewProps> = ({ caseData, onStat
           />
         </div>
 
-        {/* Right Column - Metadata */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+        {/* Right Column - Metadata (7 cols) */}
+        <div className="lg:col-span-7 bg-white rounded-lg border border-gray-200 p-5">
+          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">Thông tin xử lý</h4>
           <CaseMetadata
             caseId={caseData.id}
             caseCode={caseData.caseCode}
@@ -41,7 +43,7 @@ export const CaseDetailView: React.FC<CaseDetailViewProps> = ({ caseData, onStat
         </div>
       </div>
 
-      {/* Steps Progress - Hiển thị khi có steps */}
+      {/* Steps Progress */}
       {detailData.steps && (
         <CaseStepsProgress
           caseId={detailData.id}
@@ -65,11 +67,10 @@ export const CaseDetailView: React.FC<CaseDetailViewProps> = ({ caseData, onStat
 
       {/* Receivers */}
       {caseData.receivedBy?.$values && caseData.receivedBy.$values.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+        <div className="bg-white rounded-lg border border-gray-200 p-5">
           <CaseReceivers receivers={caseData.receivedBy} />
         </div>
       )}
     </div>
   );
 };
-

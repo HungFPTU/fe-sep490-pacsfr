@@ -474,22 +474,50 @@ export function CreateCasePageView() {
     // Create Case Mode
     if (mode === "create-case") {
         return (
-            <div className="min-h-screen py-8">
-                <div className="max-w-4xl mx-auto">
-                    <div className="mb-6 flex items-center gap-4">
-                        <h1 className="text-3xl font-bold text-gray-900">Tạo hồ sơ mới</h1>
+            <div className="min-h-screen bg-white">
+                <div className="max-w-7xl mx-auto">
+                    {/* Header */}
+                    <div className="mb-6 flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900">Tạo hồ sơ mới</h1>
+                            <p className="text-sm text-gray-500 mt-0.5">Chọn khách hàng và dịch vụ</p>
+                        </div>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                setMode("select");
+                                setGuestSearchKeyword("");
+                                setGuestSearchResults([]);
+                                setSelectedGuest(null);
+                                setServiceSearchKeyword("");
+                                setServiceData(null);
+                                setSelectedService(null);
+                            }}
+                            className="flex items-center gap-2"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                            Quay lại
+                        </Button>
                     </div>
 
-                    <Card className="p-6">
-                        <div className="mb-6">
-                            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                                <FileText className="w-6 h-6 text-blue-600" />
-                                Thông tin hồ sơ
-                            </h2>
-                            <p className="text-sm text-gray-600 mt-1">Vui lòng chọn khách hàng và điền thông tin hồ sơ</p>
+                    {/* Form Card */}
+                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+                        {/* Card Header */}
+                        <div className="px-6 py-4 border-b border-gray-100">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                                    <FileText className="w-5 h-5 text-indigo-600" />
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-semibold text-gray-900">Thông tin hồ sơ</h2>
+                                    <p className="text-xs text-gray-500">Điền đầy đủ thông tin bắt buộc</p>
+                                </div>
+                            </div>
                         </div>
 
-                        <form onSubmit={handleCreateCase} className="space-y-6">
+                        {/* Form Body */}
+                        <form onSubmit={handleCreateCase} className="p-6 space-y-6">
                             {/* Guest Search */}
                             <GuestSearchForm
                                 searchKeyword={guestSearchKeyword}
@@ -506,6 +534,9 @@ export function CreateCasePageView() {
                                 onToggleDropdown={() => setShowGuestDropdown(!showGuestDropdown)}
                             />
 
+                            {/* Divider */}
+                            <div className="border-t border-gray-100" />
+
                             {/* Service Search */}
                             <ServiceListWithPagination
                                 searchKeyword={serviceSearchKeyword}
@@ -521,6 +552,9 @@ export function CreateCasePageView() {
                                 onPageChange={handleServicePageChange}
                             />
 
+                            {/* Divider */}
+                            <div className="border-t border-gray-100" />
+
                             {/* Case Form Fields */}
                             <CaseFormFields
                                 caseData={caseData}
@@ -531,13 +565,12 @@ export function CreateCasePageView() {
                             />
 
                             {/* Submit Buttons */}
-                            <div className="flex justify-end gap-3 pt-4 border-t">
+                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                                 <Button
                                     type="button"
                                     variant="outline"
                                     onClick={() => {
                                         setMode("select");
-                                        // Reset form data
                                         setGuestSearchKeyword("");
                                         setGuestSearchResults([]);
                                         setSelectedGuest(null);
@@ -551,14 +584,14 @@ export function CreateCasePageView() {
                                 </Button>
                                 <Button
                                     type="submit"
-                                    disabled={isSubmitting || !caseData.guestId || !caseData.serviceId}
+                                    disabled={isSubmitting || !caseData.guestId || !caseData.serviceId || !caseData.submissionMethodId}
                                     className="bg-indigo-600 hover:bg-indigo-700"
                                 >
                                     {isSubmitting ? "Đang tạo hồ sơ..." : "Tạo hồ sơ"}
                                 </Button>
                             </div>
                         </form>
-                    </Card>
+                    </div>
                 </div>
             </div>
         );

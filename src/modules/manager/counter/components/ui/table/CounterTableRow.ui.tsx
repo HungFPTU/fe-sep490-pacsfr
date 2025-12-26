@@ -77,7 +77,7 @@ export const CounterTableRow: React.FC<Props> = ({ counter, onView, onAssignServ
                                     <span className="text-xs text-slate-500">
                                         ({sg.currentLength} đang chờ)
                                     </span>
-                                    {sg.status && (
+                                    {/* {sg.status && (
                                         <span className={`inline-flex rounded-full px-1.5 py-0.5 text-xs font-medium ${
                                             sg.status === 'Active' 
                                                 ? 'bg-green-100 text-green-800' 
@@ -85,7 +85,7 @@ export const CounterTableRow: React.FC<Props> = ({ counter, onView, onAssignServ
                                         }`}>
                                             {sg.status}
                                         </span>
-                                    )}
+                                    )} */}
                                 </div>
                             ))}
                         </div>

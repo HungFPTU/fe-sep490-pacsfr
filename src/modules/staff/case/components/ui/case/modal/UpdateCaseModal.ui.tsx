@@ -2,8 +2,9 @@
 'use client';
 
 import React from 'react';
+import { FileText, User, Briefcase, Calendar, Banknote, FileEdit, StickyNote } from 'lucide-react';
 import { BaseModal } from '@/shared/components/layout/manager/modal/BaseModal';
-import { InputField, TextareaField } from '@/shared/components/manager/features/form/BaseForm';
+import { TextareaField } from '@/shared/components/manager/features/form/BaseForm';
 import { useCaseForm } from '../../../../hooks/useCaseForm';
 import type { CaseDetailResponse } from '../../../../types/case-search';
 import { FormApiOf } from '@/types/types';
@@ -37,6 +38,9 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
     onClose,
   });
 
+  const inputClass = "w-full h-10 px-3 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed";
+  const labelClass = "block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5";
+
   return (
     <BaseModal
       open={open}
@@ -44,29 +48,32 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
       title="Cập nhật hồ sơ"
       onOk={handleSubmit}
       onCancel={onClose}
-      okText="Lưu"
+      okText="Lưu thay đổi"
       cancelText="Hủy"
       centered
       size="large"
       confirmLoading={isLoading}
     >
-      <div className="space-y-4">
-        {/* Case Info - Read Only */}
+      <div className="space-y-5">
+        {/* Case Info Header */}
         {caseData && (
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Thông tin hồ sơ</h4>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <span className="text-gray-600">Mã hồ sơ:</span>{' '}
-                <span className="font-medium text-gray-900">{caseData.caseCode}</span>
+          <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
+                <FileText className="w-6 h-6 text-indigo-600" />
               </div>
-              <div>
-                <span className="text-gray-600">Khách hàng:</span>{' '}
-                <span className="font-medium text-gray-900">{caseData.guestName}</span>
-              </div>
-              <div className="col-span-2">
-                <span className="text-gray-600">Dịch vụ:</span>{' '}
-                <span className="font-medium text-gray-900">{caseData.serviceName}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-lg font-bold text-gray-900 font-mono">{caseData.caseCode}</p>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-600">
+                  <span className="flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5" />
+                    {caseData.guestName}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5" />
+                    {caseData.serviceName}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -74,36 +81,35 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
 
         {/* Form Fields */}
         <div className="space-y-4">
-          {/* Submission Method */}
+          {/* Submission Method - Read Only */}
           <form.Field name="submissionMethod">
             {(field) => (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phương thức nộp
-                </label>
+                <label className={labelClass}>Phương thức nộp</label>
                 <input
                   type="text"
                   value={field.state.value}
                   disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                  className={inputClass}
                 />
               </div>
             )}
           </form.Field>
 
-          {/* Dates */}
+          {/* Dates Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <form.Field name="estimatedCompletionDate">
               {(field) => (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={labelClass}>
+                    <Calendar className="w-3.5 h-3.5 inline mr-1" />
                     Ngày dự kiến hoàn thành
                   </label>
                   <input
                     type="date"
                     value={field.state.value}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                    className={inputClass}
                   />
                 </div>
               )}
@@ -112,7 +118,8 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
             <form.Field name="actualCompletionDate">
               {(field) => (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={labelClass}>
+                    <Calendar className="w-3.5 h-3.5 inline mr-1" />
                     Ngày hoàn thành thực tế <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -120,29 +127,32 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value as never)}
                     disabled={isLoading}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className={inputClass}
                   />
                 </div>
               )}
             </form.Field>
           </div>
 
-          {/* Total Fee */}
+          {/* Total Fee - Read Only */}
           <form.Field name="totalFee">
             {(field) => (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={labelClass}>
+                  <Banknote className="w-3.5 h-3.5 inline mr-1" />
                   Tổng phí
                 </label>
-                <input
-                  type="number"
-                  value={field.state.value}
-                  disabled
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Số tiền: {field.state.value.toLocaleString('vi-VN')} VNĐ
-                </p>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={field.state.value}
+                    disabled
+                    className={inputClass}
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+                    {field.state.value.toLocaleString('vi-VN')} VNĐ
+                  </span>
+                </div>
               </div>
             )}
           </form.Field>
@@ -151,7 +161,8 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
           <form.Field name="resultDescription">
             {(field) => (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={labelClass}>
+                  <FileEdit className="w-3.5 h-3.5 inline mr-1" />
                   Mô tả kết quả
                 </label>
                 <textarea
@@ -159,8 +170,8 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
                   onChange={(e) => field.handleChange(e.target.value as never)}
                   disabled={isLoading}
                   rows={3}
-                  placeholder="Nhập mô tả kết quả xử lý hồ sơ"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
+                  placeholder="Nhập mô tả kết quả xử lý hồ sơ..."
+                  className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:cursor-not-allowed resize-none"
                 />
               </div>
             )}
@@ -169,14 +180,20 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
           {/* Notes */}
           <form.Field name="notes">
             {(field) => (
-              <TextareaField<FormValues>
-                form={form as FormApiOf<FormValues>}
-                name="notes"
-                label="Ghi chú"
-                placeholder="Nhập ghi chú bổ sung..."
-                rows={3}
-                disabled={isLoading}
-              />
+              <div>
+                <label className={labelClass}>
+                  <StickyNote className="w-3.5 h-3.5 inline mr-1" />
+                  Ghi chú
+                </label>
+                <textarea
+                  value={field.state.value as string}
+                  onChange={(e) => field.handleChange(e.target.value as never)}
+                  disabled={isLoading}
+                  rows={3}
+                  placeholder="Nhập ghi chú bổ sung..."
+                  className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:cursor-not-allowed resize-none"
+                />
+              </div>
             )}
           </form.Field>
         </div>
@@ -184,4 +201,3 @@ export const UpdateCaseModal: React.FC<UpdateCaseModalProps> = ({
     </BaseModal>
   );
 };
-

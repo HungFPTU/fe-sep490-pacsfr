@@ -57,7 +57,7 @@ export const CaseProgressResultView: React.FC<CaseProgressResultProps> = ({
     return (
         <div className="mt-8 space-y-6">
             <CaseProgressSummaryCard summary={result.summary} message={result.message} />
-            <CaseProgressTimeline steps={result.steps} />
+            {/* <CaseProgressTimeline steps={result.steps} /> */}
             <CaseProgressDetailTable rawData={result.rawData} />
         </div>
     );

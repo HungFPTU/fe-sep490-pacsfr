@@ -33,7 +33,7 @@ export interface CaseProgressRaw {
     citizenName?: string;
     status?: string;
     statusName?: string;
-    currentStatus?: string; // New field from API
+    currentStatus?: string;
     statusDescription?: string;
     submitDate?: string;
     createdAt?: string;
@@ -42,12 +42,28 @@ export interface CaseProgressRaw {
     lastUpdated?: string;
     estimatedCompletionDate?: string;
     expectedCompletion?: string;
-    progressPercentage?: number; // New field from API
+    progressPercentage?: number;
     processingAgency?: string;
     departmentName?: string;
     organizationName?: string;
-    assignedStaffName?: string; // New field from API
+    assignedStaffName?: string;
     receivedChannel?: string;
+    // New fields from API response
+    staffName?: string;
+    submissionMethod?: string;
+    priorityLevel?: number;
+    totalFee?: number;
+    isPayment?: boolean;
+    notes?: string;
+    paymentInfo?: {
+        paymentId?: string;
+        amount?: number;
+        paymentStatus?: string;
+        qrCodeUrl?: string;
+        billUrl?: string;
+        description?: string;
+        expiredAt?: string;
+    };
     statusHistory?: {
         $values?: Array<{
             id?: string;
@@ -68,7 +84,16 @@ export interface CaseProgressRaw {
         [key: string]: unknown;
     }>;
     progressSteps?: unknown;
-    steps?: unknown;
+    steps?: {
+        $id?: string;
+        $values?: Array<{
+            caseServiceProcedureId?: string;
+            stepNumber?: number;
+            stepName?: string;
+            isCurrent?: boolean;
+            isFinished?: boolean;
+        }>;
+    };
     histories?: unknown;
     timeline?: unknown;
     [key: string]: unknown;

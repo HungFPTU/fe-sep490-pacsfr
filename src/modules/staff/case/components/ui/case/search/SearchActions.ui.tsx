@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 
 interface SearchActionsProps {
   isLoading: boolean;
@@ -22,47 +23,31 @@ export const SearchActions: React.FC<SearchActionsProps> = ({
       <button
         onClick={onSearch}
         disabled={isLoading}
-        className={`px-6 py-2 text-white rounded-lg transition-colors ${
-          hasChanges ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-indigo-600 hover:bg-indigo-700'
-        } disabled:bg-gray-400 disabled:cursor-not-allowed`}
+        className="px-5 py-2 text-white rounded-lg transition-colors bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 disabled:cursor-not-allowed"
       >
         {isLoading ? 'Đang tìm...' : hasChanges ? 'Tìm kiếm lại' : 'Tìm kiếm'}
       </button>
 
       <button
         onClick={onReset}
-        className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+        className="px-5 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors"
       >
         Làm mới
       </button>
 
       {searchEnabled && !hasChanges && (
-        <div className="flex items-center text-sm text-gray-600">
-          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
+        <div className="flex items-center text-sm text-green-600">
+          <CheckCircleIcon className="w-4 h-4 mr-1" />
           Đã tìm kiếm
         </div>
       )}
 
       {hasChanges && searchEnabled && (
-        <div className="flex items-center text-sm text-blue-600">
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-            />
-          </svg>
+        <div className="flex items-center text-sm text-amber-600">
+          <ExclamationTriangleIcon className="w-4 h-4 mr-1" />
           Có thay đổi bộ lọc
         </div>
       )}
     </div>
   );
 };
-
