@@ -43,7 +43,7 @@ export const ChatBotPage: React.FC = () => {
 
         const userId = '3fa85f64-5717-4562-b3fc-2c963f66afa6';
         await submitMessage(prompt, userId, aborter.signal);
-        
+
         setController(null);
     };
 
@@ -53,10 +53,16 @@ export const ChatBotPage: React.FC = () => {
         inputRef,
         handleInputChange,
         handleSubmit: handleFormSubmit,
+        clear,
     } = useChatForm({
         onSubmit: handleSubmit,
         disabled: isSending,
     });
+
+    const handleHintClick = (hint: string) => {
+        clear();
+        handleSubmit(hint);
+    };
 
     // Stop request
     const handleStop = () => {
@@ -76,16 +82,16 @@ export const ChatBotPage: React.FC = () => {
             controller.abort();
             setController(null);
         }
-        
+
         try {
             console.log('Loading conversation:', convId);
             await loadMessagesFromConversation(convId);
             console.log('Conversation loaded successfully');
         } catch (error) {
             console.error('Failed to load conversation:', error);
-            addToast({ 
-                message: 'Không thể tải cuộc trò chuyện. Vui lòng thử lại.', 
-                type: 'error' 
+            addToast({
+                message: 'Không thể tải cuộc trò chuyện. Vui lòng thử lại.',
+                type: 'error'
             });
         }
     };
@@ -109,8 +115,8 @@ export const ChatBotPage: React.FC = () => {
     return (
         <SidebarProvider>
             <div className="flex h-screen w-full overflow-hidden bg-gradient-to-b from-yellow-50 via-yellow-100 to-yellow-50">
-                <ChatbotSidebar 
-                    onNewChat={handleNewChat} 
+                <ChatbotSidebar
+                    onNewChat={handleNewChat}
                     onSelectConversation={handleSelectConversation}
                     selectedConversationId={conversationId}
                 />
@@ -144,6 +150,7 @@ export const ChatBotPage: React.FC = () => {
                         {/* Input area */}
                         <div className="relative z-10 w-full flex-shrink-0 py-5">
                             <div className="w-full max-w-4xl mx-auto px-4 md:px-6">
+                                <ChatFooter onHintClick={handleHintClick} />
                                 <ChatInput
                                     value={input}
                                     onChange={handleInputChange}
@@ -153,7 +160,6 @@ export const ChatBotPage: React.FC = () => {
                                     onStop={handleStop}
                                     inputRef={inputRef}
                                 />
-                                <ChatFooter />
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import {
     Sidebar,
     SidebarContent,
@@ -35,10 +36,10 @@ const MoreIcon = () => (
     </svg>
 );
 
-export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({ 
-    onNewChat, 
-    onSelectConversation, 
-    selectedConversationId 
+export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({
+    onNewChat,
+    onSelectConversation,
+    selectedConversationId
 }) => {
     const [conversations, setConversations] = useState<ConversationItem[]>([]);
     const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -105,14 +106,14 @@ export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({
     const handleConfirmDelete = () => {
         if (deleteConfirmId) {
             removeConversation(deleteConfirmId);
-            
+
             if (selectedConversationId === deleteConfirmId) {
                 removeConversationId();
                 if (onNewChat) {
                     onNewChat();
                 }
             }
-            
+
             setDeleteConfirmId(null);
             const loaded = getConversations();
             setConversations(loaded);
@@ -127,9 +128,11 @@ export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({
         <Sidebar className="bg-yellow-50/80 backdrop-blur-xl border-red-200/60">
             <SidebarHeader className="p-4 bg-white/50 backdrop-blur-sm border-b border-red-200/60">
                 <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-600 to-red-500 flex items-center justify-center shadow-md text-white">
-                        <MessageIcon />
-                    </div>
+                    <Link href="/">
+                        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-red-600 to-red-500 flex items-center justify-center shadow-md text-white cursor-pointer hover:opacity-80 transition-opacity">
+                            <MessageIcon />
+                        </div>
+                    </Link>
                     <h2 className="text-lg font-bold text-red-800">PASCS Chat</h2>
                 </div>
             </SidebarHeader>
@@ -149,23 +152,22 @@ export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({
                     {conversations.length === 0 ? (
                         <div className="text-center py-12 px-4 h-full flex flex-col justify-center items-center bg-gradient-to-br from-yellow-100/60 to-yellow-50/40 rounded-2xl border-2 border-dashed border-yellow-300/60 shadow-inner">
                             <div className="w-20 h-20 mb-5 rounded-2xl bg-gradient-to-br from-yellow-200 to-yellow-100 flex items-center justify-center text-yellow-700 shadow-md">
-                            <MessageIcon />
-                        </div>
+                                <MessageIcon />
+                            </div>
                             <p className="text-yellow-900/90 text-sm font-semibold mb-1.5">Lịch sử trò chuyện</p>
                             <p className="text-yellow-800/70 text-xs leading-relaxed max-w-[180px]">
-                            Các cuộc hội thoại của bạn sẽ được hiển thị ở đây.
-                        </p>
-                    </div>
+                                Các cuộc hội thoại của bạn sẽ được hiển thị ở đây.
+                            </p>
+                        </div>
                     ) : (
                         <div className="space-y-1.5">
                             {conversations.map((conversation) => (
                                 <div
                                     key={conversation.conversationId}
-                                    className={`relative rounded-xl transition-all duration-200 group ${
-                                        selectedConversationId === conversation.conversationId
-                                            ? 'bg-gradient-to-r from-red-100 to-red-50 shadow-md shadow-red-500/10 border border-red-200/50'
-                                            : 'bg-white/60 hover:bg-yellow-50/80 hover:shadow-md border border-transparent hover:border-yellow-200/50'
-                                    }`}
+                                    className={`relative rounded-xl transition-all duration-200 group ${selectedConversationId === conversation.conversationId
+                                        ? 'bg-gradient-to-r from-red-100 to-red-50 shadow-md shadow-red-500/10 border border-red-200/50'
+                                        : 'bg-white/60 hover:bg-yellow-50/80 hover:shadow-md border border-transparent hover:border-yellow-200/50'
+                                        }`}
                                 >
                                     <button
                                         onClick={() => onSelectConversation(conversation.conversationId)}
@@ -181,7 +183,7 @@ export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({
                                                                 {date}
                                                             </p>
                                                             {time && (
-                                                                <p className={`text-xs ${selectedConversationId === conversation.conversationId ? 'font-semibold text-red-900' : 'font-medium text-slate-700'}`}>Vào lúc : 
+                                                                <p className={`text-xs ${selectedConversationId === conversation.conversationId ? 'font-semibold text-red-900' : 'font-medium text-slate-700'}`}>Vào lúc :
                                                                     {time}
                                                                 </p>
                                                             )}
@@ -197,11 +199,10 @@ export const ChatbotSidebar: React.FC<ChatbotSidebarProps> = ({
                                     <div className="absolute top-2 right-2 z-10" ref={(el) => { menuRefs.current[conversation.conversationId] = el; }}>
                                         <button
                                             onClick={(e) => handleMenuClick(e, conversation.conversationId)}
-                                            className={`p-1.5 rounded-lg hover:bg-red-100/50 text-slate-600 hover:text-red-700 transition-all ${
-                                                openMenuId === conversation.conversationId || selectedConversationId === conversation.conversationId
-                                                    ? 'opacity-100'
-                                                    : 'opacity-0 group-hover:opacity-100'
-                                            }`}
+                                            className={`p-1.5 rounded-lg hover:bg-red-100/50 text-slate-600 hover:text-red-700 transition-all ${openMenuId === conversation.conversationId || selectedConversationId === conversation.conversationId
+                                                ? 'opacity-100'
+                                                : 'opacity-0 group-hover:opacity-100'
+                                                }`}
                                         >
                                             <MoreIcon />
                                         </button>
