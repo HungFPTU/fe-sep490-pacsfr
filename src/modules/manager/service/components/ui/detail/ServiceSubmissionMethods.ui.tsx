@@ -417,18 +417,6 @@ export const ServiceSubmissionMethods: React.FC<Props> = ({
                                                 <p className="text-sm font-semibold text-slate-900 truncate">
                                                     {methodInfo?.submissionMethodName}
                                                 </p>
-                                                <div className="flex items-center gap-3 mt-1.5 text-xs text-slate-600">
-                                                    <span className="inline-flex items-center gap-1 bg-white px-2.5 py-1 rounded-md">
-                                                        <DollarSign className="h-3 w-3 text-indigo-600" />
-                                                        <strong className="text-slate-900">
-                                                            {method.fee === 0 ? 'Miễn phí' : formatCurrency(method.fee)}
-                                                        </strong>
-                                                    </span>
-                                                    <span className="inline-flex items-center gap-1 bg-white px-2.5 py-1 rounded-md">
-                                                        <Clock className="h-3 w-3 text-indigo-600" />
-                                                        <strong className="text-slate-900">{method.processingTime} ngày</strong>
-                                                    </span>
-                                                </div>
                                             </div>
                                             <button
                                                 onClick={() => handleRemoveMethod(method.submissionMethodId)}
