@@ -23,40 +23,45 @@ interface EntityRowProps {
     onSuccess: (type: string, originalData: any, newId: string) => void;
 }
 
+const getInitialFormData = (type: string, data: any) => {
+    switch (type) {
+        case 'legislationDocument':
+            return {
+                documentNumber: data.soKyHieu || '',
+                name: data.trichYeu || '',
+                issueDate: data.ngayBanHanh || '',
+                issueBody: data.coQuanBanHanh || 'Chính Phủ',
+                documentType: 'Quyết định',
+                effectiveDate: data.ngayBanHanh || ''
+            };
+        case 'docsType':
+            return {
+                docTypeName: data.tenGiayTo || '',
+                description: 'Tài liệu được hệ thống tạo tự động từ chức năng nhập nhanh, phục vụ việc lập và quản lý hồ sơ theo quy định.'
+            };
+        case 'submissionMethod':
+            return {
+                submissionMethodName: data.hinhThuc || '',
+                description: data.moTa || `Thời hạn: ${data.thoiHan || ''}, Phí: ${data.phiLePhi || ''}`
+            };
+        case 'serviceAgency':
+            return {
+                agencyName: typeof data === 'string' ? data : (data.coQuan || ''),
+                description: 'Tài liệu được hệ thống tạo tự động từ chức năng nhập nhanh, phục vụ việc lập và quản lý hồ sơ theo quy định.'
+            };
+        default:
+            return {};
+    }
+};
+
 const EntityRow: React.FC<EntityRowProps> = ({ item, type, onSuccess }) => {
     const toast = useGlobalToast();
     const [isCreating, setIsCreating] = useState(false);
-    const [formData, setFormData] = useState<any>(() => {
-        const data = item.originalData || {};
-        switch (type) {
-            case 'legislationDocument':
-                return {
-                    documentNumber: data.soKyHieu || '',
-                    name: data.trichYeu || '',
-                    issueDate: data.ngayBanHanh || '',
-                    issueBody: data.coQuanBanHanh || 'Chính Phủ',
-                    documentType: 'Quyết định',
-                    effectiveDate: data.ngayBanHanh || ''
-                };
-            case 'docsType':
-                return {
-                    docTypeName: data.tenGiayTo || '',
-                    description: 'Tài liệu được hệ thống tạo tự động từ chức năng nhập nhanh, phục vụ việc lập và quản lý hồ sơ theo quy định.'
-                };
-            case 'submissionMethod':
-                return {
-                    submissionMethodName: data.hinhThuc || '',
-                    description: data.moTa || `Thời hạn: ${data.thoiHan || ''}, Phí: ${data.phiLePhi || ''}`
-                };
-            case 'serviceAgency':
-                return {
-                    agencyName: typeof data === 'string' ? data : (data.coQuan || ''),
-                    description: 'Tài liệu được hệ thống tạo tự động từ chức năng nhập nhanh, phục vụ việc lập và quản lý hồ sơ theo quy định.'
-                };
-            default:
-                return {};
-        }
-    });
+    const [formData, setFormData] = useState<any>(() => getInitialFormData(type, item.originalData || {}));
+
+    React.useEffect(() => {
+        setFormData(getInitialFormData(type, item.originalData || {}));
+    }, [item.originalData, type]);
 
     const handleChange = (field: string, value: string) => {
         setFormData((prev: any) => ({ ...prev, [field]: value }));
@@ -318,7 +323,7 @@ const EntityRow: React.FC<EntityRowProps> = ({ item, type, onSuccess }) => {
 
 export const MissingEntitiesPanel: React.FC<Props> = ({ missingEntities, onEntityCreated }) => {
 
-    // Check if any missing items exist
+
     const hasMissingItems =
         getList(missingEntities.legislationDocuments).length > 0 ||
         getList(missingEntities.docsTypes).length > 0 ||
@@ -336,7 +341,7 @@ export const MissingEntitiesPanel: React.FC<Props> = ({ missingEntities, onEntit
                 <div className="space-y-2">
                     {items.map((item, index) => (
                         <EntityRow
-                            key={`${type}-${index}`}
+                            key={`${type}-${index}-${item.name}`}
                             item={item}
                             type={type}
                             onSuccess={onEntityCreated}
