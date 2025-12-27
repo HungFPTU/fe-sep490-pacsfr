@@ -273,31 +273,8 @@ const EntityRow: React.FC<EntityRowProps> = ({ item, type, onSuccess }) => {
         <div className="bg-amber-100/40 p-3 rounded border border-amber-200 mb-2 last:mb-0 flex items-start justify-between">
             <div className="flex-1 mr-4">
                 <p className="text-sm font-bold text-amber-900 mb-1">{item.name}</p>
-                <div className="text-xs text-amber-800 space-y-1">
-                    {/* Render details based on type */}
-                    {type === 'legislationDocument' && (
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                            <p><span className="font-semibold">Số ký hiệu:</span> {formData.documentNumber}</p>
-                            <p><span className="font-semibold">Ngày ban hành:</span> {formData.issueDate}</p>
-                            <p><span className="font-semibold">Cơ quan:</span> {formData.issueBody}</p>
-                            <p><span className="font-semibold">Loại:</span> {formData.documentType}</p>
-                        </div>
-                    )}
-                    {type === 'docsType' && (
-                        <div>
-                            <p><span className="font-semibold">Mô tả:</span> {formData.description}</p>
-                        </div>
-                    )}
-                    {type === 'submissionMethod' && (
-                        <div>
-                            <p><span className="font-semibold">Chi tiết:</span> {formData.description}</p>
-                        </div>
-                    )}
-                    {type === 'serviceAgency' && (
-                        <div>
-                            <p><span className="font-semibold">Mô tả:</span> {formData.description}</p>
-                        </div>
-                    )}
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                    {renderInputs()}
                 </div>
             </div>
             <div className="flex justify-end flex-shrink-0 mt-0.5">
