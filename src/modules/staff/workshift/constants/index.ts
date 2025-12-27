@@ -11,7 +11,7 @@ export const DEFAULT_PAGE_SIZE = 10;
 export const WORKSHIFT_TYPE_OPTIONS = [
   { value: 'Sáng', label: 'Sáng' },
   { value: 'Chiều', label: 'Chiều' },
-  { value: 'Cả ngày', label: 'Cả ngày' },
+  // { value: 'Cả ngày', label: 'Cả ngày' },
 ];
 
 // Color mapping for shift types

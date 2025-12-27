@@ -26,13 +26,13 @@ const SHIFT_OPTIONS: ShiftTypeOption[] = [
     endTime: '17:30',
     dotColor: 'bg-yellow-500',
   },
-  {
-    value: 'Cả ngày',
-    label: 'Cả Ngày',
-    startTime: '07:00',
-    endTime: '17:30',
-    dotColor: 'bg-blue-500',
-  },
+  // {
+  //   value: 'Cả ngày',
+  //   label: 'Cả Ngày',
+  //   startTime: '07:00',
+  //   endTime: '17:30',
+  //   dotColor: 'bg-blue-500',
+  // },
 ];
 
 interface ShiftTypeSelectProps {

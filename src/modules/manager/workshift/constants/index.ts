@@ -39,14 +39,14 @@ export const SHIFT_TYPE_DOT_COLORS: Record<string, string> = {
 export const WORKSHIFT_TYPE_OPTIONS = [
   { value: 'Sáng', label: '🟢 Ca Sáng: 7:00 - 11:30' },
   { value: 'Chiều', label: '🟡 Ca Chiều: 13:00 - 17:30' },
-  { value: 'Cả ngày', label: '🔵 Cả Ngày: 7:00 - 17:30' },
+  // { value: 'Cả ngày', label: '🔵 Cả Ngày: 7:00 - 17:30' },
 ];
 
 // Simple options for places that need plain text (like filters)
 export const WORKSHIFT_TYPE_SIMPLE_OPTIONS = [
   { value: 'Sáng', label: 'Sáng' },
   { value: 'Chiều', label: 'Chiều' },
-  { value: 'Cả ngày', label: 'Cả ngày' },
+  // { value: 'Cả ngày', label: 'Cả ngày' },
 ];
 
 // Color mapping for shift types
