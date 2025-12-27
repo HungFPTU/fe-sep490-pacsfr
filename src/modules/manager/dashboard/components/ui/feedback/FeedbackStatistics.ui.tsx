@@ -56,8 +56,8 @@ export const FeedbackStatisticsSection: React.FC<Props> = ({ data }) => {
                                 <StarIcon
                                     key={star}
                                     className={`h-6 w-6 ${star <= Math.round(data.averageRating)
-                                            ? 'text-amber-400'
-                                            : 'text-slate-300'
+                                        ? 'text-amber-400'
+                                        : 'text-slate-300'
                                         }`}
                                 />
                             ))}
@@ -90,68 +90,39 @@ export const FeedbackStatisticsSection: React.FC<Props> = ({ data }) => {
                         ))}
                     </div>
                 </div>
-
-                <div className="space-y-4">
+                {data.serviceRatings.length > 0 && (
                     <div className="rounded-lg border border-slate-200 bg-white p-4">
                         <h3 className="mb-3 text-sm font-semibold text-slate-700">
-                            Trạng thái phản hồi
+                            Top dịch vụ được đánh giá
                         </h3>
-                        <div className="grid grid-cols-3 gap-3">
-                            <div className="text-center">
-                                <div className="mb-1 text-2xl font-bold text-yellow-600">
-                                    {data.pendingCount}
+                        <div className="space-y-3">
+                            {data.serviceRatings.slice(0, 3).map((service, index) => (
+                                <div
+                                    key={service.serviceId}
+                                    className="flex items-center justify-between"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
+                                            {index + 1}
+                                        </span>
+                                        <span className="text-sm text-slate-700">
+                                            {service.serviceName}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <StarIcon className="h-4 w-4 text-amber-400" />
+                                        <span className="text-sm font-semibold text-slate-900">
+                                            {service.averageRating.toFixed(1)}
+                                        </span>
+                                        <span className="text-xs text-slate-500">
+                                            ({service.totalRatings})
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="text-xs text-slate-600">Chờ duyệt</div>
-                            </div>
-                            <div className="text-center">
-                                <div className="mb-1 text-2xl font-bold text-green-600">
-                                    {data.approvedCount}
-                                </div>
-                                <div className="text-xs text-slate-600">Đã duyệt</div>
-                            </div>
-                            <div className="text-center">
-                                <div className="mb-1 text-2xl font-bold text-red-600">
-                                    {data.canceledCount}
-                                </div>
-                                <div className="text-xs text-slate-600">Từ chối</div>
-                            </div>
+                            ))}
                         </div>
                     </div>
-
-                    {data.serviceRatings.length > 0 && (
-                        <div className="rounded-lg border border-slate-200 bg-white p-4">
-                            <h3 className="mb-3 text-sm font-semibold text-slate-700">
-                                Top dịch vụ được đánh giá
-                            </h3>
-                            <div className="space-y-3">
-                                {data.serviceRatings.slice(0, 3).map((service, index) => (
-                                    <div
-                                        key={service.serviceId}
-                                        className="flex items-center justify-between"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
-                                                {index + 1}
-                                            </span>
-                                            <span className="text-sm text-slate-700">
-                                                {service.serviceName}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <StarIcon className="h-4 w-4 text-amber-400" />
-                                            <span className="text-sm font-semibold text-slate-900">
-                                                {service.averageRating.toFixed(1)}
-                                            </span>
-                                            <span className="text-xs text-slate-500">
-                                                ({service.totalRatings})
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
+                )}
             </div>
         </div>
     );
