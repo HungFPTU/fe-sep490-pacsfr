@@ -14,7 +14,7 @@ export function GovernmentFooter() {
             priority
           />
         </div>
-        <div className="container mx-auto px-4 relative z-10 py-12">
+        <div className="container mx-auto px-4 relative z-0 py-12">
           <div className="text-center">
             {/* Logo */}
             <div className="flex justify-center mb-6">
@@ -38,7 +38,7 @@ export function GovernmentFooter() {
             {/* Contact Info */}
             <div className="text-gray-800 space-y-2">
               <p className="text-lg">
-                <strong>Địa chỉ:</strong> 18 Nguyễn Du, Quận Hai Bà Trưng, Hà Nội
+                <strong>Địa chỉ:</strong> UBND Phường Tăng Nhơn Phú
               </p>
               <p className="text-lg">
                 <strong>Email:</strong> dichvucong@chinhphu.vn

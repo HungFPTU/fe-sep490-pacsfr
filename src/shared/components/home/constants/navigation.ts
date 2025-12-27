@@ -59,11 +59,11 @@ export const HOME_NAVIGATION_ITEMS: HomeNavigationItem[] = [
         type: 'dropdown',
         subItems: [
             { key: 'support-lookup', label: 'Tra cứu hồ sơ TTHC', href: '/tra-cuu-ho-so' },
-            { key: 'support-guide', label: 'Hướng dẫn sử dụng', href: '/guide' },
+            // { key: 'support-guide', label: 'Hướng dẫn sử dụng', href: '/guide' },
             { key: 'support-faq', label: 'Câu hỏi thường gặp', href: '/cau-hoi-thuong-gap' },
-            { key: 'support-survey', label: 'Khảo sát ý kiến', href: '/survey' },
-            { key: 'support-search-questions', label: 'Tra cứu câu hỏi', href: '/search-questions' },
-            { key: 'support-contact', label: 'Số điện thoại hướng dẫn giải quyết TTHC', href: '/contact' },
+            // { key: 'support-survey', label: 'Khảo sát ý kiến', href: '/survey' },
+            // { key: 'support-search-questions', label: 'Tra cứu câu hỏi', href: '/search-questions' },
+            // { key: 'support-contact', label: 'Số điện thoại hướng dẫn giải quyết TTHC', href: '/contact' },
         ],
     },
 ];

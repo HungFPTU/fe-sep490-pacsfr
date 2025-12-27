@@ -64,7 +64,7 @@ export function UserMenu() {
                         {user?.fullName || user?.username || 'User'}
                     </div>
                     <div className="text-xs text-slate-500">
-                        {user?.role || 'Manager'}
+                        {user?.roleType || 'Undefined'}
                     </div>
                 </div>
                 <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />

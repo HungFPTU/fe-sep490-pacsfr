@@ -520,12 +520,19 @@ httpNoLoading.addErrorInterceptor(async (error) => {
 
     // Handle common error scenarios
     if (error.status === 401) {
-        // Unauthorized - logout user and redirect to login
+        // Unauthorized - only redirect to login if on private routes
         console.warn('[HTTP Client] 401 Unauthorized:', error.message);
 
         if (typeof window !== "undefined") {
-            // Use http client's logout method
-            httpNoLoading.handleLogout('unauthorized');
+            // Check if user is on private routes that require authentication
+            const isPrivateRoute = 
+                window.location.pathname.startsWith('/manager') || 
+                window.location.pathname.startsWith('/staff');
+            
+            if (isPrivateRoute) {
+                // Use http client's logout method only for private routes
+                httpNoLoading.handleLogout('unauthorized');
+            }
         }
     }
 
@@ -581,12 +588,19 @@ http.addErrorInterceptor(async (error) => {
 
     // Handle common error scenarios
     if (error.status === 401) {
-        // Unauthorized - logout user and redirect to login
+        // Unauthorized - only redirect to login if on private routes
         console.warn('[HTTP Client] 401 Unauthorized:', error.message);
 
         if (typeof window !== "undefined") {
-            // Use http client's logout method
-            http.handleLogout('unauthorized');
+            // Check if user is on private routes that require authentication
+            const isPrivateRoute = 
+                window.location.pathname.startsWith('/manager') || 
+                window.location.pathname.startsWith('/staff');
+            
+            if (isPrivateRoute) {
+                // Use http client's logout method only for private routes
+                http.handleLogout('unauthorized');
+            }
         }
     }
 
